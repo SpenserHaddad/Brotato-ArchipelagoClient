@@ -1,0 +1,95 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://resources/themes/base_theme.tres" type="Theme" id=1]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/menu_ap_connect.gd" type="Script" id=2]
+
+[node name="MarginContainer" type="MarginContainer"]
+anchor_left = 0.3
+anchor_right = 0.7
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_right = 768.0
+margin_bottom = 1080.0
+custom_constants/separation = 50
+alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
+margin_top = 376.0
+margin_right = 768.0
+margin_bottom = 588.0
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/CenterContainer"]
+margin_left = 15.0
+margin_right = 753.0
+margin_bottom = 212.0
+custom_constants/vseparation = 25
+custom_constants/hseparation = 25
+columns = 2
+
+[node name="HostLabel" type="Label" parent="VBoxContainer/CenterContainer/GridContainer"]
+margin_top = 4.0
+margin_right = 213.0
+margin_bottom = 49.0
+text = "Host:"
+
+[node name="HostEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer"]
+margin_left = 238.0
+margin_right = 738.0
+margin_bottom = 54.0
+rect_min_size = Vector2( 500, 0 )
+focus_next = NodePath("../../../ConnectButton")
+focus_previous = NodePath("../PlayerEdit")
+clear_button_enabled = true
+placeholder_text = "IP/Address:Port"
+caret_blink = true
+caret_blink_speed = 0.5
+
+[node name="PlayerLabel" type="Label" parent="VBoxContainer/CenterContainer/GridContainer"]
+margin_top = 83.0
+margin_right = 213.0
+margin_bottom = 128.0
+text = "Player:"
+
+[node name="PlayerEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer"]
+margin_left = 238.0
+margin_top = 79.0
+margin_right = 738.0
+margin_bottom = 133.0
+focus_next = NodePath("../HostEdit")
+focus_previous = NodePath("../PasswordEdit")
+clear_button_enabled = true
+placeholder_text = "Player Name"
+caret_blink = true
+caret_blink_speed = 0.5
+
+[node name="PasswordLabel" type="Label" parent="VBoxContainer/CenterContainer/GridContainer"]
+margin_top = 162.0
+margin_right = 213.0
+margin_bottom = 207.0
+text = "Password:"
+
+[node name="PasswordEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer"]
+margin_left = 238.0
+margin_top = 158.0
+margin_right = 738.0
+margin_bottom = 212.0
+focus_next = NodePath("../PlayerEdit")
+focus_previous = NodePath("../../../ConnectButton")
+clear_button_enabled = true
+placeholder_text = "Leave empty if blank"
+caret_blink = true
+caret_blink_speed = 0.5
+
+[node name="ConnectButton" type="Button" parent="VBoxContainer"]
+unique_name_in_owner = true
+margin_top = 638.0
+margin_right = 768.0
+margin_bottom = 703.0
+focus_next = NodePath("../CenterContainer/GridContainer/HostEdit")
+focus_previous = NodePath("../CenterContainer/GridContainer/PasswordEdit")
+text = "Connect"
+
+[connection signal="pressed" from="VBoxContainer/ConnectButton" to="." method="_on_ConnectButton_pressed"]
