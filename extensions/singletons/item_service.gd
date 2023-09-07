@@ -23,7 +23,3 @@ func get_consumable_to_drop(tier:int= Tier.COMMON) -> ConsumableData:
 		return _ap_items_by_tier[tier]
 	else:
 		return .get_consumable_to_drop(tier)
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
