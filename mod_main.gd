@@ -4,6 +4,7 @@ extends Node
 # Brotato Archipelago Multiworld Randomizer Client
 
 const MOD_NAME = "RampagingHippy-Archipelago"
+export onready var ap_client
 
 func _init(_modLoader = ModLoader):
 	ModLoaderLog.info("Init", MOD_NAME)
@@ -38,11 +39,14 @@ func _init(_modLoader = ModLoader):
 
 func _ready()->void:
 	ModLoaderLog.info("Ready", MOD_NAME)
-
-	# ! This uses Godot's native `tr` func, which translates a string. You'll
-	# ! find this particular string in the example CSV here: translations/modname.csv
 	ModLoaderLog.info(str("Translation Demo: ", tr("MODNAME_READY_TEXT")), MOD_NAME)
 	ModLoaderLog.success("Loaded", MOD_NAME)
+	
+	ModLoaderLog.debug("Adding WebSocket Client", MOD_NAME)
+#	ap_client = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_client_service.tscn").instance()
+	ap_client = ApClientService.new("Brotato")
+	self.add_child(ap_client)
+	ModLoaderLog.debug("Added WebSocket Client", MOD_NAME)
 
 	# var ContentLoader = get_node("/root/ModLoader/Darkly77-ContentLoader/ContentLoader")
 	# var content_dir = "res://mods-unpacked/RampagingHippy-Archipelago/content_data/"
