@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_client_service.gd" type="Script" id=1]
+
+[node name="ApClientService" type="Node"]
+script = ExtResource( 1 )
