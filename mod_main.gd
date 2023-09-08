@@ -33,10 +33,10 @@ func _ready()->void:
 	ModLoaderLog.info(str("Translation Demo: ", tr("MODNAME_READY_TEXT")), MOD_NAME)
 	ModLoaderLog.success("Loaded", MOD_NAME)
 
-
 	# TODO: Can we turn the service into a singleton somehow? Adding a node to the root
 	# didn't seem to work.
 	ModLoaderLog.debug("Adding WebSocket Client", MOD_NAME)
+	ap_client = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_client_service.gd")
 	ap_client = ApClientService.new("Brotato")
 	self.add_child(ap_client)
 	ModLoaderLog.debug("Added WebSocket Client", MOD_NAME)
