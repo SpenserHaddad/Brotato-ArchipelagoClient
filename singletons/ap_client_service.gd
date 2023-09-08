@@ -11,6 +11,19 @@ var _password: String
 var _connected_to_multiworld = false
 
 signal item_received
+signal on_room_info
+signal on_connected
+signal on_connection_regused
+signal on_received_items
+signal on_location_info
+signal on_room_update
+signal on_print_json
+signal on_data_package
+signal on_bounced
+signal on_invalid_packet
+signal on_retrieved
+signal on_set_reply
+
 
 func _init(game: String):
 	_game = game
