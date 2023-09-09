@@ -37,6 +37,8 @@ func _ready():
 	ModLoaderLog.info("AP Client Ready!", "RampagingHippy-Archipelago")
 	set_process(false)
 
+# Public API
+
 func connect_to_multiworld(server: String, port: int, user: String, password: String = ""):
 	var url = "ws://%s:%d" % [server, port]
 	ModLoaderLog.info("Connecting to %s" % url, LOG_NAME)
@@ -48,6 +50,82 @@ func connect_to_multiworld(server: String, port: int, user: String, password: St
 		_peer = _client.get_peer(1)
 		_peer.set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
 		set_process(true)
+
+func send_location_checks(locations: Array):
+	_send_command(
+		{
+			"cmd": "LocationChecks",
+			"locations": locations,
+		}
+	)
+
+# TODO: create_as_hint Enum
+func send_location_scouts(locations: Array, create_as_int: int):
+	_send_command({
+		"cmd": "LocationScouts",
+		"locations": locations,
+		"create_as_int": create_as_int
+	})
+
+
+# TODO: ClientStatus enum
+func status_update(client_status: int):
+	_send_command({
+		"cmd": "StatusUpdate",
+		"client_status": client_status,
+	})
+
+func say(text: String):
+	_send_command({
+		"cmd": "Say",
+		"text": text,
+	})
+
+func get_data_package(games: Array):
+	_send_command({
+		"cmd": "GetDataPackage",
+		"games": games,
+	})
+
+func bounce(games: Array, slots: Array, tags: Array, data: Dictionary):
+	_send_command({
+		"cmd": "Bounce",
+		"games": games,
+		"slots": slots,
+		"tags": tags,
+		"data": data,
+	})
+
+# TODO: Extra custom arguments
+func get_value(keys: Array):
+	# This is Archipelago's "Get" command, we change the name 
+	# since "get" is already taken by "Object.get".
+	_send_command({
+		"cmd": "Get",
+		"keys": keys,
+	})
+
+# TODO: DataStorageOperation data type
+func set_value(key: String, default, want_reply: bool, operations: Array):
+	_send_command({
+		"cmd": "Set",
+		"key": key,
+		"default": default,
+		"want_reply": want_reply,
+		"operations": operations,
+	})
+
+func set_notify(keys: Array):
+	_send_command({
+		"cmd": "SetNotify",
+		"keys": keys,
+	})
+
+
+# Websocket callbacks
+func _send_command(args: Dictionary):
+	var command_str = JSON.print(args)
+	var _result = _peer.put_packet(command_str.to_ascii())
 
 func _closed(was_clean = false):
 	ModLoaderLog.info("AP connection closed, clean: %s" % was_clean, LOG_NAME)
