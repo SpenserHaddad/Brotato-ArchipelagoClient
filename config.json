@@ -1,0 +1,33 @@
+{
+	"extra": {
+		"godot": {
+			"config_schema": {
+				"title": "RampagingHippy-Archipelago",
+				"description": "Archipelago client configuration",
+				"type": "object",
+				"properties": {
+					"last_server": {
+						"title": "The last server connected to:",
+						"type": "string",
+						"default": "archipelago.gg:38281"
+					},
+                    "last_player": {
+                        "title": "The last player name used:",
+                        "type": "string",
+                        "default": ""
+                    },
+                    "last_password": {
+                        "title": "The last password used:",
+                        "type": "string",
+                        "default": ""
+                    },
+                    "data_packages": {
+                        "title": "Cached AP DataPackages.:",
+                        "type": "object",
+                        "default": {}
+                    }
+				}
+			}
+		}
+	}
+}
