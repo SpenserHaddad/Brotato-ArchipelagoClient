@@ -10,6 +10,16 @@ var _password: String
 
 var _connected_to_multiworld = false
 
+enum State {
+	STATE_CONNECTING = 0
+	STATE_OPEN = 1
+	STATE_CLOSING = 2
+	STATE_CLOSED = 3
+}
+signal connection_state_changed
+
+var connection_state = State.STATE_CLOSED
+
 signal item_received
 signal on_room_info
 signal on_connected
@@ -40,6 +50,7 @@ func _ready():
 # Public API
 
 func connect_to_multiworld(server: String, port: int, user: String, password: String = ""):
+	_set_connection_state(State.STATE_CONNECTING)
 	var url = "ws://%s:%d" % [server, port]
 	ModLoaderLog.info("Connecting to %s" % url, LOG_NAME)
 	var err = _client.connect_to_url("ws://%s:%d" % [server, port])
@@ -121,23 +132,29 @@ func set_notify(keys: Array):
 		"keys": keys,
 	})
 
-
 # Websocket callbacks
 func _send_command(args: Dictionary):
-	var command_str = JSON.print(args)
+	var command_str = JSON.print([args])
 	var _result = _peer.put_packet(command_str.to_ascii())
 
 func _closed(was_clean = false):
+	_set_connection_state(State.STATE_CLOSED)
 	ModLoaderLog.info("AP connection closed, clean: %s" % was_clean, LOG_NAME)
 	set_process(false)
 
 func _connected(proto = ""):
+	_set_connection_state(State.STATE_OPEN)
 	ModLoaderLog.info("AP connection opened with protocol: %s" % proto, LOG_NAME)
+
+func _set_connection_state(state):
+	ModLoaderLog.info("AP connection state changed to: %d" % state, LOG_NAME)
+	connection_state = state
+	emit_signal("connection_state_changed", connection_state)
 
 func _on_data():
 	var received_data_str = _peer.get_packet().get_string_from_utf8()
 	var received_data = JSON.parse(received_data_str)
-	ModLoaderLog.debug("Got data from server: %s" % received_data_str, LOG_NAME)
+	# ModLoaderLog.debug_json_print("Got data from server", received_data_str, LOG_NAME)
 	for command in received_data.result:
 		_handle_command(command)
 	
@@ -147,8 +164,7 @@ func _handle_command(command: Dictionary):
 			ModLoaderLog.debug("Received RoomInfo cmd.", LOG_NAME)
 			if _connected_to_multiworld:
 				ModLoaderLog.debug("Asked to connect to server when already connected. Ignoring", LOG_NAME)
-			var connect_command = [
-				{
+			var connect_command = {
 					"cmd": "Connect", 
 					"game": _game, 
 					"name": _user,
@@ -158,9 +174,9 @@ func _handle_command(command: Dictionary):
 					"items_handling": 0b111,
 					"tags": [],
 					"slot_data": true
-				}]
-			var connect_command_str = JSON.print(connect_command)
-			var _result = _peer.put_packet(connect_command_str.to_ascii())
+				}
+			_send_command(connect_command)
+			get_data_package(["Brotato", "Archipelago"])
 		"ConnectionRefused":
 			ModLoaderLog.debug("Received ConnectionRefused cmd.", LOG_NAME)
 		"Connected":
@@ -175,6 +191,7 @@ func _handle_command(command: Dictionary):
 			ModLoaderLog.debug("Received PrintJSON cmd.", LOG_NAME)
 		"DataPackage":
 			ModLoaderLog.debug("Received DataPackage cmd.", LOG_NAME)
+			emit_signal("on_data_package", command)
 		"Bounced":
 			ModLoaderLog.debug("Received Bounced cmd.", LOG_NAME)
 		"InvalidPacket":
@@ -186,6 +203,5 @@ func _handle_command(command: Dictionary):
 		_:
 			ModLoaderLog.warning("Received Unknown Command %s" % command["cmd"], LOG_NAME)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	_client.poll()
