@@ -44,7 +44,6 @@ func _ready():
 	_client.connect("connection_error", self, "_closed")
 	_client.connect("connection_established", self, "_connected")
 	_client.connect("data_received", self, "_on_data")
-	ModLoaderLog.info("AP Client Ready!", "RampagingHippy-Archipelago")
 	set_process(false)
 
 # Public API
