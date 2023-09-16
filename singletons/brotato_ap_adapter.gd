@@ -1,22 +1,32 @@
 extends Node
 class_name BrotatoApAdapter
 
-const LOG_NAME = "RampagingHippy-Archipelago: Brotato Client"
+const LOG_NAME = "RampagingHippy-Archipelago/Brotato Client"
 
 onready var websocket_client: ApClientService
 
+var constants: BrotatoApConstants
 const game: String = "Brotato"
 export var player: String
 export var password: String
 
 var _item_name_to_id: Dictionary
-var _location_name_to_id: Dictionary
 var _item_id_to_name: Dictionary
+var _location_name_to_id: Dictionary
 var _location_id_to_name: Dictionary
 
 var _num_consumables_found = 0
 
+var received_characters = []
+
+# Item received signals
+signal character_received
+signal xp_received
+signal gold_received
+signal item_received
+
 func _init(websocket_client_: ApClientService):
+	constants = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd").new()
 	self.websocket_client = websocket_client_
 	ModLoaderLog.debug("Brotato AP adapter initialized", LOG_NAME)
 
@@ -53,7 +63,10 @@ func _on_received_items(command):
 	var items = command["items"]
 	for item in items:
 		var item_name = _item_id_to_name[item["item"]]
-		ModLoaderLog.debug_json_print("Received item %s:" % item_name, item, LOG_NAME)
+		ModLoaderLog.debug("Received item %s:" % item_name, LOG_NAME)
+		if constants.CHARACTERS.has(item_name):
+			received_characters.append(item_name)
+			emit_signal("character_received", item_name)
 
 func _on_data_package(received_data_package):
 	ModLoaderLog.debug("Got the data package", LOG_NAME)
