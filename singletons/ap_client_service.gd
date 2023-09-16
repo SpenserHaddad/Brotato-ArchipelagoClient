@@ -4,9 +4,7 @@ const LOG_NAME = "AP Client"
 
 var _client = WebSocketClient.new()
 var _peer: WebSocketPeer
-var _game: String
-var _user: String
-var _password: String
+
 
 var _connected_to_multiworld = false
 
@@ -23,7 +21,7 @@ var connection_state = State.STATE_CLOSED
 signal item_received
 signal on_room_info
 signal on_connected
-signal on_connection_regused
+signal on_connection_refused
 signal on_received_items
 signal on_location_info
 signal on_room_update
@@ -34,9 +32,8 @@ signal on_invalid_packet
 signal on_retrieved
 signal on_set_reply
 
-
-func _init(game: String):
-	_game = game
+func _init():
+	pass
 
 func _ready():
 	# Connect base signals to get notified of connection open, close, and errors.
@@ -48,18 +45,36 @@ func _ready():
 
 # Public API
 
-func connect_to_multiworld(server: String, port: int, user: String, password: String = ""):
+func connect_to_multiworld(server: String, port: int):
 	_set_connection_state(State.STATE_CONNECTING)
 	var url = "ws://%s:%d" % [server, port]
 	ModLoaderLog.info("Connecting to %s" % url, LOG_NAME)
 	var err = _client.connect_to_url("ws://%s:%d" % [server, port])
 	ModLoaderLog.info("Connect Results: " + str(err), LOG_NAME)
 	if not err:
-		_user = user
-		_password = password
 		_peer = _client.get_peer(1)
 		_peer.set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
 		set_process(true)
+
+func connected_to_multiworld() -> bool:
+	return self.connection_state == State.STATE_OPEN
+
+func send_connect(game: String, user: String, password: String = "", slot_data: bool = true):
+	_send_command({
+		"cmd": "Connect", 
+		"game": game, 
+		"name": user,
+		"password": password,
+		"uuid": "Godot",
+		"version": {"major": 0, "minor": 4, "build": 2, "class": "Version"},
+		"items_handling": 0b111, # TODO: argument
+		"tags": [],
+		"slot_data": slot_data
+	})
+
+
+func send_sync():
+	_send_command({"cmd": "Sync"})
 
 func send_location_checks(locations: Array):
 	_send_command(
@@ -133,6 +148,7 @@ func set_notify(keys: Array):
 
 # Websocket callbacks
 func _send_command(args: Dictionary):
+	ModLoaderLog.info("Sending %s command" % args["cmd"], LOG_NAME)
 	var command_str = JSON.print([args])
 	var _result = _peer.put_packet(command_str.to_ascii())
 
@@ -153,7 +169,11 @@ func _set_connection_state(state):
 func _on_data():
 	var received_data_str = _peer.get_packet().get_string_from_utf8()
 	var received_data = JSON.parse(received_data_str)
-	# ModLoaderLog.debug_json_print("Got data from server", received_data_str, LOG_NAME)
+	ModLoaderLog.debug("Got data from server %s" % received_data_str.substr(0, 30), LOG_NAME)
+	if received_data.result == null:
+		ModLoaderLog.error("Failed to parse JSON for %s" % received_data_str, LOG_NAME)
+#	ModLoaderLog.debug_json_print("Got data from server", received_data_str, LOG_NAME)
+#	ModLoaderLog.debug_json_print("It became", received_data.result[0], LOG_NAME)
 	for command in received_data.result:
 		_handle_command(command)
 	
@@ -161,44 +181,41 @@ func _handle_command(command: Dictionary):
 	match command["cmd"]:
 		"RoomInfo":
 			ModLoaderLog.debug("Received RoomInfo cmd.", LOG_NAME)
-			if _connected_to_multiworld:
-				ModLoaderLog.debug("Asked to connect to server when already connected. Ignoring", LOG_NAME)
-			var connect_command = {
-					"cmd": "Connect", 
-					"game": _game, 
-					"name": _user,
-					"password": _password,
-					"uuid": "Godot",
-					"version": {"major": 0,"minor": 4,"build": 2,"class": "Version"},
-					"items_handling": 0b111,
-					"tags": [],
-					"slot_data": true
-				}
-			_send_command(connect_command)
-			get_data_package(["Brotato", "Archipelago"])
+			emit_signal("on_room_info", command)
+			# get_data_package(["Brotato", "Archipelago"])
 		"ConnectionRefused":
 			ModLoaderLog.debug("Received ConnectionRefused cmd.", LOG_NAME)
+			emit_signal("on_connection_refused", command)
 		"Connected":
 			ModLoaderLog.debug("Received Connected cmd.", LOG_NAME)
+			emit_signal("on_connected", command)
 		"ReceivedItems":
 			ModLoaderLog.debug("Received ReceivedItems cmd.", LOG_NAME)
+			emit_signal("on_received_items", command)
 		"LocationInfo":
 			ModLoaderLog.debug("Received LocationInfo cmd.", LOG_NAME)
+			emit_signal("on_location_info", command)
 		"RoomUpdate":
 			ModLoaderLog.debug("Received RoomUpdate cmd.", LOG_NAME)
+			emit_signal("on_room_update", command)
 		"PrintJSON":
 			ModLoaderLog.debug("Received PrintJSON cmd.", LOG_NAME)
+			emit_signal("on_print_json", command)
 		"DataPackage":
 			ModLoaderLog.debug("Received DataPackage cmd.", LOG_NAME)
 			emit_signal("on_data_package", command)
 		"Bounced":
 			ModLoaderLog.debug("Received Bounced cmd.", LOG_NAME)
+			emit_signal("on_bounced", command)
 		"InvalidPacket":
 			ModLoaderLog.debug("Received InvalidPacket cmd.", LOG_NAME)
+			emit_signal("on_invalid_packet", command)
 		"Retrieved":
 			ModLoaderLog.debug("Received Retrieved cmd.", LOG_NAME)
+			emit_signal("on_retrieved", command)
 		"SetReply":
 			ModLoaderLog.debug("Received SetReply cmd.", LOG_NAME)
+			emit_signal("on_set_reply", command)
 		_:
 			ModLoaderLog.warning("Received Unknown Command %s" % command["cmd"], LOG_NAME)
 
