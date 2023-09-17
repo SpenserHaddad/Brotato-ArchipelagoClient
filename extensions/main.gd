@@ -2,15 +2,28 @@ extends "res://main.gd"
 
 # Extensions
 var _drop_ap_pickup = true;
-onready var _brotato_client
+onready var _brotato_client: BrotatoApAdapter
 
 func _ready() -> void:
-	ModLoaderLog.info("AP main ready", ArchipelagoModBase.MOD_NAME)
+	ModLoaderLog.info("AP main ready, wave %d" % RunData.current_wave, ArchipelagoModBase.MOD_NAME)
 	var mod_node: ArchipelagoModBase = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_brotato_client = mod_node.brotato_client
-	var _status = _brotato_client.connect("xp_received", RunData, "add_xp")
-	_status = _brotato_client.connect("gold_received", RunData, "add_gold")
+	
+	if RunData.current_wave == 1:
+		ModLoaderLog.debug("Start of run, giving player %d XP and %d gold." % [_brotato_client.starting_xp, _brotato_client.starting_gold], ArchipelagoModBase.MOD_NAME)
+		
+		RunData.add_xp(_brotato_client.starting_xp)
+		RunData.add_gold(_brotato_client.starting_gold)
+	var _status = _brotato_client.connect("xp_received", self, "_on_ap_xp_received")
+	_status = _brotato_client.connect("gold_received", self, "_on_ap_gold_received")
 
+func _on_ap_xp_received(xp_amount: int):
+	ModLoaderLog.info("%d XP received" % xp_amount, ArchipelagoModBase.MOD_NAME)
+	RunData.add_xp(xp_amount)
+
+func _on_ap_gold_received(gold_amount: int):
+	ModLoaderLog.info("%d Gold received" % gold_amount, ArchipelagoModBase.MOD_NAME)
+	RunData.add_gold(gold_amount)
 
 #func spawn_consumables(unit: Unit) -> void:
 #	if _drop_ap_pickup:
@@ -29,6 +42,6 @@ func _ready() -> void:
 func on_consumable_picked_up(consumable: Node):
 	if consumable.consumable_data.my_id.begins_with("ap_item"):
 		ModLoaderLog.info("Picked up AP consumable", ArchipelagoModBase.MOD_NAME)
-		_brotato_client.item_picked_up(consumable, Tier.COMMON)
+		_brotato_client.item_picked_up(consumable)
 	.on_consumable_picked_up(consumable)
 	
