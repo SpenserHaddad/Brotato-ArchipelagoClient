@@ -17,9 +17,12 @@ var _location_id_to_name: Dictionary
 
 var _num_consumables_found = 0
 
-var received_characters = []
-var starting_gold = 0
-var starting_xp = 0
+var game_data = ApGameData.new()
+
+class ApGameData:
+	var starting_gold: int = 0
+	var starting_xp : int = 0
+	var received_characters: Array = []
 
 # Item received signals
 signal character_received
@@ -30,6 +33,7 @@ signal item_received
 func _init(websocket_client_: ApClientService):
 	constants = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd").new()
 	self.websocket_client = websocket_client_
+	websocket_client.connect("connection_state_changed", self, "_on_connection_state_changed")
 	ModLoaderLog.debug("Brotato AP adapter initialized", LOG_NAME)
 
 func _ready():
@@ -39,13 +43,18 @@ func _ready():
 	_status = websocket_client.connect("on_data_package", self, "_on_data_package")
 	_status = websocket_client.connect("on_received_items", self, "_on_received_items")
 
+func _on_connection_state_changed(new_state: int):
+	if new_state == ApClientService.State.STATE_CLOSED:
+		# Reset game data to get a clean slate in case we reconnect
+		ModLoaderLog.debug("Disconnected, clearing any game state.", LOG_NAME)
+		game_data = ApGameData.new()
+
 func connected_to_multiworld() -> bool:
 	# Convenience method to check if connected to AP, so other scenes don't need to 
 	# reference the WS client just to check this.
 	return websocket_client.connected_to_multiworld()
 
-
-func item_picked_up(item: Node):
+func item_picked_up():
 	var location_name = "Crate Drop %d" % _num_consumables_found
 	_num_consumables_found += 1
 	var location_id = _location_name_to_id[location_name]
@@ -55,27 +64,29 @@ func item_picked_up(item: Node):
 # WebSocket Command received handlers
 
 func _on_room_info(room_info):
-	# ModLoaderLog.debug_json_print("Got the room info", room_info, LOG_NAME)
 	websocket_client.get_data_package(["Brotato"])
 
 func _on_ws_connected(command):
-	self.websocket_client.send_sync()
+	return
+	websocket_client.send_sync()
 
 func _on_received_items(command):
 	var items = command["items"]
 	for item in items:
 		var item_name = _item_id_to_name[item["item"]]
-		ModLoaderLog.debug("Received item %s:" % item_name, LOG_NAME)
+		ModLoaderLog.debug("Received item %s." % item_name, LOG_NAME)
 		if constants.CHARACTERS.has(item_name):
-			received_characters.append(item_name)
+			game_data.received_characters.append(item_name)
 			emit_signal("character_received", item_name)
 		elif item_name in constants.XP_ITEM_NAME_TO_VALUE:
 			var xp_value = constants.XP_ITEM_NAME_TO_VALUE[item_name]
-			starting_xp += xp_value
+			game_data.starting_xp += xp_value
+			ModLoaderLog.debug("Starting XP is now %d." % game_data.starting_xp, LOG_NAME)
 			emit_signal("xp_received", xp_value)
 		elif item_name in constants.GOLD_DROP_NAME_TO_VALUE:
 			var gold_value = constants.GOLD_DROP_NAME_TO_VALUE[item_name]
-			starting_gold += gold_value
+			game_data.starting_gold += gold_value
+			ModLoaderLog.debug("Starting gold is now %d." % game_data.starting_gold, LOG_NAME)
 			emit_signal("gold_received", gold_value)
 
 func _on_data_package(received_data_package):
