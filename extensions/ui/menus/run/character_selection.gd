@@ -1,5 +1,5 @@
 extends "res://ui/menus/run/character_selection.gd"
-onready var _brotato_client
+onready var _brotato_client: BrotatoApAdapter
 
 var _unlocked_characters: Array = []
 
@@ -17,7 +17,7 @@ func _ensure_brotato_client():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_brotato_client = mod_node.brotato_client
 	ModLoaderLog.debug("Got AP client %s" % _brotato_client, ArchipelagoModBase.MOD_NAME)
-	for unlocked_char in _brotato_client.received_characters:
+	for unlocked_char in _brotato_client.game_data.received_characters:
 		_add_character(unlocked_char)
 	var _status = _brotato_client.connect("character_received", self, "_on_character_received")
 
@@ -31,9 +31,8 @@ func _on_character_received(character: String):
 
 func get_elements_unlocked() -> Array:
 	_ensure_brotato_client()
-#	return ["character_well_rounded"]
 	ModLoaderLog.debug("Getting unlocked characters", ArchipelagoModBase.MOD_NAME)
-	if not _brotato_client.connected_to_multiworld():
-		return .get_elements_unlocked()
-	else:
+	if _brotato_client.connected_to_multiworld():
 		return _unlocked_characters
+	else:
+		return .get_elements_unlocked()
