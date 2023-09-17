@@ -10,10 +10,11 @@ func _ready() -> void:
 	_brotato_client = mod_node.brotato_client
 	
 	if RunData.current_wave == 1:
-		ModLoaderLog.debug("Start of run, giving player %d XP and %d gold." % [_brotato_client.starting_xp, _brotato_client.starting_gold], ArchipelagoModBase.MOD_NAME)
+		var ap_game_data = _brotato_client.game_data
+		ModLoaderLog.debug("Start of run, giving player %d XP and %d gold." % [ap_game_data.starting_xp, ap_game_data.starting_gold], ArchipelagoModBase.MOD_NAME)
 		
-		RunData.add_xp(_brotato_client.starting_xp)
-		RunData.add_gold(_brotato_client.starting_gold)
+		RunData.add_xp(ap_game_data.starting_xp)
+		RunData.add_gold(ap_game_data.starting_gold)
 	var _status = _brotato_client.connect("xp_received", self, "_on_ap_xp_received")
 	_status = _brotato_client.connect("gold_received", self, "_on_ap_gold_received")
 
@@ -36,12 +37,9 @@ func _on_ap_gold_received(gold_amount: int):
 #	_drop_ap_pickup = false
 #	.clean_up_room(is_last_wave, is_run_lost, is_run_won)
 
-# Custom
-# =============================================================================
-
-func on_consumable_picked_up(consumable: Node):
-	if consumable.consumable_data.my_id.begins_with("ap_item"):
-		ModLoaderLog.info("Picked up AP consumable", ArchipelagoModBase.MOD_NAME)
-		_brotato_client.item_picked_up(consumable)
-	.on_consumable_picked_up(consumable)
-	
+#func on_consumable_picked_up(consumable: Node):
+#	if consumable.consumable_data.my_id.begins_with("ap_item"):
+#		ModLoaderLog.info("Picked up AP consumable", ArchipelagoModBase.MOD_NAME)
+#		_brotato_client.item_picked_up(consumable)
+#	.on_consumable_picked_up(consumable)
+#
