@@ -18,6 +18,8 @@ var _location_id_to_name: Dictionary
 var _num_consumables_found = 0
 
 var received_characters = []
+var starting_gold = 0
+var starting_xp = 0
 
 # Item received signals
 signal character_received
@@ -67,6 +69,14 @@ func _on_received_items(command):
 		if constants.CHARACTERS.has(item_name):
 			received_characters.append(item_name)
 			emit_signal("character_received", item_name)
+		elif item_name in constants.XP_ITEM_NAME_TO_VALUE:
+			var xp_value = constants.XP_ITEM_NAME_TO_VALUE[item_name]
+			starting_xp += xp_value
+			emit_signal("xp_received", xp_value)
+		elif item_name in constants.GOLD_DROP_NAME_TO_VALUE:
+			var gold_value = constants.GOLD_DROP_NAME_TO_VALUE[item_name]
+			starting_gold += gold_value
+			emit_signal("gold_recived", gold_value)
 
 func _on_data_package(received_data_package):
 	ModLoaderLog.debug("Got the data package", LOG_NAME)
