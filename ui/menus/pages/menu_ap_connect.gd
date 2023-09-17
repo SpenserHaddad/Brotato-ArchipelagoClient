@@ -1,16 +1,16 @@
 extends MarginContainer
 
-signal connect_button_pressed
-
+signal back_button_pressed
 
 onready var _connect_button: Button = $"VBoxContainer/ConnectButton"
+onready var _disconnect_button: Button = $"VBoxContainer/DisconnectButton"
 onready var _connect_status_label: Label = $"VBoxContainer/ConnectStatusLabel"
 onready var _host_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/HostEdit"
 onready var _player_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PlayerEdit"
 onready var _password_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PasswordEdit"
 
-onready var ap_client
-onready var brotato_client
+onready var ap_client: ApClientService
+onready var brotato_client: BrotatoApAdapter
 
 
 func init():
@@ -35,15 +35,20 @@ func _on_connection_state_changed(new_state):
 			_connect_status_label.text = "Connecting"
 		1:
 			# Open
-			_connect_button.text = "Disconnect"
+#			_connect_button.text = "Disconnect"
 			_connect_status_label.text = "Connected"
 		2:
 			# Closing
 			_connect_status_label.text = "Disconnecting"
 		3:
 			# Closed
-			_connect_button.text = "Connect"
-			_connect_status_label.text = "Disonnected"
+#			_connect_button.text = "Connect"
+			_connect_status_label.text = "Disconnected"
+	var show_connect_button = new_state == 3
+	var show_disconnect_button = not show_connect_button
+	_connect_button.visible = show_connect_button
+	_disconnect_button.visible = show_disconnect_button
+
 
 func _on_ConnectButton_pressed():
 	var server_info = _host_edit.text.rsplit(":", false, 1)
@@ -52,4 +57,11 @@ func _on_ConnectButton_pressed():
 	brotato_client.player = _player_edit.text
 	brotato_client.password = _player_edit.text
 	ap_client.connect_to_multiworld(server, port)
-	emit_signal("connect_button_pressed")
+
+
+func _on_BackButton_pressed():
+	emit_signal("back_button_pressed")
+
+
+func _on_DisconnectButton_pressed():
+	ap_client.disconnect_from_multiworld()
