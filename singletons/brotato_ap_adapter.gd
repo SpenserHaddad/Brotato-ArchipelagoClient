@@ -45,9 +45,9 @@ func connected_to_multiworld() -> bool:
 	return websocket_client.connected_to_multiworld()
 
 
-func item_picked_up(item: Node, tier: Tier):
+func item_picked_up(item: Node):
+	var location_name = "Crate Drop %d" % _num_consumables_found
 	_num_consumables_found += 1
-	var location_name = "Common Pickup %d" % _num_consumables_found
 	var location_id = _location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
@@ -76,7 +76,7 @@ func _on_received_items(command):
 		elif item_name in constants.GOLD_DROP_NAME_TO_VALUE:
 			var gold_value = constants.GOLD_DROP_NAME_TO_VALUE[item_name]
 			starting_gold += gold_value
-			emit_signal("gold_recived", gold_value)
+			emit_signal("gold_received", gold_value)
 
 func _on_data_package(received_data_package):
 	ModLoaderLog.debug("Got the data package", LOG_NAME)
