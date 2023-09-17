@@ -46,6 +46,8 @@ func _ready():
 # Public API
 
 func connect_to_multiworld(server: String, port: int):
+	if connection_state == State.STATE_OPEN:
+		return
 	_set_connection_state(State.STATE_CONNECTING)
 	var url = "ws://%s:%d" % [server, port]
 	ModLoaderLog.info("Connecting to %s" % url, LOG_NAME)
@@ -57,7 +59,13 @@ func connect_to_multiworld(server: String, port: int):
 		set_process(true)
 
 func connected_to_multiworld() -> bool:
-	return self.connection_state == State.STATE_OPEN
+	return connection_state == State.STATE_OPEN
+	
+func disconnect_from_multiworld():
+	if connection_state == State.STATE_CLOSED:
+		return
+	_set_connection_state(State.STATE_CLOSING)
+	_client.disconnect_from_host()
 
 func send_connect(game: String, user: String, password: String = "", slot_data: bool = true):
 	_send_command({
@@ -155,6 +163,7 @@ func _send_command(args: Dictionary):
 func _closed(was_clean = false):
 	_set_connection_state(State.STATE_CLOSED)
 	ModLoaderLog.info("AP connection closed, clean: %s" % was_clean, LOG_NAME)
+	_peer = null
 	set_process(false)
 
 func _connected(proto = ""):
@@ -169,7 +178,6 @@ func _set_connection_state(state):
 func _on_data():
 	var received_data_str = _peer.get_packet().get_string_from_utf8()
 	var received_data = JSON.parse(received_data_str)
-	ModLoaderLog.debug("Got data from server %s" % received_data_str.substr(0, 30), LOG_NAME)
 	if received_data.result == null:
 		ModLoaderLog.error("Failed to parse JSON for %s" % received_data_str, LOG_NAME)
 #	ModLoaderLog.debug_json_print("Got data from server", received_data_str, LOG_NAME)
