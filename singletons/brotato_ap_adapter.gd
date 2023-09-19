@@ -15,8 +15,6 @@ var _item_id_to_name: Dictionary
 var _location_name_to_id: Dictionary
 var _location_id_to_name: Dictionary
 
-var _num_consumables_found = 0
-
 var game_data = ApGameData.new()
 
 class ApCharacterProgress:
@@ -77,16 +75,15 @@ func can_drop_legendary_consumable() -> bool:
 	return game_data.next_legendary_consumable_drop <= game_data.total_legendary_consumable_drops
 
 # Hooks for other scenes to tell us that they got a check.
-
 func consumable_picked_up():
-	var location_name = "Crate Drop %d" % _num_consumables_found
-	_num_consumables_found += 1
+	var location_name = "Crate Drop %d" % game_data.next_consumable_drop
+	game_data.next_consumable_drop += 1
 	var location_id = _location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
 func legendary_consumable_picked_up():
-	var location_name = "Crate Drop %d" % _num_consumables_found
-	_num_consumables_found += 1
+	var location_name = "Crate Drop %d" % game_data.next_legendary_consumable_drop
+	game_data.next_legendary_consumable_drop += 1
 	var location_id = _location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
