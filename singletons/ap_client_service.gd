@@ -5,9 +5,6 @@ const LOG_NAME = "AP Client"
 var _client = WebSocketClient.new()
 var _peer: WebSocketPeer
 
-
-var _connected_to_multiworld = false
-
 enum State {
 	STATE_CONNECTING = 0
 	STATE_OPEN = 1
