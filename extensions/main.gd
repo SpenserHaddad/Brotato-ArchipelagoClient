@@ -26,20 +26,6 @@ func _on_ap_gold_received(gold_amount: int):
 	ModLoaderLog.info("%d Gold received" % gold_amount, ArchipelagoModBase.MOD_NAME)
 	RunData.add_gold(gold_amount)
 
-#func spawn_consumables(unit: Unit) -> void:
-#	if _drop_ap_pickup:
-#		ModLoaderLog.debug("DROP AP ITEM", ArchipelagoModBase.MOD_NAME)
-#		_drop_ap_pickup = false
-#	.spawn_consumables(unit)
-#
-#func clean_up_room(is_last_wave: bool = false, is_run_lost: bool = false, is_run_won: bool =false) -> void:
-#	ModLoaderLog.debug("Resetting drop_item_check", ArchipelagoModBase.MOD_NAME)
-#	_drop_ap_pickup = false
-#	.clean_up_room(is_last_wave, is_run_lost, is_run_won)
-
-#func on_consumable_picked_up(consumable: Node):
-#	if consumable.consumable_data.my_id.begins_with("ap_item"):
-#		ModLoaderLog.info("Picked up AP consumable", ArchipelagoModBase.MOD_NAME)
-#		_brotato_client.item_picked_up(consumable)
-#	.on_consumable_picked_up(consumable)
-#
+func apply_run_won():
+	_brotato_client.run_won(RunData.current_character.name)
+	.apply_run_won()
