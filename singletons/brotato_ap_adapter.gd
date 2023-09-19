@@ -19,10 +19,22 @@ var _num_consumables_found = 0
 
 var game_data = ApGameData.new()
 
+class ApCharacterProgress:
+	var won_run: bool = false
+	var waves_with_checks: Array = []
+
 class ApGameData:
 	var starting_gold: int = 0
 	var starting_xp : int = 0
 	var received_characters: Array = []
+	var next_crate_drop: int = 1
+	var next_legendary_crate_drop: int = 1
+
+	var character_progress: Dictionary = {}
+
+	func _init():
+		for character in BrotatoApConstants.CHARACTERS:
+			character_progress[character] = ApCharacterProgress.new()
 
 # Item received signals
 signal character_received
@@ -33,7 +45,7 @@ signal item_received
 func _init(websocket_client_: ApClientService):
 	constants = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd").new()
 	self.websocket_client = websocket_client_
-	websocket_client.connect("connection_state_changed", self, "_on_connection_state_changed")
+	var _success = websocket_client.connect("connection_state_changed", self, "_on_connection_state_changed")
 	ModLoaderLog.debug("Brotato AP adapter initialized", LOG_NAME)
 
 func _ready():
@@ -54,6 +66,9 @@ func connected_to_multiworld() -> bool:
 	# reference the WS client just to check this.
 	return websocket_client.connected_to_multiworld()
 
+func consumable_for_wave_dropped(current_wave: int) -> bool:
+	return current_wave >= game_data.next_crate_drop
+
 func item_picked_up():
 	var location_name = "Crate Drop %d" % _num_consumables_found
 	_num_consumables_found += 1
@@ -63,12 +78,57 @@ func item_picked_up():
 
 # WebSocket Command received handlers
 
-func _on_room_info(room_info):
+func _on_room_info(_room_info):
 	websocket_client.get_data_package(["Brotato"])
 
 func _on_ws_connected(command):
-	return
-	websocket_client.send_sync()
+	var crate_drop_location_pattern = RegEx.new()
+	crate_drop_location_pattern.compile("$Crate Drop (\\d+)")
+
+	var legendary_crate_drop_location_pattern = RegEx.new()
+	legendary_crate_drop_location_pattern.compile("$Legendary Crate Drop (\\d+)")
+
+	var char_run_complete_pattern = RegEx.new()
+	char_run_complete_pattern.compile("$Run Complete \\((\\w+)\\)")
+
+	var char_wave_complete_pattern = RegEx.new()
+	char_wave_complete_pattern.compile("$Wave (\\d+\\) Complete \\((\\w+)\\)")
+
+	# Look through the checked locations to find our progress
+	for location_id in command["checked_locations"]:
+		var location_name = _location_id_to_name[location_id]
+		
+		var crate_drop_match = crate_drop_location_pattern.search(location_name)
+		if crate_drop_match:
+			# By the end this should be the highest crate drop we've seen
+			var crate_drop_number = int(crate_drop_match.get_string(1))
+			if crate_drop_number > game_data.next_crate_drop:
+				game_data.next_crate_drop = crate_drop_number
+			continue
+
+		var leg_crate_drop_match = legendary_crate_drop_location_pattern.search(location_name)
+		if leg_crate_drop_match:
+			# By the end this should be the highest crate drop we've seen
+			var leg_crate_drop_number = int(leg_crate_drop_match.get_string(1))
+			if leg_crate_drop_number > game_data.next_legendary_crate_drop:
+				game_data.next_legendary_crate_drop = leg_crate_drop_number
+			continue
+		
+		var char_run_complete_match = char_run_complete_pattern.search(location_name)
+		if char_run_complete_match:
+			var winning_character = char_run_complete_match.get_string(1)
+			game_data.character_progress[winning_character].won_run = true
+	
+	# However, we don't know which waves have checks without looking at the missing locations
+	for location_id in command["missing_locations"]:
+		var location_name = _location_id_to_name[location_id]
+	
+		var char_wave_complete_match = char_wave_complete_pattern.search(location_name)
+		if char_wave_complete_match:
+			var wave_number = char_wave_complete_match.get_string(1)
+			var wave_character = char_wave_complete_match.get_string(2)
+			game_data.character_progress[wave_character].waves_with_checks.append(wave_number)
+			
 
 func _on_received_items(command):
 	var items = command["items"]
@@ -88,6 +148,8 @@ func _on_received_items(command):
 			game_data.starting_gold += gold_value
 			ModLoaderLog.debug("Starting gold is now %d." % game_data.starting_gold, LOG_NAME)
 			emit_signal("gold_received", gold_value)
+		else:
+			ModLoaderLog.warning("No handler for item defined: %s." % item_name, LOG_NAME)
 
 func _on_data_package(received_data_package):
 	ModLoaderLog.debug("Got the data package", LOG_NAME)
@@ -98,7 +160,7 @@ func _on_data_package(received_data_package):
 	for item_name in _item_name_to_id:
 		var item_id = _item_name_to_id[item_name]
 		_item_id_to_name[item_id] = item_name
-		
+	
 	_location_name_to_id = data_package["location_name_to_id"]
 	_location_id_to_name = Dictionary()
 	for location_name in _location_name_to_id:
