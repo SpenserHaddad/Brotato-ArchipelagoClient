@@ -1,11 +1,8 @@
 extends "res://singletons/item_service.gd"
 
-var _dropped_ap_item_wave = 0
-var _ap_item_drop_count = 0
-var _ap_pickup
-var _ap_item
-
-var _brotato_client: BrotatoApAdapter
+onready var _ap_item
+onready var _ap_pickup
+onready var _brotato_client: BrotatoApAdapter
 
 func _ready():
 	_brotato_client = get_node("/root/ModLoader/RampagingHippy-Archipelago").brotato_client
@@ -15,11 +12,8 @@ func _ready():
 
 # TODO: Drop on loot crate instead?
 func get_consumable_to_drop(tier:int= Tier.COMMON) -> ConsumableData:
-	if _dropped_ap_item_wave < RunData.current_wave:
-		ModLoaderLog.debug("Dropping AP item for wave %d." % [RunData.current_wave],
-							ArchipelagoModBase.MOD_NAME)
-		_dropped_ap_item_wave = RunData.current_wave
-		_ap_item_drop_count += 1
+	if _brotato_client.consumable_for_wave_dropped(RunData.current_wave):
+		ModLoaderLog.debug("Dropping AP item for wave %d." % [RunData.current_wave], ArchipelagoModBase.MOD_NAME)
 		return _ap_pickup
 	else:
 		return .get_consumable_to_drop(tier)
