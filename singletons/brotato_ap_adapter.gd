@@ -27,12 +27,12 @@ class ApGameData:
 	var starting_gold: int = 0
 	var starting_xp : int = 0
 	var received_characters: Array = []
-	var next_crate_drop: int = 1
-	var next_legendary_crate_drop: int = 1
+	var next_consumable_drop: int = 1
+	var next_legendary_consumable_drop: int = 1
 
 	# These will be updated in when we get the "Connected" message from the server
-	var total_crate_drops: int = 1
-	var total_legendary_crate_drops: int = 1
+	var total_consumable_drops: int = 0
+	var total_legendary_consumable_drops: int = 0
 
 	var character_progress: Dictionary = {}
 
@@ -70,18 +70,23 @@ func connected_to_multiworld() -> bool:
 	# reference the WS client just to check this.
 	return websocket_client.connected_to_multiworld()
 
-func can_drop_crate() -> bool:
-	return game_data.next_crate_drop <= game_data.total_crate_drops
+func can_drop_consumable() -> bool:
+	return game_data.next_consumable_drop <= game_data.total_consumable_drops
 
-func can_drop_legendary_crate() -> bool:
-	return game_data.next_legendary_crate_drop <= game_data.total_legendary_crate_drops
+func can_drop_legendary_consumable() -> bool:
+	return game_data.next_legendary_consumable_drop <= game_data.total_legendary_consumable_drops
 
-func item_picked_up():
+func consumable_picked_up():
 	var location_name = "Crate Drop %d" % _num_consumables_found
 	_num_consumables_found += 1
 	var location_id = _location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
+func legendary_consumable_picked_up():
+	var location_name = "Crate Drop %d" % _num_consumables_found
+	_num_consumables_found += 1
+	var location_id = _location_name_to_id[location_name]
+	websocket_client.send_location_checks([location_id])
 
 # WebSocket Command received handlers
 
@@ -89,11 +94,11 @@ func _on_room_info(_room_info):
 	websocket_client.get_data_package(["Brotato"])
 
 func _on_connected(command):
-	var crate_drop_location_pattern = RegEx.new()
-	crate_drop_location_pattern.compile("$Crate Drop (\\d+)")
+	var consumable_location_pattern = RegEx.new()
+	consumable_location_pattern.compile("$Crate Drop (\\d+)")
 
-	var legendary_crate_drop_location_pattern = RegEx.new()
-	legendary_crate_drop_location_pattern.compile("$Legendary Crate Drop (\\d+)")
+	var legendary_consumable_location_pattern = RegEx.new()
+	legendary_consumable_location_pattern.compile("$Legendary Crate Drop (\\d+)")
 
 	var char_run_complete_pattern = RegEx.new()
 	char_run_complete_pattern.compile("$Run Complete \\((\\w+)\\)")
@@ -105,18 +110,18 @@ func _on_connected(command):
 	for location_id in command["checked_locations"]:
 		var location_name = _location_id_to_name[location_id]
 		
-		var crate_drop_match = crate_drop_location_pattern.search(location_name)
-		if crate_drop_match:
+		var consumable_match = consumable_location_pattern.search(location_name)
+		if consumable_match:
 			# By the end this should be the highest crate drop we've seen
-			var crate_number = int(crate_drop_match.get_string(1))
-			game_data.next_crate_drop = max(game_data.next_crate_drop, crate_number)
+			var consumable_number = int(consumable_match.get_string(1))
+			game_data.next_consumable_drop = max(game_data.next_consumable_drop, consumable_number)
 			continue
 
-		var legendary_crate_drop_match = legendary_crate_drop_location_pattern.search(location_name)
-		if legendary_crate_drop_match:
+		var legendary_consumable_match = legendary_consumable_location_pattern.search(location_name)
+		if legendary_consumable_match:
 			# By the end this should be the highest crate drop we've seen
-			var legendary_crate_number = int(legendary_crate_drop_match.get_string(1))
-			game_data.next_legendary_crate_drop = max(game_data.next_legendary_crate_drop, legendary_crate_number)
+			var legendary_consumable_number = int(legendary_consumable_match.get_string(1))
+			game_data.next_legendary_consumable_drop = max(game_data.next_legendary_consumable_drop, legendary_consumable_number)
 			continue
 		
 		var char_run_complete_match = char_run_complete_pattern.search(location_name)
@@ -130,16 +135,16 @@ func _on_connected(command):
 	for location_id in command["missing_locations"]:
 		var location_name = _location_id_to_name[location_id]
 	
-		var crate_drop_match = crate_drop_location_pattern.search(location_name)
-		if crate_drop_match:
-			var crate_number = int(crate_drop_match.get_string(1))
-			game_data.total_crate_drops = max(game_data.total_crate_drops, crate_number)
+		var consumable_match = consumable_location_pattern.search(location_name)
+		if consumable_match:
+			var consumable_number = int(consumable_match.get_string(1))
+			game_data.total_consumable_drops = max(game_data.total_consumable_drops, consumable_number)
 			continue
 		
-		var legendary_crate_drop_match = legendary_crate_drop_location_pattern.search(location_name)
-		if legendary_crate_drop_match:
-			var legendary_crate_number = int(legendary_crate_drop_match.get_string(1))
-			game_data.total_legendary_crate_drops = max(game_data.total_legendary_crate_drops, legendary_crate_number)
+		var legendary_consumable_match = legendary_consumable_location_pattern.search(location_name)
+		if legendary_consumable_match:
+			var legendary_consumable_number = int(legendary_consumable_match.get_string(1))
+			game_data.total_legendary_consumable_drops = max(game_data.total_legendary_consumable_drops, legendary_consumable_number)
 			continue
 
 		var char_wave_complete_match = char_wave_complete_pattern.search(location_name)
