@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://ui/menus/global/my_menu_button.gd" type="Script" id=1]
-[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_icon.png" type="Texture" id=2]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup.png" type="Texture" id=2]
 
 [node name="ConnectButton" type="Button"]
 margin_right = 12.0
