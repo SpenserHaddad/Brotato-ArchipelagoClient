@@ -76,18 +76,28 @@ func can_drop_legendary_consumable() -> bool:
 
 # Hooks for other scenes to tell us that they got a check.
 func consumable_picked_up():
+	## Notify the client that the player has picked up an AP consumable.
+	##
+	## Sends the next "Crate Drop" check to the server.
 	var location_name = "Crate Drop %d" % game_data.next_consumable_drop
 	game_data.next_consumable_drop += 1
 	var location_id = _location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
 func legendary_consumable_picked_up():
-	var location_name = "Crate Drop %d" % game_data.next_legendary_consumable_drop
+	## Notify the client that the player has picked up an AP legendary consumable.
+	##
+	## Sends the next "Legendary Crate Drop" check to the server.
+	var location_name = "Legendary Crate Drop %d" % game_data.next_legendary_consumable_drop
 	game_data.next_legendary_consumable_drop += 1
 	var location_id = _location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
 func run_won(character: String):
+	## Notify the client that the player won a run with the following character.
+	##
+	## If the player hasn't won a run with that character before, then the corresponding
+	## location check will be sent to the server.
 	if not game_data.character_progress[character].won_run:
 		var location_name = "Run Complete (%s)" % character
 		var location_id = _location_name_to_id[location_name]
