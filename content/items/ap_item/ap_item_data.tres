@@ -1,0 +1,23 @@
+[gd_resource type="Resource" load_steps=5 format=2]
+
+[ext_resource path="res://items/global/item_data.gd" type="Script" id=2]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/items/ap_item/ap_item_appearance.tres" type="Resource" id=3]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/items/ap_item/ap_item_effect.tres" type="Resource" id=4]
+
+[sub_resource type="StreamTexture" id=1]
+flags = 4
+load_path = "res://.import/ap_item.png-40df4d386d902623bf65b8e8cd00d555.stex"
+
+[resource]
+script = ExtResource( 2 )
+my_id = "ap_item"
+unlocked_by_default = true
+icon = SubResource( 1 )
+name = "Archipelago Item"
+tier = 0
+value = 0
+effects = [ ExtResource( 4 ) ]
+tracking_text = ""
+max_nb = -1
+item_appearances = [ ExtResource( 3 ) ]
+tags = [  ]

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://items/global/item_appearance_data.gd" type="Script" id=1]
+
+[sub_resource type="StreamTexture" id=1]
+flags = 4
+load_path = "res://.import/ap_item_icon.png-71d0860d7f7e4a6ab6c747caf2ee882f.stex"
+
+[resource]
+script = ExtResource( 1 )
+sprite = SubResource( 1 )
+position = 9
+display_priority = 1
+depth = 250.0
