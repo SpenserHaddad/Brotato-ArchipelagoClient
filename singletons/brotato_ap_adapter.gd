@@ -30,6 +30,10 @@ class ApGameData:
 	var next_crate_drop: int = 1
 	var next_legendary_crate_drop: int = 1
 
+	# These will be updated in when we get the "Connected" message from the server
+	var total_crate_drops: int = 1
+	var total_legendary_crate_drops: int = 1
+
 	var character_progress: Dictionary = {}
 
 	func _init():
@@ -51,7 +55,7 @@ func _init(websocket_client_: ApClientService):
 func _ready():
 	var _status: int
 	_status = websocket_client.connect("on_room_info", self, "_on_room_info")
-	_status = websocket_client.connect("on_connected", self, "_on_ws_connected")
+	_status = websocket_client.connect("on_connected", self, "_on_connected")
 	_status = websocket_client.connect("on_data_package", self, "_on_data_package")
 	_status = websocket_client.connect("on_received_items", self, "_on_received_items")
 
@@ -66,8 +70,11 @@ func connected_to_multiworld() -> bool:
 	# reference the WS client just to check this.
 	return websocket_client.connected_to_multiworld()
 
-func consumable_for_wave_dropped(current_wave: int) -> bool:
-	return current_wave >= game_data.next_crate_drop
+func can_drop_crate() -> bool:
+	return game_data.next_crate_drop <= game_data.total_crate_drops
+
+func can_drop_legendary_crate() -> bool:
+	return game_data.next_legendary_crate_drop <= game_data.total_legendary_crate_drops
 
 func item_picked_up():
 	var location_name = "Crate Drop %d" % _num_consumables_found
@@ -81,7 +88,7 @@ func item_picked_up():
 func _on_room_info(_room_info):
 	websocket_client.get_data_package(["Brotato"])
 
-func _on_ws_connected(command):
+func _on_connected(command):
 	var crate_drop_location_pattern = RegEx.new()
 	crate_drop_location_pattern.compile("$Crate Drop (\\d+)")
 
@@ -101,33 +108,46 @@ func _on_ws_connected(command):
 		var crate_drop_match = crate_drop_location_pattern.search(location_name)
 		if crate_drop_match:
 			# By the end this should be the highest crate drop we've seen
-			var crate_drop_number = int(crate_drop_match.get_string(1))
-			if crate_drop_number > game_data.next_crate_drop:
-				game_data.next_crate_drop = crate_drop_number
+			var crate_number = int(crate_drop_match.get_string(1))
+			game_data.next_crate_drop = max(game_data.next_crate_drop, crate_number)
 			continue
 
-		var leg_crate_drop_match = legendary_crate_drop_location_pattern.search(location_name)
-		if leg_crate_drop_match:
+		var legendary_crate_drop_match = legendary_crate_drop_location_pattern.search(location_name)
+		if legendary_crate_drop_match:
 			# By the end this should be the highest crate drop we've seen
-			var leg_crate_drop_number = int(leg_crate_drop_match.get_string(1))
-			if leg_crate_drop_number > game_data.next_legendary_crate_drop:
-				game_data.next_legendary_crate_drop = leg_crate_drop_number
+			var legendary_crate_number = int(legendary_crate_drop_match.get_string(1))
+			game_data.next_legendary_crate_drop = max(game_data.next_legendary_crate_drop, legendary_crate_number)
 			continue
 		
 		var char_run_complete_match = char_run_complete_pattern.search(location_name)
 		if char_run_complete_match:
 			var winning_character = char_run_complete_match.get_string(1)
 			game_data.character_progress[winning_character].won_run = true
+			continue
 	
-	# However, we don't know which waves have checks without looking at the missing locations
+	# We also need to look at the missing locations to know which waves have checks and
+	# how many total crate drops there are.
 	for location_id in command["missing_locations"]:
 		var location_name = _location_id_to_name[location_id]
 	
+		var crate_drop_match = crate_drop_location_pattern.search(location_name)
+		if crate_drop_match:
+			var crate_number = int(crate_drop_match.get_string(1))
+			game_data.total_crate_drops = max(game_data.total_crate_drops, crate_number)
+			continue
+		
+		var legendary_crate_drop_match = legendary_crate_drop_location_pattern.search(location_name)
+		if legendary_crate_drop_match:
+			var legendary_crate_number = int(legendary_crate_drop_match.get_string(1))
+			game_data.total_legendary_crate_drops = max(game_data.total_legendary_crate_drops, legendary_crate_number)
+			continue
+
 		var char_wave_complete_match = char_wave_complete_pattern.search(location_name)
 		if char_wave_complete_match:
 			var wave_number = char_wave_complete_match.get_string(1)
 			var wave_character = char_wave_complete_match.get_string(2)
 			game_data.character_progress[wave_character].waves_with_checks.append(wave_number)
+			continue
 			
 
 func _on_received_items(command):
