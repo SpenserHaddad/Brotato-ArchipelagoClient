@@ -68,6 +68,7 @@ func connected_to_multiworld() -> bool:
 	# reference the WS client just to check this.
 	return websocket_client.connected_to_multiworld()
 
+# API for other scenes to query game state to update the game
 func can_drop_consumable() -> bool:
 	return game_data.next_consumable_drop <= game_data.total_consumable_drops
 
@@ -93,18 +94,17 @@ func legendary_consumable_picked_up():
 	var location_id = _location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
-func run_won(character: String):
+func run_won(character_id: String):
 	## Notify the client that the player won a run with the following character.
 	##
 	## If the player hasn't won a run with that character before, then the corresponding
 	## location check will be sent to the server.
-	if not game_data.character_progress[character].won_run:
-		var location_name = "Run Complete (%s)" % character
+	if not game_data.character_progress[character_id].won_run:
+		var location_name = "Run Complete (%s)" % character_id
 		var location_id = _location_name_to_id[location_name]
 		websocket_client.send_location_checks([location_id])
 
 # WebSocket Command received handlers
-
 func _on_room_info(_room_info):
 	websocket_client.get_data_package(["Brotato"])
 
@@ -168,7 +168,6 @@ func _on_connected(command):
 			var wave_character = char_wave_complete_match.get_string(2)
 			game_data.character_progress[wave_character].waves_with_checks.append(wave_number)
 			continue
-			
 
 func _on_received_items(command):
 	var items = command["items"]

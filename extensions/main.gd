@@ -6,6 +6,8 @@ onready var _brotato_client: BrotatoApAdapter
 
 func _ready() -> void:
 	ModLoaderLog.info("AP main ready, wave %d" % RunData.current_wave, ArchipelagoModBase.MOD_NAME)
+	var cc= RunData.current_character
+	ModLoaderLog.info("Character %s" % RunData.current_character.name, ArchipelagoModBase.MOD_NAME)
 	var mod_node: ArchipelagoModBase = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_brotato_client = mod_node.brotato_client
 	
@@ -27,5 +29,5 @@ func _on_ap_gold_received(gold_amount: int):
 	RunData.add_gold(gold_amount)
 
 func apply_run_won():
-	_brotato_client.run_won(RunData.current_character.name)
+	_brotato_client.run_won(RunData.current_character.my_id)
 	.apply_run_won()
