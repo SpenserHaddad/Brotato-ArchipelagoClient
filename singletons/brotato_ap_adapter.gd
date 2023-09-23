@@ -92,15 +92,31 @@ func legendary_consumable_picked_up():
 	var location_id = _data_package.location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
+
+func wave_won(character_id: String, wave_number: int):
+	## Notify the client that the player won a wave with a particular character.
+	##
+	## If the player hasn't won the wave run with that character before, then the
+	## corresponding location check will be sent to the server.
+	var character_name = _character_id_to_name(character_id)
+	if game_data.character_progress[character_name].waves_with_checks.has(wave_number):
+		var location_name = "Wave %d Complete (%s)" % [wave_number, character_name]
+		var location_id = _data_package.location_name_to_id[location_name]
+		websocket_client.send_location_checks([location_id])
+
 func run_won(character_id: String):
-	## Notify the client that the player won a run with the following character.
+	## Notify the client that the player won a run with a particular character.
 	##
 	## If the player hasn't won a run with that character before, then the corresponding
 	## location check will be sent to the server.
-	if not game_data.character_progress[character_id].won_run:
-		var location_name = "Run Complete (%s)" % character_id
+	var character_name = _character_id_to_name(character_id)
+	if not game_data.character_progress[character_name].won_run:
+		var location_name = "Run Complete (%s)" % character_name
 		var location_id = _data_package.location_name_to_id[location_name]
 		websocket_client.send_location_checks([location_id])
+
+func _character_id_to_name(character_id: String) -> String:
+	return character_id.trim_prefix("character_").capitalize()
 
 # WebSocket Command received handlers
 func _on_room_info(_room_info):
@@ -114,14 +130,17 @@ func _on_connected(command):
 		var consumable_number = location_groups.consumables.get(location_id)
 		if consumable_number:
 			game_data.next_consumable_drop = max(game_data.next_consumable_drop, consumable_number)
+			continue
 
 		var legendary_consumable_number = location_groups.legendary_consumables.get(location_id)
 		if legendary_consumable_number:
 			game_data.next_legendary_consumable_drop = max(game_data.next_legendary_consumable_drop, legendary_consumable_number)
+			continue
 
 		var character_run_complete = location_groups.character_run_complete.get(location_id)
 		if character_run_complete:
 			game_data.character_progress[character_run_complete].won_run = true
+			continue
 
 	for location_id in command["missing_locations"]:
 		var consumable_number = location_groups.consumables.get(location_id)
@@ -131,10 +150,10 @@ func _on_connected(command):
 
 		var legendary_consumable_number = location_groups.consumables.get(location_id)
 		if legendary_consumable_number:
-			game_data.total_legendaryconsumable_drops = max(game_data.total_legendaryconsumable_drops, legendary_consumable_number)
+			game_data.total_legendary_consumable_drops = max(game_data.total_legendary_consumable_drops, legendary_consumable_number)
 			continue
 
-		var character_wave_complete = location_groups.character_run_complete.get(location_id)
+		var character_wave_complete = location_groups.character_wave_complete.get(location_id)
 		if character_wave_complete:
 			var wave_number = character_wave_complete[0]
 			var wave_complete_character = character_wave_complete[1]
