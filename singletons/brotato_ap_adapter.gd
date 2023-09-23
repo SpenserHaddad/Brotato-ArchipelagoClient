@@ -6,14 +6,10 @@ const LOG_NAME = "RampagingHippy-Archipelago/Brotato Client"
 onready var websocket_client: ApClientService
 
 var constants: BrotatoApConstants
-const game: String = "Brotato"
+const GAME: String = "Brotato"
+const DataPackage = preload("./data_package.gd")
 export var player: String
 export var password: String
-
-var _item_name_to_id: Dictionary
-var _item_id_to_name: Dictionary
-var _location_name_to_id: Dictionary
-var _location_id_to_name: Dictionary
 
 var game_data = ApGameData.new()
 
@@ -37,6 +33,8 @@ class ApGameData:
 	func _init():
 		for character in BrotatoApConstants.CHARACTERS:
 			character_progress[character] = ApCharacterProgress.new()
+
+var _data_package: DataPackage.BrotatoDataPackage
 
 # Item received signals
 signal character_received
@@ -82,7 +80,7 @@ func consumable_picked_up():
 	## Sends the next "Crate Drop" check to the server.
 	var location_name = "Crate Drop %d" % game_data.next_consumable_drop
 	game_data.next_consumable_drop += 1
-	var location_id = _location_name_to_id[location_name]
+	var location_id = _data_package.location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
 func legendary_consumable_picked_up():
@@ -91,7 +89,7 @@ func legendary_consumable_picked_up():
 	## Sends the next "Legendary Crate Drop" check to the server.
 	var location_name = "Legendary Crate Drop %d" % game_data.next_legendary_consumable_drop
 	game_data.next_legendary_consumable_drop += 1
-	var location_id = _location_name_to_id[location_name]
+	var location_id = _data_package.location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
 func run_won(character_id: String):
@@ -101,7 +99,7 @@ func run_won(character_id: String):
 	## location check will be sent to the server.
 	if not game_data.character_progress[character_id].won_run:
 		var location_name = "Run Complete (%s)" % character_id
-		var location_id = _location_name_to_id[location_name]
+		var location_id = _data_package.location_name_to_id[location_name]
 		websocket_client.send_location_checks([location_id])
 
 # WebSocket Command received handlers
@@ -109,70 +107,47 @@ func _on_room_info(_room_info):
 	websocket_client.get_data_package(["Brotato"])
 
 func _on_connected(command):
-	var consumable_location_pattern = RegEx.new()
-	consumable_location_pattern.compile("$Crate Drop (\\d+)")
-
-	var legendary_consumable_location_pattern = RegEx.new()
-	legendary_consumable_location_pattern.compile("$Legendary Crate Drop (\\d+)")
-
-	var char_run_complete_pattern = RegEx.new()
-	char_run_complete_pattern.compile("$Run Complete \\((\\w+)\\)")
-
-	var char_wave_complete_pattern = RegEx.new()
-	char_wave_complete_pattern.compile("$Wave (\\d+\\) Complete \\((\\w+)\\)")
-
+	var start_time = Time.get_ticks_msec()
+	var location_groups: DataPackage.BrotatoLocationGroups = _data_package.location_groups
 	# Look through the checked locations to find our progress
 	for location_id in command["checked_locations"]:
-		var location_name = _location_id_to_name[location_id]
-		
-		var consumable_match = consumable_location_pattern.search(location_name)
-		if consumable_match:
-			# By the end this should be the highest crate drop we've seen
-			var consumable_number = int(consumable_match.get_string(1))
+		var consumable_number = location_groups.consumables.get(location_id)
+		if consumable_number:
 			game_data.next_consumable_drop = max(game_data.next_consumable_drop, consumable_number)
-			continue
 
-		var legendary_consumable_match = legendary_consumable_location_pattern.search(location_name)
-		if legendary_consumable_match:
-			# By the end this should be the highest crate drop we've seen
-			var legendary_consumable_number = int(legendary_consumable_match.get_string(1))
+		var legendary_consumable_number = location_groups.legendary_consumables.get(location_id)
+		if legendary_consumable_number:
 			game_data.next_legendary_consumable_drop = max(game_data.next_legendary_consumable_drop, legendary_consumable_number)
-			continue
-		
-		var char_run_complete_match = char_run_complete_pattern.search(location_name)
-		if char_run_complete_match:
-			var winning_character = char_run_complete_match.get_string(1)
-			game_data.character_progress[winning_character].won_run = true
-			continue
-	
-	# We also need to look at the missing locations to know which waves have checks and
-	# how many total crate drops there are.
+
+		var character_run_complete = location_groups.character_run_complete.get(location_id)
+		if character_run_complete:
+			game_data.character_progress[character_run_complete].won_run = true
+
 	for location_id in command["missing_locations"]:
-		var location_name = _location_id_to_name[location_id]
-	
-		var consumable_match = consumable_location_pattern.search(location_name)
-		if consumable_match:
-			var consumable_number = int(consumable_match.get_string(1))
+		var consumable_number = location_groups.consumables.get(location_id)
+		if consumable_number:
 			game_data.total_consumable_drops = max(game_data.total_consumable_drops, consumable_number)
 			continue
-		
-		var legendary_consumable_match = legendary_consumable_location_pattern.search(location_name)
-		if legendary_consumable_match:
-			var legendary_consumable_number = int(legendary_consumable_match.get_string(1))
-			game_data.total_legendary_consumable_drops = max(game_data.total_legendary_consumable_drops, legendary_consumable_number)
+
+		var legendary_consumable_number = location_groups.consumables.get(location_id)
+		if legendary_consumable_number:
+			game_data.total_legendaryconsumable_drops = max(game_data.total_legendaryconsumable_drops, legendary_consumable_number)
 			continue
 
-		var char_wave_complete_match = char_wave_complete_pattern.search(location_name)
-		if char_wave_complete_match:
-			var wave_number = char_wave_complete_match.get_string(1)
-			var wave_character = char_wave_complete_match.get_string(2)
-			game_data.character_progress[wave_character].waves_with_checks.append(wave_number)
+		var character_wave_complete = location_groups.character_run_complete.get(location_id)
+		if character_wave_complete:
+			var wave_number = character_wave_complete[0]
+			var wave_complete_character = character_wave_complete[1]
+			game_data.character_progress[wave_complete_character].waves_with_checks.append(wave_number)
 			continue
+	var end_time = Time.get_ticks_msec()
+	var elapsed = (end_time - start_time) / 1000
+	ModLoaderLog.debug("Handled connected in %f s." % elapsed, LOG_NAME)
 
 func _on_received_items(command):
 	var items = command["items"]
 	for item in items:
-		var item_name = _item_id_to_name[item["item"]]
+		var item_name = _data_package.item_id_to_name[item["item"]]
 		ModLoaderLog.debug("Received item %s." % item_name, LOG_NAME)
 		if constants.CHARACTERS.has(item_name):
 			game_data.received_characters.append(item_name)
@@ -192,18 +167,6 @@ func _on_received_items(command):
 
 func _on_data_package(received_data_package):
 	ModLoaderLog.debug("Got the data package", LOG_NAME)
-	var data_package = received_data_package["data"]["games"][game]
-	# ModLoaderLog.debug_json_print("Brotato data package:", data_package, LOG_NAME)
-	_item_name_to_id = data_package["item_name_to_id"]
-	_item_id_to_name = Dictionary()
-	for item_name in _item_name_to_id:
-		var item_id = _item_name_to_id[item_name]
-		_item_id_to_name[item_id] = item_name
-	
-	_location_name_to_id = data_package["location_name_to_id"]
-	_location_id_to_name = Dictionary()
-	for location_name in _location_name_to_id:
-		var location_id = _location_name_to_id[location_name]
-		_location_id_to_name[location_id] = location_name
-
-	websocket_client.send_connect(game, player, password)
+	var data_package_info = received_data_package["data"]["games"][GAME]
+	_data_package = DataPackage.BrotatoDataPackage.from_data_package(data_package_info)
+	websocket_client.send_connect(GAME, player, password)
