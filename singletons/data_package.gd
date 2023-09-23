@@ -10,16 +10,17 @@ class BrotatoLocationGroups:
 	static func from_location_table(location_name_to_id: Dictionary) -> BrotatoLocationGroups:
 		var location_groups = BrotatoLocationGroups.new()
 		var consumable_location_pattern = RegEx.new()
-		consumable_location_pattern.compile("$Crate Drop (\\d+)")
+		consumable_location_pattern.compile("^Crate Drop (\\d+)")
 	
 		var legendary_consumable_location_pattern = RegEx.new()
-		legendary_consumable_location_pattern.compile("$Legendary Crate Drop (\\d+)")
+		legendary_consumable_location_pattern.compile("^Legendary Crate Drop (\\d+)")
 	
 		var char_run_complete_pattern = RegEx.new()
-		char_run_complete_pattern.compile("$Run Complete \\((\\w+)\\)")
+		char_run_complete_pattern.compile("^Run Complete \\(([\\w ]+)\\)")
 	
 		var char_wave_complete_pattern = RegEx.new()
-		char_wave_complete_pattern.compile("$Wave (\\d+\\) Complete \\((\\w+)\\)")
+		char_wave_complete_pattern.compile("^Wave (\\d+) Complete \\(([\\w ]+)\\)$")
+		ModLoaderLog.debug("Pattern: %s, Valid: %s, Groups: %d" % [char_wave_complete_pattern.get_pattern(), char_wave_complete_pattern.is_valid(), char_wave_complete_pattern.get_group_count()], LOG_NAME)
 	
 		for location_name in location_name_to_id:
 			var location_id = location_name_to_id[location_name]
@@ -46,7 +47,7 @@ class BrotatoLocationGroups:
 
 			var char_wave_complete_match = char_wave_complete_pattern.search(location_name)
 			if char_wave_complete_match:
-				var wave_number = char_wave_complete_match.get_string(1)
+				var wave_number = int(char_wave_complete_match.get_string(1))
 				var wave_character = char_wave_complete_match.get_string(2)
 				location_groups.character_wave_complete[location_id] = [wave_number, wave_character]
 		return location_groups
