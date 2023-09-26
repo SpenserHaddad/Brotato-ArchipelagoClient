@@ -1,7 +1,11 @@
-[gd_resource type="Resource" load_steps=3 format=2]
+[gd_resource type="Resource" load_steps=7 format=2]
 
 [ext_resource path="res://mods-unpacked/Darkly77-ContentLoader/content_data.gd" type="Script" id=1]
-[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup.tres" type="Resource" id=2]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.tres" type="Resource" id=2]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_common.tres" type="Resource" id=3]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_uncommon.tres" type="Resource" id=4]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_legendary.tres" type="Resource" id=5]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_rare.tres" type="Resource" id=6]
 
 [resource]
 script = ExtResource( 1 )
@@ -12,7 +16,7 @@ weapons_characters = [  ]
 sets = [  ]
 challenges = [  ]
 upgrades = [  ]
-consumables = [ ExtResource( 2 ) ]
+consumables = [ ExtResource( 3 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 4 ), ExtResource( 2 ) ]
 elites = [  ]
 difficulties = [  ]
 debug_items = [  ]
