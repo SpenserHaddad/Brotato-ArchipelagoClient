@@ -12,6 +12,7 @@ export var player: String
 export var password: String
 
 var game_data = ApGameData.new()
+var run_data = ApRunData.new()
 
 class ApCharacterProgress:
 	var won_run: bool = false
@@ -20,6 +21,12 @@ class ApCharacterProgress:
 class ApGameData:
 	var starting_gold: int = 0
 	var starting_xp : int = 0
+	var received_items_by_tier: Dictionary = {
+		Tier.COMMON: 0,
+		Tier.UNCOMMON: 0,
+		Tier.RARE: 0,
+		Tier.LEGENDARY: 0
+	}
 	var received_characters: Array = []
 	var next_consumable_drop: int = 1
 	var next_legendary_consumable_drop: int = 1
@@ -33,6 +40,14 @@ class ApGameData:
 	func _init():
 		for character in BrotatoApConstants.CHARACTERS:
 			character_progress[character] = ApCharacterProgress.new()
+
+class ApRunData:
+	var gift_item_count_by_tier: Dictionary = {
+		Tier.COMMON: 0,
+		Tier.UNCOMMON: 0,
+		Tier.RARE: 0,
+		Tier.LEGENDARY: 0
+	}
 
 var _data_package: DataPackage.BrotatoDataPackage
 
@@ -92,6 +107,21 @@ func legendary_consumable_picked_up():
 	var location_id = _data_package.location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 
+func gift_item_processed(gift_tier: int) -> int:
+	## Notify the client that a gift item is being processed.
+	##
+	## Gift items are items received from the multiworld. This should be called when
+	## the consumables are processed at the end of the round for each item.
+	## This increments the number of items of the input tier processed this run,
+	## then returns the wave that the received item should be processed as.
+	run_data.gift_item_count_by_tier[gift_tier] += 1
+	return int(ceil(run_data.gift_item_count_by_tier[gift_tier] / constants.NUM_ITEM_DROPS_PER_WAVE)) % 20
+
+func run_started():
+	## Notify the client that a new run has started.
+	##
+	## To be called by main._ready() only, so we can reinitialize run-specific data.
+	run_data = ApRunData.new()
 
 func wave_won(character_id: String, wave_number: int):
 	## Notify the client that the player won a wave with a particular character.
@@ -181,6 +211,11 @@ func _on_received_items(command):
 			game_data.starting_gold += gold_value
 			ModLoaderLog.debug("Starting gold is now %d." % game_data.starting_gold, LOG_NAME)
 			emit_signal("gold_received", gold_value)
+		elif item_name in constants.ITEM_DROP_NAME_TO_TIER:
+			var item_tier = constants.ITEM_DROP_NAME_TO_TIER[item_name]
+			game_data.received_items_by_tier[item_tier] += 1
+			ModLoaderLog.debug("Got item Tier %d" % item_tier, LOG_NAME)
+			emit_signal("item_received", item_tier)
 		else:
 			ModLoaderLog.warning("No handler for item defined: %s." % item_name, LOG_NAME)
 

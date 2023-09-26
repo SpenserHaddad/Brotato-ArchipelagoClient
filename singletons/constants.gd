@@ -47,6 +47,18 @@ const CHARACTERS = [
 	"Demon",
 ]
 
+const ITEM_DROP_NAME_TO_TIER = {
+	"Common Item": Tier.COMMON,
+	"Uncommon Item": Tier.UNCOMMON,
+	"Rare Item": Tier.RARE,
+	"Legendary Item": Tier.LEGENDARY
+}
+
+# The ItemService generates items using the current wave to choose the value. This value
+# defines how many items are dropped for each wave, going up. For example, if 2 then
+# the first two items will be generated with wave=1, the next two with wave=2, etc.
+const NUM_ITEM_DROPS_PER_WAVE = 2
+
 const GOLD_DROP_NAME_TO_VALUE = {
 	"Gold (10)": 10,
 	"Gold (25)": 25,
