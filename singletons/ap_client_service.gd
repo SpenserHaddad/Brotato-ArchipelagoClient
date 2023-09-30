@@ -15,6 +15,16 @@ signal connection_state_changed
 
 var connection_state = State.STATE_CLOSED
 
+
+enum ClientState {
+## This is the Client States enum as documented in AP->network protocol
+CLIENT_UNKOWN = 0
+CLIENT_CONNECTED = 5
+CLIENT_READY = 10
+CLIENT_PLAYING = 20
+CLIENT_GOAL = 30
+}
+
 signal item_received
 signal on_room_info
 signal on_connected
