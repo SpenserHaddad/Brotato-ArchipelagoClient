@@ -143,7 +143,10 @@ func run_won(character_id: String):
 	if not game_data.character_progress[character_name].won_run:
 		var location_name = "Run Complete (%s)" % character_name
 		var location_id = _data_package.location_name_to_id[location_name]
-		websocket_client.send_location_checks([location_id])
+		
+		var event_name = location_name
+		var event_id = _data_package.location_name_to_id[event_name]
+		websocket_client.send_location_checks([location_id, event_id])
 
 func _character_id_to_name(character_id: String) -> String:
 	return character_id.trim_prefix("character_").capitalize()
