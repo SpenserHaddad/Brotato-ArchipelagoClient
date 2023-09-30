@@ -74,7 +74,6 @@ class BrotatoDataPackage:
 		location_groups = location_groups_
 		
 	static func from_data_package(data_package: Dictionary) -> BrotatoDataPackage:
-		var start_time = Time.get_ticks_msec()
 		# Expects that you already extracted the game's data package from the message
 		var item_name_to_id_ = data_package["item_name_to_id"]
 		var item_id_to_name_ = Dictionary()
@@ -89,10 +88,6 @@ class BrotatoDataPackage:
 			location_id_to_name_[location_id] = location_name
 		
 		var location_groups_ = BrotatoLocationGroups.from_location_table(location_name_to_id_)
-
-		var end_time = Time.get_ticks_msec()
-		var elapsed = (end_time - start_time) / 1000
-		ModLoaderLog.debug("Built data package in %f s." % elapsed, LOG_NAME)
 
 		return BrotatoDataPackage.new(
 			item_name_to_id_,
