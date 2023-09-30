@@ -33,7 +33,7 @@ const CHARACTERS = [
 	"Glutton",
 	"Jack",
 	"Lich",
-	"Appentice",
+	"Apprentice",
 	"Cryptid",
 	"Fisherman",
 	"Golem",
