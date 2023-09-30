@@ -19,6 +19,7 @@ class ApCharacterProgress:
 	var waves_with_checks: Array = []
 
 class ApGameData:
+	var goal_completed: bool = false
 	var starting_gold: int = 0
 	var starting_xp : int = 0
 	var received_items_by_tier: Dictionary = {
@@ -36,6 +37,8 @@ class ApGameData:
 	var total_legendary_consumable_drops: int = 0
 
 	var character_progress: Dictionary = {}
+	var num_required_wins: int = 1
+	var num_wins: int = 0
 
 	func _init():
 		for character in BrotatoApConstants.CHARACTERS:
@@ -148,6 +151,12 @@ func run_won(character_id: String):
 		var event_id = _data_package.location_name_to_id[event_name]
 		websocket_client.send_location_checks([location_id, event_id])
 
+func run_complete_received():
+	self.game_data.num_wins += 1
+	if self.game_data.num_wins >= self.game_data.num_required_wins and not self.game_data.goal_completed:
+		self.game_data.goal_completed = true
+		websocket_client.status_update(ApClientService.ClientState.CLIENT_GOAL)
+
 func _character_id_to_name(character_id: String) -> String:
 	return character_id.trim_prefix("character_").capitalize()
 
@@ -156,9 +165,17 @@ func _on_room_info(_room_info):
 	websocket_client.get_data_package(["Brotato"])
 
 func _on_connected(command):
-	var start_time = Time.get_ticks_msec()
 	var location_groups: DataPackage.BrotatoLocationGroups = _data_package.location_groups
-	# Look through the checked locations to find our progress
+
+	var slot_data = command["slot_data"]
+	game_data.total_consumable_drops = slot_data["num_consumables"]
+	game_data.total_legendary_consumable_drops = slot_data["num_legendary_consumables"]
+	game_data.num_required_wins = slot_data["num_wins_needed"]
+	var waves_with_checks: Array = slot_data["waves_with_checks"]
+	for character in constants.CHARACTERS:
+		game_data.character_progress[character].waves_with_checks = waves_with_checks
+
+	# Look through the checked locations to find some additonal progress
 	for location_id in command["checked_locations"]:
 		var consumable_number = location_groups.consumables.get(location_id)
 		if consumable_number:
@@ -175,31 +192,10 @@ func _on_connected(command):
 			game_data.character_progress[character_run_complete].won_run = true
 			continue
 
-	for location_id in command["missing_locations"]:
-		var consumable_number = location_groups.consumables.get(location_id)
-		if consumable_number:
-			game_data.total_consumable_drops = max(game_data.total_consumable_drops, consumable_number)
-			continue
-
-		var legendary_consumable_number = location_groups.consumables.get(location_id)
-		if legendary_consumable_number:
-			game_data.total_legendary_consumable_drops = max(game_data.total_legendary_consumable_drops, legendary_consumable_number)
-			continue
-
-		var character_wave_complete = location_groups.character_wave_complete.get(location_id)
-		if character_wave_complete:
-			var wave_number = character_wave_complete[0]
-			var wave_complete_character = character_wave_complete[1]
-			game_data.character_progress[wave_complete_character].waves_with_checks.append(wave_number)
-			continue
-	var end_time = Time.get_ticks_msec()
-	var elapsed = (end_time - start_time) / 1000
-	ModLoaderLog.debug("Handled connected in %f s." % elapsed, LOG_NAME)
-
 func _on_received_items(command):
 	var items = command["items"]
 	for item in items:
-		var item_name = _data_package.item_id_to_name[item["item"]]
+		var item_name: String = _data_package.item_id_to_name[item["item"]]
 		ModLoaderLog.debug("Received item %s." % item_name, LOG_NAME)
 		if constants.CHARACTERS.has(item_name):
 			game_data.received_characters.append(item_name)
@@ -219,6 +215,8 @@ func _on_received_items(command):
 			game_data.received_items_by_tier[item_tier] += 1
 			ModLoaderLog.debug("Got item Tier %d" % item_tier, LOG_NAME)
 			emit_signal("item_received", item_tier)
+		elif item_name == "Run Complete":
+			run_complete_received()
 		else:
 			ModLoaderLog.warning("No handler for item defined: %s." % item_name, LOG_NAME)
 
