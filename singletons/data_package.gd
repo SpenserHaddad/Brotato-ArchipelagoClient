@@ -20,7 +20,6 @@ class BrotatoLocationGroups:
 	
 		var char_wave_complete_pattern = RegEx.new()
 		char_wave_complete_pattern.compile("^Wave (\\d+) Complete \\(([\\w ]+)\\)$")
-		ModLoaderLog.debug("Pattern: %s, Valid: %s, Groups: %d" % [char_wave_complete_pattern.get_pattern(), char_wave_complete_pattern.is_valid(), char_wave_complete_pattern.get_group_count()], LOG_NAME)
 	
 		for location_name in location_name_to_id:
 			var location_id = location_name_to_id[location_name]
