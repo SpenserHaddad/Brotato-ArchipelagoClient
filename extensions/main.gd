@@ -24,7 +24,7 @@ func _ready() -> void:
 		
 		for gift_tier in _brotato_client.game_data.received_items_by_tier:
 			var num_gifts = _brotato_client.game_data.received_items_by_tier[gift_tier]
-			ModLoaderLog.debug("Giving player %d items of tier %d.." % [num_gifts, gift_tier], ArchipelagoModBase.MOD_NAME)
+			ModLoaderLog.debug("Giving player %d items of tier %d." % [num_gifts, gift_tier], ArchipelagoModBase.MOD_NAME)
 			for _i in range(num_gifts):
 				_on_ap_item_received(gift_tier)
 	var _status = _brotato_client.connect("xp_received", self, "_on_ap_xp_received")
