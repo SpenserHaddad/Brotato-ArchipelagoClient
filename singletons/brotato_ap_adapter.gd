@@ -16,7 +16,7 @@ var run_data = ApRunData.new()
 
 class ApCharacterProgress:
 	var won_run: bool = false
-	var waves_with_checks: Array = []
+	var waves_with_checks: Dictionary = {}
 
 class ApGameData:
 	var goal_completed: bool = false
@@ -28,7 +28,7 @@ class ApGameData:
 		Tier.RARE: 0,
 		Tier.LEGENDARY: 0
 	}
-	var received_characters: Array = []
+	var received_characters: Dictionary = {}
 	var next_consumable_drop: int = 1
 	var next_legendary_consumable_drop: int = 1
 
@@ -41,8 +41,9 @@ class ApGameData:
 	var num_wins: int = 0
 
 	func _init():
-		for character in BrotatoApConstants.CHARACTERS:
+		for character in BrotatoApConstants.CHARACTER_NAME_TO_ID:
 			character_progress[character] = ApCharacterProgress.new()
+			received_characters[character] = false
 
 class ApRunData:
 	var gift_item_count_by_tier: Dictionary = {
@@ -131,8 +132,8 @@ func wave_won(character_id: String, wave_number: int):
 	##
 	## If the player hasn't won the wave run with that character before, then the
 	## corresponding location check will be sent to the server.
-	var character_name = _character_id_to_name(character_id)
-	if game_data.character_progress[character_name].waves_with_checks.has(wave_number):
+	var character_name = constants.CHARACTER_ID_TO_NAME[character_id]
+	if not game_data.character_progress[character_name].waves_with_checks.get(wave_number, true):
 		var location_name = "Wave %d Complete (%s)" % [wave_number, character_name]
 		var location_id = _data_package.location_name_to_id[location_name]
 		websocket_client.send_location_checks([location_id])
@@ -142,7 +143,7 @@ func run_won(character_id: String):
 	##
 	## If the player hasn't won a run with that character before, then the corresponding
 	## location check will be sent to the server.
-	var character_name = _character_id_to_name(character_id)
+	var character_name = constants.CHARACTER_ID_TO_NAME[character_id]
 	if not game_data.character_progress[character_name].won_run:
 		var location_name = "Run Complete (%s)" % character_name
 		var location_id = _data_package.location_name_to_id[location_name]
@@ -157,9 +158,6 @@ func run_complete_received():
 		self.game_data.goal_completed = true
 		websocket_client.status_update(ApClientService.ClientState.CLIENT_GOAL)
 
-func _character_id_to_name(character_id: String) -> String:
-	return character_id.trim_prefix("character_").capitalize()
-
 # WebSocket Command received handlers
 func _on_room_info(_room_info):
 	websocket_client.get_data_package(["Brotato"])
@@ -172,8 +170,9 @@ func _on_connected(command):
 	game_data.total_legendary_consumable_drops = slot_data["num_legendary_consumables"]
 	game_data.num_required_wins = slot_data["num_wins_needed"]
 	var waves_with_checks: Array = slot_data["waves_with_checks"]
-	for character in constants.CHARACTERS:
-		game_data.character_progress[character].waves_with_checks = waves_with_checks
+	for character in constants.CHARACTER_NAME_TO_ID:
+		for wave in waves_with_checks:
+			game_data.character_progress[character].waves_with_checks[int(wave)] = false
 
 	# Look through the checked locations to find some additonal progress
 	for location_id in command["checked_locations"]:
@@ -191,14 +190,21 @@ func _on_connected(command):
 		if character_run_complete:
 			game_data.character_progress[character_run_complete].won_run = true
 			continue
+		
+		var character_wave_complete = location_groups.character_wave_complete.get(location_id)
+		if character_wave_complete:
+			var wave_number = character_wave_complete[0]
+			var wave_character = character_wave_complete[1]
+			game_data.character_progress[wave_character].waves_with_checks[wave_number] = true
+		
 
 func _on_received_items(command):
 	var items = command["items"]
 	for item in items:
 		var item_name: String = _data_package.item_id_to_name[item["item"]]
 		ModLoaderLog.debug("Received item %s." % item_name, LOG_NAME)
-		if constants.CHARACTERS.has(item_name):
-			game_data.received_characters.append(item_name)
+		if constants.CHARACTER_NAME_TO_ID.has(item_name):
+			game_data.received_characters[item_name] = true
 			emit_signal("character_received", item_name)
 		elif item_name in constants.XP_ITEM_NAME_TO_VALUE:
 			var xp_value = constants.XP_ITEM_NAME_TO_VALUE[item_name]
