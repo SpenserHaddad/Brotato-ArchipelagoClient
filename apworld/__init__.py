@@ -128,10 +128,6 @@ class BrotatoWorld(World):
         total_locations = (
             num_common_crate_drops
             + num_legendary_crate_drops
-            + num_common_upgrades
-            + num_uncommon_upgrades
-            + num_rare_upgrades
-            + num_legendary_upgrades
             + (len(self.waves_with_checks) * len(CHARACTERS))
         )
         num_filler_items = total_locations - len(itempool)
