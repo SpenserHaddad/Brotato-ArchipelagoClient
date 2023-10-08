@@ -36,7 +36,7 @@ class WavesPerCheck(Range):
     default = 10
 
 
-class NumberCrateDropLocations(Range):
+class NumberCommonCrateDropLocations(Range):
     """
     The first <count> normal crate drops will be AP locations.
     """
@@ -112,7 +112,7 @@ class NumberShopItems(Range):
 options: dict[str, AssembleOptions] = {
     "num_victories": NumberRequiredWins,
     "waves_per_drop": WavesPerCheck,
-    "num_common_crate_drops": NumberCrateDropLocations,
+    "num_common_crate_drops": NumberCommonCrateDropLocations,
     "num_legendary_crate_drops": NumberLegendaryCrateDropLocations,
     "num_common_upgrades": NumberCommonUpgrades,
     "num_uncommon_upgrades": NumberUncommonUpgrades,
