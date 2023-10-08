@@ -28,6 +28,13 @@ class ApGameData:
 		Tier.RARE: 0,
 		Tier.LEGENDARY: 0
 	}
+	var received_upgrades_by_tier: Dictionary = {
+		Tier.COMMON: 0,
+		Tier.UNCOMMON: 0,
+		Tier.RARE: 0,
+		Tier.LEGENDARY: 0
+	}
+
 	var received_characters: Dictionary = {}
 	var next_consumable_drop: int = 1
 	var next_legendary_consumable_drop: int = 1
@@ -60,6 +67,7 @@ signal character_received
 signal xp_received
 signal gold_received
 signal item_received
+signal upgrade_received
 
 func _init(websocket_client_: ApClientService):
 	constants = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd").new()
@@ -221,6 +229,11 @@ func _on_received_items(command):
 			game_data.received_items_by_tier[item_tier] += 1
 			ModLoaderLog.debug("Got item Tier %d" % item_tier, LOG_NAME)
 			emit_signal("item_received", item_tier)
+		elif item_name in constants.UPGRADE_NAME_TO_TIER:
+			var upgrade_tier = constants.UPGRADE_NAME_TO_TIER[item_name]
+			game_data.received_upgrades_by_tier[upgrade_tier] += 1
+			ModLoaderLog.debug("Got upgrade Tier %d" % upgrade_tier, LOG_NAME)
+			emit_signal("upgrade_received", upgrade_tier)
 		elif item_name == "Run Complete":
 			run_complete_received()
 		else:

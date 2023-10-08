@@ -42,3 +42,13 @@ func process_item_box(wave:int, consumable_data:ConsumableData, fixed_tier:int =
 
 			_:
 				return .process_item_box(wave, consumable_data, fixed_tier)
+
+func get_upgrade_data(level: int) -> UpgradeData:
+	if level >= 0:
+		return .get_upgrade_data(level)
+	else:
+		# We set the level to -1 for AP common upgrade drops. For other tiers we can use
+		# existing logic by setting the level equal to a certain multiple of 5. This way
+		# we modify existing code as litle as possible. That being said, we just hard
+		# code the tier for the call to get_rand_element just as the base call would do.
+		return Utils.get_rand_element(_tiers_data[Tier.COMMON][TierData.UPGRADES])

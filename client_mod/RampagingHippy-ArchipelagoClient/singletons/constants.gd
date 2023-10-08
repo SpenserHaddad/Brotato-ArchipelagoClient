@@ -56,6 +56,13 @@ const ITEM_DROP_NAME_TO_TIER = {
 	"Legendary Item": Tier.LEGENDARY
 }
 
+const UPGRADE_NAME_TO_TIER = {
+	"Common Upgrade": Tier.COMMON,
+	"Uncommon Upgrade": Tier.UNCOMMON,
+	"Rare Upgrade": Tier.RARE,
+	"Legendary Upgrade": Tier.LEGENDARY
+}
+
 # The ItemService generates items using the current wave to choose the value. This value
 # defines how many items are dropped for each wave, going up. For example, if 2 then
 # the first two items will be generated with wave=1, the next two with wave=2, etc.
