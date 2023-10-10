@@ -16,7 +16,7 @@ signal connection_state_changed
 var connection_state = State.STATE_CLOSED
 
 
-enum ClientState {
+enum ClientStatus {
 ## This is the Client States enum as documented in AP->network protocol
 CLIENT_UNKOWN = 0
 CLIENT_CONNECTED = 5
@@ -110,11 +110,10 @@ func send_location_scouts(locations: Array, create_as_int: int):
 	})
 
 
-# TODO: ClientStatus enum
-func status_update(client_status: int):
+func status_update(status: int):
 	_send_command({
 		"cmd": "StatusUpdate",
-		"client_status": client_status,
+		"status": status,
 	})
 
 func say(text: String):
