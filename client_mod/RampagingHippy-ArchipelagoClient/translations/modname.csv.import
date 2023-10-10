@@ -5,10 +5,10 @@ type="Translation"
 
 [deps]
 
-files=[ "res://mods-unpacked/RampagingHippy-Archipelago/brotato_client_mod/RampagingHippy-ArchipelagoClient/translations/modname.en.translation" ]
+files=[ "res://mods-unpacked/RampagingHippy-Archipelago/translations/modname.en.translation" ]
 
-source_file="res://mods-unpacked/RampagingHippy-Archipelago/brotato_client_mod/RampagingHippy-ArchipelagoClient/translations/modname.csv"
-dest_files=[ "res://mods-unpacked/RampagingHippy-Archipelago/brotato_client_mod/RampagingHippy-ArchipelagoClient/translations/modname.en.translation" ]
+source_file="res://mods-unpacked/RampagingHippy-Archipelago/translations/modname.csv"
+dest_files=[ "res://mods-unpacked/RampagingHippy-Archipelago/translations/modname.en.translation" ]
 
 [params]
 
