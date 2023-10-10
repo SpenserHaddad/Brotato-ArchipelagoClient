@@ -4,9 +4,7 @@ onready var _brotato_client: BrotatoApAdapter
 var _unlocked_characters: Array = []
 
 func _ready()->void :
-	ModLoaderLog.debug("Char-gen ready", ArchipelagoModBase.MOD_NAME)
 	_ensure_brotato_client()
-#	._ready()
 
 func _ensure_brotato_client():
 	# Because Godot calls the base _ready() before this one, and the base
