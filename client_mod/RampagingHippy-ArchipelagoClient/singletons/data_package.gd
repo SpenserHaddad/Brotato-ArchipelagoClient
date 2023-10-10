@@ -1,4 +1,4 @@
-const LOG_NAME = "RampagingHippy-Archipelago/DataPacakge"
+const LOG_NAME = "RampagingHippy-Archipelago/DataPackage"
 
 class BrotatoLocationGroups:
 	## Container for id-to-value for various types of locations we want to reference at runtime.
