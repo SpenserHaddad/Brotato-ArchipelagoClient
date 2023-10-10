@@ -3,13 +3,14 @@ from __future__ import annotations
 from Options import AssembleOptions, Range
 
 from .Constants import (
-    MAX_LEGENDARY_CRATE_DROPS,
-    MAX_NORMAL_CRATE_DROPS,
-    MAX_SHOP_LOCATIONS_PER_TIER,
     MAX_COMMON_UPGRADES,
-    MAX_UNCOMMON_UPGRADES,
-    MAX_RARE_UPGRADES,
+    MAX_LEGENDARY_CRATE_DROPS,
     MAX_LEGENDARY_UPGRADES,
+    MAX_NORMAL_CRATE_DROPS,
+    MAX_RARE_UPGRADES,
+    MAX_SHOP_LOCATIONS_PER_TIER,
+    MAX_SHOP_SLOTS,
+    MAX_UNCOMMON_UPGRADES,
     NUM_CHARACTERS,
     NUM_WAVES,
     ItemRarity,
@@ -100,6 +101,15 @@ class NumberLegendaryUpgrades(Range):
     default = 5
 
 
+class StartingShopSlots(Range):
+    """How many slot the shop begins with. Missing slots are added as items."""
+
+    range_start = 0
+    range_end = MAX_SHOP_SLOTS
+    display_name = "Starting shop slots"
+    default = 4
+
+
 class NumberShopItems(Range):
     """The number of items to place in the shop"""
 
@@ -118,5 +128,6 @@ options: dict[str, AssembleOptions] = {
     "num_uncommon_upgrades": NumberUncommonUpgrades,
     "num_rare_upgrades": NumberRareUpgrades,
     "num_legendary_upgrades": NumberLegendaryUpgrades,
-    "num_shop_items": NumberShopItems,
+    "num_starting_shop_slots": StartingShopSlots,
+    # "num_shop_items": NumberShopItems,
 }

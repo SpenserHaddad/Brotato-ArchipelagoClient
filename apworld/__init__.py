@@ -5,16 +5,16 @@ from BaseClasses import MultiWorld, Tutorial
 from worlds.AutoWorld import WebWorld, World
 
 from . import Options
-from .Constants import DEFAULT_CHARACTERS, CHARACTERS, NUM_WAVES, UNLOCKABLE_CHARACTERS
+from .Constants import CHARACTERS, DEFAULT_CHARACTERS, MAX_SHOP_SLOTS, NUM_WAVES, UNLOCKABLE_CHARACTERS
 from .Items import (
     BrotatoItem,
-    filler_items,
     ItemName,
+    filler_items,
     item_name_groups,
     item_name_to_id,
     item_table,
 )
-from .Locations import location_name_to_id, location_name_groups
+from .Locations import location_name_groups, location_name_to_id
 from .Regions import create_regions
 from .Rules import BrotatoLogic
 
@@ -115,9 +115,13 @@ class BrotatoWorld(World):
         num_legendary_upgrades = self._get_option_value("num_legendary_upgrades")
         item_names += [ItemName.LEGENDARY_UPGRADE] * num_legendary_upgrades
 
-        num_shop_items = self._get_option_value("num_shop_items")
-        for _ in range(num_shop_items):
-            pass
+        num_starting_shop_slots = self._get_option_value("num_starting_shop_slots")
+        num_shop_slot_items = max(MAX_SHOP_SLOTS - num_starting_shop_slots, 0)
+        item_names += [ItemName.SHOP_SLOT] * num_shop_slot_items
+
+        # num_shop_items = self._get_option_value("num_shop_items")
+        # for _ in range(num_shop_items):
+        #     pass
 
         itempool = [self.create_item(item_name) for item_name in item_names]
 
@@ -145,5 +149,6 @@ class BrotatoWorld(World):
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": int(self._get_option_value("num_victories")),
             "num_consumables": int(self._get_option_value("num_common_crate_drops")),
+            "num_starting_shop_slots": int(self._get_option_value("num_starting_shop_slots")),
             "num_legendary_consumables": int(self._get_option_value("num_legendary_crate_drops")),
         }
