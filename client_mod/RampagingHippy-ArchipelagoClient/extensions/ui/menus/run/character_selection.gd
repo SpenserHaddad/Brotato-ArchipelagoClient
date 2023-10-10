@@ -1,12 +1,9 @@
 extends "res://ui/menus/run/character_selection.gd"
-onready var _brotato_client: BrotatoApAdapter
+var _brotato_client: BrotatoApAdapter
 
 const LOG_NAME = ArchipelagoModBase.MOD_NAME + "/character_selection"
 
 var _unlocked_characters: Array = []
-
-func _ready()->void :
-	_ensure_brotato_client()
 
 func _ensure_brotato_client():
 	# Because Godot calls the base _ready() before this one, and the base
