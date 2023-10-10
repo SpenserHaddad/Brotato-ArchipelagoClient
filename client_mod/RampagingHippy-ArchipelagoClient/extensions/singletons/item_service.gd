@@ -1,9 +1,7 @@
 extends "res://singletons/item_service.gd"
 
-var _ap_item = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/items/ap_item/ap_item_data.tres")
-var _ap_consumable = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.tres")
-onready var _ap_legendary_item
-onready var _ap_legendary_consumable
+var _ap_pickup = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.tres")
+var _ap_legendary_pickup = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_legendary_pickup/ap_legendary_pickup.tres")
 onready var _item_box_original
 onready var _legendary_item_box_original
 onready var _brotato_client: BrotatoApAdapter
@@ -15,17 +13,17 @@ func _ready():
 	_item_box_original = item_box
 	_legendary_item_box_original = legendary_item_box
 
-func _on_crate_drop_status_changed(can_drop_ap_consumables: bool):
-	if can_drop_ap_consumables:
+func _on_crate_drop_status_changed(can_drop_ap_pickups: bool):
+	if can_drop_ap_pickups:
 		ModLoaderLog.debug("Crate is AP consumable", ArchipelagoModBase.MOD_NAME)
-		item_box = _ap_consumable
+		item_box = _ap_pickup
 	else:
 		ModLoaderLog.debug("Crate is normal crate.", ArchipelagoModBase.MOD_NAME)
 		item_box = _item_box_original
 
-func _on_legendary_crate_drop_status_changed(can_drop_ap_legendary_consumables: bool):
-	if can_drop_ap_legendary_consumables:
-		legendary_item_box = _ap_legendary_consumable
+func _on_legendary_crate_drop_status_changed(can_drop_ap_legendary_pickups: bool):
+	if can_drop_ap_legendary_pickups:
+		legendary_item_box = _ap_legendary_pickup
 	else:
 		legendary_item_box = _legendary_item_box_original		
 
