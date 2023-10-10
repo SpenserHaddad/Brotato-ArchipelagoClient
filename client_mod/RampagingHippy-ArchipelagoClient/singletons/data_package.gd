@@ -10,16 +10,16 @@ class BrotatoLocationGroups:
 	static func from_location_table(location_name_to_id: Dictionary) -> BrotatoLocationGroups:
 		var location_groups = BrotatoLocationGroups.new()
 		var consumable_location_pattern = RegEx.new()
-		consumable_location_pattern.compile("^Crate Drop (\\d+)")
+		consumable_location_pattern.compile("^Loot Crate (\\d+)")
 	
 		var legendary_consumable_location_pattern = RegEx.new()
-		legendary_consumable_location_pattern.compile("^Legendary Crate Drop (\\d+)")
+		legendary_consumable_location_pattern.compile("^Legendary Loot Crate (\\d+)")
 	
 		var char_run_complete_pattern = RegEx.new()
-		char_run_complete_pattern.compile("^Run Complete \\(([\\w ]+)\\)")
+		char_run_complete_pattern.compile("^Run Won \\(([\\w ]+)\\)")
 	
 		var char_wave_complete_pattern = RegEx.new()
-		char_wave_complete_pattern.compile("^Wave (\\d+) Complete \\(([\\w ]+)\\)$")
+		char_wave_complete_pattern.compile("^Wave (\\d+) Completed \\(([\\w ]+)\\)$")
 	
 		for location_name in location_name_to_id:
 			var location_id = location_name_to_id[location_name]

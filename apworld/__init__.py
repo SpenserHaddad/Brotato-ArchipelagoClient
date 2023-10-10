@@ -133,7 +133,7 @@ class BrotatoWorld(World):
 
         self.multiworld.itempool += itempool
 
-        # Place "Run Complete" items at the Run Win event locations
+        # Place "Run Won" items at the Run Win event locations
         for loc in self.location_name_groups["Run Win Specific Character"]:
             item = self.create_item(ItemName.RUN_COMPLETE)
             self.multiworld.get_location(loc, self.player).place_locked_item(item)

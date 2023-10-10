@@ -89,6 +89,6 @@ MAX_SHOP_LOCATIONS_PER_TIER = {
 # Location name string templates
 CRATE_DROP_LOCATION_TEMPLATE = "Loot Crate {num}"
 LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE = "Legendary Loot Crate {num}"
-WAVE_COMPLETE_LOCATION_TEMPLATE = "Wave {wave} Complete ({char})"
-RUN_COMPLETE_LOCATION_TEMPLATE = "Run Complete ({char})"
+WAVE_COMPLETE_LOCATION_TEMPLATE = "Wave {wave} Completed ({char})"
+RUN_COMPLETE_LOCATION_TEMPLATE = "Run Won ({char})"
 SHOP_ITEM_LOCATION_TEMPLATE = "{tier} Shop Item {num}"

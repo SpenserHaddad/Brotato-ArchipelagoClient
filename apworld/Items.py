@@ -50,7 +50,7 @@ class ItemName(Enum):
     GOLD_50 = "Gold (50)"
     GOLD_100 = "Gold (100)"
     GOLD_200 = "Gold (200)"
-    RUN_COMPLETE = "Run Complete"
+    RUN_COMPLETE = "Run Won"
     CHARACTER_WELL_ROUNDED = "Well Rounded"
     CHARACTER_BRAWLER = "Brawler"
     CHARACTER_CRAZY = "Crazy"
