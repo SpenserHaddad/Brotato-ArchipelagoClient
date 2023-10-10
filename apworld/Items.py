@@ -99,28 +99,14 @@ class ItemName(Enum):
 _char_items = [x for x in ItemName if x.name.startswith("CHARACTER_")]
 
 _items: list[BrotatoItemBase] = [
-    BrotatoItemBase(
-        name=ItemName.COMMON_ITEM, classification=ItemClassification.useful
-    ),
-    BrotatoItemBase(
-        name=ItemName.UNCOMMON_ITEM, classification=ItemClassification.useful
-    ),
+    BrotatoItemBase(name=ItemName.COMMON_ITEM, classification=ItemClassification.useful),
+    BrotatoItemBase(name=ItemName.UNCOMMON_ITEM, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.RARE_ITEM, classification=ItemClassification.useful),
-    BrotatoItemBase(
-        name=ItemName.LEGENDARY_ITEM, classification=ItemClassification.useful
-    ),
-    BrotatoItemBase(
-        name=ItemName.COMMON_UPGRADE, classification=ItemClassification.useful
-    ),
-    BrotatoItemBase(
-        name=ItemName.UNCOMMON_UPGRADE, classification=ItemClassification.useful
-    ),
-    BrotatoItemBase(
-        name=ItemName.RARE_UPGRADE, classification=ItemClassification.useful
-    ),
-    BrotatoItemBase(
-        name=ItemName.LEGENDARY_UPGRADE, classification=ItemClassification.useful
-    ),
+    BrotatoItemBase(name=ItemName.LEGENDARY_ITEM, classification=ItemClassification.useful),
+    BrotatoItemBase(name=ItemName.COMMON_UPGRADE, classification=ItemClassification.useful),
+    BrotatoItemBase(name=ItemName.UNCOMMON_UPGRADE, classification=ItemClassification.useful),
+    BrotatoItemBase(name=ItemName.RARE_UPGRADE, classification=ItemClassification.useful),
+    BrotatoItemBase(name=ItemName.LEGENDARY_UPGRADE, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.XP_5, classification=ItemClassification.filler),
     BrotatoItemBase(name=ItemName.XP_10, classification=ItemClassification.filler),
     BrotatoItemBase(name=ItemName.XP_25, classification=ItemClassification.filler),
@@ -132,23 +118,14 @@ _items: list[BrotatoItemBase] = [
     BrotatoItemBase(name=ItemName.GOLD_50, classification=ItemClassification.filler),
     BrotatoItemBase(name=ItemName.GOLD_100, classification=ItemClassification.filler),
     BrotatoItemBase(name=ItemName.GOLD_200, classification=ItemClassification.filler),
-    BrotatoItemBase(
-        name=ItemName.RUN_COMPLETE, classification=ItemClassification.progression
-    ),
+    BrotatoItemBase(name=ItemName.RUN_COMPLETE, classification=ItemClassification.progression),
     # Individual items for each character
-    *[
-        BrotatoItemBase(name=c, classification=ItemClassification.progression)
-        for c in _char_items
-    ],
+    *[BrotatoItemBase(name=c, classification=ItemClassification.progression) for c in _char_items],
 ]
 
 item_table = {item.code: item for item in _items}
 item_name_to_id = {item.name.value: item.code for item in _items}
-filler_items = [
-    item.name.value
-    for item in item_table.values()
-    if item.classification == ItemClassification.filler
-]
+filler_items = [item.name.value for item in item_table.values() if item.classification == ItemClassification.filler]
 
 item_name_groups = {
     "Item Drops": {
