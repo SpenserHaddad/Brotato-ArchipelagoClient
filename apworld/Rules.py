@@ -1,7 +1,6 @@
 from typing import Protocol
 
 from ..AutoWorld import LogicMixin
-
 from .Items import ItemName
 
 

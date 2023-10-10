@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import Sequence
 
 from BaseClasses import MultiWorld, Region
@@ -7,9 +8,9 @@ from .Constants import (
     CHARACTERS,
     CRATE_DROP_LOCATION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
-    WAVE_COMPLETE_LOCATION_TEMPLATE,
     RUN_COMPLETE_LOCATION_TEMPLATE,
     SHOP_ITEM_LOCATION_TEMPLATE,
+    WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
 from .Locations import (
     BrotatoLocation,

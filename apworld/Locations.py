@@ -15,9 +15,9 @@ from .Constants import (
     MAX_NORMAL_CRATE_DROPS,
     MAX_SHOP_LOCATIONS_PER_TIER,
     NUM_WAVES,
-    WAVE_COMPLETE_LOCATION_TEMPLATE,
     RUN_COMPLETE_LOCATION_TEMPLATE,
     SHOP_ITEM_LOCATION_TEMPLATE,
+    WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
 
 # TypeVar that's a union of all character name string literals
