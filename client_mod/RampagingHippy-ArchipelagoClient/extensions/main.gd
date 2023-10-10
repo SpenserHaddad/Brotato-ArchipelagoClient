@@ -14,6 +14,7 @@ onready var _brotato_client: BrotatoApAdapter
 func _ready() -> void:
 	var mod_node: ArchipelagoModBase = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_brotato_client = mod_node.brotato_client
+	_brotato_client.wave_started()
 	
 	if RunData.current_wave == 1:
 		# Run started, initialize/reset some values
@@ -41,6 +42,8 @@ func _ready() -> void:
 	_status = _brotato_client.connect("item_received", self, "_on_ap_item_received")
 	_status = _brotato_client.connect("upgrade_received", self, "_on_ap_upgrade_received")
 
+# Archipelago Item received handlers
+
 func _on_ap_xp_received(xp_amount: int):
 	ModLoaderLog.info("%d XP received" % xp_amount, ArchipelagoModBase.MOD_NAME)
 	RunData.add_xp(xp_amount)
@@ -61,6 +64,7 @@ func _on_ap_item_received(item_tier: int):
 		Tier.LEGENDARY:
 			item_data = _ap_gift_legendary
 	_consumables_to_process.push_back(item_data)
+	emit_signal("consumable_to_process_added", item_data)
 
 func _on_ap_upgrade_received(upgrade_tier: int):
 	var upgrade_level: int
@@ -79,6 +83,38 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 	# Taken from on_levelled_up
 	emit_signal("upgrade_to_process_added", ap_upgrade_to_process_icon, upgrade_level)
 	_upgrades_to_process.push_back(upgrade_level)
+
+# Base overrides
+
+func spawn_consumables(unit: Unit) -> void:
+	var consumable_count_start = _consumables.size()
+	.spawn_consumables(unit)
+	var consumable_count_after = _consumables.size()
+	var spawned_consumable = consumable_count_after > consumable_count_start
+	if spawned_consumable:
+		var spawned_consumable_id = _consumables.back().consumable_data.my_id
+		if spawned_consumable_id == "ap_pickup" or spawned_consumable_id == "ap_legendary_pickup":
+			_brotato_client.consumable_spawned()
+
+func on_consumable_picked_up(consumable: Node) -> void:
+	var is_ap_consumable = false
+	if consumable.consumable_data.my_id == "ap_pickup":
+		ModLoaderLog.debug("Picked up AP consumable", ArchipelagoModBase.MOD_NAME)
+		is_ap_consumable = true
+		_brotato_client.consumable_picked_up()
+	elif consumable.consumable_data.my_id == "ap_legendary_pickup":
+		ModLoaderLog.debug("Picked up legendary AP consumable", ArchipelagoModBase.MOD_NAME)
+		is_ap_consumable = true
+		_brotato_client.legendary_consumable_picked_up()
+
+	if is_ap_consumable:
+		# Pretend we're a crate and add gold if the player has Bag, copy/pasted from the
+		# base function.
+		if RunData.effects["item_box_gold"] != 0:
+			RunData.add_gold(RunData.effects["item_box_gold"])
+			RunData.tracked_item_effects["item_bag"] += RunData.effects["item_box_gold"]
+	.on_consumable_picked_up(consumable)
+
 
 func _on_WaveTimer_timeout() -> void:
 	_brotato_client.wave_won(RunData.current_character.my_id, RunData.current_wave)

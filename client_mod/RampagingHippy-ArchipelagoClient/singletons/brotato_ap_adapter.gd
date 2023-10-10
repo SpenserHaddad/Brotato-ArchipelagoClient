@@ -13,6 +13,7 @@ export var password: String
 
 var game_data = ApGameData.new()
 var run_data = ApRunData.new()
+var wave_data = ApWaveData.new()
 
 class ApCharacterProgress:
 	var won_run: bool = false
@@ -36,8 +37,8 @@ class ApGameData:
 	}
 
 	var received_characters: Dictionary = {}
-	var next_consumable_drop: int = 1
-	var next_legendary_consumable_drop: int = 1
+	var num_consumables_picked_up: int = 0
+	var num_legendary_consumables_picked_up: int = 0
 
 	# These will be updated in when we get the "Connected" message from the server
 	var total_consumable_drops: int = 0
@@ -60,14 +61,23 @@ class ApRunData:
 		Tier.LEGENDARY: 0
 	}
 
+class ApWaveData:
+	# Keep track of how many AP items were dropped each wave but haven't been picked up,
+	# and therefore their locations have not been sent. This helps us to not drop more
+	# AP items than there are locations for.
+	var ap_consumables_not_picked_up = 0
+	var ap_legendary_consumables_not_picked_up = 0
+
 var _data_package: DataPackage.BrotatoDataPackage
 
 # Item received signals
-signal character_received
-signal xp_received
-signal gold_received
-signal item_received
-signal upgrade_received
+signal character_received(character)
+signal xp_received(xp_amount)
+signal gold_received(gold_amount)
+signal item_received(item_tier)
+signal upgrade_received(upgrade_tier)
+signal crate_drop_status_changed(can_drop_ap_consumables)
+signal legendary_crate_drop_status_changed(can_drop_ap_legendary_consumables)
 
 func _init(websocket_client_: ApClientService):
 	constants = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd").new()
@@ -93,31 +103,51 @@ func connected_to_multiworld() -> bool:
 	# reference the WS client just to check this.
 	return websocket_client.connected_to_multiworld()
 
-# API for other scenes to query game state to update the game
-func can_drop_consumable() -> bool:
-	return game_data.next_consumable_drop <= game_data.total_consumable_drops
+# Methods to check AP game state and send updates to the actual game.
+func _update_can_drop_consumable():
+	ModLoaderLog.debug(
+					"Consumable drop status: picked up: %d, on ground: %d, total: %d." % 
+					[game_data.num_consumables_picked_up, wave_data.ap_consumables_not_picked_up, game_data.total_consumable_drops],
+					LOG_NAME)
+	var can_drop = game_data.num_consumables_picked_up + wave_data.ap_consumables_not_picked_up < game_data.total_consumable_drops
+	emit_signal("crate_drop_status_changed", can_drop)
 
-func can_drop_legendary_consumable() -> bool:
-	return game_data.next_legendary_consumable_drop <= game_data.total_legendary_consumable_drops
+func _update_can_drop_legendary_consumable():
+	var can_drop = game_data.num_legendary_consumables_picked_up + wave_data.ap_legendary_consumables_not_picked_up < game_data.total_legendary_consumable_drops
+	emit_signal("legendary_crate_drop_status_changed", can_drop)
+	
+# API for other scenes to tell us about in-game events.
+func consumable_spawned():
+	wave_data.ap_consumables_not_picked_up += 1
+	ModLoaderLog.debug("Consumable spawned, number picked up now %d" % wave_data.ap_consumables_not_picked_up, LOG_NAME)	
+	_update_can_drop_consumable()
 
-# Hooks for other scenes to tell us that they got a check.
+func legendary_consumable_spawned():
+	wave_data.ap_legendary_consumables_not_picked_up += 1
+	_update_can_drop_legendary_consumable()
+
 func consumable_picked_up():
 	## Notify the client that the player has picked up an AP consumable.
 	##
 	## Sends the next "Crate Drop" check to the server.
-	var location_name = "Crate Drop %d" % game_data.next_consumable_drop
-	game_data.next_consumable_drop += 1
+	# TODO: Crate Drop to Loot Crate?
+	game_data.num_consumables_picked_up += 1
+	wave_data.ap_consumables_not_picked_up -= 1
+	var location_name = "Crate Drop %d" % game_data.num_consumables_picked_up
 	var location_id = _data_package.location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
+	ModLoaderLog.debug("Picked up crate %d, not picked up in wave is %d" % [game_data.num_consumables_picked_up, wave_data.ap_consumables_not_picked_up], LOG_NAME)	
 
 func legendary_consumable_picked_up():
 	## Notify the client that the player has picked up an AP legendary consumable.
 	##
 	## Sends the next "Legendary Crate Drop" check to the server.
-	var location_name = "Legendary Crate Drop %d" % game_data.next_legendary_consumable_drop
-	game_data.next_legendary_consumable_drop += 1
+	game_data.num_legendary_consumables_picked_up += 1
+	wave_data.ap_legendary_consumables_not_picked_up -= 1
+	var location_name = "Legendary Crate Drop %d" % game_data.num_legendary_consumables_picked_up
 	var location_id = _data_package.location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
+	wave_data.ap_legendary_consumables_not_picked_up -= 1
 
 func gift_item_processed(gift_tier: int) -> int:
 	## Notify the client that a gift item is being processed.
@@ -126,6 +156,7 @@ func gift_item_processed(gift_tier: int) -> int:
 	## the consumables are processed at the end of the round for each item.
 	## This increments the number of items of the input tier processed this run,
 	## then returns the wave that the received item should be processed as.
+	# TODO: 
 	run_data.gift_item_count_by_tier[gift_tier] += 1
 	return int(ceil(run_data.gift_item_count_by_tier[gift_tier] / constants.NUM_ITEM_DROPS_PER_WAVE)) % 20
 
@@ -133,7 +164,18 @@ func run_started():
 	## Notify the client that a new run has started.
 	##
 	## To be called by main._ready() only, so we can reinitialize run-specific data.
+	ModLoaderLog.debug("New run started", LOG_NAME)
 	run_data = ApRunData.new()
+
+func wave_started():
+	## Notify the client that a new wave has started.
+	##
+	## To be called by main._ready() only, so we can reinitialize wave-specific data.
+	ModLoaderLog.debug("New wave started", LOG_NAME)
+	wave_data = ApWaveData.new()
+	# TODO: NECESSARY?
+	_update_can_drop_consumable()
+	_update_can_drop_legendary_consumable()
 
 func wave_won(character_id: String, wave_number: int):
 	## Notify the client that the player won a wave with a particular character.
@@ -186,12 +228,12 @@ func _on_connected(command):
 	for location_id in command["checked_locations"]:
 		var consumable_number = location_groups.consumables.get(location_id)
 		if consumable_number:
-			game_data.next_consumable_drop = max(game_data.next_consumable_drop, consumable_number)
+			game_data.num_consumables_picked_up = max(game_data.num_consumables_picked_up, consumable_number)
 			continue
 
 		var legendary_consumable_number = location_groups.legendary_consumables.get(location_id)
 		if legendary_consumable_number:
-			game_data.next_legendary_consumable_drop = max(game_data.next_legendary_consumable_drop, legendary_consumable_number)
+			game_data.num_legendary_consumables_picked_up = max(game_data.num_legendary_consumables_picked_up, legendary_consumable_number)
 			continue
 
 		var character_run_complete = location_groups.character_run_complete.get(location_id)
@@ -205,7 +247,6 @@ func _on_connected(command):
 			var wave_character = character_wave_complete[1]
 			game_data.character_progress[wave_character].waves_with_checks[wave_number] = true
 		
-
 func _on_received_items(command):
 	var items = command["items"]
 	for item in items:
