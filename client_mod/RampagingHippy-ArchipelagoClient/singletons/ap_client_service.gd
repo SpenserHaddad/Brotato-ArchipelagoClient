@@ -48,6 +48,8 @@ func _ready():
 	_client.connect("connection_error", self, "_closed")
 	_client.connect("connection_established", self, "_connected")
 	_client.connect("data_received", self, "_on_data")
+	# Make sure that pausing the game doesn't stop out WebSocket connection
+	pause_mode = Node.PAUSE_MODE_PROCESS
 	set_process(false)
 
 # Public API
