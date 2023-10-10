@@ -24,11 +24,11 @@ def create_regions(world: MultiWorld, player: int, waves_with_drops: Sequence[in
     crate_drop_region = Region("Loot Crates", player, world)
 
     crate_drop_locs_name_to_id = {}
-    for i in range(getattr(world, "num_common_crate_drops")[player]):
+    for i in range(1, getattr(world, "num_common_crate_drops")[player] + 1):
         loc_name = CRATE_DROP_LOCATION_TEMPLATE.format(num=i)
         crate_drop_locs_name_to_id[loc_name] = location_name_to_id[loc_name]
 
-    for i in range(getattr(world, "num_legendary_crate_drops")[player]):
+    for i in range(1, getattr(world, "num_legendary_crate_drops")[player] + 1):
         loc_name = LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE.format(num=i)
         crate_drop_locs_name_to_id[loc_name] = location_name_to_id[loc_name]
 
