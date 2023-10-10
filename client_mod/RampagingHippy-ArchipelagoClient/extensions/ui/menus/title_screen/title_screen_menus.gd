@@ -1,6 +1,7 @@
 extends "res://ui/menus/title_screen/title_screen_menus.gd"
 
 var _custom_menu_ap_connect
+const LOG_NAME = ArchipelagoModBase.MOD_NAME + "/title_screen_menus"
 
 func _ready():
 	_custom_menu_ap_connect = load("res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/menu_ap_connect.tscn").instance()
@@ -11,9 +12,9 @@ func _ready():
 	var _foo = _main_menu.connect("ap_connect_button_pressed", self, "_on_MainMenu_ap_connect_button_pressed")
 
 func _on_MainMenu_ap_connect_button_pressed() -> void:
-	ModLoaderLog.debug("Switching to AP Connect menu", ArchipelagoModBase.MOD_NAME)
+	ModLoaderLog.debug("Switching to AP Connect menu", LOG_NAME)
 	switch(_main_menu, _custom_menu_ap_connect)
 
 func _on_MenuAp_back_button_pressed() -> void:
-	ModLoaderLog.debug("Switching to main menu", ArchipelagoModBase.MOD_NAME)
+	ModLoaderLog.debug("Switching from AP Connect menu to main menu", LOG_NAME)
 	switch(_custom_menu_ap_connect, _main_menu)

@@ -1,5 +1,7 @@
 extends "res://main.gd"
 
+const LOG_NAME = ArchipelagoModBase.MOD_NAME +"/main"
+
 var _ap_gift_common = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_common.tres")
 var _ap_gift_uncommon = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_uncommon.tres")
 var _ap_gift_rare = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_rare.tres")
@@ -20,20 +22,20 @@ func _ready() -> void:
 		# Run started, initialize/reset some values
 		_brotato_client.run_started()
 		var ap_game_data = _brotato_client.game_data
-		ModLoaderLog.debug("Start of run, giving player %d XP and %d gold." % [ap_game_data.starting_xp, ap_game_data.starting_gold], ArchipelagoModBase.MOD_NAME)
+		ModLoaderLog.debug("Start of run, giving player %d XP and %d gold." % [ap_game_data.starting_xp, ap_game_data.starting_gold], LOG_NAME)
 		
 		RunData.add_xp(ap_game_data.starting_xp)
 		RunData.add_gold(ap_game_data.starting_gold)
 		
 		for gift_tier in _brotato_client.game_data.received_items_by_tier:
 			var num_gifts = _brotato_client.game_data.received_items_by_tier[gift_tier]
-			ModLoaderLog.debug("Giving player %d items of tier %d." % [num_gifts, gift_tier], ArchipelagoModBase.MOD_NAME)
+			ModLoaderLog.debug("Giving player %d items of tier %d." % [num_gifts, gift_tier], LOG_NAME)
 			for _i in range(num_gifts):
 				_on_ap_item_received(gift_tier)
 
 		for upgrade_tier in _brotato_client.game_data.received_upgrades_by_tier:
 			var num_upgrades = _brotato_client.game_data.received_upgrades_by_tier[upgrade_tier]
-			ModLoaderLog.debug("Giving player %d upgrades of tier %d." % [num_upgrades, upgrade_tier], ArchipelagoModBase.MOD_NAME)
+			ModLoaderLog.debug("Giving player %d upgrades of tier %d." % [num_upgrades, upgrade_tier], LOG_NAME)
 			for _i in range(num_upgrades):
 				_on_ap_upgrade_received(upgrade_tier)
 
@@ -45,11 +47,11 @@ func _ready() -> void:
 # Archipelago Item received handlers
 
 func _on_ap_xp_received(xp_amount: int):
-	ModLoaderLog.info("%d XP received" % xp_amount, ArchipelagoModBase.MOD_NAME)
+	ModLoaderLog.info("%d XP received" % xp_amount, LOG_NAME)
 	RunData.add_xp(xp_amount)
 
 func _on_ap_gold_received(gold_amount: int):
-	ModLoaderLog.info("%d Gold received" % gold_amount, ArchipelagoModBase.MOD_NAME)
+	ModLoaderLog.info("%d Gold received" % gold_amount, LOG_NAME)
 	RunData.add_gold(gold_amount)
 
 func _on_ap_item_received(item_tier: int):
@@ -99,11 +101,11 @@ func spawn_consumables(unit: Unit) -> void:
 func on_consumable_picked_up(consumable: Node) -> void:
 	var is_ap_consumable = false
 	if consumable.consumable_data.my_id == "ap_pickup":
-		ModLoaderLog.debug("Picked up AP consumable", ArchipelagoModBase.MOD_NAME)
+		ModLoaderLog.debug("Picked up AP consumable", LOG_NAME)
 		is_ap_consumable = true
 		_brotato_client.consumable_picked_up()
 	elif consumable.consumable_data.my_id == "ap_legendary_pickup":
-		ModLoaderLog.debug("Picked up legendary AP consumable", ArchipelagoModBase.MOD_NAME)
+		ModLoaderLog.debug("Picked up legendary AP consumable", LOG_NAME)
 		is_ap_consumable = true
 		_brotato_client.legendary_consumable_picked_up()
 

@@ -1,6 +1,6 @@
 extends Node
 class_name ApClientService
-const LOG_NAME = "AP Client"
+const LOG_NAME = ArchipelagoModBase.MOD_NAME + "/AP Client"
 
 var _client = WebSocketClient.new()
 var _peer: WebSocketPeer
