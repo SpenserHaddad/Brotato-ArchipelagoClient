@@ -78,9 +78,7 @@ class BrotatoWorld(World):
 
     def set_rules(self):
         num_required_victories = self._get_option_value("num_victories")
-        self.multiworld.completion_condition[
-            self.player
-        ] = lambda state: BrotatoLogic._brotato_has_run_wins(
+        self.multiworld.completion_condition[self.player] = lambda state: BrotatoLogic._brotato_has_run_wins(
             state, self.player, count=num_required_victories
         )
 
@@ -93,9 +91,7 @@ class BrotatoWorld(World):
         for dc in DEFAULT_CHARACTERS:
             self.multiworld.push_precollected(self.create_item(dc))
 
-        item_names += [
-            c for c in item_name_groups["Characters"] if c in UNLOCKABLE_CHARACTERS
-        ]
+        item_names += [c for c in item_name_groups["Characters"] if c in UNLOCKABLE_CHARACTERS]
 
         # Add an item to receive for each crate drop location, as backfill
         num_common_crate_drops = self._get_option_value("num_common_crate_drops")
@@ -126,9 +122,7 @@ class BrotatoWorld(World):
         itempool = [self.create_item(item_name) for item_name in item_names]
 
         total_locations = (
-            num_common_crate_drops
-            + num_legendary_crate_drops
-            + (len(self.waves_with_checks) * len(CHARACTERS))
+            num_common_crate_drops + num_legendary_crate_drops + (len(self.waves_with_checks) * len(CHARACTERS))
         )
         num_filler_items = total_locations - len(itempool)
         itempool += [self.create_filler() for _ in range(num_filler_items)]
@@ -151,7 +145,5 @@ class BrotatoWorld(World):
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": int(self._get_option_value("num_victories")),
             "num_consumables": int(self._get_option_value("num_common_crate_drops")),
-            "num_legendary_consumables": int(
-                self._get_option_value("num_legendary_crate_drops")
-            ),
+            "num_legendary_consumables": int(self._get_option_value("num_legendary_crate_drops")),
         }
