@@ -171,14 +171,14 @@ func run_started():
 	## Notify the client that a new run has started.
 	##
 	## To be called by main._ready() only, so we can reinitialize run-specific data.
-	ModLoaderLog.debug("New run started", LOG_NAME)
+	ModLoaderLog.debug("New run started with character %s" % RunData.current_character.name, LOG_NAME)
 	run_data = ApRunData.new()
 
 func wave_started():
 	## Notify the client that a new wave has started.
 	##
 	## To be called by main._ready() only, so we can reinitialize wave-specific data.
-	ModLoaderLog.debug("New wave started", LOG_NAME)
+	ModLoaderLog.debug("Wave %d started" % RunData.current_wave, LOG_NAME)
 	wave_data = ApWaveData.new()
 	# TODO: NECESSARY?
 	_update_can_drop_consumable()
@@ -191,7 +191,7 @@ func wave_won(character_id: String, wave_number: int):
 	## corresponding location check will be sent to the server.
 	var character_name = constants.CHARACTER_ID_TO_NAME[character_id]
 	if not game_data.character_progress[character_name].waves_with_checks.get(wave_number, true):
-		var location_name = "Wave %d Complete (%s)" % [wave_number, character_name]
+		var location_name = "Wave %d Completed (%s)" % [wave_number, character_name]
 		var location_id = _data_package.location_name_to_id[location_name]
 		websocket_client.send_location_checks([location_id])
 
@@ -202,7 +202,7 @@ func run_won(character_id: String):
 	## location check will be sent to the server.
 	var character_name = constants.CHARACTER_ID_TO_NAME[character_id]
 	if not game_data.character_progress[character_name].won_run:
-		var location_name = "Run Complete (%s)" % character_name
+		var location_name = "Run Won (%s)" % character_name
 		var location_id = _data_package.location_name_to_id[location_name]
 		
 		var event_name = location_name
@@ -289,7 +289,7 @@ func _on_received_items(command):
 			var total_shop_slots = get_num_shop_slots()
 			ModLoaderLog.debug("Recieved shop slot. Total is now %d" % total_shop_slots, LOG_NAME)
 			emit_signal("shop_slot_received", total_shop_slots)
-		elif item_name == "Run Complete":
+		elif item_name == "Run Completed":
 			run_complete_received()
 		else:
 			ModLoaderLog.warning("No handler for item defined: %s." % item_name, LOG_NAME)
