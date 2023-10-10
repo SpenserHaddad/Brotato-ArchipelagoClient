@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/ap_icon_full.png-1ca9b7d680c09b68e018ece70d160ced.stex"
+path="res://.import/ap_icon_full.png-aef70b1896c8ca3ef6ec3597141df013.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://mods-unpacked/RampagingHippy-Archipelago/brotato_client_mod/RampagingHippy-ArchipelagoClient/content/consumables/ap_pickup/ap_icon_full.png"
-dest_files=[ "res://.import/ap_icon_full.png-1ca9b7d680c09b68e018ece70d160ced.stex" ]
+source_file="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_icon_full.png"
+dest_files=[ "res://.import/ap_icon_full.png-aef70b1896c8ca3ef6ec3597141df013.stex" ]
 
 [params]
 

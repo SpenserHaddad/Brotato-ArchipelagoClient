@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource( 1 )
 key = "stat_armor"
-text_key = "Send an item far away"
+text_key = "EFFECT_ARCHIPELAGO_ITEM"
 value = 0
 custom_key = ""
 storage_method = 0
