@@ -9,10 +9,15 @@ from BaseClasses import Location
 from .Constants import (
     BASE_ID,
     CHARACTERS,
+    CRATE_DROP_LOCATION_TEMPLATE,
+    LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_NORMAL_CRATE_DROPS,
     MAX_SHOP_LOCATIONS_PER_TIER,
     NUM_WAVES,
+    WAVE_COMPLETE_LOCATION_TEMPLATE,
+    RUN_COMPLETE_LOCATION_TEMPLATE,
+    SHOP_ITEM_LOCATION_TEMPLATE,
 )
 
 # TypeVar that's a union of all character name string literals
@@ -48,8 +53,10 @@ _char_specific_wave_complete_locs: list[BrotatoLocationBase] = []
 _char_specific_run_complete_locs: list[BrotatoLocationBase] = []
 character_specific_locations: dict[str, dict[str, int | None]] = {}
 for char in CHARACTERS:
-    _char_wave_complete_locations = [BrotatoLocationBase(name=f"Wave {w} Complete ({char})") for w in _wave_count]
-    _char_run_complete_location = BrotatoLocationBase(name=f"Run Complete ({char})")
+    _char_wave_complete_locations = [
+        BrotatoLocationBase(name=WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=char)) for w in _wave_count
+    ]
+    _char_run_complete_location = BrotatoLocationBase(name=RUN_COMPLETE_LOCATION_TEMPLATE.format(char))
     _char_specific_wave_complete_locs += _char_wave_complete_locations
     _char_specific_run_complete_locs.append(_char_run_complete_location)
 
@@ -60,11 +67,17 @@ for char in CHARACTERS:
 
 _shop_item_locs: list[BrotatoLocationBase] = []
 for tier, max_shop_locs in MAX_SHOP_LOCATIONS_PER_TIER.items():
-    _shop_item_locs += [BrotatoLocationBase(name=f"{tier.name} Shop Item {i}") for i in range(max_shop_locs)]
+    _shop_item_locs += [
+        BrotatoLocationBase(name=SHOP_ITEM_LOCATION_TEMPLATE.format(tier=tier.value, num=i))
+        for i in range(max_shop_locs)
+    ]
 
-_normal_item_drop_locs = [BrotatoLocationBase(name=f"Crate Drop {i}") for i in range(MAX_NORMAL_CRATE_DROPS)]
+_normal_item_drop_locs = [
+    BrotatoLocationBase(name=CRATE_DROP_LOCATION_TEMPLATE.format(num=i)) for i in range(MAX_NORMAL_CRATE_DROPS)
+]
 _legendary_item_drop_locs = [
-    BrotatoLocationBase(name=f"Legendary Crate Drop {i}") for i in range(MAX_LEGENDARY_CRATE_DROPS)
+    BrotatoLocationBase(name=LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE.format(num=i))
+    for i in range(MAX_LEGENDARY_CRATE_DROPS)
 ]
 
 location_table: list[BrotatoLocationBase] = [

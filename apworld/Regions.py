@@ -3,8 +3,19 @@ from typing import Sequence
 
 from BaseClasses import MultiWorld, Region
 
-from .Constants import CHARACTERS
-from .Locations import BrotatoLocation, character_specific_locations, location_name_to_id
+from .Constants import (
+    CHARACTERS,
+    CRATE_DROP_LOCATION_TEMPLATE,
+    LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
+    WAVE_COMPLETE_LOCATION_TEMPLATE,
+    RUN_COMPLETE_LOCATION_TEMPLATE,
+    SHOP_ITEM_LOCATION_TEMPLATE,
+)
+from .Locations import (
+    BrotatoLocation,
+    character_specific_locations,
+    location_name_to_id,
+)
 from .Rules import BrotatoLogic
 
 
@@ -14,11 +25,11 @@ def create_regions(world: MultiWorld, player: int, waves_with_drops: Sequence[in
 
     crate_drop_locs_name_to_id = {}
     for i in range(getattr(world, "num_common_crate_drops")[player]):
-        loc_name = f"Crate Drop {i}"
+        loc_name = CRATE_DROP_LOCATION_TEMPLATE.format(num=i)
         crate_drop_locs_name_to_id[loc_name] = location_name_to_id[loc_name]
 
     for i in range(getattr(world, "num_legendary_crate_drops")[player]):
-        loc_name = f"Legendary Crate Drop {i}"
+        loc_name = LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE.format(num=i)
         crate_drop_locs_name_to_id[loc_name] = location_name_to_id[loc_name]
 
     crate_drop_region.add_locations(crate_drop_locs_name_to_id, location_type=BrotatoLocation)  # type: ignore
@@ -34,11 +45,18 @@ def create_regions(world: MultiWorld, player: int, waves_with_drops: Sequence[in
         char_region_access_rule = lambda state: BrotatoLogic._brotato_has_character(  # noqa: E731
             state, player, character
         )
-        char_wave_drop_location_names = [f"Wave {w} Complete ({character})" for w in waves_with_drops]
+        char_wave_drop_location_names = [
+            WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=character) for w in waves_with_drops
+        ]
         char_in_game_region.add_locations(
-            {loc: location_name_to_id[loc] for loc in char_wave_drop_location_names}, location_type=BrotatoLocation
+            {loc: location_name_to_id[loc] for loc in char_wave_drop_location_names},
+            location_type=BrotatoLocation,
         )
-        menu_region.connect(char_in_game_region, f"Start Game ({character})", rule=char_region_access_rule)
+        menu_region.connect(
+            char_in_game_region,
+            f"Start Game ({character})",
+            rule=char_region_access_rule,
+        )
 
         # Crates can be gotten with any character
         char_in_game_region.connect(crate_drop_region, f"Drop crates for {character}")
