@@ -54,9 +54,14 @@ _char_specific_run_complete_locs: list[BrotatoLocationBase] = []
 character_specific_locations: dict[str, dict[str, int | None]] = {}
 for char in CHARACTERS:
     _char_wave_complete_locations = [
-        BrotatoLocationBase(name=WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=char)) for w in _wave_count
+        BrotatoLocationBase(
+            name=WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=char)
+        )
+        for w in _wave_count
     ]
-    _char_run_complete_location = BrotatoLocationBase(name=RUN_COMPLETE_LOCATION_TEMPLATE.format(char))
+    _char_run_complete_location = BrotatoLocationBase(
+        name=RUN_COMPLETE_LOCATION_TEMPLATE.format(char)
+    )
     _char_specific_wave_complete_locs += _char_wave_complete_locations
     _char_specific_run_complete_locs.append(_char_run_complete_location)
 
@@ -68,16 +73,19 @@ for char in CHARACTERS:
 _shop_item_locs: list[BrotatoLocationBase] = []
 for tier, max_shop_locs in MAX_SHOP_LOCATIONS_PER_TIER.items():
     _shop_item_locs += [
-        BrotatoLocationBase(name=SHOP_ITEM_LOCATION_TEMPLATE.format(tier=tier.value, num=i))
-        for i in range(max_shop_locs)
+        BrotatoLocationBase(
+            name=SHOP_ITEM_LOCATION_TEMPLATE.format(tier=tier.value, num=i)
+        )
+        for i in range(1, max_shop_locs + 1)
     ]
 
 _normal_item_drop_locs = [
-    BrotatoLocationBase(name=CRATE_DROP_LOCATION_TEMPLATE.format(num=i)) for i in range(MAX_NORMAL_CRATE_DROPS)
+    BrotatoLocationBase(name=CRATE_DROP_LOCATION_TEMPLATE.format(num=i))
+    for i in range(1, MAX_NORMAL_CRATE_DROPS + 1)
 ]
 _legendary_item_drop_locs = [
     BrotatoLocationBase(name=LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE.format(num=i))
-    for i in range(MAX_LEGENDARY_CRATE_DROPS)
+    for i in range(1, MAX_LEGENDARY_CRATE_DROPS + 1)
 ]
 
 location_table: list[BrotatoLocationBase] = [
@@ -90,7 +98,9 @@ location_table: list[BrotatoLocationBase] = [
 
 location_name_to_id: dict[str, int] = {loc.name: loc.id for loc in location_table}
 location_name_groups: dict[str, set[str]] = {
-    "Wave Complete Specific Character": set(c.name for c in _char_specific_wave_complete_locs),
+    "Wave Complete Specific Character": set(
+        c.name for c in _char_specific_wave_complete_locs
+    ),
     "Run Win Specific Character": set(c.name for c in _char_specific_run_complete_locs),
     "Normal Crate Drops": set(c.name for c in _normal_item_drop_locs),
     "Legendary Crate Drops": set(c.name for c in _legendary_item_drop_locs),
