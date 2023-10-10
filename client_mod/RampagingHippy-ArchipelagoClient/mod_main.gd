@@ -4,7 +4,7 @@ extends Node
 # Brotato Archipelago Multiworld Randomizer Client
 
 const MOD_NAME = "RampagingHippy-Archipelago"
-const LOG_NAME = MOD_NAME / "mod_main"
+const LOG_NAME = MOD_NAME + "/mod_main"
 export onready var ap_client
 export onready var brotato_client
 
@@ -31,29 +31,24 @@ func _init(_modLoader = ModLoader):
 	
 
 func _ready()->void:
-	ModLoaderLog.info("Ready", LOG_NAME)
 	# TODO: Proper translations
 	ModLoaderLog.info(str("Translation Demo: ", tr("MODNAME_READY_TEXT")), LOG_NAME)
 	ModLoaderLog.success("Loaded", LOG_NAME)
 
 	# TODO: Can we turn the service into a singleton somehow? Adding a node to the root
 	# didn't seem to work.
-	ModLoaderLog.debug("Adding WebSocket client", LOG_NAME)
 	var _ap_client_class = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_client_service.gd")
 	ap_client = ApClientService.new()
 	self.add_child(ap_client)
 	ModLoaderLog.debug("Added WebSocket client", LOG_NAME)
 
-	ModLoaderLog.debug("Adding AP client", LOG_NAME)
 	var _brotato_client_class = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/brotato_ap_adapter.gd")
 	brotato_client = BrotatoApAdapter.new(ap_client)
 	self.add_child(brotato_client)
 	ModLoaderLog.debug("Added AP client", LOG_NAME)
 
-
-	# We explicitly DON'T add the AP consumables to the full list because we want to 
-	# control how they drop more carefully, and it's easier to control this way than
-	# modifying the consumable drop logic.
+	# We deliberately DON'T add the AP consumables to the full list because we want to 
+	# manually control how/when they drop, instead of just adding to the drop pool.
 
 	# var ContentLoader = get_node("/root/ModLoader/Darkly77-ContentLoader/ContentLoader")
 	# var content_dir = "res://mods-unpacked/RampagingHippy-Archipelago/content_data/"
