@@ -23,6 +23,8 @@ class ApGameData:
 	var goal_completed: bool = false
 	var starting_gold: int = 0
 	var starting_xp : int = 0
+	var num_starting_shop_slots: int = 4
+	var num_received_shop_slots: int = 0
 	var received_items_by_tier: Dictionary = {
 		Tier.COMMON: 0,
 		Tier.UNCOMMON: 0,
@@ -76,6 +78,7 @@ signal xp_received(xp_amount)
 signal gold_received(gold_amount)
 signal item_received(item_tier)
 signal upgrade_received(upgrade_tier)
+signal shop_slot_received(total_slots)
 signal crate_drop_status_changed(can_drop_ap_consumables)
 signal legendary_crate_drop_status_changed(can_drop_ap_legendary_consumables)
 
@@ -115,7 +118,11 @@ func _update_can_drop_consumable():
 func _update_can_drop_legendary_consumable():
 	var can_drop = game_data.num_legendary_consumables_picked_up + wave_data.ap_legendary_consumables_not_picked_up < game_data.total_legendary_consumable_drops
 	emit_signal("legendary_crate_drop_status_changed", can_drop)
-	
+
+# API for other scenes to query multiworld state
+func get_num_shop_slots() -> int:
+	return game_data.num_starting_shop_slots + game_data.num_received_shop_slots
+
 # API for other scenes to tell us about in-game events.
 func consumable_spawned():
 	wave_data.ap_consumables_not_picked_up += 1
@@ -133,7 +140,7 @@ func consumable_picked_up():
 	# TODO: Crate Drop to Loot Crate?
 	game_data.num_consumables_picked_up += 1
 	wave_data.ap_consumables_not_picked_up -= 1
-	var location_name = "Crate Drop %d" % game_data.num_consumables_picked_up
+	var location_name = "Loot Crate %d" % game_data.num_consumables_picked_up
 	var location_id = _data_package.location_name_to_id[location_name]
 	websocket_client.send_location_checks([location_id])
 	ModLoaderLog.debug("Picked up crate %d, not picked up in wave is %d" % [game_data.num_consumables_picked_up, wave_data.ap_consumables_not_picked_up], LOG_NAME)	
@@ -206,7 +213,7 @@ func run_complete_received():
 	self.game_data.num_wins += 1
 	if self.game_data.num_wins >= self.game_data.num_required_wins and not self.game_data.goal_completed:
 		self.game_data.goal_completed = true
-		websocket_client.status_update(ApClientService.ClientState.CLIENT_GOAL)
+		websocket_client.status_update(ApClientService.ClientStatus.CLIENT_GOAL)
 
 # WebSocket Command received handlers
 func _on_room_info(_room_info):
@@ -215,10 +222,12 @@ func _on_room_info(_room_info):
 func _on_connected(command):
 	var location_groups: DataPackage.BrotatoLocationGroups = _data_package.location_groups
 
+	# Get options and other info from the slot data
 	var slot_data = command["slot_data"]
 	game_data.total_consumable_drops = slot_data["num_consumables"]
 	game_data.total_legendary_consumable_drops = slot_data["num_legendary_consumables"]
 	game_data.num_required_wins = slot_data["num_wins_needed"]
+	game_data.num_starting_shop_slots = slot_data["num_starting_shop_slots"]
 	var waves_with_checks: Array = slot_data["waves_with_checks"]
 	for character in constants.CHARACTER_NAME_TO_ID:
 		for wave in waves_with_checks:
@@ -275,6 +284,11 @@ func _on_received_items(command):
 			game_data.received_upgrades_by_tier[upgrade_tier] += 1
 			ModLoaderLog.debug("Got upgrade Tier %d" % upgrade_tier, LOG_NAME)
 			emit_signal("upgrade_received", upgrade_tier)
+		elif item_name == constants.SHOP_SLOT_ITEM_NAME:
+			game_data.num_received_shop_slots += 1
+			var total_shop_slots = get_num_shop_slots()
+			ModLoaderLog.debug("Recieved shop slot. Total is now %d" % total_shop_slots, LOG_NAME)
+			emit_signal("shop_slot_received", total_shop_slots)
 		elif item_name == "Run Complete":
 			run_complete_received()
 		else:

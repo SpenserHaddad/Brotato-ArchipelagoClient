@@ -63,6 +63,8 @@ const UPGRADE_NAME_TO_TIER = {
 	"Legendary Upgrade": Tier.LEGENDARY
 }
 
+const SHOP_SLOT_ITEM_NAME = "Progressive Shop Slot"
+
 # The ItemService generates items using the current wave to choose the value. This value
 # defines how many items are dropped for each wave, going up. For example, if 2 then
 # the first two items will be generated with wave=1, the next two with wave=2, etc.
