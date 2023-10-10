@@ -84,3 +84,10 @@ MAX_SHOP_LOCATIONS_PER_TIER = {
     ItemRarity.RARE: 10,
     ItemRarity.LEGENDARY: 10,
 }
+
+# Location name string templates
+CRATE_DROP_LOCATION_TEMPLATE = "Loot Crate {num}"
+LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE = "Legendary Loot Crate {num}"
+WAVE_COMPLETE_LOCATION_TEMPLATE = "Wave {wave} Complete ({char})"
+RUN_COMPLETE_LOCATION_TEMPLATE = "Run Complete ({char})"
+SHOP_ITEM_LOCATION_TEMPLATE = "{tier} Shop Item {num}"
