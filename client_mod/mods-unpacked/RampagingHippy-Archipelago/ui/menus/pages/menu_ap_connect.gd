@@ -10,15 +10,15 @@ onready var _host_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer
 onready var _player_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PlayerEdit"
 onready var _password_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PasswordEdit"
 
-onready var ap_client: ApClientService
-onready var brotato_client: BrotatoApAdapter
+onready var ap_client
+onready var brotato_client
 
 func init():
 	# Needed to make the scene switch in title_screen_menus happy.
 	pass
 
 func _ready():
-	var mod_node: ArchipelagoModBase = get_node("/root/ModLoader/RampagingHippy-Archipelago")
+	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	ap_client = mod_node.ap_client
 	ap_client.connect("connection_state_changed", self, "_on_connection_state_changed")
 	brotato_client = mod_node.brotato_client

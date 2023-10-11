@@ -43,7 +43,7 @@ func _ready()->void:
 	ModLoaderLog.debug("Added WebSocket client", LOG_NAME)
 
 	var _brotato_client_class = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/brotato_ap_adapter.gd")
-	brotato_client = BrotatoApAdapter.new(ap_client)
+	brotato_client = _brotato_client_class.new(ap_client)
 	self.add_child(brotato_client)
 	ModLoaderLog.debug("Added AP client", LOG_NAME)
 

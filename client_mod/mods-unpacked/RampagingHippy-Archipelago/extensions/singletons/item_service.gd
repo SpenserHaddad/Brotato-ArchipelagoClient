@@ -1,12 +1,12 @@
 extends "res://singletons/item_service.gd"
 
-const LOG_NAME = ArchipelagoModBase.MOD_NAME + "/item_service"
+const LOG_NAME = "RampagingHippy-Archipelago/item_service"
 
 var _ap_pickup = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.tres")
 var _ap_legendary_pickup = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_legendary_pickup/ap_legendary_pickup.tres")
 onready var _item_box_original
 onready var _legendary_item_box_original
-onready var _brotato_client: BrotatoApAdapter
+onready var _brotato_client
 
 func _ready():
 	_brotato_client = get_node("/root/ModLoader/RampagingHippy-Archipelago").brotato_client

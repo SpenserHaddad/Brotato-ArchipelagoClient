@@ -1,7 +1,7 @@
 extends "res://ui/menus/run/character_selection.gd"
-var _brotato_client: BrotatoApAdapter
+var _brotato_client
 
-const LOG_NAME = ArchipelagoModBase.MOD_NAME + "/character_selection"
+const LOG_NAME = "RampagingHippy-Archipelago/character_selection"
 
 var _unlocked_characters: Array = []
 

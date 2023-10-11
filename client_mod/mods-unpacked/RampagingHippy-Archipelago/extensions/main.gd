@@ -1,6 +1,6 @@
 extends "res://main.gd"
 
-const LOG_NAME = ArchipelagoModBase.MOD_NAME +"/main"
+const LOG_NAME = "RampagingHippy-Archipelago/main"
 
 var _ap_gift_common = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_common.tres")
 var _ap_gift_uncommon = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_uncommon.tres")
@@ -11,10 +11,10 @@ export (Resource) var ap_upgrade_to_process_icon = preload("res://mods-unpacked/
 
 # Extensions
 var _drop_ap_pickup = true;
-onready var _brotato_client: BrotatoApAdapter
+onready var _brotato_client
 
 func _ready() -> void:
-	var mod_node: ArchipelagoModBase = get_node("/root/ModLoader/RampagingHippy-Archipelago")
+	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_brotato_client = mod_node.brotato_client
 	_brotato_client.wave_started()
 	

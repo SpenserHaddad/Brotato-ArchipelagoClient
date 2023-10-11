@@ -199,7 +199,6 @@ func _handle_command(command: Dictionary):
 		"RoomInfo":
 			ModLoaderLog.debug("Received RoomInfo cmd.", LOG_NAME)
 			emit_signal("on_room_info", command)
-			# get_data_package(["Brotato", "Archipelago"])
 		"ConnectionRefused":
 			ModLoaderLog.debug("Received ConnectionRefused cmd.", LOG_NAME)
 			emit_signal("on_connection_refused", command)

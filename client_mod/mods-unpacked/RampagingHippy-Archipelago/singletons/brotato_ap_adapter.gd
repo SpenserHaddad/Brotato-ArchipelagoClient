@@ -3,9 +3,10 @@ class_name BrotatoApAdapter
 
 const LOG_NAME = "RampagingHippy-Archipelago/Brotato Client"
 
-onready var websocket_client: ApClientService
+onready var websocket_client
 
-var constants: BrotatoApConstants
+const constants_namespace = preload("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd")
+var constants
 const GAME: String = "Brotato"
 const DataPackage = preload("./data_package.gd")
 export var player: String
@@ -51,7 +52,7 @@ class ApGameData:
 	var num_wins: int = 0
 
 	func _init():
-		for character in BrotatoApConstants.CHARACTER_NAME_TO_ID:
+		for character in constants_namespace.new().CHARACTER_NAME_TO_ID:
 			character_progress[character] = ApCharacterProgress.new()
 			received_characters[character] = false
 
@@ -85,8 +86,8 @@ signal legendary_crate_drop_status_changed(can_drop_ap_legendary_consumables)
 # Connection issue signals
 signal on_connection_refused(reasons)
 
-func _init(websocket_client_: ApClientService):
-	constants = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd").new()
+func _init(websocket_client_):
+	constants = constants_namespace.new()
 	self.websocket_client = websocket_client_
 	var _success = websocket_client.connect("connection_state_changed", self, "_on_connection_state_changed")
 	ModLoaderLog.debug("Brotato AP adapter initialized", LOG_NAME)
@@ -99,8 +100,9 @@ func _ready():
 	_status = websocket_client.connect("on_received_items", self, "_on_received_items")
 	_status = websocket_client.connect("on_connection_refused", self, "_on_connection_refused")
 
-func _on_connection_state_changed(new_state: int):
-	if new_state == ApClientService.State.STATE_CLOSED:
+func _on_connection_state_changed(new_state: int):\
+	# ApClientService.State.STATE_CLOSED, can't use directly because of dynamic imports
+	if new_state == 3:
 		# Reset game data to get a clean slate in case we reconnect
 		ModLoaderLog.debug("Disconnected, clearing any game state.", LOG_NAME)
 		game_data = ApGameData.new()
@@ -217,18 +219,18 @@ func run_complete_received():
 	self.game_data.num_wins += 1
 	if self.game_data.num_wins >= self.game_data.num_required_wins and not self.game_data.goal_completed:
 		self.game_data.goal_completed = true
-		websocket_client.status_update(ApClientService.ClientStatus.CLIENT_GOAL)
+		# 30 = ApClientService.ClientStatus.CLIENT_GOAL
+		websocket_client.status_update(30)
 
 # WebSocket Command received handlers
 func _on_room_info(_room_info):
 	websocket_client.get_data_package(["Brotato"])
 
-func _on_connection_refused(reasons: Array):
-	var reasons_str = ""
-	for r in reasons:
-		reasons_str += str(r) + ", "
-	ModLoaderLog.warning("Connection refused: reasons: %s" % reasons_str, LOG_NAME)
-	emit_signal("on_connection_refused", reasons)
+func _on_connection_refused(command):
+	var errors = command["errors"]
+	var error_str = ", ".join(PoolStringArray(errors))
+	ModLoaderLog.warning("Connection refused: %s" % error_str, LOG_NAME)
+	emit_signal("on_connection_refused", errors)
 
 func _on_connected(command):
 	var location_groups: DataPackage.BrotatoLocationGroups = _data_package.location_groups
@@ -300,7 +302,7 @@ func _on_received_items(command):
 			var total_shop_slots = get_num_shop_slots()
 			ModLoaderLog.debug("Recieved shop slot. Total is now %d" % total_shop_slots, LOG_NAME)
 			emit_signal("shop_slot_received", total_shop_slots)
-		elif item_name == "Run Completed":
+		elif item_name == "Run Won":
 			run_complete_received()
 		else:
 			ModLoaderLog.warning("No handler for item defined: %s." % item_name, LOG_NAME)
