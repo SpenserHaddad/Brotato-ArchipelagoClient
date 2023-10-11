@@ -18,7 +18,7 @@ func _ready() -> void:
 	_brotato_client = mod_node.brotato_client
 	_brotato_client.wave_started()
 	
-	if RunData.current_wave == 1:
+	if RunData.current_wave == 1 and _brotato_client.connected_to_multiworld():
 		# Run started, initialize/reset some values
 		_brotato_client.run_started()
 		var ap_game_data = _brotato_client.game_data
@@ -93,7 +93,7 @@ func spawn_consumables(unit: Unit) -> void:
 	.spawn_consumables(unit)
 	var consumable_count_after = _consumables.size()
 	var spawned_consumable = consumable_count_after > consumable_count_start
-	if spawned_consumable:
+	if spawned_consumable and _brotato_client.connected_to_multiworld():
 		var spawned_consumable_id = _consumables.back().consumable_data.my_id
 		if spawned_consumable_id == "ap_pickup" or spawned_consumable_id == "ap_legendary_pickup":
 			_brotato_client.consumable_spawned()
