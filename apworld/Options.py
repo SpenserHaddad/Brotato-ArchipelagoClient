@@ -30,7 +30,10 @@ class NumberRequiredWins(Range):
 class WavesPerCheck(Range):
     """How many waves to win to receive a check. Smaller values mean more frequent checks."""
 
-    range_start = 1
+    # We'd make the start 1, but the number of items sent when the game is released is
+    # so large that the resulting ReceivedItems command is bigger than Godot 3.5's
+    # hard-coded WebSocket buffer can fit, meaning the engine silently drops it.
+    range_start = 2
     range_end = NUM_WAVES
 
     display_name = "Waves per check"
