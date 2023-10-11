@@ -82,6 +82,9 @@ signal shop_slot_received(total_slots)
 signal crate_drop_status_changed(can_drop_ap_consumables)
 signal legendary_crate_drop_status_changed(can_drop_ap_legendary_consumables)
 
+# Connection issue signals
+signal on_connection_refused(reasons)
+
 func _init(websocket_client_: ApClientService):
 	constants = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd").new()
 	self.websocket_client = websocket_client_
@@ -94,6 +97,7 @@ func _ready():
 	_status = websocket_client.connect("on_connected", self, "_on_connected")
 	_status = websocket_client.connect("on_data_package", self, "_on_data_package")
 	_status = websocket_client.connect("on_received_items", self, "_on_received_items")
+	_status = websocket_client.connect("on_connection_refused", self, "_on_connection_refused")
 
 func _on_connection_state_changed(new_state: int):
 	if new_state == ApClientService.State.STATE_CLOSED:
@@ -218,6 +222,13 @@ func run_complete_received():
 # WebSocket Command received handlers
 func _on_room_info(_room_info):
 	websocket_client.get_data_package(["Brotato"])
+
+func _on_connection_refused(reasons: Array):
+	var reasons_str = ""
+	for r in reasons:
+		reasons_str += str(r) + ", "
+	ModLoaderLog.warning("Connection refused: reasons: %s" % reasons_str, LOG_NAME)
+	emit_signal("on_connection_refused", reasons)
 
 func _on_connected(command):
 	var location_groups: DataPackage.BrotatoLocationGroups = _data_package.location_groups

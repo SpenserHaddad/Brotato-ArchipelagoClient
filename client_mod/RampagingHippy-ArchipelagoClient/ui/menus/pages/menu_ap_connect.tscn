@@ -62,7 +62,6 @@ margin_right = 738.0
 margin_bottom = 133.0
 focus_next = NodePath("../HostEdit")
 focus_previous = NodePath("../PasswordEdit")
-text = "BrotatoTest2"
 clear_button_enabled = true
 placeholder_text = "Player Name"
 caret_blink = true
@@ -116,6 +115,14 @@ margin_top = 763.0
 margin_right = 768.0
 margin_bottom = 808.0
 text = "Connection Status"
+align = 1
+
+[node name="ConnectionErrorLabel" type="Label" parent="VBoxContainer"]
+visible = false
+margin_top = 811.0
+margin_right = 768.0
+margin_bottom = 856.0
+text = "Connection Error"
 align = 1
 
 [connection signal="pressed" from="VBoxContainer/ConnectButton" to="." method="_on_ConnectButton_pressed"]
