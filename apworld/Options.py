@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from Options import AssembleOptions, Range
+from Options import AssembleOptions, Range, TextChoice
 
 from .Constants import (
     MAX_COMMON_UPGRADES,
@@ -25,6 +25,31 @@ class NumberRequiredWins(Range):
 
     display_name = "Number of runs required"
     default = 10
+
+
+class StartingCharacters(TextChoice):
+    """Determines your set of starting characters.
+
+    Default: Start with Well Rounded, Brawler, Crazy, Ranger and Mage.
+
+    Shuffle: Start with a random selection of characters.
+    """
+
+    option_default_characters = 0
+    option_random_characters = 1
+
+    display_name = "Starting characters"
+    default = 1
+
+
+class NumberStartingCharacters(Range):
+    """The number of random characters to start with. Ignored if starting characters is set to 'Default'."""
+
+    range_start = 1
+    range_end = NUM_CHARACTERS
+
+    display_name = "Number of starting characters"
+    default = 5
 
 
 class WavesPerCheck(Range):
@@ -124,6 +149,8 @@ class NumberShopItems(Range):
 
 options: dict[str, AssembleOptions] = {
     "num_victories": NumberRequiredWins,
+    "starting_characters": StartingCharacters,
+    "num_starting_characters": NumberStartingCharacters,
     "waves_per_drop": WavesPerCheck,
     "num_common_crate_drops": NumberCommonCrateDropLocations,
     "num_legendary_crate_drops": NumberLegendaryCrateDropLocations,

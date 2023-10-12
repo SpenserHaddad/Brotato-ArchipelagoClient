@@ -53,6 +53,7 @@ class BrotatoWorld(World):
     item_name_groups = item_name_groups
 
     _filler_items = filler_items
+    _starting_characters: list[str]
 
     location_name_to_id = location_name_to_id
     location_name_groups = location_name_groups
@@ -75,6 +76,12 @@ class BrotatoWorld(World):
         waves_per_drop = self._get_option_value("waves_per_drop")
         # Ignore 0 value, but choosing a different start gives the wrong wave results
         self.waves_with_checks = list(range(0, NUM_WAVES + 1, waves_per_drop))[1:]
+        character_option = self._get_option_value("starting_characters")
+        if character_option == 0:  # Default
+            self._starting_characters = DEFAULT_CHARACTERS
+        else:
+            num_starting_characters = self._get_option_value("num_starting_characters")
+            self._starting_characters = self.multiworld.random.sample(CHARACTERS, num_starting_characters)
 
     def set_rules(self):
         num_required_victories = self._get_option_value("num_victories")
@@ -88,10 +95,10 @@ class BrotatoWorld(World):
     def create_items(self):
         item_names: list[ItemName | str] = []
 
-        for dc in DEFAULT_CHARACTERS:
-            self.multiworld.push_precollected(self.create_item(dc))
+        for c in self._starting_characters:
+            self.multiworld.push_precollected(self.create_item(c))
 
-        item_names += [c for c in item_name_groups["Characters"] if c in UNLOCKABLE_CHARACTERS]
+        item_names += [c for c in item_name_groups["Characters"] if c not in self._starting_characters]
 
         # Add an item to receive for each crate drop location, as backfill
         num_common_crate_drops = self._get_option_value("num_common_crate_drops")
