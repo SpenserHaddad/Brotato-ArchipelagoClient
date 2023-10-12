@@ -39,7 +39,7 @@ class StartingCharacters(TextChoice):
     option_random_characters = 1
 
     display_name = "Starting characters"
-    default = 1
+    default = 0
 
 
 class NumberStartingCharacters(Range):
