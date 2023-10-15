@@ -46,7 +46,7 @@ func _init():
 func _ready():
 	# Connect base signals to get notified of connection open, close, and errors.
 	_client.connect("connection_closed", self, "_closed")
-	_client.connect("connection_error", self, "_closed")
+	_client.connect("connection_error", self, "_on_connection_error")
 	_client.connect("connection_established", self, "_connected")
 	_client.connect("data_received", self, "_on_data")
 	# Make sure that pausing the game doesn't stop out WebSocket connection
@@ -59,9 +59,10 @@ func connect_to_multiworld(server: String, port: int):
 	if connection_state == State.STATE_OPEN:
 		return
 	_set_connection_state(State.STATE_CONNECTING)
-	var url = "ws://%s:%d" % [server, port]
+	# TODO: WS fallback?
+	var url = "wss://%s:%d" % [server, port]
 	ModLoaderLog.info("Connecting to %s" % url, LOG_NAME)
-	var err = _client.connect_to_url("ws://%s:%d" % [server, port])
+	var err = _client.connect_to_url(url)
 	ModLoaderLog.info("Connect Results: " + str(err), LOG_NAME)
 	if not err:
 		_peer = _client.get_peer(1)
@@ -178,6 +179,11 @@ func _closed(was_clean = false):
 func _connected(proto = ""):
 	_set_connection_state(State.STATE_OPEN)
 	ModLoaderLog.info("AP connection opened with protocol: %s" % proto, LOG_NAME)
+
+func _on_connection_error():
+	_set_connection_state(State.STATE_CLOSED)
+	ModLoaderLog.info("Failed to connect to AP server", LOG_NAME)
+
 
 func _set_connection_state(state):
 	ModLoaderLog.info("AP connection state changed to: %d" % state, LOG_NAME)
