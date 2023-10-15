@@ -3,15 +3,15 @@
 This adds [Brotato](https://store.steampowered.com/app/1942280/Brotato/) as a game to
 be used in [Archipelago](archipelago.gg) multi-world randomizers.
 
-This repo contains two project
+This repo contains two projects:
 
-* [`brotato_apworld`](./brotato_apworld/): An Archipelago
+* [`apworld/brotato`](./apworld/brotato): An Archipelago
 [apworld](https://github.com/ArchipelagoMW/Archipelago/blob/main/docs/apworld%20specification.md)
 folder containing the definitions of items, locations, logic, etc. used by Archipelago
 to generate games.
-* [`brotato_client_mod`](./brotato_client_mod/): A Brotato game mod which includes an
+* [`client_mod`](./client_mod/): A Brotato game mod which includes an
   Archipelago WebSocket client and hooks for sending locations and receiving items from
-  the AP server.
+  the Archipelago server.
 
 ## Installing
 
@@ -23,10 +23,15 @@ into your Archipelago `worlds/` folder. On Windows by default, this is
 `C:\ProgramData\Archipelago\lib\worlds\`.
 
 To play Brotato as part of a randomizer, download the latest version of
-`RampagingHippy-ArchipelagoClient`, then copy it into your Steam workshop folder for
-Brotato. On Windows by default, this is `C:\Program Files
-(x86)\steamapps\workshop\content\1942280` (`1942280` being Brotato's Steam ID). Unzip
-the mod into this folder so it's a sub-folder of `1942280`.
+`RampagingHippy-Archipelago.zip`, then copy it **without unzipping** into your Steam
+workshop folder for Brotato. For example, on Windows by default this may be `C:\Program
+Files
+(x86)\steamapps\workshop\content\1942280\Archipelago\RampagingHippy-Archipelago.zip`
+(`1942280` being Brotato's Steam ID). Note that the `Archipelago` sub-folder can be
+named anything; the .zip file just needs to be within a sub-folder of the `1942280`
+folder.
+
+The client mod will eventually be hosted as a Steam workshop mod once it is more stable.
 
 ### From source
 
@@ -34,8 +39,9 @@ NOTE: This is not recommended since unreleased code is more likely to have bugs 
 unfinished features. This should only be done if you want to contribute to the project.
 
 Instead of downloading the .apworld file and mod zip from the releases page, copy the 
-`brotato_apworld` folder to the Archipelago `worlds/` folder, renaming it to `brotato`,
-and copy the `brotato_client_mod` folder to the Brotato Steam workshop folder.
+`apworld/brotato` folder to the Archipelago `worlds/` folder, and zip the `client_mod`
+folder into a zip called `RampagingHippy-Archipelago.zip` and copy it to Brotato's mod
+folder as described above.
 
 
 ## Playing Brotato with the mod installed.
@@ -49,7 +55,7 @@ progress in the AP game. This includes:
 
 * Only unlocking characters that you start with or that someone has found.
 * Giving you extra XP, gold, upgrades, and items depending on the items found.
-* (WIP) Modifying the number of shop items available based on the progressive shop items
+* Modifying the number of shop items available based on the progressive shop items
   found.
 
 This won't affect your normal progress. Once you disconnect from the AP server, your
