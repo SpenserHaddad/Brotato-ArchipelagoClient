@@ -215,36 +215,34 @@ func _on_connected(command):
 		
 func _on_received_items(command):
 	var items = command["items"]
+	# NOTE: We used to have some debug logs in each if/elif branch to say what item(s)
+	# we got, but for larger payloads, such as connecting to a completed game or when a
+	# game is released/collected, the log commands caused a several-second slowdown when
+	# combined. Add logs here only when debugging something, don't keep.
 	for item in items:
 		var item_name: String = _data_package.item_id_to_name[item["item"]]
-		ModLoaderLog.debug("Received item %s." % item_name, LOG_NAME)
 		if constants.CHARACTER_NAME_TO_ID.has(item_name):
 			game_state.character_progress[item_name].unlocked = true
 			emit_signal("character_received", item_name)
 		elif item_name in constants.XP_ITEM_NAME_TO_VALUE:
 			var xp_value = constants.XP_ITEM_NAME_TO_VALUE[item_name]
 			game_state.starting_xp += xp_value
-			ModLoaderLog.debug("Starting XP is now %d." % game_state.starting_xp, LOG_NAME)
 			emit_signal("xp_received", xp_value)
 		elif item_name in constants.GOLD_DROP_NAME_TO_VALUE:
 			var gold_value = constants.GOLD_DROP_NAME_TO_VALUE[item_name]
 			game_state.starting_gold += gold_value
-			ModLoaderLog.debug("Starting gold is now %d." % game_state.starting_gold, LOG_NAME)
 			emit_signal("gold_received", gold_value)
 		elif item_name in constants.ITEM_DROP_NAME_TO_TIER:
 			var item_tier = constants.ITEM_DROP_NAME_TO_TIER[item_name]
 			game_state.received_items_by_tier[item_tier] += 1
-			ModLoaderLog.debug("Got item Tier %d" % item_tier, LOG_NAME)
 			emit_signal("item_received", item_tier)
 		elif item_name in constants.UPGRADE_NAME_TO_TIER:
 			var upgrade_tier = constants.UPGRADE_NAME_TO_TIER[item_name]
 			game_state.received_upgrades_by_tier[upgrade_tier] += 1
-			ModLoaderLog.debug("Got upgrade Tier %d" % upgrade_tier, LOG_NAME)
 			emit_signal("upgrade_received", upgrade_tier)
 		elif item_name == constants.SHOP_SLOT_ITEM_NAME:
 			game_state.num_received_shop_slots += 1
 			var total_shop_slots = get_num_shop_slots()
-			ModLoaderLog.debug("Recieved shop slot. Total is now %d" % total_shop_slots, LOG_NAME)
 			emit_signal("shop_slot_received", total_shop_slots)
 		elif item_name == "Run Won":
 			run_complete_received()
