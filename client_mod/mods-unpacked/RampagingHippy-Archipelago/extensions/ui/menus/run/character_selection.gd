@@ -13,8 +13,8 @@ func _ensure_brotato_client():
 		return
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_brotato_client = mod_node.brotato_client
-	for character in _brotato_client.game_data.received_characters:
-		if _brotato_client.game_data.received_characters[character]:
+	for character in _brotato_client.game_state.character_progress:
+		if _brotato_client.game_state.character_progress[character].unlocked:
 			_add_character(character)
 	var _status = _brotato_client.connect("character_received", self, "_on_character_received")
 

@@ -175,7 +175,7 @@ func _on_connection_closed(was_clean = false):
 	_peer = null
 	set_process(false)
 
-func _on_connection_established(proto = ""):
+func _on_connection_established(_proto = ""):
 	_set_connection_state(State.STATE_OPEN)
 	_peer = _client.get_peer(1)
 	_peer.set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)

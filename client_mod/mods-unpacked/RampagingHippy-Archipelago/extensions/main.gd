@@ -16,28 +16,30 @@ onready var _brotato_client
 func _ready() -> void:
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_brotato_client = mod_node.brotato_client
-	_brotato_client.wave_started()
 	
 	if RunData.current_wave == 1 and _brotato_client.connected_to_multiworld():
 		# Run started, initialize/reset some values
 		_brotato_client.run_started()
-		var ap_game_data = _brotato_client.game_data
+		var ap_game_data = _brotato_client.game_state
 		ModLoaderLog.debug("Start of run, giving player %d XP and %d gold." % [ap_game_data.starting_xp, ap_game_data.starting_gold], LOG_NAME)
 		
 		RunData.add_xp(ap_game_data.starting_xp)
 		RunData.add_gold(ap_game_data.starting_gold)
 		
-		for gift_tier in _brotato_client.game_data.received_items_by_tier:
-			var num_gifts = _brotato_client.game_data.received_items_by_tier[gift_tier]
+		for gift_tier in _brotato_client.game_state.received_items_by_tier:
+			var num_gifts = _brotato_client.game_state.received_items_by_tier[gift_tier]
 			ModLoaderLog.debug("Giving player %d items of tier %d." % [num_gifts, gift_tier], LOG_NAME)
 			for _i in range(num_gifts):
 				_on_ap_item_received(gift_tier)
 
-		for upgrade_tier in _brotato_client.game_data.received_upgrades_by_tier:
-			var num_upgrades = _brotato_client.game_data.received_upgrades_by_tier[upgrade_tier]
+		for upgrade_tier in _brotato_client.game_state.received_upgrades_by_tier:
+			var num_upgrades = _brotato_client.game_state.received_upgrades_by_tier[upgrade_tier]
 			ModLoaderLog.debug("Giving player %d upgrades of tier %d." % [num_upgrades, upgrade_tier], LOG_NAME)
 			for _i in range(num_upgrades):
 				_on_ap_upgrade_received(upgrade_tier)
+
+	# Need to call after run is started otherwise some game state isn't ready yet.
+	_brotato_client.wave_started()
 
 	var _status = _brotato_client.connect("xp_received", self, "_on_ap_xp_received")
 	_status = _brotato_client.connect("gold_received", self, "_on_ap_gold_received")
