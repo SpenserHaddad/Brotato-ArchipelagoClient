@@ -14,7 +14,6 @@ export var password: String
 
 var constants = _constants_namespace.new()
 var game_state: ApGameState
-# var game_state.run_state.wave_state = ApWaveData.new()
 
 var _data_package: DataPackage.BrotatoDataPackage
 
@@ -65,16 +64,22 @@ func _update_can_drop_consumable():
 						game_state.total_consumable_drops
 					],
 					LOG_NAME)
-	var can_drop = game_state.num_existing_consumables() < game_state.total_consumable_drops
+	var can_drop = (
+		connected_to_multiworld() 
+		and game_state.num_existing_consumables() < game_state.total_consumable_drops
+	)
 	emit_signal("crate_drop_status_changed", can_drop)
 
 func _update_can_drop_legendary_consumable():
-	var can_drop = game_state.num_existing_legendary_consumables() < game_state.total_legendary_consumable_drops
+	var can_drop = (
+		connected_to_multiworld() 
+		and game_state.num_existing_legendary_consumables() < game_state.total_legendary_consumable_drops
+	)
 	emit_signal("legendary_crate_drop_status_changed", can_drop)
 
 # API for other scenes to query multiworld state
 func get_num_shop_slots() -> int:
-	return game_state.num_shop_slots()
+		return game_state.num_shop_slots()
 
 # API for other scenes to tell us about in-game events.
 func consumable_spawned():

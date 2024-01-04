@@ -17,34 +17,41 @@ func _ready() -> void:
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_brotato_client = mod_node.brotato_client
 	
-	if RunData.current_wave == 1 and _brotato_client.connected_to_multiworld():
-		# Run started, initialize/reset some values
-		_brotato_client.run_started()
-		var ap_game_data = _brotato_client.game_state
-		ModLoaderLog.debug("Start of run, giving player %d XP and %d gold." % [ap_game_data.starting_xp, ap_game_data.starting_gold], LOG_NAME)
-		
-		RunData.add_xp(ap_game_data.starting_xp)
-		RunData.add_gold(ap_game_data.starting_gold)
-		
-		for gift_tier in _brotato_client.game_state.received_items_by_tier:
-			var num_gifts = _brotato_client.game_state.received_items_by_tier[gift_tier]
-			ModLoaderLog.debug("Giving player %d items of tier %d." % [num_gifts, gift_tier], LOG_NAME)
-			for _i in range(num_gifts):
-				_on_ap_item_received(gift_tier)
+	if _brotato_client.connected_to_multiworld():
+		if RunData.current_wave == 1:
+			# Run started, initialize/reset some values
+			_brotato_client.run_started()
+			var ap_game_data = _brotato_client.game_state
+			ModLoaderLog.debug("Start of AP run, giving player %d XP and %d gold." % 
+				[
+					ap_game_data.starting_xp,
+					ap_game_data.starting_gold
+				],
+				LOG_NAME
+			)
+			
+			RunData.add_xp(ap_game_data.starting_xp)
+			RunData.add_gold(ap_game_data.starting_gold)
+			
+			for gift_tier in _brotato_client.game_state.received_items_by_tier:
+				var num_gifts = _brotato_client.game_state.received_items_by_tier[gift_tier]
+				ModLoaderLog.debug("Giving player %d items of tier %d." % [num_gifts, gift_tier], LOG_NAME)
+				for _i in range(num_gifts):
+					_on_ap_item_received(gift_tier)
 
-		for upgrade_tier in _brotato_client.game_state.received_upgrades_by_tier:
-			var num_upgrades = _brotato_client.game_state.received_upgrades_by_tier[upgrade_tier]
-			ModLoaderLog.debug("Giving player %d upgrades of tier %d." % [num_upgrades, upgrade_tier], LOG_NAME)
-			for _i in range(num_upgrades):
-				_on_ap_upgrade_received(upgrade_tier)
+			for upgrade_tier in _brotato_client.game_state.received_upgrades_by_tier:
+				var num_upgrades = _brotato_client.game_state.received_upgrades_by_tier[upgrade_tier]
+				ModLoaderLog.debug("Giving player %d upgrades of tier %d." % [num_upgrades, upgrade_tier], LOG_NAME)
+				for _i in range(num_upgrades):
+					_on_ap_upgrade_received(upgrade_tier)
 
-	# Need to call after run is started otherwise some game state isn't ready yet.
-	_brotato_client.wave_started()
+		# Need to call after run is started otherwise some game state isn't ready yet.
+		_brotato_client.wave_started()
 
-	var _status = _brotato_client.connect("xp_received", self, "_on_ap_xp_received")
-	_status = _brotato_client.connect("gold_received", self, "_on_ap_gold_received")
-	_status = _brotato_client.connect("item_received", self, "_on_ap_item_received")
-	_status = _brotato_client.connect("upgrade_received", self, "_on_ap_upgrade_received")
+		var _status = _brotato_client.connect("xp_received", self, "_on_ap_xp_received")
+		_status = _brotato_client.connect("gold_received", self, "_on_ap_gold_received")
+		_status = _brotato_client.connect("item_received", self, "_on_ap_item_received")
+		_status = _brotato_client.connect("upgrade_received", self, "_on_ap_upgrade_received")
 
 # Archipelago Item received handlers
 
@@ -89,16 +96,16 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 	_upgrades_to_process.push_back(upgrade_level)
 
 # Base overrides
-
 func spawn_consumables(unit: Unit) -> void:
-	var consumable_count_start = _consumables.size()
-	.spawn_consumables(unit)
-	var consumable_count_after = _consumables.size()
-	var spawned_consumable = consumable_count_after > consumable_count_start
-	if spawned_consumable and _brotato_client.connected_to_multiworld():
-		var spawned_consumable_id = _consumables.back().consumable_data.my_id
-		if spawned_consumable_id == "ap_pickup" or spawned_consumable_id == "ap_legendary_pickup":
-			_brotato_client.consumable_spawned()
+	if _brotato_client.connected_to_multiworld():
+		var consumable_count_start = _consumables.size()
+		.spawn_consumables(unit)
+		var consumable_count_after = _consumables.size()
+		var spawned_consumable = consumable_count_after > consumable_count_start
+		if spawned_consumable:
+			var spawned_consumable_id = _consumables.back().consumable_data.my_id
+			if spawned_consumable_id == "ap_pickup" or spawned_consumable_id == "ap_legendary_pickup":
+				_brotato_client.consumable_spawned()
 
 func on_consumable_picked_up(consumable: Node) -> void:
 	var is_ap_consumable = false
@@ -121,9 +128,11 @@ func on_consumable_picked_up(consumable: Node) -> void:
 
 
 func _on_WaveTimer_timeout() -> void:
-	_brotato_client.wave_won(RunData.current_character.my_id, RunData.current_wave)
+	if _brotato_client.connected_to_multiworld():
+		_brotato_client.wave_won(RunData.current_character.my_id, RunData.current_wave)
 	._on_WaveTimer_timeout()
 
 func apply_run_won():
-	_brotato_client.run_won(RunData.current_character.my_id)
+	if _brotato_client.connected_to_multiworld():
+		_brotato_client.run_won(RunData.current_character.my_id)
 	.apply_run_won()

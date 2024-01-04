@@ -52,13 +52,13 @@ func get_upgrade_data(level: int) -> UpgradeData:
 		return Utils.get_rand_element(_tiers_data[Tier.COMMON][TierData.UPGRADES])
 
 func get_shop_items(wave: int, number: int = NB_SHOP_ITEMS, shop_items: Array = [], locked_items: Array = []) -> Array:
-	ModLoaderLog.debug("Get shop items called with: wave=%d, number=%d, shop_items=%s, locked_items=%s" % [wave, number, shop_items, locked_items], LOG_NAME)
-	var ap_num_shop_slots = _brotato_client.get_num_shop_slots()
-	var num_locked_items = locked_items.size()
-	if num_locked_items > 0:
-		# We're rerolling the shop with some slots locked, make sure we don't accidentally add slots
-		number = min(number, ap_num_shop_slots - num_locked_items)
-	elif number > ap_num_shop_slots:
-		number = ap_num_shop_slots
-	ModLoaderLog.debug("Calling get_shop_items base with number=%d" % number, LOG_NAME)
+	if _brotato_client.connected_to_multiworld():
+		ModLoaderLog.debug("Get shop items called with: wave=%d, number=%d, shop_items=%s, locked_items=%s" % [wave, number, shop_items, locked_items], LOG_NAME)
+		var ap_num_shop_slots = _brotato_client.get_num_shop_slots()
+		var num_locked_items = locked_items.size()
+		if num_locked_items > 0:
+			# We're rerolling the shop with some slots locked, make sure we don't accidentally add slots
+			number = min(number, ap_num_shop_slots - num_locked_items)
+		elif number > ap_num_shop_slots:
+			number = ap_num_shop_slots
 	return .get_shop_items(wave, number, shop_items, locked_items)
