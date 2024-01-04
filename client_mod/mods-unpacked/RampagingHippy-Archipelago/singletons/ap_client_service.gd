@@ -56,6 +56,9 @@ func _ready():
 	# for 64. The other defaults are fine though.
 	_client.set_buffers(256, 1024, 64, 1024)
 	
+	# Always process so we don't disconnect if the game is paused for too long.
+	pause_mode = Node.PAUSE_MODE_PROCESS
+	
 # Public API
 func connect_to_multiworld(multiworld_url: String):
 	if connection_state == State.STATE_OPEN:
