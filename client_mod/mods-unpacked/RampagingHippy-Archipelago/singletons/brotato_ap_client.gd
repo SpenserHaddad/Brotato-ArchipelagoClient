@@ -44,7 +44,7 @@ func _ready():
 	_status = websocket_client.connect("on_connection_refused", self, "_on_connection_refused")
 
 func _on_connection_state_changed(new_state: int):\
-	# ApClientService.State.STATE_CLOSED, can't use directly because of dynamic imports
+	# ApWebSocketConnection.State.STATE_CLOSED, can't use directly because of dynamic imports
 	if new_state == 3:
 		# Reset game data to get a clean slate in case we reconnect
 		ModLoaderLog.debug("Disconnected from multiworld.", LOG_NAME)
@@ -170,7 +170,7 @@ func run_complete_received():
 	game_state.num_wins += 1
 	if game_state.num_wins >= game_state.num_wins_needed and not game_state.goal_completed:
 		game_state.goal_completed = true
-		# 30 = ApClientService.ClientStatus.CLIENT_GOAL
+		# 30 = ApWebSocketConnection.ClientStatus.CLIENT_GOAL
 		websocket_client.status_update(30)
 
 # WebSocket Command received handlers

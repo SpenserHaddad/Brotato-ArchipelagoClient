@@ -10,8 +10,8 @@ onready var _host_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer
 onready var _player_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PlayerEdit"
 onready var _password_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PasswordEdit"
 
-onready var ap_client
-onready var brotato_client
+onready var _ap_websocket_connection
+onready var _ap_client
 
 func init():
 	# Needed to make the scene switch in title_screen_menus happy.
@@ -19,11 +19,11 @@ func init():
 
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
-	ap_client = mod_node.ap_client
-	ap_client.connect("connection_state_changed", self, "_on_connection_state_changed")
-	brotato_client = mod_node.brotato_client
-	brotato_client.connect("on_connection_refused", self, "_on_connection_refused")
-	_on_connection_state_changed(ap_client.connection_state)
+	_ap_websocket_connection = mod_node.ap_websocket_connection
+	_ap_client = mod_node.brotato_ap_client
+	_ap_websocket_connection.connect("connection_state_changed", self, "_on_connection_state_changed")
+	_ap_client.connect("on_connection_refused", self, "_on_connection_refused")
+	_on_connection_state_changed(_ap_websocket_connection.connection_state)
 
 #func _input(_event):
 #	if get_tree().current_scene.name == self.name && Input.is_key_pressed(KEY_ENTER):
@@ -55,9 +55,9 @@ func _on_connection_refused(reasons: Array):
 	var reason_string
 	match reasons[0]:
 		"InvalidSlot":
-			reason_string = "Invalid slot: %s." % brotato_client.player
+			reason_string = "Invalid slot: %s." % _ap_client.player
 		"InvalidGame":
-			reason_string = "Slot for %s is not a Brotato game." % brotato_client.player
+			reason_string = "Slot for %s is not a Brotato game." % _ap_client.player
 		"IncompatibleVersion":
 			reason_string = "Version mismatch."
 		"InvalidPassword":
@@ -70,9 +70,9 @@ func _on_connection_refused(reasons: Array):
 
 func _on_ConnectButton_pressed():
 	var url = _host_edit.text
-	brotato_client.player = _player_edit.text
-	brotato_client.password = _password_edit.text
-	ap_client.connect_to_multiworld(url)
+	_ap_client.player = _player_edit.text
+	_ap_client.password = _password_edit.text
+	_ap_websocket_connection.connect_to_multiworld(url)
 
 
 func _on_BackButton_pressed():
@@ -80,4 +80,4 @@ func _on_BackButton_pressed():
 
 
 func _on_DisconnectButton_pressed():
-	ap_client.disconnect_from_multiworld()
+	_ap_websocket_connection.disconnect_from_multiworld()

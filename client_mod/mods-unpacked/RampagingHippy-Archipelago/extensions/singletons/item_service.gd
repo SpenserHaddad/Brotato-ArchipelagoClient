@@ -6,12 +6,13 @@ var _ap_pickup = preload("res://mods-unpacked/RampagingHippy-Archipelago/content
 var _ap_legendary_pickup = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_legendary_pickup/ap_legendary_pickup.tres")
 onready var _item_box_original
 onready var _legendary_item_box_original
-onready var _brotato_client
+onready var _ap_client
 
 func _ready():
-	_brotato_client = get_node("/root/ModLoader/RampagingHippy-Archipelago").brotato_client
-	var _success = _brotato_client.connect("crate_drop_status_changed", self, "_on_crate_drop_status_changed")
-	_success = _brotato_client.connect("legendary_crate_drop_status_changed", self, "_on_legendary_crate_drop_status_changed")
+	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
+	_ap_client = mod_node.brotato_ap_client
+	var _success = _ap_client.connect("crate_drop_status_changed", self, "_on_crate_drop_status_changed")
+	_success = _ap_client.connect("legendary_crate_drop_status_changed", self, "_on_legendary_crate_drop_status_changed")
 	_item_box_original = item_box
 	_legendary_item_box_original = legendary_item_box
 
@@ -35,7 +36,7 @@ func process_item_box(wave:int, consumable_data: ConsumableData, fixed_tier: int
 			"ap_gift_item_common", "ap_gift_item_uncommon", "ap_gift_item_rare", "ap_gift_item_legendary":
 				var gift_tier = consumable_data.tier
 				ModLoaderLog.debug("Processing gift item of tier %d" % gift_tier, LOG_NAME)
-				var gift_wave = _brotato_client.gift_item_processed(gift_tier)
+				var gift_wave = _ap_client.gift_item_processed(gift_tier)
 				return .process_item_box(gift_wave, consumable_data, gift_tier)
 
 			_:
@@ -52,13 +53,15 @@ func get_upgrade_data(level: int) -> UpgradeData:
 		return Utils.get_rand_element(_tiers_data[Tier.COMMON][TierData.UPGRADES])
 
 func get_shop_items(wave: int, number: int = NB_SHOP_ITEMS, shop_items: Array = [], locked_items: Array = []) -> Array:
-	if _brotato_client.connected_to_multiworld():
+	if _ap_client.connected_to_multiworld():
 		ModLoaderLog.debug("Get shop items called with: wave=%d, number=%d, shop_items=%s, locked_items=%s" % [wave, number, shop_items, locked_items], LOG_NAME)
-		var ap_num_shop_slots = _brotato_client.get_num_shop_slots()
+		var ap_num_shop_slots = _ap_client.get_num_shop_slots()
 		var num_locked_items = locked_items.size()
 		if num_locked_items > 0:
 			# We're rerolling the shop with some slots locked, make sure we don't accidentally add slots
 			number = min(number, ap_num_shop_slots - num_locked_items)
 		elif number > ap_num_shop_slots:
 			number = ap_num_shop_slots
+		ModLoaderLog.debug("Calling get_shop_items base with number=%d" % number, LOG_NAME)
+	
 	return .get_shop_items(wave, number, shop_items, locked_items)

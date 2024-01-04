@@ -1,5 +1,5 @@
 extends Node
-class_name ApClientService
+class_name ApWebSocketConnection
 # Hard-code mod name to avoid cyclical dependency
 var LOG_NAME = "RampagingHippy-Archipelago/AP Client"
 
