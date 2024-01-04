@@ -12,7 +12,10 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
     auto_construct = False
 
     def _run(
-        self, num_characters: int, custom_starting_characters: bool = True, expected_characters: list[str] | None = None
+        self,
+        num_characters: int,
+        custom_starting_characters: bool = True,
+        expected_characters: list[str] | None = None,
     ):
         # Create world with relevant options
         self.options = {

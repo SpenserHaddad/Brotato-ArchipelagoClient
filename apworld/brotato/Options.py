@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from Options import Range, TextChoice, PerGameCommonOptions
+
+from Options import PerGameCommonOptions, Range, TextChoice
 
 from .Constants import (
     MAX_COMMON_UPGRADES,
@@ -58,7 +60,7 @@ class WavesPerCheck(Range):
     # We'd make the start 1, but the number of items sent when the game is released is
     # so large that the resulting ReceivedItems command is bigger than Godot 3.5's
     # hard-coded WebSocket buffer can fit, meaning the engine silently drops it.
-    range_start = 2
+    range_start = 1
     range_end = NUM_WAVES
 
     display_name = "Waves per check"
@@ -160,4 +162,4 @@ class BrotatoOptions(PerGameCommonOptions):
     num_rare_upgrades: NumberRareUpgrades
     num_legendary_upgrades: NumberLegendaryUpgrades
     num_starting_shop_slots: StartingShopSlots
-    # "num_shop_items": NumberShopItems,
+    num_shop_items: NumberShopItems

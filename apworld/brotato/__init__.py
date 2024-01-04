@@ -6,7 +6,6 @@ from typing import Any, Sequence
 from BaseClasses import MultiWorld, Tutorial
 from worlds.AutoWorld import WebWorld, World
 
-from .Options import BrotatoOptions
 from .Constants import CHARACTERS, DEFAULT_CHARACTERS, MAX_SHOP_SLOTS, NUM_WAVES
 from .Items import (
     BrotatoItem,
@@ -17,6 +16,7 @@ from .Items import (
     item_table,
 )
 from .Locations import location_name_groups, location_name_to_id
+from .Options import BrotatoOptions
 from .Regions import create_regions
 from .Rules import BrotatoLogic
 
@@ -67,9 +67,6 @@ class BrotatoWorld(World):
     def __init__(self, world: MultiWorld, player: int):
         super().__init__(world, player)
 
-    def _get_option_value(self, option: str) -> Any:
-        return getattr(self.multiworld, option)[self.player]
-
     def create_item(self, name: str | ItemName) -> BrotatoItem:
         if isinstance(name, ItemName):
             name = name.value
@@ -83,7 +80,7 @@ class BrotatoWorld(World):
         if character_option == 0:  # Default
             self._starting_characters = list(DEFAULT_CHARACTERS)
         else:
-            num_starting_characters = self._get_option_value("num_starting_characters")
+            num_starting_characters = self.options.num_starting_characters
             self._starting_characters = self.random.sample(CHARACTERS, num_starting_characters)
 
     def set_rules(self):
@@ -93,7 +90,7 @@ class BrotatoWorld(World):
         )
 
     def create_regions(self) -> None:
-        create_regions(self.multiworld, self.player, self.waves_with_checks)
+        create_regions(self.multiworld, self.player, self.options, self.waves_with_checks)
 
     def create_items(self):
         item_names: list[ItemName | str] = []
@@ -129,9 +126,8 @@ class BrotatoWorld(World):
         num_shop_slot_items = max(MAX_SHOP_SLOTS - num_starting_shop_slots, 0)
         item_names += [ItemName.SHOP_SLOT] * num_shop_slot_items
 
-        # num_shop_items = self._get_option_value("num_shop_items")
-        # for _ in range(num_shop_items):
-        #     pass
+        for _ in range(self.options.num_shop_items):
+            pass
 
         itempool = [self.create_item(item_name) for item_name in item_names]
 
