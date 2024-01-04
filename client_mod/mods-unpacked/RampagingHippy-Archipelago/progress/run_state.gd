@@ -8,6 +8,7 @@ class_name ApRunState
 var ap_consumables_not_picked_up = 0
 var ap_legendary_consumables_not_picked_up = 0
 
+# Track items received from the server so we can process them at the end of a wave.
 var gift_item_count_by_tier: Dictionary = {
 	Tier.COMMON: 0,
 	Tier.UNCOMMON: 0,
