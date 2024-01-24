@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Sequence
+from typing import Callable, Sequence
 
-from BaseClasses import MultiWorld, Region
+from BaseClasses import CollectionState, MultiWorld, Region
+from worlds.generic import Rules
 
 from .Constants import (
     CHARACTERS,
@@ -40,13 +41,10 @@ def create_regions(multiworld: MultiWorld, player: int, options: BrotatoOptions,
     character_regions = []
     for character in CHARACTERS:
         char_in_game_region = Region(f"In-Game ({character})", player, multiworld)
+        has_character_rule = _create_char_region_access_rule(player, character)
         char_in_game_locations = character_specific_locations[character]
         char_in_game_region.add_locations(char_in_game_locations, location_type=BrotatoLocation)
 
-        def char_region_access_rule(state) -> bool:
-            return BrotatoLogic._brotato_has_character(state, player, character)
-
-        # char_region_access_rule = lambda state: BrotatoLogic._brotato_has_character(state, player, character)
         char_wave_drop_location_names = [
             WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=character) for w in waves_with_drops
         ]
@@ -57,12 +55,19 @@ def create_regions(multiworld: MultiWorld, player: int, options: BrotatoOptions,
         menu_region.connect(
             char_in_game_region,
             f"Start Game ({character})",
-            rule=char_region_access_rule,
+            rule=has_character_rule,
         )
 
         # Crates can be gotten with any character
         char_in_game_region.connect(crate_drop_region, f"Drop crates for {character}")
-        crate_drop_region.connect(char_in_game_region, f"Exit drop crates for {character}")
+        crate_drop_region.connect(char_in_game_region, f"Exit drop crates for {character}", rule=has_character_rule)
         character_regions.append(char_in_game_region)
 
     multiworld.regions += character_regions
+
+
+def _create_char_region_access_rule(player: int, character: str) -> Callable[[CollectionState], bool]:
+    def char_region_access_rule(state: CollectionState):
+        return BrotatoLogic._brotato_has_character(state, player, character)
+
+    return char_region_access_rule
