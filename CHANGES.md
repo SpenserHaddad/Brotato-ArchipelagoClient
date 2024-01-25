@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Fix bug in rules generation where all locations were viewed accessible from the start.
+- Fix bug where character accessed rule checked if Demon was unlocked instead of the
+  relevant character.
+- Fix progression items being placed in legendary loot crate drop locations.
+  there.
+  - Note: Unlike the intended change in 0.0.4, the location type is back to `DEFAULT`,
+    and the apworld uses a manual `item_rule` for now that prevents `progression` and
+    `progression_skip_balancing` items from being placed at these locations.. This may
+    be changed in the future, however currently marking the locations as `EXCLUDED`
+    causes issues in world generation.
+
+
 ## [0.0.4]
 
 ### Fixed
