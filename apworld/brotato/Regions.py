@@ -2,20 +2,16 @@ from __future__ import annotations
 
 from typing import Callable, Sequence
 
-from BaseClasses import CollectionState, MultiWorld, Region
-from worlds.generic import Rules
+from BaseClasses import CollectionState, Item, ItemClassification, MultiWorld, Region
 
 from .Constants import (
     CHARACTERS,
     CRATE_DROP_LOCATION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
+    RUN_COMPLETE_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
-from .Locations import (
-    BrotatoLocation,
-    character_specific_locations,
-    location_name_to_id,
-)
+from .Locations import location_table
 from .Options import BrotatoOptions
 from .Rules import BrotatoLogic
 
@@ -24,44 +20,50 @@ def create_regions(multiworld: MultiWorld, player: int, options: BrotatoOptions,
     menu_region = Region("Menu", player, multiworld)
     crate_drop_region = Region("Loot Crates", player, multiworld)
 
-    crate_drop_locs_name_to_id = {}
     for i in range(1, options.num_common_crate_drops + 1):
-        loc_name = CRATE_DROP_LOCATION_TEMPLATE.format(num=i)
-        crate_drop_locs_name_to_id[loc_name] = location_name_to_id[loc_name]
+        location_name = CRATE_DROP_LOCATION_TEMPLATE.format(num=i)
+        crate_drop_region.locations.append(location_table[location_name].to_location(player, parent=crate_drop_region))
+
+    def legendary_loot_crate_item_rule(item: Item) -> bool:
+        return item.classification not in (
+            ItemClassification.progression,
+            ItemClassification.progression_skip_balancing,
+        )
 
     for i in range(1, options.num_legendary_crate_drops + 1):
-        loc_name = LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE.format(num=i)
-        crate_drop_locs_name_to_id[loc_name] = location_name_to_id[loc_name]
+        location_name = LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE.format(num=i)
+        legendary_crate_drop_location = location_table[location_name].to_location(player, parent=crate_drop_region)
+        legendary_crate_drop_location.item_rule = legendary_loot_crate_item_rule
+        crate_drop_region.locations.append(legendary_crate_drop_location)
 
-    crate_drop_region.add_locations(crate_drop_locs_name_to_id, location_type=BrotatoLocation)
     menu_region.connect(crate_drop_region, "Drop Loot Crates")
 
     multiworld.regions += [menu_region, crate_drop_region]
 
     character_regions = []
     for character in CHARACTERS:
-        char_in_game_region = Region(f"In-Game ({character})", player, multiworld)
+        character_region = Region(f"In-Game ({character})", player, multiworld)
         has_character_rule = _create_char_region_access_rule(player, character)
-        char_in_game_locations = character_specific_locations[character]
-        char_in_game_region.add_locations(char_in_game_locations, location_type=BrotatoLocation)
+        character_run_won_location = location_table[RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)]
+        character_region.locations.append(character_run_won_location.to_location(player, parent=character_region))
 
         char_wave_drop_location_names = [
             WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=character) for w in waves_with_drops
         ]
-        char_in_game_region.add_locations(
-            {loc: location_name_to_id[loc] for loc in char_wave_drop_location_names},
-            location_type=BrotatoLocation,
+        character_region.locations.extend(
+            location_table[loc].to_location(player, parent=character_region) for loc in char_wave_drop_location_names
         )
         menu_region.connect(
-            char_in_game_region,
+            character_region,
             f"Start Game ({character})",
             rule=has_character_rule,
         )
 
-        # Crates can be gotten with any character
-        char_in_game_region.connect(crate_drop_region, f"Drop crates for {character}")
-        crate_drop_region.connect(char_in_game_region, f"Exit drop crates for {character}", rule=has_character_rule)
-        character_regions.append(char_in_game_region)
+        # Crates can be gotten with any character...
+        character_region.connect(crate_drop_region, f"Drop crates for {character}")
+        # ...but we need to make sure you don't go to another character's in-game before you have them.
+        crate_drop_region.connect(character_region, f"Exit drop crates for {character}", rule=has_character_rule)
+        character_regions.append(character_region)
 
     multiworld.regions += character_regions
 
