@@ -24,6 +24,8 @@ def create_regions(multiworld: MultiWorld, player: int, options: BrotatoOptions,
         location_name = CRATE_DROP_LOCATION_TEMPLATE.format(num=i)
         crate_drop_region.locations.append(location_table[location_name].to_location(player, parent=crate_drop_region))
 
+    # Prevent progression items from being placed at legendary loot crate drops.
+    # TODO: Ideally we would make the locations EXCLUDED, but that causes fill problems.
     def legendary_loot_crate_item_rule(item: Item) -> bool:
         return item.classification not in (
             ItemClassification.progression,
