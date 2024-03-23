@@ -11,7 +11,7 @@ enum State {
 # Hard-code mod name to avoid cyclical dependency
 const LOG_NAME = "RampagingHippy-Archipelago/ap_websocket_connection"
 const _DEFAULT_PORT = 38281
-const _CONNECT_TIMEOUT = 5 # 8/3 # Seconds
+const _CONNECT_TIMEOUT_SECONDS = 5
 
 # The client handles connecting to the server, and the peer handles sending/receiving
 # data after connecting. We set the peer in the "_on_connection_established" callback,
@@ -255,7 +255,7 @@ func _init_client():
 	self._peer = null
 
 func _make_connection_timeout(for_url: String):
-	yield (get_tree().create_timer(_CONNECT_TIMEOUT), "timeout")
+	yield (get_tree().create_timer(_CONNECT_TIMEOUT_SECONDS), "timeout")
 	if _waiting_to_connect_to_server == for_url:
 		# We took to long, stop waiting and tell the called we failed.
 		_waiting_to_connect_to_server = false
