@@ -101,7 +101,7 @@ func connect_to_server(server: String) -> bool:
 	
 	return wss_success or ws_success
 
-func connected_to_multiworld() -> bool:
+func connected_to_server() -> bool:
 	return connection_state == State.STATE_OPEN
 	
 func disconnect_from_server():
