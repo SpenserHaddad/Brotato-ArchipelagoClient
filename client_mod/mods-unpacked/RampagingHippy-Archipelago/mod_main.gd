@@ -7,6 +7,7 @@ const MOD_NAME = "RampagingHippy-Archipelago"
 const LOG_NAME = MOD_NAME + "/mod_main"
 export onready var ap_websocket_connection
 export onready var brotato_ap_client
+export onready var ap_player_session
 
 func _init(_modLoader = ModLoader):
 	ModLoaderLog.info("Init", LOG_NAME)
@@ -40,6 +41,12 @@ func _ready()->void:
 	var _ap_websocket_connection_namespace = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_websocket_connection.gd")
 	ap_websocket_connection = _ap_websocket_connection_namespace.new()
 	self.add_child(ap_websocket_connection)
+
+	var _ap_player_session_namespace = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_player_session.gd")
+	ap_player_session = _ap_player_session_namespace.new(ap_websocket_connection)
+	ap_player_session.game = "Brotato"
+	self.add_child(ap_player_session)
+	ModLoaderLog.debug("Added AP session", LOG_NAME)
 
 	var _brotato_ap_client_namespace = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/brotato_ap_client.gd")
 	brotato_ap_client = _brotato_ap_client_namespace.new(ap_websocket_connection)

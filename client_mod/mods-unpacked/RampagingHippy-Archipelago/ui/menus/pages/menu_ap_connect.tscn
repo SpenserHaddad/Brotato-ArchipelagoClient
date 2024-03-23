@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://resources/themes/base_theme.tres" type="Theme" id=1]
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/menu_ap_connect.gd" type="Script" id=2]
 [ext_resource path="res://ui/menus/global/my_menu_button.gd" type="Script" id=3]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_disconnected.png" type="Texture" id=4]
 
 [node name="MarginContainer" type="MarginContainer"]
 anchor_left = 0.3
@@ -18,9 +19,9 @@ custom_constants/separation = 50
 alignment = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
-margin_top = 271.0
+margin_top = 149.0
 margin_right = 768.0
-margin_bottom = 483.0
+margin_bottom = 361.0
 
 [node name="GridContainer" type="GridContainer" parent="VBoxContainer/CenterContainer"]
 margin_left = 15.0
@@ -43,7 +44,7 @@ margin_bottom = 54.0
 rect_min_size = Vector2( 500, 0 )
 focus_next = NodePath("../PlayerEdit")
 focus_previous = NodePath("../../../BackButton")
-text = "archipelago.gg:38281"
+text = "localhost:38281"
 clear_button_enabled = true
 placeholder_text = "IP/Address:Port"
 caret_blink = true
@@ -62,7 +63,7 @@ margin_right = 738.0
 margin_bottom = 133.0
 focus_next = NodePath("../PasswordEdit")
 focus_previous = NodePath("../HostEdit")
-text = ""
+text = "BrotatoDeathLink"
 clear_button_enabled = true
 placeholder_text = "Player Name"
 caret_blink = true
@@ -88,35 +89,34 @@ caret_blink_speed = 0.5
 
 [node name="ConnectButton" type="Button" parent="VBoxContainer"]
 unique_name_in_owner = true
-margin_top = 533.0
+margin_top = 411.0
 margin_right = 768.0
-margin_bottom = 598.0
+margin_bottom = 476.0
 focus_next = NodePath("../BackButton")
 focus_previous = NodePath("../CenterContainer/GridContainer/PasswordEdit")
 text = "Connect"
 
 [node name="DisconnectButton" type="Button" parent="VBoxContainer"]
-visible = false
-margin_top = 591.0
+margin_top = 526.0
 margin_right = 768.0
-margin_bottom = 656.0
+margin_bottom = 591.0
 focus_next = NodePath("../CenterContainer/GridContainer/HostEdit")
 focus_previous = NodePath("../CenterContainer/GridContainer/PasswordEdit")
 text = "Disconnect"
 
 [node name="BackButton" type="Button" parent="VBoxContainer"]
-margin_top = 648.0
+margin_top = 641.0
 margin_right = 768.0
-margin_bottom = 713.0
+margin_bottom = 706.0
 focus_next = NodePath("../CenterContainer/GridContainer/HostEdit")
 focus_previous = NodePath("../ConnectButton")
 text = "MENU_BACK"
 script = ExtResource( 3 )
 
 [node name="ConnectStatusLabel" type="Label" parent="VBoxContainer"]
-margin_top = 763.0
+margin_top = 756.0
 margin_right = 768.0
-margin_bottom = 808.0
+margin_bottom = 801.0
 text = "Connection Status"
 align = 1
 
@@ -125,8 +125,17 @@ visible = false
 margin_top = 811.0
 margin_right = 768.0
 margin_bottom = 856.0
+custom_colors/font_color = Color( 0.756863, 0, 0, 1 )
 text = "Connection Error"
 align = 1
+
+[node name="StatusTexture" type="TextureRect" parent="VBoxContainer"]
+margin_top = 851.0
+margin_right = 768.0
+margin_bottom = 931.0
+rect_pivot_offset = Vector2( 384, 40 )
+texture = ExtResource( 4 )
+stretch_mode = 4
 
 [connection signal="pressed" from="VBoxContainer/ConnectButton" to="." method="_on_ConnectButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/DisconnectButton" to="." method="_on_DisconnectButton_pressed"]

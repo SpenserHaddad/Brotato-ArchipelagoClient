@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Added AP logo image to the connection menu to show the state of the connection.
+- Connection menu now shows an error message when a connection error occurs.
+
+### Fixed
+- Connection to server should properly handle connection errors now.
+- Connection to server now times out if it can't reach the server.
+
+### Changed
+- Connecting to multiworld no longer needs to reconnect to the server if already connected.
+  - This makes the process more closely follow the [Archipelago Connection
+    Handshake](https://github.com/ArchipelagoMW/Archipelago/blob/main/docs/network%20protocol.md#archipelago-connection-handshake).
+- (Internal) - Split out WebSocket connection from multiworld connection, since both were
+  getting to be too complex for a single class.
+
 ## [0.0.5]
 
 ### Fixed
