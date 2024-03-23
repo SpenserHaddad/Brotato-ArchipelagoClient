@@ -86,7 +86,7 @@ func _connected_or_connection_refused_received(message: Dictionary):
 	emit_signal("_received_connect_response", message)
 
 func connect_to_multiworld(password: String="", get_data_pacakge: bool=true) -> int:
-	if websocket_client.connected_to_multiworld():
+	if websocket_client.connected_to_server() and self.connect_state == ConnectState.CONNECTED_TO_MULTIWORLD:
 		return ConnectResult.ALREADY_CONNECTED
 	elif player.strip_edges().empty():
 		return ConnectResult.PLAYER_NOT_SET
@@ -102,7 +102,7 @@ func connect_to_multiworld(password: String="", get_data_pacakge: bool=true) -> 
 
 	# 1. Client establishes WebSocket connection to the Archipelago server.
 	# Skip if we're already connected to a server
-	if self.connect_state != ConnectState.CONNECTED_TO_SERVER:
+	if not websocket_client.connected_to_server():
 		var funcstate = websocket_client.connect_to_server(server)
 		var server_connect_result = yield (funcstate, "completed")
 
