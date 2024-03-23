@@ -3,15 +3,14 @@ class_name BrotatoApClient
 
 const LOG_NAME = "RampagingHippy-Archipelago/Brotato Client"
 
-const _constants_namespace = preload("./constants.gd")
-const _game_state_namespace = preload("../progress/game_state.gd")
-const _AP_TYPES = preload("./ap_types.gd")
+const _constants_namespace = preload ("./constants.gd")
+const _game_state_namespace = preload ("../progress/game_state.gd")
+const _AP_TYPES = preload ("./ap_types.gd")
 const GAME: String = "Brotato"
 
 onready var ap_session
 
-
-const DataPackage = preload("./data_package.gd")
+const DataPackage = preload ("./data_package.gd")
 
 var constants = _constants_namespace.new()
 var game_state
@@ -33,17 +32,11 @@ signal on_connection_refused(reasons)
 
 func _init(ap_session_):
 	self.ap_session = ap_session_
-	# var _success = websocket_client.connect("connection_state_changed", self, "_on_connection_state_changed")
 	ModLoaderLog.debug("Brotato AP adapter initialized", LOG_NAME)
 
 func _ready():
 	var _status: int
 	_status = ap_session.connect("connected_to_multiworld", self, "_on_connected_to_multiworld")
-	# _status = websocket_client.connect("on_room_info", self, "_on_room_info")
-	# _status = websocket_client.connect("on_connected", self, "_on_connected")
-	# _status = websocket_client.connect("on_data_package", self, "_on_data_package")
-	# _status = websocket_client.connect("on_received_items", self, "_on_received_items")
-	# _status = websocket_client.connect("on_connection_refused", self, "_on_connection_refused")
 
 func _on_connection_state_changed(new_state: int):
 	# ApWebSocketConnection.State.STATE_CLOSED, can't use directly because of dynamic imports
@@ -59,7 +52,7 @@ func connected_to_multiworld() -> bool:
 # Methods to check AP game state and send updates to the actual game.
 func _update_can_drop_consumable():
 	ModLoaderLog.debug(
-					"Consumable drop status: picked up: %d, on ground: %d, total: %d." % 
+					"Consumable drop status: picked up: %d, on ground: %d, total: %d." %
 					[
 						game_state.num_consumables_picked_up,
 						game_state.run_state.ap_consumables_not_picked_up,
@@ -67,14 +60,14 @@ func _update_can_drop_consumable():
 					],
 					LOG_NAME)
 	var can_drop = (
-		connected_to_multiworld() 
+		connected_to_multiworld()
 		and game_state.num_existing_consumables() < game_state.total_consumable_drops
 	)
 	emit_signal("crate_drop_status_changed", can_drop)
 
 func _update_can_drop_legendary_consumable():
 	var can_drop = (
-		connected_to_multiworld() 
+		connected_to_multiworld()
 		and game_state.num_existing_legendary_consumables() < game_state.total_legendary_consumable_drops
 	)
 	emit_signal("legendary_crate_drop_status_changed", can_drop)
@@ -168,24 +161,12 @@ func run_won(character_id: String):
 		var event_id = _data_package.location_name_to_id[event_name]
 		ap_session.check_location(location_id)
 		ap_session.check_location(event_id)
-		# websocket_client.send_location_checks([location_id, event_id])
 
 func run_complete_received():
 	game_state.num_wins += 1
 	if game_state.num_wins >= game_state.num_wins_needed and not game_state.goal_completed:
 		game_state.goal_completed = true
-		# 30 = ApWebSocketConnection.ClientStatus.CLIENT_GOAL
 		ap_session.set_status(_AP_TYPES.ClientStatus.CLIENT_GOAL)
-
-# WebSocket Command received handlers
-# func _on_room_info(_room_info):
-# 	websocket_client.get_data_package(["Brotato"])
-
-# func _on_connection_refused(command):
-# 	var errors = command["errors"]
-# 	var error_str = ", ".join(PoolStringArray(errors))
-# 	ModLoaderLog.warning("Connection refused: %s" % error_str, LOG_NAME)
-# 	emit_signal("on_connection_refused", errors)
 
 func _on_connected_to_multiworld(command):
 	var location_groups: DataPackage.BrotatoLocationGroups = _data_package.location_groups
@@ -257,22 +238,3 @@ func _on_received_items(command):
 			run_complete_received()
 		else:
 			ModLoaderLog.warning("No handler for item defined: %s." % item_name, LOG_NAME)
-
-# func connect_to_multiworld(url: String, player: String, password: String) -> int:
-# 	var funcstate = websocket_client.connect_to_server(url)
-# 	var server_connect_result = yield(funcstate, "completed")
-	
-# 	ModLoaderLog.debug("Connection status: %s" % connect_success, LOG_NAME)
-
-# 	if server_connect_result:
-# 		# Failed to connect to server, bail out
-# 		return server_connect_result
-	
-# 	websocket_client.send_connect(GAME, player, password)
-# 	return connect_success
-
-#func _on_data_package(received_data_package):
-#	ModLoaderLog.debug("Got the data package", LOG_NAME)
-#	var data_package_info = received_data_package["data"]["games"][GAME]
-#	_data_package = DataPackage.BrotatoDataPackage.from_data_package(data_package_info)
-#	websocket_client.send_connect(GAME, player, password)
