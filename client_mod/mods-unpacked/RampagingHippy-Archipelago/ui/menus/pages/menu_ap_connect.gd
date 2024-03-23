@@ -2,6 +2,10 @@ extends MarginContainer
 
 signal back_button_pressed
 
+var _ap_icon_connected = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_connected.png")
+var _ap_icon_disconnected = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_disconnected.png")
+var _ap_icon_error =  preload("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_error.png")
+
 onready var _connect_button: Button = $"VBoxContainer/ConnectButton"
 onready var _disconnect_button: Button = $"VBoxContainer/DisconnectButton"
 onready var _connect_status_label: Label = $"VBoxContainer/ConnectStatusLabel"
@@ -9,8 +13,13 @@ onready var _connect_error_label: Label = $"VBoxContainer/ConnectionErrorLabel"
 onready var _host_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/HostEdit"
 onready var _player_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PlayerEdit"
 onready var _password_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PasswordEdit"
+onready var _status_texture: TextureRect = $"VBoxContainer/StatusTexture"
 
 onready var _ap_session
+
+const _MAX_ANGLE_DEGREES = 360
+const _STATUS_TEXTURE_ROTATION_SPEED_DEGREES_PER_SECOND = 360
+var _animate_status_texture: bool = false
 
 func init():
 	# Needed to make the scene switch in title_screen_menus happy.
@@ -18,8 +27,10 @@ func init():
 
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
+	
 	_ap_session = mod_node.ap_player_session
 	_ap_session.connect("connection_state_changed", self, "_on_connection_state_changed")
+	
 
 #func _input(_event):
 #	if get_tree().current_scene.name == self.name && Input.is_key_pressed(KEY_ENTER):
@@ -64,6 +75,19 @@ func _on_connection_state_changed(new_state: int, error: int=0):
 	if _disconnect_button.disabled and _disconnect_button.has_focus():
 		_disconnect_button.release_focus()
 
+	if new_state == ApPlayerSession.ConnectState.CONNECTED_TO_MULTIWORLD:
+		_status_texture.texture = _ap_icon_connected
+	elif error != 0:
+		_status_texture.texture = _ap_icon_error
+	else:
+		_status_texture.texture = _ap_icon_disconnected
+		
+	if new_state == ApPlayerSession.ConnectState.CONNECTING:
+		_animate_status_texture = true
+	else:
+		_animate_status_texture = false
+		_status_texture.rect_rotation = 0
+	
 	if error != 0:
 		_set_error(error)
 	else:
@@ -106,7 +130,7 @@ func _clear_error():
 func _on_ConnectButton_pressed():
 	_ap_session.server = _host_edit.text
 	_ap_session.player = _player_edit.text
-
+ 
 	# Fire and forget this coroutine call, signal handlers will take care of the rest.
 	_ap_session.connect_to_multiworld(_password_edit.text)
 
@@ -115,3 +139,18 @@ func _on_BackButton_pressed():
 
 func _on_DisconnectButton_pressed():
 	_ap_session.disconnect_from_multiworld()
+
+func _reset_status_texture():
+	_status_texture.set_rotation(0)
+
+func _process(delta):
+	if _animate_status_texture:
+		# Set status texture to pivot around its center instead of its top-left corner.
+		# Do this every frame in case the screen size changes.
+		_status_texture.rect_pivot_offset = _status_texture.rect_size / 2
+		var new_angle = _status_texture.rect_rotation + (delta * _STATUS_TEXTURE_ROTATION_SPEED_DEGREES_PER_SECOND)
+		if new_angle > _MAX_ANGLE_DEGREES:
+			# Rotation goes from -360 to 360 degrees
+			new_angle -= _MAX_ANGLE_DEGREES * 2
+		_status_texture.rect_rotation = new_angle
+	
