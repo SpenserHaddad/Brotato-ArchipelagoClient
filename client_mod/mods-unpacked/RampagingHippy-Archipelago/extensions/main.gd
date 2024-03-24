@@ -2,12 +2,12 @@ extends "res://main.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/main"
 
-var _ap_gift_common = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_common.tres")
-var _ap_gift_uncommon = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_uncommon.tres")
-var _ap_gift_rare = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_rare.tres")
-var _ap_gift_legendary = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_legendary.tres")
+var _ap_gift_common = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_common.tres")
+var _ap_gift_uncommon = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_uncommon.tres")
+var _ap_gift_rare = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_rare.tres")
+var _ap_gift_legendary = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_legendary.tres")
 
-export (Resource) var ap_upgrade_to_process_icon = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap_upgrade_icon.png")
+export(Resource) var ap_upgrade_to_process_icon = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_upgrade_icon.png")
 
 # Extensions
 var _drop_ap_pickup = true;
@@ -18,11 +18,11 @@ func _ready() -> void:
 	_ap_client = mod_node.brotato_ap_client
 	
 	if _ap_client.connected_to_multiworld():
-		if RunData.current_wave == 1:
+		if RunData.current_wave == DebugService.starting_wave:
 			# Run started, initialize/reset some values
 			_ap_client.run_started()
 			var ap_game_data = _ap_client.game_state
-			ModLoaderLog.debug("Start of AP run, giving player %d XP and %d gold." % 
+			ModLoaderLog.debug("Start of AP run, giving player %d XP and %d gold." %
 				[
 					ap_game_data.starting_xp,
 					ap_game_data.starting_gold
@@ -126,7 +126,6 @@ func on_consumable_picked_up(consumable: Node) -> void:
 			RunData.add_gold(RunData.effects["item_box_gold"])
 			RunData.tracked_item_effects["item_bag"] += RunData.effects["item_box_gold"]
 	.on_consumable_picked_up(consumable)
-
 
 func _on_WaveTimer_timeout() -> void:
 	if _ap_client.connected_to_multiworld():
