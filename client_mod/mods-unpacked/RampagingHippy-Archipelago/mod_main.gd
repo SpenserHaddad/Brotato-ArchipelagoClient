@@ -9,7 +9,7 @@ export onready var ap_websocket_connection
 export onready var brotato_ap_client
 export onready var ap_player_session
 
-func _init(_modLoader = ModLoader):
+func _init(_modLoader=ModLoader):
 	ModLoaderLog.info("Init", LOG_NAME)
 
 	var dir = ModLoaderMod.get_unpacked_dir() + MOD_NAME + "/"
@@ -29,9 +29,8 @@ func _init(_modLoader = ModLoader):
 
 	# Add translations
 	ModLoaderMod.add_translation(dir + "translations/modname.en.translation")
-	
 
-func _ready()->void:
+func _ready() -> void:
 	# TODO: Proper translations
 	ModLoaderLog.info(str("Translation Demo: ", tr("MODNAME_READY_TEXT")), LOG_NAME)
 	ModLoaderLog.success("Loaded", LOG_NAME)
@@ -49,7 +48,7 @@ func _ready()->void:
 	ModLoaderLog.debug("Added AP session", LOG_NAME)
 
 	var _brotato_ap_client_namespace = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/brotato_ap_client.gd")
-	brotato_ap_client = _brotato_ap_client_namespace.new(ap_websocket_connection)
+	brotato_ap_client = _brotato_ap_client_namespace.new(ap_player_session)
 	self.add_child(brotato_ap_client)
 	ModLoaderLog.debug("Added AP client", LOG_NAME)
 
