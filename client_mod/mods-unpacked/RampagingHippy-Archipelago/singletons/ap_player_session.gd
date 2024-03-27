@@ -74,6 +74,7 @@ var data_package: ApDataPackage
 signal _received_connect_response(message)
 signal connection_state_changed(state, error)
 signal item_received(item_name, item)
+signal data_storage_updated(key, new_value, original_value)
 
 func _init(websocket_client_):
 	self.websocket_client = websocket_client_
@@ -81,6 +82,8 @@ func _init(websocket_client_):
 func _ready():
 	var _status: int
 	_status = websocket_client.connect("on_received_items", self, "_on_received_items")
+	_status = websocket_client.connect("on_set_reply", self, "_on_set_reply")
+	_status = websocket_client.connect("on_retrieved", self, "_on_retrieved")
 
 func _connected_or_connection_refused_received(message: Dictionary):
 	emit_signal("_received_connect_response", message)
@@ -124,7 +127,8 @@ func connect_to_multiworld(password: String="", get_data_pacakge: bool=true) -> 
 			data_package = ApDataPackage.new(data_package_message["data"]["games"][self.game])
 
 	# 5. Client sends Connect packet in order to authenticate with the server.
-	# 6. Server validates the client's packet and responds with Connected or ConnectionRefused.
+	# 6. Server validates the client's packet and responds with Connected or
+	#    ConnectionRefused.
 
 	# Wait for the first response the server sends back
 	var _result = websocket_client.connect(
@@ -173,8 +177,10 @@ func connect_to_multiworld(password: String="", get_data_pacakge: bool=true) -> 
 	self.hint_points = connect_response["hint_points"]
 
 	# The last two steps are handled by signal handlers and other classes.
-	# 7. Server may send ReceivedItems to the client, in the case that the client is missing items that are queued up for it.
-	# 8. Server sends PrintJSON to all players to notify them of the new client connection.
+	# 7. Server may send ReceivedItems to the client, in the case that the client is
+	#    missing items that are queued up for it.
+	# 8. Server sends PrintJSON to all players to notify them of the new client
+	#    connection.
 
 	_set_connection_state(ConnectState.CONNECTED_TO_MULTIWORLD)
 	return ConnectResult.SUCCESS
@@ -197,6 +203,25 @@ func check_location(location_id: int):
 	# TODO: allow name or id?
 	websocket_client.send_location_checks([location_id])
 
+func get_value(keys: Array):
+	websocket_client.get_value(keys)
+
+func set_notify(keys: Array):
+	websocket_client.set_notify(keys)
+
+func set_value(key: String, operations, values, default=null, want_reply: bool=false):
+	var ap_ops = Array()
+	# Shorthand to allow more concise single operation argument
+	if not (operations is Array):
+		# TODO: Check values as well? Hard because update operation takes a dict value.
+		operations = [operations]
+		values = [values]
+	for i in range(operations.size()):
+		var operation_name = _AP_TYPES.data_storage_operation_to_name[operations[i]]
+		var operation_obj = {"operation": operation_name, "value": values[i]}
+		ap_ops.append(operation_obj)
+	websocket_client.set_value(key, default, want_reply, ap_ops)
+
 func _on_received_items(command):
 	# TODO: update missing and checked locations?
 	var items = command["items"]
@@ -205,3 +230,20 @@ func _on_received_items(command):
 		if self.data_package:
 			item_name = data_package.item_id_to_name[item["item"]]
 		emit_signal("item_received", item_name, item)
+
+func _on_retrieved(command):
+	# TODO: Custom additional args
+	for key in command["keys"]:
+		emit_signal(
+			"data_storage_updated",
+			key,
+			command["keys"][key]
+		)
+
+func _on_set_reply(command):
+	emit_signal(
+		"data_storage_updated",
+		command["key"],
+		command["value"],
+		command["original_value"]
+	)
