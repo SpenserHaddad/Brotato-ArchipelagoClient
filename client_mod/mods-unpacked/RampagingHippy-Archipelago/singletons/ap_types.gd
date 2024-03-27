@@ -30,6 +30,49 @@ enum ClientStatus {
 	CLIENT_GOAL = 30
 }
 
+enum DataStorageOperationType {
+	REPLACE = 0
+	DEFAULT = 1
+	ADD = 2
+	MUL = 3
+	POW = 4
+	MOD = 5
+	FLOOR = 6
+	CEIL = 7
+	MAX = 8
+	MIN = 9
+	AND = 10
+	OR = 11
+	XOR = 12
+	LEFT_SHIFT = 13
+	RIGHT_SHIFT = 14
+	REMOVE = 15
+	POP = 16
+	UPDATE = 17
+
+}
+
+const data_storage_operation_to_name = {
+	DataStorageOperationType.REPLACE: "replace",
+	DataStorageOperationType.DEFAULT: "default",
+	DataStorageOperationType.ADD: "add",
+	DataStorageOperationType.MUL: "mul",
+	DataStorageOperationType.POW: "pow",
+	DataStorageOperationType.MOD: "mod",
+	DataStorageOperationType.FLOOR: "floor",
+	DataStorageOperationType.CEIL: "ceil",
+	DataStorageOperationType.MAX: "max",
+	DataStorageOperationType.MIN: "min",
+	DataStorageOperationType.AND: "and",
+	DataStorageOperationType.OR: "or",
+	DataStorageOperationType.XOR: "xor",
+	DataStorageOperationType.LEFT_SHIFT: "left_shift",
+	DataStorageOperationType.RIGHT_SHIFT: "right_shift",
+	DataStorageOperationType.REMOVE: "remove",
+	DataStorageOperationType.POP: "pop",
+	DataStorageOperationType.UPDATE: "update",
+}
+
 class NetworkVersion:
 	var major: int
 	var minor: int
@@ -42,7 +85,6 @@ class NetworkVersion:
 		network_version.build = data["build"]
 
 		return network_version
-
 
 class NetworkPlayer:
 	var team: int
@@ -182,7 +224,7 @@ class Bounced:
 	var data: Dictionary
 
 class InvalidPacket:
-	var type : String
+	var type: String
 	var original_cmd: String
 	var text: String
 
