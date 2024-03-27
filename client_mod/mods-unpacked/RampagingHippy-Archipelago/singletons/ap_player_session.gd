@@ -53,7 +53,7 @@ class ApDataPackage:
 			var location_id = location_name_to_id[location_name]
 			location_id_to_name[location_id] = location_name
 
-var websocket_client: ApWebSocketConnection
+var websocket_client
 var connect_state = ConnectState.DISCONNECTED
 var player: String = ""
 var server: String = "archipelago.gg"
