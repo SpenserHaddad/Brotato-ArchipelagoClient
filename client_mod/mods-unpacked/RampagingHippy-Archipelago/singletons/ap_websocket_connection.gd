@@ -228,7 +228,10 @@ func _on_data_received():
 func _send_command(args: Dictionary):
 	ModLoaderLog.info("Sending %s command" % args["cmd"], LOG_NAME)
 	var command_str = JSON.print([args])
-	var _result = _peer.put_packet(command_str.to_ascii())
+	if _peer != null:
+		var _result = _peer.put_packet(command_str.to_ascii())
+	else:
+		ModLoaderLog.warning("Peer is null!", LOG_NAME)
 
 func _init_client():
 	if self._client != null:

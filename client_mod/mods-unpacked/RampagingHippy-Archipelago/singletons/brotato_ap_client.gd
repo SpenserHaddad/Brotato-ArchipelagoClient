@@ -9,11 +9,12 @@ const DataPackage = preload ("./data_package.gd")
 const _AP_TYPES = preload ("./ap_types.gd")
 const GAME: String = "Brotato"
 
-onready var ap_session: ApGameState
+onready var ap_session: ApPlayerSession
 
 var constants = _constants_namespace.new()
-var game_state
-
+var game_state: ApGameState
+var _received_gold_data_storage_key: String = ""
+var _received_xp_data_storage_key: String = ""
 # Item received signals
 signal character_received(character)
 signal xp_received(xp_amount)
@@ -27,7 +28,7 @@ signal legendary_crate_drop_status_changed(can_drop_ap_legendary_consumables)
 # Connection issue signals
 signal on_connection_refused(reasons)
 
-func _init(ap_session_):
+func _init(ap_session_: ApPlayerSession):
 	self.ap_session = ap_session_
 	ModLoaderLog.debug("Brotato AP adapter initialized", LOG_NAME)
 
@@ -35,6 +36,7 @@ func _ready():
 	var _status: int
 	_status = ap_session.connect("connection_state_changed", self, "_on_connection_state_changed")
 	_status = ap_session.connect("item_received", self, "_on_item_received")
+	_status = ap_session.connect("data_storage_updated", self, "_on_data_storage_updated")
 	ModLoaderLog.debug("Loaded AP client. %d" % _status, LOG_NAME)
 
 func connected_to_multiworld() -> bool:
@@ -64,6 +66,50 @@ func _update_can_drop_legendary_consumable():
 		and game_state.num_existing_legendary_consumables() < game_state.total_legendary_consumable_drops
 	)
 	emit_signal("legendary_crate_drop_status_changed", can_drop)
+
+func _give_player_unreceived_ap_gold_and_xp():
+	## Give the player any gold and XP they've received but haven't "picked up" yet.
+	##
+	## We want to give the player any gold and XP items once in either their current run
+	## or the run after the one they receive the items, to keep them from getting too
+	## strong too fast.
+	##
+	## So, if this is called while the player is in a run, the method will give them any
+	## gold/XP they've gotten from items that haven't been claimed yet. We then update
+	## two Archipelago data storage keys with the total amount of each they've been
+	## given so the tracked value persists between multiple runs of the game. We already
+	## track the total received (both given and not) from items as part of the "items
+	## received" handler.
+
+	if not game_state.run_active:
+		return
+	var gold_to_give = game_state.gold_received_from_multiworld - game_state.gold_given_to_player
+	if gold_to_give > 0:
+		ModLoaderLog.info("Giving player %d gold" % gold_to_give, LOG_NAME)
+		RunData.add_gold(gold_to_give)
+		ap_session.set_value(
+			_received_gold_data_storage_key,
+			ApTypes.DataStorageOperationType.ADD,
+			gold_to_give,
+			0,
+			true
+		)
+	else:
+		ModLoaderLog.debug("Not giving player gold. Received is %d and given is %d." % [game_state.gold_received_from_multiworld, game_state.gold_given_to_player], LOG_NAME)
+
+	var xp_to_give = game_state.xp_received_from_multiworld - game_state.xp_given_to_player
+	if xp_to_give > 0:
+		ModLoaderLog.info("Giving player %d XP" % xp_to_give, LOG_NAME)
+		RunData.add_xp(xp_to_give)
+		ap_session.set_value(
+			_received_xp_data_storage_key,
+			ApTypes.DataStorageOperationType.ADD,
+			xp_to_give,
+			0,
+			true
+		)
+	else:
+		ModLoaderLog.debug("Not giving player XP. Received is %d and given is %d." % [game_state.xp_received_from_multiworld, game_state.xp_given_to_player], LOG_NAME)
 
 # API for other scenes to query multiworld state
 func get_num_shop_slots() -> int:
@@ -118,6 +164,13 @@ func run_started():
 	## To be called by main._ready() only, so we can reinitialize run-specific data.
 	ModLoaderLog.debug("New run started with character %s." % RunData.current_character.name, LOG_NAME)
 	game_state.run_started()
+	game_state.run_active = true
+	_give_player_unreceived_ap_gold_and_xp()
+
+func run_finished():
+	## Notify the client that the current run has finished
+	ModLoaderLog.debug("Run finished with character %s." % RunData.current_character.name, LOG_NAME)
+	game_state.run_active = false
 
 func wave_started():
 	## Notify the client that a new wave has started.
@@ -166,14 +219,26 @@ func _on_connection_state_changed(new_state: int, _error: int=0):
 		_on_connected_to_multiworld()
 
 func _on_connected_to_multiworld():
-	# Get options and other info from the slot data
+	
+	# Ensure the data storage keys are initialized (i.e. first time connecting as slot)
+	_received_gold_data_storage_key = "%s_received_gold" % ap_session.player
+	_received_xp_data_storage_key = "%s_received_xp" % ap_session.player
+	ap_session.set_value(_received_gold_data_storage_key, ApTypes.DataStorageOperationType.DEFAULT, 0, 0, false)
+	ap_session.set_value(_received_xp_data_storage_key, ApTypes.DataStorageOperationType.DEFAULT, 0, 0, false)
+
+	# Get the current value of the data storage entries (i.e. not first time connecting)
+	ap_session.get_value([_received_gold_data_storage_key, _received_xp_data_storage_key])
+	ap_session.set_notify([_received_gold_data_storage_key, _received_xp_data_storage_key])
+	
+	# Get options and other info from the slot data and data 
 	var slot_data = ap_session.slot_data
 	game_state = _game_state_namespace.new(
 		slot_data["num_wins_needed"],
 		slot_data["num_consumables"],
 		slot_data["num_legendary_consumables"],
 		slot_data["num_starting_shop_slots"],
-		slot_data["waves_with_checks"])
+		slot_data["waves_with_checks"]
+	)
 
 	var location_groups = DataPackage.BrotatoLocationGroups.from_location_table(ap_session.data_package.location_name_to_id)
 
@@ -210,11 +275,13 @@ func _on_item_received(item_name: String, _item: Dictionary):
 		emit_signal("character_received", item_name)
 	elif item_name in constants.XP_ITEM_NAME_TO_VALUE:
 		var xp_value = constants.XP_ITEM_NAME_TO_VALUE[item_name]
-		game_state.starting_xp += xp_value
+		game_state.xp_received_from_multiworld += xp_value
+		_give_player_unreceived_ap_gold_and_xp()
 		emit_signal("xp_received", xp_value)
 	elif item_name in constants.GOLD_DROP_NAME_TO_VALUE:
 		var gold_value = constants.GOLD_DROP_NAME_TO_VALUE[item_name]
-		game_state.starting_gold += gold_value
+		game_state.gold_received_from_multiworld += gold_value
+		_give_player_unreceived_ap_gold_and_xp()
 		emit_signal("gold_received", gold_value)
 	elif item_name in constants.ITEM_DROP_NAME_TO_TIER:
 		var item_tier = constants.ITEM_DROP_NAME_TO_TIER[item_name]
@@ -232,3 +299,16 @@ func _on_item_received(item_name: String, _item: Dictionary):
 		run_complete_received()
 	else:
 		ModLoaderLog.warning("No handler for item defined: %s." % item_name, LOG_NAME)
+
+func _on_data_storage_updated(key: String, new_value, _original_value=null):
+	if key == _received_gold_data_storage_key:
+		ModLoaderLog.debug(
+			"Updating gold given to player from to %d. Total received is %d." %
+			[new_value, game_state.gold_received_from_multiworld], LOG_NAME)
+		game_state.gold_given_to_player = new_value
+	elif key == _received_xp_data_storage_key:
+		ModLoaderLog.debug(
+			"Updating XP given to player from %d. Total received is %d." %
+			[new_value, game_state.xp_received_from_multiworld], LOG_NAME
+		)
+		game_state.xp_given_to_player = new_value

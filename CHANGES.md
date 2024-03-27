@@ -10,12 +10,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added AP logo image to the connection menu to show the state of the connection.
 - Connection menu now shows an error message when a connection error occurs.
+- (Internal) Mod now properly detects if the player quits a game early or restarts it.
+  - This is a needed change to ensure they are given gold and XP items at the right time
+    (see `Changed` section below).
+- (Internal) Total gold and XP given to the player is now tracked using two data storage entries
+  per Brotato player in the multiworld.
+  - Another needed change to support giving players gold and XP items only once. Using
+    data storage lets us track the value outside the game.
 
 ### Fixed
 - Connection to server should properly handle connection errors now.
 - Connection to server now times out if it can't reach the server.
 
 ### Changed
+- Gold and XP items are now given to players once in their current run or the next run
+  after they receive the item, not in every run.
+  - This should keep players from getting too strong too fast and trivializing their
+    playthrough.
 - Connecting to multiworld no longer needs to reconnect to the server if already connected.
   - This makes the process more closely follow the [Archipelago Connection
     Handshake](https://github.com/ArchipelagoMW/Archipelago/blob/main/docs/network%20protocol.md#archipelago-connection-handshake).
