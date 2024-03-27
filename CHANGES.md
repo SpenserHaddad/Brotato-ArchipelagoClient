@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.6]
+## [0.0.6] - 2024-03-27
 
 ### Added
 - Added AP logo image to the connection menu to show the state of the connection.
@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Internal) - Split out WebSocket connection from multiworld connection, since both were
   getting to be too complex for a single class.
 
-## [0.0.5]
+## [0.0.5] - 2024-01-25
 
 ### Fixed
 - Fix bug in rules generation where all locations were viewed accessible from the start.
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     causes issues in world generation.
 
 
-## [0.0.4]
+## [0.0.4] - 2024-01-10
 
 ### Fixed
 - Fix consumables not spawning when playing vanilla with the mod installed.
@@ -58,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change "Legendary Loot Crate <x>" location progress type from `DEFAULT` to `EXCLUDED`.
   These are too difficult to get for them to hold progression items.
 
-## [0.0.3]
+## [0.0.3] - 2024-01-06
 
 ### Fixed
 - The client mod can now connect to servers hosted both with and without SSL (aka using
@@ -80,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Several internal changes were made to follow updated Archipelago development
   guidelines and to make the code better organized overall.
 
-## [0.0.2]
+## [0.0.2] - 2023-10-27
 
 ### Fixed
 - Fix generating games failing when using Python 3.11 and the random starting character
@@ -91,7 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use `self.random` when generating games instead of `self.multiworld.random`, to match
   new Archipelago API changes.
 
-## [0.0.1]
+## [0.0.1] - 2023-10-15
 
 ### Added
 
@@ -129,4 +129,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.3...v0.0.4
+[0.0.3]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/releases/tag/v0.0.1
