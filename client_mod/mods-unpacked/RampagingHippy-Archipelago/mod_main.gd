@@ -9,7 +9,7 @@ export onready var ap_websocket_connection
 export onready var brotato_ap_client
 export onready var ap_player_session
 
-func _init(_modLoader=ModLoader):
+func _init():
 	ModLoaderLog.info("Init", LOG_NAME)
 
 	var dir = ModLoaderMod.get_unpacked_dir() + MOD_NAME + "/"
