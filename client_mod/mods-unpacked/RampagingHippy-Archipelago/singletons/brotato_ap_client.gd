@@ -3,16 +3,17 @@ class_name BrotatoApClient
 
 const LOG_NAME = "RampagingHippy-Archipelago/Brotato Client"
 
+const _player_session_ns = preload ("./ap_player_session.gd")
 const _constants_namespace = preload ("./constants.gd")
 const _game_state_namespace = preload ("../progress/game_state.gd")
 const DataPackage = preload ("./data_package.gd")
-const _AP_TYPES = preload ("./ap_types.gd")
+const _AP_TYPES_NS = preload ("./ap_types.gd")
 const GAME: String = "Brotato"
 
-onready var ap_session: ApPlayerSession
+onready var ap_session
 
 var constants = _constants_namespace.new()
-var game_state: ApGameState
+var game_state
 var _received_gold_data_storage_key: String = ""
 var _received_xp_data_storage_key: String = ""
 # Item received signals
@@ -28,7 +29,7 @@ signal legendary_crate_drop_status_changed(can_drop_ap_legendary_consumables)
 # Connection issue signals
 signal on_connection_refused(reasons)
 
-func _init(ap_session_: ApPlayerSession):
+func _init(ap_session_):
 	self.ap_session = ap_session_
 	ModLoaderLog.debug("Brotato AP adapter initialized", LOG_NAME)
 
@@ -42,7 +43,7 @@ func _ready():
 func connected_to_multiworld() -> bool:
 	# Convenience method to check if connected to AP, so other scenes don't need to 
 	# reference the player session just to check this.
-	return ap_session.connect_state == ApPlayerSession.ConnectState.CONNECTED_TO_MULTIWORLD
+	return ap_session.connect_state == _player_session_ns.ConnectState.CONNECTED_TO_MULTIWORLD
 
 # Methods to check AP game state and send updates to the actual game.
 func _update_can_drop_consumable():
@@ -81,7 +82,7 @@ func _give_player_unreceived_ap_gold_and_xp():
 	## track the total received (both given and not) from items as part of the "items
 	## received" handler.
 
-	if not game_state.run_active:
+	if not game_state.run_active or not connected_to_multiworld():
 		return
 	var gold_to_give = game_state.gold_received_from_multiworld - game_state.gold_given_to_player
 	if gold_to_give > 0:
@@ -89,7 +90,7 @@ func _give_player_unreceived_ap_gold_and_xp():
 		RunData.add_gold(gold_to_give)
 		ap_session.set_value(
 			_received_gold_data_storage_key,
-			ApTypes.DataStorageOperationType.ADD,
+			_AP_TYPES_NS.DataStorageOperationType.ADD,
 			gold_to_give,
 			0,
 			true
@@ -103,7 +104,7 @@ func _give_player_unreceived_ap_gold_and_xp():
 		RunData.add_xp(xp_to_give)
 		ap_session.set_value(
 			_received_xp_data_storage_key,
-			ApTypes.DataStorageOperationType.ADD,
+			_AP_TYPES_NS.DataStorageOperationType.ADD,
 			xp_to_give,
 			0,
 			true
@@ -162,6 +163,8 @@ func run_started():
 	## Notify the client that a new run has started.
 	##
 	## To be called by main._ready() only, so we can reinitialize run-specific data.
+	if not connected_to_multiworld():
+		return
 	ModLoaderLog.debug("New run started with character %s." % RunData.current_character.name, LOG_NAME)
 	game_state.run_started()
 	game_state.run_active = true
@@ -169,6 +172,8 @@ func run_started():
 
 func run_finished():
 	## Notify the client that the current run has finished
+	if not connected_to_multiworld():
+		return
 	ModLoaderLog.debug("Run finished with character %s." % RunData.current_character.name, LOG_NAME)
 	game_state.run_active = false
 
@@ -176,6 +181,8 @@ func wave_started():
 	## Notify the client that a new wave has started.
 	##
 	## To be called by main._ready() only, so we can reinitialize wave-specific data.
+	if not connected_to_multiworld():
+		return
 	ModLoaderLog.debug("Wave %d started" % RunData.current_wave, LOG_NAME)
 	game_state.wave_started()
 	# TODO: NECESSARY?
@@ -187,6 +194,8 @@ func wave_won(character_id: String, wave_number: int):
 	##
 	## If the player hasn't won the wave run with that character before, then the
 	## corresponding location check will be sent to the server.
+	if not connected_to_multiworld():
+		return
 	var character_name = constants.CHARACTER_ID_TO_NAME[character_id]
 	if not game_state.character_progress[character_name].reached_check_wave.get(wave_number, true):
 		var location_name = "Wave %d Completed (%s)" % [wave_number, character_name]
@@ -198,6 +207,8 @@ func run_won(character_id: String):
 	##
 	## If the player hasn't won a run with that character before, then the corresponding
 	## location check will be sent to the server.
+	if not connected_to_multiworld():
+		return
 	var character_name = constants.CHARACTER_ID_TO_NAME[character_id]
 	if not game_state.character_progress[character_name].won_run:
 		var location_name = "Run Won (%s)" % character_name
@@ -212,10 +223,10 @@ func run_complete_received():
 	game_state.num_wins += 1
 	if game_state.num_wins >= game_state.num_wins_needed and not game_state.goal_completed:
 		game_state.goal_completed = true
-		ap_session.set_status(_AP_TYPES.ClientStatus.CLIENT_GOAL)
+		ap_session.set_status(_AP_TYPES_NS.ClientStatus.CLIENT_GOAL)
 
 func _on_connection_state_changed(new_state: int, _error: int=0):
-	if new_state == ApPlayerSession.ConnectState.CONNECTED_TO_MULTIWORLD:
+	if new_state == _player_session_ns.ConnectState.CONNECTED_TO_MULTIWORLD:
 		_on_connected_to_multiworld()
 
 func _on_connected_to_multiworld():
@@ -223,8 +234,20 @@ func _on_connected_to_multiworld():
 	# Ensure the data storage keys are initialized (i.e. first time connecting as slot)
 	_received_gold_data_storage_key = "%s_received_gold" % ap_session.player
 	_received_xp_data_storage_key = "%s_received_xp" % ap_session.player
-	ap_session.set_value(_received_gold_data_storage_key, ApTypes.DataStorageOperationType.DEFAULT, 0, 0, false)
-	ap_session.set_value(_received_xp_data_storage_key, ApTypes.DataStorageOperationType.DEFAULT, 0, 0, false)
+	ap_session.set_value(
+		_received_gold_data_storage_key,
+		_AP_TYPES_NS.DataStorageOperationType.DEFAULT,
+		0,
+		0,
+		false
+	)
+	ap_session.set_value(
+		_received_xp_data_storage_key,
+		_AP_TYPES_NS.DataStorageOperationType.DEFAULT,
+		0,
+		0,
+		false
+	)
 
 	# Get the current value of the data storage entries (i.e. not first time connecting)
 	ap_session.get_value([_received_gold_data_storage_key, _received_xp_data_storage_key])
