@@ -5,6 +5,8 @@
 extends Object
 class_name ApGameState
 
+const LOG_NAME = "RampagingHippy-Archipelago/game_state"
+
 class ApCharacterProgress:
 	var unlocked: bool = false
 	var won_run: bool = false
@@ -13,9 +15,8 @@ class ApCharacterProgress:
 	# exact number of waves depends on game settings.
 	var reached_check_wave: Dictionary = {}
 
-const _run_state_namespace = preload("./run_state.gd")
-const _constants_namespace = preload("../singletons/constants.gd")
-var constants = _constants_namespace.new()
+const _run_state_namespace = preload ("./run_state.gd")
+var _constants = preload ("../singletons/constants.gd").new()
 
 # User-defined options from the randomizer. These are retrieved from the slot data on
 # the server after connecting. The number of items to drop as consumables in a run.
@@ -27,8 +28,10 @@ var num_wins_needed: int
 # Cumulative values updated as the player receives items and gets checks.
 var goal_completed: bool = false
 var num_wins: int = 0
-var starting_gold: int = 0
-var starting_xp : int = 0
+var gold_received_from_multiworld: int = 0
+var gold_given_to_player: int = 0
+var xp_received_from_multiworld: int = 0
+var xp_given_to_player: int = 0
 var num_received_shop_slots: int = 0
 var character_progress: Dictionary = {} # Dictionary of { character_name: ApCharacterProgress }
 var num_consumables_picked_up: int = 0
@@ -47,10 +50,11 @@ var received_upgrades_by_tier: Dictionary = {
 }
 
 # Data to track when in a run (i.e. actually playing the game).
+var run_active: bool = false
 var run_state
 
 func _init(
-	num_wins_needed_: int, 
+	num_wins_needed_: int,
 	total_consumable_drops_: int,
 	total_legendary_consumable_drops_: int,
 	num_starting_shop_slots_: int,
@@ -60,7 +64,7 @@ func _init(
 	total_consumable_drops = total_consumable_drops_
 	total_legendary_consumable_drops = total_legendary_consumable_drops_
 	num_starting_shop_slots = num_starting_shop_slots_
-	for character in _constants_namespace.new().CHARACTER_NAME_TO_ID:
+	for character in _constants.CHARACTER_NAME_TO_ID:
 		character_progress[character] = ApCharacterProgress.new()
 		for wave in waves_with_checks:
 			character_progress[character].reached_check_wave[int(wave)] = false
@@ -74,7 +78,6 @@ func num_existing_consumables() -> int:
 
 func num_existing_legendary_consumables() -> int:
 		return num_legendary_consumables_picked_up + run_state.ap_legendary_consumables_not_picked_up
-	
 
 # Helpers to update state when in-game events happen
 func consumable_spawned():
@@ -92,7 +95,11 @@ func legendary_consumable_picked_up():
 	run_state.ap_legendary_consumables_not_picked_up -= 1
 
 func run_started():
+	run_active = true
 	run_state = _run_state_namespace.new()
+
+func run_finished():
+	run_active = false
 
 func wave_started():
 	run_state.wave_started()
