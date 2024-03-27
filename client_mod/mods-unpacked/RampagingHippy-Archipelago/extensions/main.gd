@@ -21,48 +21,29 @@ func _ready() -> void:
 		if RunData.current_wave == DebugService.starting_wave:
 			# Run started, initialize/reset some values
 			_ap_client.run_started()
-			var ap_game_data = _ap_client.game_state
-			ModLoaderLog.debug("Start of AP run, giving player %d XP and %d gold." %
-				[
-					ap_game_data.starting_xp,
-					ap_game_data.starting_gold
-				],
-				LOG_NAME
-			)
-			
-			RunData.add_xp(ap_game_data.starting_xp)
-			RunData.add_gold(ap_game_data.starting_gold)
 			
 			for gift_tier in _ap_client.game_state.received_items_by_tier:
 				var num_gifts = _ap_client.game_state.received_items_by_tier[gift_tier]
-				ModLoaderLog.debug("Giving player %d items of tier %d." % [num_gifts, gift_tier], LOG_NAME)
-				for _i in range(num_gifts):
-					_on_ap_item_received(gift_tier)
+				# Check if there's gifts to add before adding mostly to avoid log noise.
+				if num_gifts > 0:
+					ModLoaderLog.debug("Giving player %d items of tier %d." % [num_gifts, gift_tier], LOG_NAME)
+					for _i in range(num_gifts):
+						_on_ap_item_received(gift_tier)
 
 			for upgrade_tier in _ap_client.game_state.received_upgrades_by_tier:
 				var num_upgrades = _ap_client.game_state.received_upgrades_by_tier[upgrade_tier]
-				ModLoaderLog.debug("Giving player %d upgrades of tier %d." % [num_upgrades, upgrade_tier], LOG_NAME)
-				for _i in range(num_upgrades):
-					_on_ap_upgrade_received(upgrade_tier)
+				if num_upgrades > 0:
+					ModLoaderLog.debug("Giving player %d upgrades of tier %d." % [num_upgrades, upgrade_tier], LOG_NAME)
+					for _i in range(num_upgrades):
+						_on_ap_upgrade_received(upgrade_tier)
 
 		# Need to call after run is started otherwise some game state isn't ready yet.
 		_ap_client.wave_started()
-
-		var _status = _ap_client.connect("xp_received", self, "_on_ap_xp_received")
-		_status = _ap_client.connect("gold_received", self, "_on_ap_gold_received")
-		_status = _ap_client.connect("item_received", self, "_on_ap_item_received")
+		
+		var _status = _ap_client.connect("item_received", self, "_on_ap_item_received")
 		_status = _ap_client.connect("upgrade_received", self, "_on_ap_upgrade_received")
 
 # Archipelago Item received handlers
-
-func _on_ap_xp_received(xp_amount: int):
-	ModLoaderLog.info("%d XP received" % xp_amount, LOG_NAME)
-	RunData.add_xp(xp_amount)
-
-func _on_ap_gold_received(gold_amount: int):
-	ModLoaderLog.info("%d Gold received" % gold_amount, LOG_NAME)
-	RunData.add_gold(gold_amount)
-
 func _on_ap_item_received(item_tier: int):
 	var item_data
 	match item_tier:
@@ -127,12 +108,12 @@ func on_consumable_picked_up(consumable: Node) -> void:
 			RunData.tracked_item_effects["item_bag"] += RunData.effects["item_box_gold"]
 	.on_consumable_picked_up(consumable)
 
-func _on_WaveTimer_timeout() -> void:
-	if _ap_client.connected_to_multiworld():
-		_ap_client.wave_won(RunData.current_character.my_id, RunData.current_wave)
-	._on_WaveTimer_timeout()
+func clean_up_room(is_last_wave: bool=false, is_run_lost: bool=false, is_run_won: bool=false) -> void:
+	if is_run_lost or is_run_won:
+		if is_run_won:
+			_ap_client.run_won(RunData.current_character.my_id)
+		# Run's over either way
+		_ap_client.run_finished()
 
-func apply_run_won():
-	if _ap_client.connected_to_multiworld():
-		_ap_client.run_won(RunData.current_character.my_id)
-	.apply_run_won()
+	_ap_client.wave_won(RunData.current_character.my_id, RunData.current_wave)
+	.clean_up_room(is_last_wave, is_run_lost, is_run_won)
