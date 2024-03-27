@@ -19,7 +19,11 @@ func _init(_modLoader=ModLoader):
 	var extension_files = [
 		"main.gd", # Update consumable drop logic to spawn AP items
 		"singletons/item_service.gd", # Drop AP consumables
-		"ui/menus/pages/main_menu.gd", # Add AP connect button to main menu
+		"ui/menus/pages/main_menu.gd", # Add AP connect
+		# Detect when game is quit when the "Return to main menu" confirmation button is pressed
+		"ui/menus/pages/menu_confirm.gd",
+		# Detect when game is restart when the "Restart" confirmation button is pressed
+		"ui/menus/pages/menu_restart.gd",
 		"ui/menus/title_screen/title_screen_menus.gd", # Swtich to connect menu when connect button is pressed
 		"ui/menus/run/character_selection.gd", # Only unlock characters received in MultiWorld
 	]
