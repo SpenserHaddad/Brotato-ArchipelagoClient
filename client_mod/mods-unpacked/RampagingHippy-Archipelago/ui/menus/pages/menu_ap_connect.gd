@@ -2,9 +2,11 @@ extends MarginContainer
 
 signal back_button_pressed
 
-var _ap_icon_connected = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_connected.png")
-var _ap_icon_disconnected = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_disconnected.png")
-var _ap_icon_error =  preload("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_error.png")
+const _AP_PLAYER_SESSION_NS = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_player_session.gd")
+
+var _ap_icon_connected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_connected.png")
+var _ap_icon_disconnected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_disconnected.png")
+var _ap_icon_error = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_error.png")
 
 onready var _connect_button: Button = $"VBoxContainer/ConnectButton"
 onready var _disconnect_button: Button = $"VBoxContainer/DisconnectButton"
@@ -30,35 +32,36 @@ func _ready():
 	
 	_ap_session = mod_node.ap_player_session
 	_ap_session.connect("connection_state_changed", self, "_on_connection_state_changed")
-	
 
 #func _input(_event):
 #	if get_tree().current_scene.name == self.name && Input.is_key_pressed(KEY_ENTER):
 #		_on_ConnectButton_pressed()
 
 func _on_connection_state_changed(new_state: int, error: int=0):
+	# Break out ApPlayerSession.ConnectState so we have a shorter name
+	var ConnectState = _AP_PLAYER_SESSION_NS.ConnectState
 	# See ConnectState enum in ap_player_session.gd
 	match new_state:
-		0:
+		ConnectState.DISCONNECTED:
 			# Disconnected
 			_connect_status_label.text = "Disconnected"
-		1:
+		ConnectState.CONNECTING:
 			# Connecting
 			_connect_status_label.text = "Connecting"
-		2:
+		ConnectState.DISCONNECTING:
 			# Disconnecting
 			_connect_status_label.text = "Disconnecting"
-		3:
+		ConnectState.CONNECTED_TO_SERVER:
 			# Connected to server
 			_connect_status_label.text = "Connected to server"
-		4:
+		ConnectState.CONNECTED_TO_MULTIWORLD:
 			# Connected to multiworld
 			_connect_status_label.text = "Connected to multiworld"
 
 	# Allow connecting if disconnected or connected to the server but not the multiworld
 	_connect_button.disabled = (
-		new_state == ApPlayerSession.ConnectState.CONNECTED_TO_MULTIWORLD or
-		new_state == ApPlayerSession.ConnectState.DISCONNECTING
+		new_state == ConnectState.CONNECTED_TO_MULTIWORLD or
+		new_state == ConnectState.DISCONNECTING
 	)
 	if _connect_button.disabled and _connect_button.has_focus():
 		# Disabled buttons having focus look ugly and don't make sense.
@@ -66,23 +69,23 @@ func _on_connection_state_changed(new_state: int, error: int=0):
 
 	# Allow disconnecting if connected to the server and/or multiworld
 	_disconnect_button.disabled = (
-		new_state == ApPlayerSession.ConnectState.DISCONNECTED or
-		new_state == ApPlayerSession.ConnectState.DISCONNECTED or
+		new_state == ConnectState.DISCONNECTED or
+		new_state == ConnectState.DISCONNECTED or
 		 # TODO: Remove below if we figure out how to cancel the connection process.
-		new_state == ApPlayerSession.ConnectState.CONNECTING
+		new_state == ConnectState.CONNECTING
 	)
 
 	if _disconnect_button.disabled and _disconnect_button.has_focus():
 		_disconnect_button.release_focus()
 
-	if new_state == ApPlayerSession.ConnectState.CONNECTED_TO_MULTIWORLD:
+	if new_state == ConnectState.CONNECTED_TO_MULTIWORLD:
 		_status_texture.texture = _ap_icon_connected
 	elif error != 0:
 		_status_texture.texture = _ap_icon_error
 	else:
 		_status_texture.texture = _ap_icon_disconnected
 		
-	if new_state == ApPlayerSession.ConnectState.CONNECTING:
+	if new_state == ConnectState.CONNECTING:
 		_animate_status_texture = true
 	else:
 		_animate_status_texture = false
@@ -95,27 +98,28 @@ func _on_connection_state_changed(new_state: int, error: int=0):
 
 func _set_error(error_reason: int):
 	# See ConnectResult enum in ap_player_session.gd
+	var ConnectResult = _AP_PLAYER_SESSION_NS.ConnectResult
 	var error_text: String
 	match error_reason:
-		1:
+		ConnectResult.SERVER_CONNECT_FAILURE:
 			error_text = "Failed to connect to the server"
-		2:
+		ConnectResult.PLAYER_NOT_SET:
 			error_text = "Need to set player name before connecting"
-		3:
+		ConnectResult.GAME_NOT_SET:
 			error_text = "Client needs to set game name before connecting"
-		4:
+		ConnectResult.INVALID_SERVER:
 			error_text = "Invalid server name"
-		5:
+		ConnectResult.AP_INVALID_SLOT:
 			error_text = "AP: Invalid player name"
-		6:
+		ConnectResult.AP_INVALID_GAME:
 			error_text = "AP: Invalid game"
-		7:
+		ConnectResult.AP_INCOMPATIBLE_VERSION:
 			error_text = "AP: Incompatible versions"
-		8:
+		ConnectResult.AP_INVALID_PASSWORD:
 			error_text = "AP: Invalid or missing password"
-		9:
+		ConnectResult.AP_INVALID_ITEMS_HANDLING:
 			error_text = "AP: Invalid items handling"
-		9:
+		ConnectResult.AP_CONNECTION_REFUSED_UNKNOWN_REASON:
 			error_text = "AP: Failed to connect (unknown error)"
 		_:
 			error_text = "Unknown error"
@@ -153,4 +157,3 @@ func _process(delta):
 			# Rotation goes from -360 to 360 degrees
 			new_angle -= _MAX_ANGLE_DEGREES * 2
 		_status_texture.rect_rotation = new_angle
-	
