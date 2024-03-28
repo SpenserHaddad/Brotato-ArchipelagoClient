@@ -68,27 +68,48 @@ class WavesPerCheck(Range):
 
 
 class NumberCommonCrateDropLocations(Range):
-    """
-    The first <count> normal crate drops will be AP locations.
+    """The number of locations which will be locked behind picking up loot crates."""
+
+    range_start = 0
+    range_end = MAX_NORMAL_CRATE_DROPS
+
+    display_name = "Number of loot crate drop locations"
+    default = 25
+
+
+class NumberCommonCrateDropsPerCheck(Range):
+    """The number of loot crates needed to check a location.
+
+    1 means every loot crate pickup gives a check, 2 means every other loot crate, etc.
     """
 
     range_start = 0
     range_end = MAX_NORMAL_CRATE_DROPS
 
-    display_name = "Number of normal crate drop locations"
-    default = 25
+    display_name = "Loot crates per check"
 
 
 class NumberLegendaryCrateDropLocations(Range):
-    """
-    The first <count> legendary crate drops will be AP locations.
-    """
+    """The number of locations which will be locked behind picking up legendary loot
+    crates."""
 
     range_start = 0
     range_end = MAX_LEGENDARY_CRATE_DROPS
 
     display_name = "Number of legendary crate drop locations"
     default = 5
+
+
+class NumberLegendaryCrateDropsPerCheck(Range):
+    """The number of legendary loot crates needed to check a location.
+
+    1 means every loot crate pickup gives a check, 2 means every other loot crate, etc.
+    """
+
+    range_start = 0
+    range_end = MAX_NORMAL_CRATE_DROPS
+
+    display_name = "Loot crates per check"
 
 
 class NumberCommonUpgrades(Range):
@@ -156,7 +177,9 @@ class BrotatoOptions(PerGameCommonOptions):
     num_starting_characters: NumberStartingCharacters
     waves_per_drop: WavesPerCheck
     num_common_crate_drops: NumberCommonCrateDropLocations
+    num_common_crate_drops_per_check: NumberCommonCrateDropsPerCheck
     num_legendary_crate_drops: NumberLegendaryCrateDropLocations
+    num_legendary_crate_drops_per_check: NumberLegendaryCrateDropsPerCheck
     num_common_upgrades: NumberCommonUpgrades
     num_uncommon_upgrades: NumberUncommonUpgrades
     num_rare_upgrades: NumberRareUpgrades
