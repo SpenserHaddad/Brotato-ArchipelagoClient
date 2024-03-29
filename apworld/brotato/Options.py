@@ -68,30 +68,57 @@ class WavesPerCheck(Range):
 
 
 class NumberCommonCrateDropLocations(Range):
-    """The number of locations which will be locked behind picking up loot crates."""
+    """The number of loot crate locations.
+
+    This replaces the loot crate drops in-game with an Archipelago item which must be picked up.
+
+    How the drops are made available and how many are needed to make a check are controlled by the next two settings.
+    """
 
     range_start = 0
     range_end = MAX_NORMAL_CRATE_DROPS
 
-    display_name = "Number of loot crate drop locations"
+    display_name = "Number of normal crate drop locations"
     default = 25
 
 
 class NumberCommonCrateDropsPerCheck(Range):
     """The number of loot crates needed to check a location.
 
-    1 means every loot crate pickup gives a check, 2 means every other loot crate, etc.
+    1 means every loot crate pickup gives a check,
+    2 means every other loot crate,
+    etc.
     """
 
     range_start = 0
     range_end = MAX_NORMAL_CRATE_DROPS
 
-    display_name = "Loot crates per check"
+    display_name = "Loot Crates per Check"
+
+
+class NumberCommonCrateDropGroups(Range):
+    """The number of groups to separate loot crate locations into.
+
+    Once you check all the locations in a group, the randomizer will not drop more loot crate Archipelago items until you win more runs.
+
+    The number of loot crate locations will be evenly split among the groups, and the groups will be evenly spread out over the number of wins you choose.
+
+    Set to 1 to make all loot crate locations available from the start.
+    """
+
+    range_start = 0
+    range_end = MAX_NORMAL_CRATE_DROPS
+    default = 1
+    display_name = "Loot Crate Groups"
 
 
 class NumberLegendaryCrateDropLocations(Range):
-    """The number of locations which will be locked behind picking up legendary loot
-    crates."""
+    """The number of legendary loot crate locations.
+
+    This replaces the legendary loot crate drops in-game with an Archipelago item which must be picked up.
+
+    How the drops are made available and how many are needed to make a check are controlled by the next two settings.
+    """
 
     range_start = 0
     range_end = MAX_LEGENDARY_CRATE_DROPS
@@ -108,8 +135,25 @@ class NumberLegendaryCrateDropsPerCheck(Range):
 
     range_start = 0
     range_end = MAX_NORMAL_CRATE_DROPS
+    default = 1
 
     display_name = "Loot crates per check"
+
+
+class NumberLegendaryCrateDropGroups(Range):
+    """The number of groups to separate legendary loot crate locations into.
+
+    Once you check all the locations in a group, the randomizer will not drop more legendary loot crate Archipelago items until you win more runs.
+
+    The number of loot crate locations will be evenly split among the groups, and the groups will be evenly spread out over the number of wins you choose.
+
+    Set to 1 to make all legendary loot crate locations available from the start.
+    """
+
+    range_start = 0
+    range_end = MAX_NORMAL_CRATE_DROPS
+    default = 1
+    display_name = "Loot Crate Groups"
 
 
 class NumberCommonUpgrades(Range):
@@ -178,8 +222,10 @@ class BrotatoOptions(PerGameCommonOptions):
     waves_per_drop: WavesPerCheck
     num_common_crate_drops: NumberCommonCrateDropLocations
     num_common_crate_drops_per_check: NumberCommonCrateDropsPerCheck
+    num_common_crate_drop_groups: NumberCommonCrateDropGroups
     num_legendary_crate_drops: NumberLegendaryCrateDropLocations
     num_legendary_crate_drops_per_check: NumberLegendaryCrateDropsPerCheck
+    num_common_crate_drop_groups: NumberLegendaryCrateDropGroups
     num_common_upgrades: NumberCommonUpgrades
     num_uncommon_upgrades: NumberUncommonUpgrades
     num_rare_upgrades: NumberRareUpgrades
