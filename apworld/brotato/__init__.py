@@ -9,10 +9,10 @@ from worlds.generic.Rules import ItemRule, add_item_rule
 
 from .Constants import (
     CHARACTERS,
-    CRATE_DROP_GROUP_LOCATION_TEMPLATE,
+    CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
     DEFAULT_CHARACTERS,
-    LEGENDARY_CRATE_DROP_GROUP_LOCATION_TEMPLATE,
+    LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
     MAX_SHOP_SLOTS,
     NUM_WAVES,
@@ -214,13 +214,13 @@ class BrotatoWorld(World):
             num_items = self.options.num_common_crate_drops.value
             num_groups = self.options.num_common_crate_drop_groups.value
             location_name_template = CRATE_DROP_LOCATION_TEMPLATE
-            region_name_template = CRATE_DROP_GROUP_LOCATION_TEMPLATE
+            region_name_template = CRATE_DROP_GROUP_REGION_TEMPLATE
             item_rule = None
         else:
             num_items = self.options.num_legendary_crate_drops.value
             num_groups = self.options.num_legendary_crate_drop_groups.value
             location_name_template = LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE
-            region_name_template = LEGENDARY_CRATE_DROP_GROUP_LOCATION_TEMPLATE
+            region_name_template = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE
             item_rule = legendary_loot_crate_item_rule
 
         regions: List[Region] = []
