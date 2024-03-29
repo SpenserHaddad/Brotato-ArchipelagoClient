@@ -108,8 +108,9 @@ class NumberCommonCrateDropGroups(Range):
 
     range_start = 0
     range_end = MAX_NORMAL_CRATE_DROPS
-    default = 1
+
     display_name = "Loot Crate Groups"
+    default = 1
 
 
 class NumberLegendaryCrateDropLocations(Range):
@@ -225,7 +226,7 @@ class BrotatoOptions(PerGameCommonOptions):
     num_common_crate_drop_groups: NumberCommonCrateDropGroups
     num_legendary_crate_drops: NumberLegendaryCrateDropLocations
     num_legendary_crate_drops_per_check: NumberLegendaryCrateDropsPerCheck
-    num_common_crate_drop_groups: NumberLegendaryCrateDropGroups
+    num_legendary_crate_drop_groups: NumberLegendaryCrateDropGroups
     num_common_upgrades: NumberCommonUpgrades
     num_uncommon_upgrades: NumberUncommonUpgrades
     num_rare_upgrades: NumberRareUpgrades
