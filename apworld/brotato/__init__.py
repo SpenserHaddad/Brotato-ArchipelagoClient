@@ -29,7 +29,7 @@ from .Items import (
 )
 from .Locations import BrotatoLocation, location_name_groups, location_name_to_id, location_table
 from .Options import BrotatoOptions
-from .Rules import BrotatoLogic, create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
+from .Rules import create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
 
 logger = logging.getLogger("Brotato")
 
@@ -96,8 +96,8 @@ class BrotatoWorld(World):
 
     def set_rules(self):
         num_required_victories = self.options.num_victories.value
-        self.multiworld.completion_condition[self.player] = lambda state: BrotatoLogic._brotato_has_run_wins(
-            state, self.player, count=num_required_victories
+        self.multiworld.completion_condition[self.player] = create_has_run_wins_rule(
+            self.player, num_required_victories
         )
 
     def create_regions(self) -> None:
@@ -225,12 +225,16 @@ class BrotatoWorld(World):
 
         regions: List[Region] = []
         num_wins_to_unlock_group = self.options.num_victories.value // num_groups
-        items_per_group = num_items // num_groups
+        items_per_group, extra_for_first_group = divmod(num_items, num_groups)
         crate_count = 0
         wins_to_unlock = 0
         for group_idx in range(1, num_groups + 1):
             crate_group_region = Region(region_name_template.format(num=group_idx), self.player, self.multiworld)
             items_in_group = min(items_per_group, num_items - crate_count)
+            if group_idx == 1 and extra_for_first_group > 0:
+                # If the number of crates doesn't evenly divide into the number of groups, add the remainder to the
+                # first group. This way there's more checks in earlier spheres which should be better?
+                items_in_group += extra_for_first_group
             for _ in range(1, items_in_group + 1):
                 crate_location_name = location_name_template.format(num=crate_count + 1)
                 crate_location: BrotatoLocation = location_table[crate_location_name].to_location(
