@@ -106,7 +106,7 @@ class NumberCommonCrateDropGroups(Range):
     Set to 1 to make all loot crate locations available from the start.
     """
 
-    range_start = 0
+    range_start = 1
     range_end = MAX_NORMAL_CRATE_DROPS
 
     display_name = "Loot Crate Groups"
@@ -151,7 +151,7 @@ class NumberLegendaryCrateDropGroups(Range):
     Set to 1 to make all legendary loot crate locations available from the start.
     """
 
-    range_start = 0
+    range_start = 1
     range_end = MAX_NORMAL_CRATE_DROPS
     default = 1
     display_name = "Loot Crate Groups"
