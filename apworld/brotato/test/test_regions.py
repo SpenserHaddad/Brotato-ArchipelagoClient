@@ -1,4 +1,5 @@
-from typing import List, Tuple, NamedTuple, Union
+from typing import List, Tuple, Union
+
 from ..Constants import (
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     MAX_NORMAL_CRATE_DROPS,
@@ -8,43 +9,140 @@ from ..Constants import (
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
 )
 from . import BrotatoTestBase
+from dataclasses import dataclass, asdict
 
 
-class _OptionsAndResults(NamedTuple):
-    common_crate_locations: int
-    common_crate_regions: int
-    legendary_crate_locations: int
-    legendary_crate_regions: int
+@dataclass(frozen=True)
+class _BrotatoTestOptions:
+    """Subset of the full options that we want to control for the test, with defaults.
 
+    This avoids needing to specify all the options for the dataclass, and makes using it in the tests slightly more
+    concise.
+    """
+
+    num_common_crate_drops: int
+    num_common_crate_drop_groups: int
+    num_legendary_crate_drops: int
+    num_legendary_crate_drop_groups: int
+
+
+@dataclass(frozen=True)
+class _BrotatoTestExpectedResults:
     # An int value means all regions have the same number of crates.
     # A tuple of ints means region "Crate Group {i}" has number of crates in index [i]
     common_crates_per_region: Union[int, Tuple[int, ...]]
     legendary_crates_per_region: Union[int, Tuple[int, ...]]
 
 
-_OPTION_SETS: List[_OptionsAndResults] = [
-    _OptionsAndResults(25, 5, 25, 5, 5, 5),
-    _OptionsAndResults(30, 6, 30, 6, 5, 5),
-    _OptionsAndResults(20, 2, 30, 6, 10, 5),
-    _OptionsAndResults(16, 3, 16, 3, [6, 5, 5], [6, 5, 5]),
-    _OptionsAndResults(35, 15, 25, 5, [7] + [2] * 14, 5),
-    _OptionsAndResults(50, 50, 50, 50, 1, 1),
-    _OptionsAndResults(50, 1, 50, 1, 50, 50),
-    _OptionsAndResults(1, 1, 1, 1, 1, 1),
-    _OptionsAndResults(2, 1, 2, 1, 2, 2),
-    _OptionsAndResults(50, 1, 50, 2, 50, 25),
+@dataclass(frozen=True)
+class _BrotatoTestDataSet:
+    options: _BrotatoTestOptions
+    expected_results: _BrotatoTestExpectedResults
+
+
+_TEST_DATA_SETS: List[_BrotatoTestDataSet] = [
+    _BrotatoTestDataSet(
+        options=_BrotatoTestOptions(
+            num_common_crate_drops=25,
+            num_common_crate_drop_groups=5,
+            num_legendary_crate_drops=25,
+            num_legendary_crate_drop_groups=5,
+        ),
+        expected_results=_BrotatoTestExpectedResults(common_crates_per_region=5, legendary_crates_per_region=5),
+    ),
+    _BrotatoTestDataSet(
+        options=_BrotatoTestOptions(
+            num_common_crate_drops=30,
+            num_common_crate_drop_groups=6,
+            num_legendary_crate_drops=30,
+            num_legendary_crate_drop_groups=6,
+        ),
+        expected_results=_BrotatoTestExpectedResults(common_crates_per_region=5, legendary_crates_per_region=5),
+    ),
+    _BrotatoTestDataSet(
+        options=_BrotatoTestOptions(
+            num_common_crate_drops=20,
+            num_common_crate_drop_groups=2,
+            num_legendary_crate_drops=30,
+            num_legendary_crate_drop_groups=6,
+        ),
+        expected_results=_BrotatoTestExpectedResults(common_crates_per_region=10, legendary_crates_per_region=5),
+    ),
+    _BrotatoTestDataSet(
+        options=_BrotatoTestOptions(
+            num_common_crate_drops=16,
+            num_common_crate_drop_groups=3,
+            num_legendary_crate_drops=16,
+            num_legendary_crate_drop_groups=3,
+        ),
+        expected_results=_BrotatoTestExpectedResults(
+            common_crates_per_region=[6, 5, 5], legendary_crates_per_region=[6, 5, 5]
+        ),
+    ),
+    _BrotatoTestDataSet(
+        options=_BrotatoTestOptions(
+            num_common_crate_drops=35,
+            num_common_crate_drop_groups=15,
+            num_legendary_crate_drops=25,
+            num_legendary_crate_drop_groups=5,
+        ),
+        expected_results=_BrotatoTestExpectedResults(
+            # Five "3's" and ten "5's"
+            common_crates_per_region=[*([3] * 5), *([5] * 10)],
+            legendary_crates_per_region=5,
+        ),
+    ),
+    _BrotatoTestDataSet(
+        options=_BrotatoTestOptions(
+            num_common_crate_drops=50,
+            num_common_crate_drop_groups=50,
+            num_legendary_crate_drops=50,
+            num_legendary_crate_drop_groups=50,
+        ),
+        expected_results=_BrotatoTestExpectedResults(common_crates_per_region=1, legendary_crates_per_region=1),
+    ),
+    _BrotatoTestDataSet(
+        options=_BrotatoTestOptions(
+            num_common_crate_drops=50,
+            num_common_crate_drop_groups=1,
+            num_legendary_crate_drops=50,
+            num_legendary_crate_drop_groups=1,
+        ),
+        expected_results=_BrotatoTestExpectedResults(common_crates_per_region=50, legendary_crates_per_region=50),
+    ),
+    _BrotatoTestDataSet(
+        options=_BrotatoTestOptions(
+            num_common_crate_drops=1,
+            num_common_crate_drop_groups=1,
+            num_legendary_crate_drops=1,
+            num_legendary_crate_drop_groups=1,
+        ),
+        expected_results=_BrotatoTestExpectedResults(common_crates_per_region=1, legendary_crates_per_region=1),
+    ),
+    _BrotatoTestDataSet(
+        options=_BrotatoTestOptions(
+            num_common_crate_drops=2,
+            num_common_crate_drop_groups=1,
+            num_legendary_crate_drops=2,
+            num_legendary_crate_drop_groups=1,
+        ),
+        expected_results=_BrotatoTestExpectedResults(common_crates_per_region=2, legendary_crates_per_region=2),
+    ),
+    _BrotatoTestDataSet(
+        options=_BrotatoTestOptions(
+            num_common_crate_drops=50,
+            num_common_crate_drop_groups=1,
+            num_legendary_crate_drops=50,
+            num_legendary_crate_drop_groups=2,
+        ),
+        expected_results=_BrotatoTestExpectedResults(common_crates_per_region=50, legendary_crates_per_region=25),
+    ),
 ]
 
 
 class TestBrotatoRegions(BrotatoTestBase):
-    def _run(self, options: _OptionsAndResults):
-        self.options = {
-            "starting_characters": 1,  # Just use the default five
-            "num_common_crate_drops": options.common_crate_locations,
-            "num_common_crate_drop_groups": options.common_crate_regions,
-            "num_legendary_crate_drops": options.legendary_crate_locations,
-            "num_legendary_crate_drop_groups": options.legendary_crate_regions,
-        }
+    def _run(self, test_data: _BrotatoTestDataSet):
+        self.options = asdict(test_data.options)
         self.world_setup()
 
     def test_correct_number_of_crate_drop_regions_created(self):
@@ -55,19 +153,18 @@ class TestBrotatoRegions(BrotatoTestBase):
         """
         total_possible_normal_crate_groups = MAX_NORMAL_CRATE_DROPS
         total_possible_legendary_crate_groups = MAX_LEGENDARY_CRATE_DROPS
-        for options_set in _OPTION_SETS:
-            with self.subTest(options_and_results=options_set):
-                self._run(options_set)
+        for test_data in _TEST_DATA_SETS:
+            with self.subTest(test_data=test_data):
+                self._run(test_data)
                 player_regions = self.multiworld.regions.region_cache[self.player]
-
-                for common_region_idx in range(1, options_set.common_crate_regions + 1):
+                for common_region_idx in range(1, test_data.options.num_common_crate_drops + 1):
                     expected_normal_crate_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
                     self.assertIn(
                         expected_normal_crate_group,
                         player_regions,
                         msg=f"Did not find expected normal loot crate region {expected_normal_crate_group}.",
                     )
-                for legendary_region_idx in range(1, options_set.legendary_crate_regions + 1):
+                for legendary_region_idx in range(1, test_data.options.num_legendary_crate_drops + 1):
                     expected_legendary_crate_group = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(
                         num=legendary_region_idx
                     )
@@ -78,7 +175,7 @@ class TestBrotatoRegions(BrotatoTestBase):
                     )
 
                 for common_region_idx in range(
-                    options_set.common_crate_regions + 1, total_possible_normal_crate_groups + 1
+                    test_data.options.num_common_crate_drop_groups + 1, total_possible_normal_crate_groups + 1
                 ):
                     expected_missing_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
                     self.assertNotIn(
@@ -88,7 +185,7 @@ class TestBrotatoRegions(BrotatoTestBase):
                     )
 
                 for legendary_region_idx in range(
-                    options_set.legendary_crate_regions + 1, total_possible_legendary_crate_groups
+                    test_data.options.num_legendary_crate_drop_groups + 1, total_possible_legendary_crate_groups
                 ):
                     expected_missing_group = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=legendary_region_idx)
                     self.assertNotIn(
@@ -98,21 +195,29 @@ class TestBrotatoRegions(BrotatoTestBase):
                     )
 
     def test_crate_drop_regions_have_correct_locations(self):
-        for options_set in _OPTION_SETS:
-            with self.subTest(options_and_results=options_set):
-                self._run(options_set)
+        for test_data in _TEST_DATA_SETS:
+            with self.subTest(test_data=test_data):
+                self._run(test_data)
                 self._test_regions_have_correct_locations(
-                    options_set.common_crates_per_region,
-                    options_set.common_crate_regions,
+                    test_data.expected_results.common_crates_per_region,
+                    test_data.options.num_common_crate_drop_groups,
                     CRATE_DROP_LOCATION_TEMPLATE,
                     CRATE_DROP_GROUP_REGION_TEMPLATE,
                 )
                 self._test_regions_have_correct_locations(
-                    options_set.legendary_crates_per_region,
-                    options_set.legendary_crate_regions,
+                    test_data.expected_results.legendary_crates_per_region,
+                    test_data.options.num_legendary_crate_drop_groups,
                     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
                     LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
                 )
+
+    def test_crate_drop_region_access_rules_correct(self):
+        for options_set in _TEST_DATA_SETS:
+            with self.subTest(test_data=options_set):
+                self._run(options_set)
+                player_regions = self.multiworld.regions.region_cache[self.player]
+                for region in range(options_set.common_crate_regions):
+                    pass
 
     def _test_regions_have_correct_locations(
         self,
