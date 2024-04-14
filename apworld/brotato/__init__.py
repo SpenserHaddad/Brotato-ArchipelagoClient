@@ -57,7 +57,7 @@ class BrotatoWorld(World):
     """
 
     options_dataclass = BrotatoOptions
-    options: BrotatoOptions
+    options: BrotatoOptions  # type: ignore
     game = "Brotato"
     web = BrotatoWeb()
     data_version = 0
@@ -91,7 +91,7 @@ class BrotatoWorld(World):
         if character_option == 0:  # Default
             self._starting_characters = list(DEFAULT_CHARACTERS)
         else:
-            num_starting_characters = self.options.num_starting_characters
+            num_starting_characters = self.options.num_starting_characters.value
             self._starting_characters = self.random.sample(CHARACTERS, num_starting_characters)
 
     def set_rules(self):
