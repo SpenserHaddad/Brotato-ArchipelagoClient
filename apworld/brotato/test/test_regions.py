@@ -1,15 +1,15 @@
+from dataclasses import asdict, dataclass
 from typing import List, Tuple, Union
 
 from ..Constants import (
     CRATE_DROP_GROUP_REGION_TEMPLATE,
-    MAX_NORMAL_CRATE_DROPS,
-    LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
-    MAX_LEGENDARY_CRATE_DROPS,
     CRATE_DROP_LOCATION_TEMPLATE,
+    LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
+    MAX_LEGENDARY_CRATE_DROPS,
+    MAX_NORMAL_CRATE_DROPS,
 )
 from . import BrotatoTestBase
-from dataclasses import dataclass, asdict
 
 
 @dataclass(frozen=True)
@@ -38,6 +38,16 @@ class _BrotatoTestExpectedResults:
 class _BrotatoTestDataSet:
     options: _BrotatoTestOptions
     expected_results: _BrotatoTestExpectedResults
+
+    def test_name(self) -> str:
+        return ", ".join(
+            [
+                str(self.options.num_common_crate_drops),
+                str(self.options.num_common_crate_drop_groups),
+                str(self.options.num_legendary_crate_drops),
+                str(self.options.num_legendary_crate_drop_groups),
+            ]
+        )
 
 
 _TEST_DATA_SETS: List[_BrotatoTestDataSet] = [
@@ -76,7 +86,7 @@ _TEST_DATA_SETS: List[_BrotatoTestDataSet] = [
             num_legendary_crate_drop_groups=3,
         ),
         expected_results=_BrotatoTestExpectedResults(
-            common_crates_per_region=[6, 5, 5], legendary_crates_per_region=[6, 5, 5]
+            common_crates_per_region=(6, 5, 5), legendary_crates_per_region=(6, 5, 5)
         ),
     ),
     _BrotatoTestDataSet(
@@ -87,8 +97,8 @@ _TEST_DATA_SETS: List[_BrotatoTestDataSet] = [
             num_legendary_crate_drop_groups=5,
         ),
         expected_results=_BrotatoTestExpectedResults(
-            # Five "3's" and ten "5's"
-            common_crates_per_region=[*([3] * 5), *([5] * 10)],
+            # Five "3's" and ten "2's", because the drops don't evenly divide into the groups
+            common_crates_per_region=(*([3] * 5), *([2] * 10)),
             legendary_crates_per_region=5,
         ),
     ),
@@ -154,17 +164,17 @@ class TestBrotatoRegions(BrotatoTestBase):
         total_possible_normal_crate_groups = MAX_NORMAL_CRATE_DROPS
         total_possible_legendary_crate_groups = MAX_LEGENDARY_CRATE_DROPS
         for test_data in _TEST_DATA_SETS:
-            with self.subTest(test_data=test_data):
+            with self.subTest(msg=test_data.test_name()):
                 self._run(test_data)
                 player_regions = self.multiworld.regions.region_cache[self.player]
-                for common_region_idx in range(1, test_data.options.num_common_crate_drops + 1):
+                for common_region_idx in range(1, test_data.options.num_common_crate_drop_groups + 1):
                     expected_normal_crate_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
                     self.assertIn(
                         expected_normal_crate_group,
                         player_regions,
                         msg=f"Did not find expected normal loot crate region {expected_normal_crate_group}.",
                     )
-                for legendary_region_idx in range(1, test_data.options.num_legendary_crate_drops + 1):
+                for legendary_region_idx in range(1, test_data.options.num_legendary_crate_drop_groups + 1):
                     expected_legendary_crate_group = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(
                         num=legendary_region_idx
                     )
@@ -196,7 +206,7 @@ class TestBrotatoRegions(BrotatoTestBase):
 
     def test_crate_drop_regions_have_correct_locations(self):
         for test_data in _TEST_DATA_SETS:
-            with self.subTest(test_data=test_data):
+            with self.subTest(msg=test_data.test_name()):
                 self._run(test_data)
                 self._test_regions_have_correct_locations(
                     test_data.expected_results.common_crates_per_region,
@@ -212,11 +222,11 @@ class TestBrotatoRegions(BrotatoTestBase):
                 )
 
     def test_crate_drop_region_access_rules_correct(self):
-        for options_set in _TEST_DATA_SETS:
-            with self.subTest(test_data=options_set):
-                self._run(options_set)
+        for test_data in _TEST_DATA_SETS:
+            with self.subTest(msg=test_data.test_name()):
+                self._run(test_data)
                 player_regions = self.multiworld.regions.region_cache[self.player]
-                for region in range(options_set.common_crate_regions):
+                for region in range(test_data.common_crate_regions):
                     pass
 
     def _test_regions_have_correct_locations(
