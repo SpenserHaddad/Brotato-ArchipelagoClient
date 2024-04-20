@@ -6,8 +6,10 @@ from Options import PerGameCommonOptions, Range, TextChoice
 
 from .Constants import (
     MAX_COMMON_UPGRADES,
+    MAX_LEGENDARY_CRATE_DROP_GROUPS,
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_LEGENDARY_UPGRADES,
+    MAX_NORMAL_CRATE_DROP_GROUPS,
     MAX_NORMAL_CRATE_DROPS,
     MAX_RARE_UPGRADES,
     MAX_SHOP_LOCATIONS_PER_TIER,
@@ -107,7 +109,7 @@ class NumberCommonCrateDropGroups(Range):
     """
 
     range_start = 1
-    range_end = MAX_NORMAL_CRATE_DROPS
+    range_end = MAX_NORMAL_CRATE_DROP_GROUPS
 
     display_name = "Loot Crate Groups"
     default = 1
@@ -152,7 +154,7 @@ class NumberLegendaryCrateDropGroups(Range):
     """
 
     range_start = 1
-    range_end = MAX_NORMAL_CRATE_DROPS
+    range_end = MAX_LEGENDARY_CRATE_DROP_GROUPS
     default = 1
     display_name = "Loot Crate Groups"
 
