@@ -212,19 +212,25 @@ class BrotatoWorld(World):
         item_rule: ItemRule | None
         if crate_type == "normal":
             num_items = self.options.num_common_crate_drops.value
-            num_groups = self.options.num_common_crate_drop_groups.value
+            num_groups_option_value = self.options.num_common_crate_drop_groups.value
             location_name_template = CRATE_DROP_LOCATION_TEMPLATE
             region_name_template = CRATE_DROP_GROUP_REGION_TEMPLATE
             item_rule = None
         else:
             num_items = self.options.num_legendary_crate_drops.value
-            num_groups = self.options.num_legendary_crate_drop_groups.value
+            num_groups_option_value = self.options.num_legendary_crate_drop_groups.value
             location_name_template = LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE
             region_name_template = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE
             item_rule = legendary_loot_crate_item_rule
 
         regions: List[Region] = []
-        num_wins_to_unlock_group = self.options.num_victories.value // num_groups
+
+        # If the options specify more crate drop groups than number of required wins, clamp to the number of wins. This
+        # makes the math simpler and ensures all items are accessible by go mode. Someone probably wants the option to
+        # have items after completing their goal, but we're going to pretend they don't exist until they ask.
+        num_groups = min(self.options.num_victories.value, num_groups_option_value)
+
+        num_wins_to_unlock_group = max(self.options.num_victories.value // num_groups, 1)
         items_per_group, extra_items = divmod(num_items, num_groups)
         crate_count = 0
         wins_to_unlock = 0
