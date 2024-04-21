@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import asdict
 from typing import Any, List, Literal, Sequence
 
 from BaseClasses import MultiWorld, Region, Tutorial
 from worlds.AutoWorld import WebWorld, World
-from worlds.generic.Rules import ItemRule, add_item_rule
+from worlds.generic.Rules import add_item_rule
 
 from ._loot_crate_groups import BrotatoLootCrateGroup, build_loot_crate_groups
 from .Constants import (
@@ -211,12 +212,10 @@ class BrotatoWorld(World):
             "num_consumables": self.options.num_common_crate_drops.value,
             "num_starting_shop_slots": self.options.num_starting_shop_slots.value,
             "num_legendary_consumables": self.options.num_legendary_crate_drops.value,
-            "num_common_crate_drops_per_check": self.options.num_common_crate_drops_per_check,
-            "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check,
-            "common_crate_drop_groups": 0,
-            "legendary_crate_drop_groups": 0,
-            "wins_per_common_crate_drop_group": 0,
-            "wins_per_legendary_crate_drop_group": 0,
+            "num_common_crate_drops_per_check": self.options.num_common_crate_drops_per_check.value,
+            "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check.value,
+            "common_crate_drop_groups": [asdict(g) for g in self.common_loot_crate_groups],
+            "legendary_crate_drop_groups": [asdict(g) for g in self.legendary_loot_crate_groups],
         }
 
     def _create_character_region(self, parent_region: Region, character: str) -> Region:
