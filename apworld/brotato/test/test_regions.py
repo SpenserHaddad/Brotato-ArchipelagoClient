@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from typing import Tuple, Union
 
 from ..Constants import (
@@ -13,14 +12,9 @@ from ..Constants import (
 )
 from ..Items import ItemName
 from . import BrotatoTestBase
-from ._data_sets import TEST_DATA_SETS, BrotatoTestDataSet
 
 
 class TestBrotatoRegions(BrotatoTestBase):
-    def _run(self, test_data: BrotatoTestDataSet):
-        self.options = {**asdict(test_data.options)}
-        self.world_setup()
-
     def test_correct_number_of_crate_drop_regions_created(self):
         """Test that only the location groups needed are created.
 
@@ -29,63 +23,61 @@ class TestBrotatoRegions(BrotatoTestBase):
         """
         total_possible_normal_crate_groups = MAX_NORMAL_CRATE_DROPS
         total_possible_legendary_crate_groups = MAX_LEGENDARY_CRATE_DROPS
-        for test_data in TEST_DATA_SETS:
-            with self.subTest(msg=test_data.test_name()):
-                self._run(test_data)
-                player_regions = self.multiworld.regions.region_cache[self.player]
-                for common_region_idx in range(1, test_data.expected_results.num_common_crate_regions + 1):
-                    expected_normal_crate_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
-                    self.assertIn(
-                        expected_normal_crate_group,
-                        player_regions,
-                        msg=f"Did not find expected normal loot crate region {expected_normal_crate_group}.",
-                    )
-                for legendary_region_idx in range(1, test_data.expected_results.num_legendary_crate_regions + 1):
-                    expected_legendary_crate_group = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(
-                        num=legendary_region_idx
-                    )
-                    self.assertIn(
-                        expected_legendary_crate_group,
-                        player_regions,
-                        msg=f"Did not find expected legendary loot crate region {expected_legendary_crate_group}.",
-                    )
+        for test_data in self._test_data_set_subtests():
+            self._run(test_data)
+            player_regions = self.multiworld.regions.region_cache[self.player]
+            for common_region_idx in range(1, test_data.expected_results.num_common_crate_regions + 1):
+                expected_normal_crate_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
+                self.assertIn(
+                    expected_normal_crate_group,
+                    player_regions,
+                    msg=f"Did not find expected normal loot crate region {expected_normal_crate_group}.",
+                )
+            for legendary_region_idx in range(1, test_data.expected_results.num_legendary_crate_regions + 1):
+                expected_legendary_crate_group = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(
+                    num=legendary_region_idx
+                )
+                self.assertIn(
+                    expected_legendary_crate_group,
+                    player_regions,
+                    msg=f"Did not find expected legendary loot crate region {expected_legendary_crate_group}.",
+                )
 
-                for common_region_idx in range(
-                    test_data.options.num_common_crate_drop_groups + 1, total_possible_normal_crate_groups + 1
-                ):
-                    expected_missing_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
-                    self.assertNotIn(
-                        expected_missing_group,
-                        player_regions,
-                        msg=f"Normal loot crate region {expected_missing_group} should not have been created.",
-                    )
+            for common_region_idx in range(
+                test_data.options.num_common_crate_drop_groups + 1, total_possible_normal_crate_groups + 1
+            ):
+                expected_missing_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
+                self.assertNotIn(
+                    expected_missing_group,
+                    player_regions,
+                    msg=f"Normal loot crate region {expected_missing_group} should not have been created.",
+                )
 
-                for legendary_region_idx in range(
-                    test_data.options.num_legendary_crate_drop_groups + 1, total_possible_legendary_crate_groups
-                ):
-                    expected_missing_group = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=legendary_region_idx)
-                    self.assertNotIn(
-                        expected_missing_group,
-                        player_regions,
-                        msg=f"Legendary loot crate region {expected_missing_group} should not have been created.",
-                    )
+            for legendary_region_idx in range(
+                test_data.options.num_legendary_crate_drop_groups + 1, total_possible_legendary_crate_groups
+            ):
+                expected_missing_group = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=legendary_region_idx)
+                self.assertNotIn(
+                    expected_missing_group,
+                    player_regions,
+                    msg=f"Legendary loot crate region {expected_missing_group} should not have been created.",
+                )
 
     def test_crate_drop_regions_have_correct_locations(self):
-        for test_data in TEST_DATA_SETS:
-            with self.subTest(msg=test_data.test_name()):
-                self._run(test_data)
-                self._test_regions_have_correct_locations(
-                    test_data.expected_results.common_crates_per_region,
-                    test_data.expected_results.num_common_crate_regions,
-                    CRATE_DROP_LOCATION_TEMPLATE,
-                    CRATE_DROP_GROUP_REGION_TEMPLATE,
-                )
-                self._test_regions_have_correct_locations(
-                    test_data.expected_results.legendary_crates_per_region,
-                    test_data.expected_results.num_legendary_crate_regions,
-                    LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
-                    LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
-                )
+        for test_data in self._test_data_set_subtests():
+            self._run(test_data)
+            self._test_regions_have_correct_locations(
+                test_data.expected_results.common_crates_per_region,
+                test_data.expected_results.num_common_crate_regions,
+                CRATE_DROP_LOCATION_TEMPLATE,
+                CRATE_DROP_GROUP_REGION_TEMPLATE,
+            )
+            self._test_regions_have_correct_locations(
+                test_data.expected_results.legendary_crates_per_region,
+                test_data.expected_results.num_legendary_crate_regions,
+                LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
+                LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
+            )
 
     def test_normal_crate_drop_region_have_correct_access_rules(self):
         """Check that each of the normal loot crate drop regions is only unlocked after enough wins are achieved.
@@ -96,15 +88,14 @@ class TestBrotatoRegions(BrotatoTestBase):
         """
         # run_won_item_name = ItemName.RUN_COMPLETE.value
         # run_won_item = self.world.create_item(run_won_item_name)
-        for test_data in TEST_DATA_SETS:
-            with self.subTest(msg=test_data.test_name()):
-                self._run(test_data)
+        for test_data in self._test_data_set_subtests():
+            self._run(test_data)
 
-                self._test_regions_have_correct_access_rules(
-                    test_data.expected_results.wins_required_per_common_region,
-                    test_data.expected_results.num_common_crate_regions,
-                    CRATE_DROP_GROUP_REGION_TEMPLATE,
-                )
+            self._test_regions_have_correct_access_rules(
+                test_data.expected_results.wins_required_per_common_region,
+                test_data.expected_results.num_common_crate_regions,
+                CRATE_DROP_GROUP_REGION_TEMPLATE,
+            )
 
     def test_legendary_crate_drop_region_have_correct_access_rules(self):
         """Check that each of the legendary loot crate drop regions is only unlocked after enough wins are achieved.
@@ -113,17 +104,14 @@ class TestBrotatoRegions(BrotatoTestBase):
         state and check region access at each step. Splitting the tests, with a common private test method, means less
         duplication and no need to try and clear state within a test.
         """
-        # run_won_item_name = ItemName.RUN_COMPLETE.value
-        # run_won_item = self.world.create_item(run_won_item_name)
-        for test_data in TEST_DATA_SETS:
-            with self.subTest(msg=test_data.test_name()):
-                self._run(test_data)
+        for test_data in self._test_data_set_subtests():
+            self._run(test_data)
 
-                self._test_regions_have_correct_access_rules(
-                    test_data.expected_results.wins_required_per_legendary_region,
-                    test_data.expected_results.num_legendary_crate_regions,
-                    LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
-                )
+            self._test_regions_have_correct_access_rules(
+                test_data.expected_results.wins_required_per_legendary_region,
+                test_data.expected_results.num_legendary_crate_regions,
+                LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
+            )
 
     def _test_regions_have_correct_access_rules(
         self, wins_per_region: Tuple[int, ...], num_regions: int, region_template: str
