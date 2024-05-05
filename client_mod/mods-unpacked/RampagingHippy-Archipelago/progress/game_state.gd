@@ -24,6 +24,12 @@ var total_consumable_drops: int
 var total_legendary_consumable_drops: int
 var num_starting_shop_slots: int
 var num_wins_needed: int
+var num_common_crate_drops_per_check: int
+var num_legendary_crate_drops_per_check: int
+# Correspond to BrotatoLootCrateGroup in the apworld. 
+# Has keys"index", "num_crates" and "wins_to_unlock".
+var common_crate_drop_groups: Dictionary
+var legendary_crate_drop_groups: Dictionary
 
 # Cumulative values updated as the player receives items and gets checks.
 var goal_completed: bool = false
@@ -58,12 +64,20 @@ func _init(
 	total_consumable_drops_: int,
 	total_legendary_consumable_drops_: int,
 	num_starting_shop_slots_: int,
-	waves_with_checks: Array
+	waves_with_checks: Array,
+	num_common_crate_drops_per_check_: int,
+	num_legendary_crate_drops_per_check_: int,
+	common_crate_drop_groups_: Dictionary,
+	legendary_crate_drop_groups_: Dictionary
 ):
 	num_wins_needed = num_wins_needed_
 	total_consumable_drops = total_consumable_drops_
 	total_legendary_consumable_drops = total_legendary_consumable_drops_
 	num_starting_shop_slots = num_starting_shop_slots_
+	num_common_crate_drops_per_check = num_common_crate_drops_per_check_
+	num_legendary_crate_drops_per_check = num_legendary_crate_drops_per_check_
+	common_crate_drop_groups = common_crate_drop_groups_
+	legendary_crate_drop_groups = legendary_crate_drop_groups_
 	for character in _constants.CHARACTER_NAME_TO_ID:
 		character_progress[character] = ApCharacterProgress.new()
 		for wave in waves_with_checks:

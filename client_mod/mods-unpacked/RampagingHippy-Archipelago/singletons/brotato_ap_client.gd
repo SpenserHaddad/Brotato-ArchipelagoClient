@@ -260,7 +260,9 @@ func _on_connected_to_multiworld():
 		slot_data["num_consumables"],
 		slot_data["num_legendary_consumables"],
 		slot_data["num_starting_shop_slots"],
-		slot_data["waves_with_checks"]
+		slot_data["waves_with_checks"],
+		slot_data["num_common_crate_drops_per_check"],
+		slot_data["num_legendary_crate_drops_per_check"]
 	)
 
 	var location_groups = DataPackage.BrotatoLocationGroups.from_location_table(ap_session.data_package.location_name_to_id)
