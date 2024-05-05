@@ -24,7 +24,7 @@ class TestBrotatoRegions(BrotatoTestBase):
         total_possible_normal_crate_groups = MAX_NORMAL_CRATE_DROPS
         total_possible_legendary_crate_groups = MAX_LEGENDARY_CRATE_DROPS
         for test_data in self._test_data_set_subtests():
-            self._run(test_data)
+            self._run(test_data.options_dict)
             player_regions = self.multiworld.regions.region_cache[self.player]
             for common_region_idx in range(1, test_data.expected_results.num_common_crate_regions + 1):
                 expected_normal_crate_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
@@ -65,7 +65,7 @@ class TestBrotatoRegions(BrotatoTestBase):
 
     def test_crate_drop_regions_have_correct_locations(self):
         for test_data in self._test_data_set_subtests():
-            self._run(test_data)
+            self._run(test_data.options_dict)
             self._test_regions_have_correct_locations(
                 test_data.expected_results.common_crates_per_region,
                 test_data.expected_results.num_common_crate_regions,
@@ -89,7 +89,7 @@ class TestBrotatoRegions(BrotatoTestBase):
         # run_won_item_name = ItemName.RUN_COMPLETE.value
         # run_won_item = self.world.create_item(run_won_item_name)
         for test_data in self._test_data_set_subtests():
-            self._run(test_data)
+            self._run(test_data.options_dict)
 
             self._test_regions_have_correct_access_rules(
                 test_data.expected_results.wins_required_per_common_region,
@@ -105,7 +105,7 @@ class TestBrotatoRegions(BrotatoTestBase):
         duplication and no need to try and clear state within a test.
         """
         for test_data in self._test_data_set_subtests():
-            self._run(test_data)
+            self._run(test_data.options_dict)
 
             self._test_regions_have_correct_access_rules(
                 test_data.expected_results.wins_required_per_legendary_region,
