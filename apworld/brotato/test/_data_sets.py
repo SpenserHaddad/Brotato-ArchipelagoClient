@@ -8,8 +8,8 @@ combinations.
 Currently, the test data sets are focused on testing the crate drop region creation and access rules, but there's no
 reason it couldn't be expanded to handle more in the future.
 """
-from dataclasses import dataclass
-from typing import List, Optional, Tuple, Union
+from dataclasses import asdict, dataclass
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ..Constants import (
     MAX_LEGENDARY_CRATE_DROP_GROUPS,
@@ -106,6 +106,10 @@ class BrotatoTestDataSet:
             name = options_str
 
         return name
+
+    @property
+    def options_dict(self) -> Dict[str, Any]:
+        return asdict(self.options)
 
 
 TEST_DATA_SETS: List[BrotatoTestDataSet] = [
