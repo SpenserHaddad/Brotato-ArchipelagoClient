@@ -8,9 +8,6 @@ _character_items = item_name_groups["Characters"]
 
 
 class TestBrotatoStartingCharacters(BrotatoTestBase):
-    run_default_tests = False
-    auto_construct = False
-
     def _run(
         self,
         num_characters: int,

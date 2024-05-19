@@ -72,6 +72,11 @@ NUM_UNLOCKABLE_CHARACTERS = NUM_CHARACTERS - NUM_DEFAULT_CHARACTERS
 
 MAX_NORMAL_CRATE_DROPS = 50
 MAX_LEGENDARY_CRATE_DROPS = 50
+# Since groups are unlocked by winning runs, the maximum number of groups there is the number of characters.
+# So these are just aliases of NUM_CHARACTERS to make them more explicit.
+MAX_NORMAL_CRATE_DROP_GROUPS = NUM_CHARACTERS
+MAX_LEGENDARY_CRATE_DROP_GROUPS = NUM_CHARACTERS
+
 
 MAX_COMMON_UPGRADES = 50
 MAX_UNCOMMON_UPGRADES = 50
@@ -92,3 +97,7 @@ LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE = "Legendary Loot Crate {num}"
 WAVE_COMPLETE_LOCATION_TEMPLATE = "Wave {wave} Completed ({char})"
 RUN_COMPLETE_LOCATION_TEMPLATE = "Run Won ({char})"
 SHOP_ITEM_LOCATION_TEMPLATE = "{tier} Shop Item {num}"
+
+# Region name string templates
+CRATE_DROP_GROUP_REGION_TEMPLATE = "Loot Crate Group {num}"
+LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE = "Legendary Loot Crate Group {num}"

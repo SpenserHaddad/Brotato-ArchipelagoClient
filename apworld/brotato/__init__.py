@@ -1,12 +1,26 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Sequence
+from dataclasses import asdict
+from typing import Any, List, Literal, Sequence
 
-from BaseClasses import MultiWorld, Tutorial
+from BaseClasses import MultiWorld, Region, Tutorial
 from worlds.AutoWorld import WebWorld, World
+from worlds.generic.Rules import add_item_rule
 
-from .Constants import CHARACTERS, DEFAULT_CHARACTERS, MAX_SHOP_SLOTS, NUM_WAVES
+from ._loot_crate_groups import BrotatoLootCrateGroup, build_loot_crate_groups
+from .Constants import (
+    CHARACTERS,
+    CRATE_DROP_GROUP_REGION_TEMPLATE,
+    CRATE_DROP_LOCATION_TEMPLATE,
+    DEFAULT_CHARACTERS,
+    LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
+    LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
+    MAX_SHOP_SLOTS,
+    NUM_WAVES,
+    RUN_COMPLETE_LOCATION_TEMPLATE,
+    WAVE_COMPLETE_LOCATION_TEMPLATE,
+)
 from .Items import (
     BrotatoItem,
     ItemName,
@@ -15,10 +29,9 @@ from .Items import (
     item_name_to_id,
     item_table,
 )
-from .Locations import location_name_groups, location_name_to_id
+from .Locations import BrotatoLocation, location_name_groups, location_name_to_id, location_table
 from .Options import BrotatoOptions
-from .Regions import create_regions
-from .Rules import BrotatoLogic
+from .Rules import create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
 
 logger = logging.getLogger("Brotato")
 
@@ -46,7 +59,7 @@ class BrotatoWorld(World):
     """
 
     options_dataclass = BrotatoOptions
-    options: BrotatoOptions
+    options: BrotatoOptions  # type: ignore
     game = "Brotato"
     web = BrotatoWeb()
     data_version = 0
@@ -62,7 +75,22 @@ class BrotatoWorld(World):
     location_name_groups = location_name_groups
 
     waves_with_checks: Sequence[int]
-    """Which waves will count as locations, derived from player options in generate_early"""
+    """Which waves will count as locations.
+
+    Calculated from player options in generate_early.
+    """
+
+    common_loot_crate_groups: Sequence[BrotatoLootCrateGroup]
+    """Information about each common loot crate group, i.e. how many crates it has and how many wins it needs.
+
+    Calculated from player options in generate_early.
+    """
+
+    legendary_loot_crate_groups: Sequence[BrotatoLootCrateGroup]
+    """Information about each legendary loot crate group, i.e. how many crates it has and how many wins it needs.
+
+    Calculated from player options in generate_early.
+    """
 
     def __init__(self, world: MultiWorld, player: int):
         super().__init__(world, player)
@@ -76,21 +104,48 @@ class BrotatoWorld(World):
         waves_per_drop = self.options.waves_per_drop.value
         # Ignore 0 value, but choosing a different start gives the wrong wave results
         self.waves_with_checks = list(range(0, NUM_WAVES + 1, waves_per_drop))[1:]
+
+        self.common_loot_crate_groups = build_loot_crate_groups(
+            self.options.num_common_crate_drops.value,
+            self.options.num_common_crate_drop_groups.value,
+            self.options.num_victories.value,
+        )
+        self.legendary_loot_crate_groups = build_loot_crate_groups(
+            self.options.num_legendary_crate_drops.value,
+            self.options.num_legendary_crate_drop_groups.value,
+            self.options.num_victories.value,
+        )
+
         character_option = self.options.starting_characters.value
         if character_option == 0:  # Default
             self._starting_characters = list(DEFAULT_CHARACTERS)
         else:
-            num_starting_characters = self.options.num_starting_characters
+            num_starting_characters = self.options.num_starting_characters.value
             self._starting_characters = self.random.sample(CHARACTERS, num_starting_characters)
 
     def set_rules(self):
         num_required_victories = self.options.num_victories.value
-        self.multiworld.completion_condition[self.player] = lambda state: BrotatoLogic._brotato_has_run_wins(
-            state, self.player, count=num_required_victories
+        self.multiworld.completion_condition[self.player] = create_has_run_wins_rule(
+            self.player, num_required_victories
         )
 
     def create_regions(self) -> None:
-        create_regions(self.multiworld, self.player, self.options, self.waves_with_checks)
+        menu_region = Region("Menu", self.player, self.multiworld)
+        loot_crate_regions = self._create_regions_for_loot_crate_groups(menu_region, "normal")
+        legendary_crate_regions = self._create_regions_for_loot_crate_groups(menu_region, "legendary")
+
+        character_regions: list[Region] = []
+        for character in CHARACTERS:
+            character_region = self._create_character_region(menu_region, character)
+            character_regions.append(character_region)
+
+            # # Crates can be gotten with any character...
+            # character_region.connect(crate_drop_region, f"Drop crates for {character}")
+            # # ...but we need to make sure you don't go to another character's in-game before you have them.
+            # crate_drop_region.connect(character_region, f"Exit drop crates for {character}", rule=has_character_rule)
+            # character_regions.append(character_region)
+
+        self.multiworld.regions.extend([menu_region, *loot_crate_regions, *legendary_crate_regions, *character_regions])
 
     def create_items(self):
         item_names: list[ItemName | str] = []
@@ -157,4 +212,65 @@ class BrotatoWorld(World):
             "num_consumables": self.options.num_common_crate_drops.value,
             "num_starting_shop_slots": self.options.num_starting_shop_slots.value,
             "num_legendary_consumables": self.options.num_legendary_crate_drops.value,
+            "num_common_crate_drops_per_check": self.options.num_common_crate_drops_per_check.value,
+            "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check.value,
+            "common_crate_drop_groups": [asdict(g) for g in self.common_loot_crate_groups],
+            "legendary_crate_drop_groups": [asdict(g) for g in self.legendary_loot_crate_groups],
         }
+
+    def _create_character_region(self, parent_region: Region, character: str) -> Region:
+        character_region = Region(f"In-Game ({character})", self.player, self.multiworld)
+        character_run_won_location = location_table[RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)]
+        character_region.locations.append(character_run_won_location.to_location(self.player, parent=character_region))
+
+        character_wave_drop_location_names = [
+            WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=character) for w in self.waves_with_checks
+        ]
+        character_region.locations.extend(
+            location_table[loc].to_location(self.player, parent=character_region)
+            for loc in character_wave_drop_location_names
+        )
+
+        has_character_rule = create_has_character_rule(self.player, character)
+        parent_region.connect(
+            character_region,
+            f"Start Game ({character})",
+            rule=has_character_rule,
+        )
+        return character_region
+
+    def _create_regions_for_loot_crate_groups(
+        self, parent_region: Region, crate_type: Literal["normal", "legendary"]
+    ) -> List[Region]:
+        if crate_type == "normal":
+            loot_crate_groups = self.common_loot_crate_groups
+            location_name_template = CRATE_DROP_LOCATION_TEMPLATE
+            region_name_template = CRATE_DROP_GROUP_REGION_TEMPLATE
+            item_rule = None
+        else:
+            loot_crate_groups = self.legendary_loot_crate_groups
+            location_name_template = LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE
+            region_name_template = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE
+            item_rule = legendary_loot_crate_item_rule
+
+        regions: List[Region] = []
+        crate_count = 1
+
+        for group_idx, group in enumerate(loot_crate_groups, start=1):
+            group_region = Region(region_name_template.format(num=group_idx), self.player, self.multiworld)
+            for _ in range(1, group.num_crates + 1):
+                crate_location_name = location_name_template.format(num=crate_count)
+                crate_location: BrotatoLocation = location_table[crate_location_name].to_location(
+                    self.player, parent=group_region
+                )
+                if item_rule is not None:
+                    add_item_rule(crate_location, item_rule)
+
+                group_region.locations.append(crate_location)
+                crate_count += 1
+
+            group_region_rule = create_has_run_wins_rule(self.player, group.wins_to_unlock)
+            parent_region.connect(group_region, name=group_region.name, rule=group_region_rule)
+            regions.append(group_region)
+
+        return regions

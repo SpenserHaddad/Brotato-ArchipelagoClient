@@ -6,8 +6,10 @@ from Options import PerGameCommonOptions, Range, TextChoice
 
 from .Constants import (
     MAX_COMMON_UPGRADES,
+    MAX_LEGENDARY_CRATE_DROP_GROUPS,
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_LEGENDARY_UPGRADES,
+    MAX_NORMAL_CRATE_DROP_GROUPS,
     MAX_NORMAL_CRATE_DROPS,
     MAX_RARE_UPGRADES,
     MAX_SHOP_LOCATIONS_PER_TIER,
@@ -68,8 +70,11 @@ class WavesPerCheck(Range):
 
 
 class NumberCommonCrateDropLocations(Range):
-    """
-    The first <count> normal crate drops will be AP locations.
+    """The number of loot crate locations.
+
+    This replaces the loot crate drops in-game with an Archipelago item which must be picked up.
+
+    How the drops are made available and how many are needed to make a check are controlled by the next two settings.
     """
 
     range_start = 0
@@ -79,9 +84,43 @@ class NumberCommonCrateDropLocations(Range):
     default = 25
 
 
-class NumberLegendaryCrateDropLocations(Range):
+class NumberCommonCrateDropsPerCheck(Range):
+    """The number of loot crates needed to check a location.
+
+    1 means every loot crate pickup gives a check,
+    2 means every other loot crate,
+    etc.
     """
-    The first <count> legendary crate drops will be AP locations.
+
+    range_start = 0
+    range_end = MAX_NORMAL_CRATE_DROPS
+
+    display_name = "Loot Crates per Check"
+
+
+class NumberCommonCrateDropGroups(Range):
+    """The number of groups to separate loot crate locations into.
+
+    Once you check all the locations in a group, the randomizer will not drop more loot crate Archipelago items until you win more runs.
+
+    The number of loot crate locations will be evenly split among the groups, and the groups will be evenly spread out over the number of wins you choose.
+
+    Set to 1 to make all loot crate locations available from the start.
+    """
+
+    range_start = 1
+    range_end = MAX_NORMAL_CRATE_DROP_GROUPS
+
+    display_name = "Loot Crate Groups"
+    default = 1
+
+
+class NumberLegendaryCrateDropLocations(Range):
+    """The number of legendary loot crate locations.
+
+    This replaces the legendary loot crate drops in-game with an Archipelago item which must be picked up.
+
+    How the drops are made available and how many are needed to make a check are controlled by the next two settings.
     """
 
     range_start = 0
@@ -89,6 +128,35 @@ class NumberLegendaryCrateDropLocations(Range):
 
     display_name = "Number of legendary crate drop locations"
     default = 5
+
+
+class NumberLegendaryCrateDropsPerCheck(Range):
+    """The number of legendary loot crates needed to check a location.
+
+    1 means every loot crate pickup gives a check, 2 means every other loot crate, etc.
+    """
+
+    range_start = 0
+    range_end = MAX_NORMAL_CRATE_DROPS
+    default = 1
+
+    display_name = "Loot crates per check"
+
+
+class NumberLegendaryCrateDropGroups(Range):
+    """The number of groups to separate legendary loot crate locations into.
+
+    Once you check all the locations in a group, the randomizer will not drop more legendary loot crate Archipelago items until you win more runs.
+
+    The number of loot crate locations will be evenly split among the groups, and the groups will be evenly spread out over the number of wins you choose.
+
+    Set to 1 to make all legendary loot crate locations available from the start.
+    """
+
+    range_start = 1
+    range_end = MAX_LEGENDARY_CRATE_DROP_GROUPS
+    default = 1
+    display_name = "Loot Crate Groups"
 
 
 class NumberCommonUpgrades(Range):
@@ -156,7 +224,11 @@ class BrotatoOptions(PerGameCommonOptions):
     num_starting_characters: NumberStartingCharacters
     waves_per_drop: WavesPerCheck
     num_common_crate_drops: NumberCommonCrateDropLocations
+    num_common_crate_drops_per_check: NumberCommonCrateDropsPerCheck
+    num_common_crate_drop_groups: NumberCommonCrateDropGroups
     num_legendary_crate_drops: NumberLegendaryCrateDropLocations
+    num_legendary_crate_drops_per_check: NumberLegendaryCrateDropsPerCheck
+    num_legendary_crate_drop_groups: NumberLegendaryCrateDropGroups
     num_common_upgrades: NumberCommonUpgrades
     num_uncommon_upgrades: NumberUncommonUpgrades
     num_rare_upgrades: NumberRareUpgrades
