@@ -1,3 +1,10 @@
+## Send checks when runs are won, and set the goal when the player has enough wins.
+##
+## Listens for every run to be won and sends the appropriate check for the winning
+## character.
+##
+## Also listens for every "Run Won" item to be received. When enough are received, sets
+## the player's status as CLIENT_GOAL, indicating they've completed their goal.
 extends ApProgressBase
 class_name ApWinsProgress
 

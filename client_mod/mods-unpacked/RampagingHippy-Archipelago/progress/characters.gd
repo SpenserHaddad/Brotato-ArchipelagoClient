@@ -1,3 +1,4 @@
+## Track which characters have been unlocked for the player slot.
 extends ApProgressBase
 class_name ApCharacterProgress
 

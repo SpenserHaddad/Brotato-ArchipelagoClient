@@ -1,3 +1,11 @@
+## Track waves completed by the player and send corresponding checks to the multiworld.
+##
+## Brotato Archipelago defines locations for every n'th wave completed with a each 
+## character. The wave counts are determined at generation time and stored in slot_data,
+## which this class reads when connecting to the multiworld.
+##
+## This then listens for every wave to be completed and sends a check if the completed 
+## wave corresponds to one.
 extends ApProgressBase
 class_name ApWavesProgress
 

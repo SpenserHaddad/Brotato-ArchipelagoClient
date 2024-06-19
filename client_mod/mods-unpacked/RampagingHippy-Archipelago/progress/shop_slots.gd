@@ -1,3 +1,4 @@
+## Track the number of shop slots unlocked from Archipelago items.
 extends ApProgressBase
 class_name ApShopSlotsProgress
 
