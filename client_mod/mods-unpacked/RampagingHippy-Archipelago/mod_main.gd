@@ -25,7 +25,8 @@ func _init():
 		# Detect when game is restart when the "Restart" confirmation button is pressed
 		"ui/menus/pages/menu_restart.gd",
 		"ui/menus/title_screen/title_screen_menus.gd", # Swtich to connect menu when connect button is pressed
-		"ui/menus/run/character_selection.gd", # Only unlock characters received in MultiWorld
+		# Unlock only characters received in MultiWorld, show MultiWorld progress
+		"ui/menus/run/character_selection.gd",
 	]
 	
 	for ef in extension_files:
