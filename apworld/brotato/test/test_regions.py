@@ -1,6 +1,6 @@
 from typing import Tuple, Union
 
-from ..Constants import (
+from ..constants import (
     CHARACTERS,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
@@ -10,7 +10,7 @@ from ..Constants import (
     MAX_NORMAL_CRATE_DROPS,
     RUN_COMPLETE_LOCATION_TEMPLATE,
 )
-from ..Items import ItemName
+from ..items import ItemName
 from . import BrotatoTestBase
 
 

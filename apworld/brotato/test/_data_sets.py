@@ -8,10 +8,11 @@ combinations.
 Currently, the test data sets are focused on testing the crate drop region creation and access rules, but there's no
 reason it couldn't be expanded to handle more in the future.
 """
+
 from dataclasses import asdict, dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from ..Constants import (
+from ..constants import (
     MAX_LEGENDARY_CRATE_DROP_GROUPS,
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_NORMAL_CRATE_DROP_GROUPS,

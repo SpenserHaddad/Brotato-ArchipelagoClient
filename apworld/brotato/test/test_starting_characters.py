@@ -1,18 +1,18 @@
-from __future__ import annotations
+from typing import Optional, Sequence
 
+from ..constants import CHARACTERS, DEFAULT_CHARACTERS
+from ..items import item_name_groups
 from . import BrotatoTestBase
-from ..Constants import DEFAULT_CHARACTERS, CHARACTERS
-from ..Items import item_name_groups
 
 _character_items = item_name_groups["Characters"]
 
 
 class TestBrotatoStartingCharacters(BrotatoTestBase):
-    def _run(
+    def _run_and_check(
         self,
         num_characters: int,
         custom_starting_characters: bool = True,
-        expected_characters: list[str] | None = None,
+        expected_characters: Optional[Sequence[str]] = None,
     ):
         # Create world with relevant options
         self.options = {
@@ -40,7 +40,7 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
                 assert expected_item in precollected_characters
 
     def test_default_starting_characters(self):
-        self._run(
+        self._run_and_check(
             num_characters=len(DEFAULT_CHARACTERS),
             custom_starting_characters=False,
             expected_characters=DEFAULT_CHARACTERS,
@@ -48,13 +48,13 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
 
     # TODO: Probably can't use pytest.paramterize, is there a better way?
     def test_custom_starting_characters_1(self):
-        self._run(num_characters=1)
+        self._run_and_check(num_characters=1)
 
     def test_custom_starting_characters_5(self):
-        self._run(num_characters=5)
+        self._run_and_check(num_characters=5)
 
     def test_custom_starting_characters_15(self):
-        self._run(num_characters=5)
+        self._run_and_check(num_characters=5)
 
     def test_custom_starting_characters_max(self):
-        self._run(num_characters=len(CHARACTERS), expected_characters=CHARACTERS)
+        self._run_and_check(num_characters=len(CHARACTERS), expected_characters=CHARACTERS)
