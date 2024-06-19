@@ -19,23 +19,28 @@ func _ready() -> void:
 	
 	if _ap_client.connected_to_multiworld():
 		if RunData.current_wave == DebugService.starting_wave:
-			# Run started, initialize/reset some values
+			# Run started, notify the AP game state tracker
 			_ap_client.game_state.notify_run_started(RunData.current_character.my_id)
 			
-			for gift_tier in _ap_client.items_progress.received_items_by_tier:
-				var num_gifts = _ap_client.items_progress.received_items_by_tier[gift_tier]
-				# Check if there's gifts to add before adding mostly to avoid log noise.
-				if num_gifts > 0:
-					ModLoaderLog.debug("Giving player %d items of tier %d." % [num_gifts, gift_tier], LOG_NAME)
-					for _i in range(num_gifts):
-						_on_ap_item_received(gift_tier)
+		# Give player any unprocessed items and upgrades from the multiworld
+		for item_tier in _ap_client.items_progress.received_items_by_tier:
+			var items_received = _ap_client.items_progress.received_items_by_tier[item_tier]
+			var items_processed = _ap_client.items_progress.processed_items_by_tier[item_tier]
+			# Check if there's items to process first to avoid log noise.
+			if items_received > items_processed:
+				var items_to_process = items_received - items_processed;
+				ModLoaderLog.debug("Giving player %d items of tier %d." % [items_to_process, item_tier], LOG_NAME)
+				for _i in range(items_to_process):
+					_on_ap_item_received(item_tier)
 
-			for upgrade_tier in _ap_client.upgrades_progress.received_upgrades_by_tier:
-				var num_upgrades = _ap_client.upgrades_progress.received_upgrades_by_tier[upgrade_tier]
-				if num_upgrades > 0:
-					ModLoaderLog.debug("Giving player %d upgrades of tier %d." % [num_upgrades, upgrade_tier], LOG_NAME)
-					for _i in range(num_upgrades):
-						_on_ap_upgrade_received(upgrade_tier)
+		for upgrade_tier in _ap_client.upgrades_progress.received_upgrades_by_tier:
+			var upgrades_received = _ap_client.upgrades_progress.received_upgrades_by_tier[upgrade_tier]
+			var upgrades_processed = _ap_client.upgrades_progress.processed_upgrades_by_tier[upgrade_tier]
+			if upgrades_received > upgrades_processed:
+				var upgrades_to_process = upgrades_received - upgrades_processed
+				ModLoaderLog.debug("Giving player %d upgrades of tier %d." % [upgrades_to_process, upgrade_tier], LOG_NAME)
+				for _i in range(upgrades_to_process):
+					_on_ap_upgrade_received(upgrade_tier)
 
 		# Need to call after run is started otherwise some game state isn't ready yet.
 		_ap_client.game_state.notify_wave_started(RunData.current_wave, RunData.current_character.my_id)
@@ -75,6 +80,10 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 	# Taken from on_levelled_up
 	emit_signal("upgrade_to_process_added", ap_upgrade_to_process_icon, upgrade_level)
 	_upgrades_to_process.push_back(upgrade_level)
+	# Mark the upgrade as processed here insteard of where it's actually
+	# processed in _on_EndWaveTimer_timeout. It's a lot simpler to do here and
+	# the end result is the same either way.
+	_ap_client.upgrades_progress.process_ap_upgrade(upgrade_tier)
 
 # Base overrides
 func spawn_consumables(unit: Unit) -> void:
