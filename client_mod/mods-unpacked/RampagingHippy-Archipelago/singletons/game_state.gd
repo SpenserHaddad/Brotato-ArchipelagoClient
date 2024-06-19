@@ -1,7 +1,7 @@
 extends Object
 class_name ApBrotatoGameInfo
 
-const ApPlayerSession = preload ("./ap_player_session.gd")
+const GodotApClient = preload ("./godot_ap_client.gd")
 
 signal run_started(character_id)
 signal run_finished(won_run, character_id)
@@ -16,7 +16,7 @@ func _init(ap_session):
 	var _status = _ap_session.connect("connection_state_changed", self, "_on_session_connection_state_changed")
 
 func connected_to_multiworld():
-	return _ap_session.connect_state == ApPlayerSession.ConnectState.CONNECTED_TO_MULTIWORLD
+	return _ap_session.connect_state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD
 
 func is_in_ap_run():
 	return in_run and connected_to_multiworld()
