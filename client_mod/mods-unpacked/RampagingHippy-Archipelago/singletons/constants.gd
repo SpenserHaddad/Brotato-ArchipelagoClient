@@ -1,6 +1,6 @@
 class_name BrotatoApConstants
 
-const CHARACTER_NAME_TO_ID = {	
+const CHARACTER_NAME_TO_ID = {
 	"Well Rounded": "character_well_rounded",
 	"Brawler": "character_brawler",
 	"Crazy": "character_crazy",
@@ -44,10 +44,12 @@ const CHARACTER_NAME_TO_ID = {
 	"Soldier": "character_soldier",
 	"Masochist": "character_masochist",
 	"Knight": "character_knight",
-	"Demon": "character_demon",	
+	"Demon": "character_demon",
 }
 
 const CHARACTER_ID_TO_NAME = {}
+
+const RUN_COMPLETE_LOCATION_TEMPLATE = "Run Won ({char})"
 
 const ITEM_DROP_NAME_TO_TIER = {
 	"Common Item": Tier.COMMON,
