@@ -9,7 +9,7 @@ from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import add_item_rule
 
 from ._loot_crate_groups import BrotatoLootCrateGroup, build_loot_crate_groups
-from .Constants import (
+from .constants import (
     CHARACTERS,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
@@ -21,7 +21,7 @@ from .Constants import (
     RUN_COMPLETE_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
-from .Items import (
+from .items import (
     BrotatoItem,
     ItemName,
     filler_items,
@@ -29,9 +29,9 @@ from .Items import (
     item_name_to_id,
     item_table,
 )
-from .Locations import BrotatoLocation, location_name_groups, location_name_to_id, location_table
-from .Options import BrotatoOptions
-from .Rules import create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
+from .locations import BrotatoLocation, location_name_groups, location_name_to_id, location_table
+from .options import BrotatoOptions
+from .rules import create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
 
 logger = logging.getLogger("Brotato")
 
@@ -209,12 +209,12 @@ class BrotatoWorld(World):
         return {
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": self.options.num_victories.value,
-            "num_consumables": self.options.num_common_crate_drops.value,
             "num_starting_shop_slots": self.options.num_starting_shop_slots.value,
-            "num_legendary_consumables": self.options.num_legendary_crate_drops.value,
+            "num_common_crate_locations": self.options.num_common_crate_drops.value,
             "num_common_crate_drops_per_check": self.options.num_common_crate_drops_per_check.value,
-            "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check.value,
             "common_crate_drop_groups": [asdict(g) for g in self.common_loot_crate_groups],
+            "num_legendary_crate_locations": self.options.num_legendary_crate_drops.value,
+            "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check.value,
             "legendary_crate_drop_groups": [asdict(g) for g in self.legendary_loot_crate_groups],
         }
 
