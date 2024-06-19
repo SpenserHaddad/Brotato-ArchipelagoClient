@@ -36,7 +36,7 @@ func _init(ap_client, game_state):
 	## Takes GodotAPClient and ApGameState instances as inputs, which are made available
 	_ap_client = ap_client
 	_game_state = game_state
-	var _status = _ap_client.connect("connection_state_changed", self, "_on_session_connection_state_changed")
+	var _status = _ap_client.connect("connection_state_changed", self, "_on_client_connection_state_changed")
 	_status = _ap_client.connect("item_received", self, "on_item_received")
 	_status = _ap_client.connect("room_updated", self, "on_room_updated")
 	_status = _game_state.connect("run_started", self, "on_run_started")
@@ -53,6 +53,6 @@ func on_run_started(_character_id: String):
 func on_wave_finished(_wave: int, _character_id: String):
 	pass
 
-func _on_session_connection_state_changed(state: int, _error: int=0):
+func _on_client_connection_state_changed(state: int, _error: int=0):
 	if state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD:
 		on_connected_to_multiworld()
