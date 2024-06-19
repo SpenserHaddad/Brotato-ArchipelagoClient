@@ -6,7 +6,7 @@ var gold_given: int = 0
 var _received_gold_data_storage_key: String = ""
 
 func _init(ap_session, game_state).(ap_session, game_state):
-	var _status = _ap_session.connect(
+	var _status = _ap_client.connect(
 		"data_storage_updated",
 		self,
 		"_on_session_data_storage_updated"
@@ -17,7 +17,7 @@ func give_player_unreceived_gold():
 		var gold_to_give = gold_received - gold_given
 		if gold_to_give > 0:
 			RunData.add_gold(gold_to_give)
-			_ap_session.set_value(
+			_ap_client.set_value(
 				_received_gold_data_storage_key,
 				"add",
 				gold_to_give,
@@ -33,9 +33,9 @@ func on_item_received(item_name: String, _item):
 func on_connected_to_multiworld():
 	# Reset received gold. The items will tell how much we have for this multiworld.
 	gold_received = 0
-	_received_gold_data_storage_key = "%s_gold_given" % _ap_session.player
+	_received_gold_data_storage_key = "%s_gold_given" % _ap_client.player
 	# Initialize the data storage value if it wasn't set yet
-	_ap_session.set_value(
+	_ap_client.set_value(
 		_received_gold_data_storage_key,
 		"default",
 		0,

@@ -43,8 +43,8 @@ func notify_crate_picked_up():
 		check_progress = 0
 		# Send check
 		var location_name = "Loot Crate %d" % total_crate_drop_locations_checked
-		var location_id = _ap_session.data_package.location_name_to_id[location_name]
-		_ap_session.check_location(location_id)
+		var location_id = _ap_client.data_package.location_name_to_id[location_name]
+		_ap_client.check_location(location_id)
 
 		# Update latest tracked group
 		if group_crate_idx > loot_crate_groups[group_idx].num_crates:
@@ -73,9 +73,9 @@ func on_item_received(item_name: String, _item):
 				_update_can_spawn_crate()
 
 func on_connected_to_multiworld():
-	total_checks = _ap_session.slot_data["num_%s_crate_locations" % crate_type]
-	crates_per_check = _ap_session.slot_data["num_%s_crate_drops_per_check" % crate_type]
-	var loot_crate_groups_info = _ap_session.slot_data["%s_crate_drop_groups" % crate_type]
+	total_checks = _ap_client.slot_data["num_%s_crate_locations" % crate_type]
+	crates_per_check = _ap_client.slot_data["num_%s_crate_drops_per_check" % crate_type]
+	var loot_crate_groups_info = _ap_client.slot_data["%s_crate_drop_groups" % crate_type]
 
 	for group in loot_crate_groups_info:
 		loot_crate_groups.append(

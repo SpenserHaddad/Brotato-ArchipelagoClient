@@ -17,7 +17,7 @@ onready var _player_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContain
 onready var _password_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PasswordEdit"
 onready var _status_texture: TextureRect = $"VBoxContainer/StatusTexture"
 
-onready var _ap_session
+onready var _ap_client
 
 const _MAX_ANGLE_DEGREES = 360
 const _STATUS_TEXTURE_ROTATION_SPEED_DEGREES_PER_SECOND = 360
@@ -30,8 +30,8 @@ func init():
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	
-	_ap_session = mod_node.ap_player_session
-	_ap_session.connect("connection_state_changed", self, "_on_connection_state_changed")
+	_ap_client = mod_node.ap_player_session
+	_ap_client.connect("connection_state_changed", self, "_on_connection_state_changed")
 
 #func _input(_event):
 #	if get_tree().current_scene.name == self.name && Input.is_key_pressed(KEY_ENTER):
@@ -132,17 +132,17 @@ func _clear_error():
 	_connect_error_label.text = ""
 
 func _on_ConnectButton_pressed():
-	_ap_session.server = _host_edit.text
-	_ap_session.player = _player_edit.text
+	_ap_client.server = _host_edit.text
+	_ap_client.player = _player_edit.text
  
 	# Fire and forget this coroutine call, signal handlers will take care of the rest.
-	_ap_session.connect_to_multiworld(_password_edit.text)
+	_ap_client.connect_to_multiworld(_password_edit.text)
 
 func _on_BackButton_pressed():
 	emit_signal("back_button_pressed")
 
 func _on_DisconnectButton_pressed():
-	_ap_session.disconnect_from_multiworld()
+	_ap_client.disconnect_from_multiworld()
 
 func _reset_status_texture():
 	_status_texture.set_rotation(0)

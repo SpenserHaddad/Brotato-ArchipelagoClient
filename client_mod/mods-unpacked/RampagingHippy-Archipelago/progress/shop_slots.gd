@@ -16,5 +16,5 @@ func on_item_received(item_name: String, _item):
 		num_unlocked_shop_slots += 1
 
 func on_connected_to_multiworld():
-	num_starting_shop_slots = _ap_session.slot_data["num_starting_shop_slots"]
+	num_starting_shop_slots = _ap_client.slot_data["num_starting_shop_slots"]
 	num_unlocked_shop_slots = num_starting_shop_slots

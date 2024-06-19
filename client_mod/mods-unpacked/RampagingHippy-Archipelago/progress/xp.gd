@@ -6,7 +6,7 @@ var xp_given: int = 0
 var _received_xp_data_storage_key: String = ""
 
 func _init(ap_session, game_state).(ap_session, game_state):
-	var _status = _ap_session.connect(
+	var _status = _ap_client.connect(
 		"data_storage_updated",
 		self,
 		"_on_session_data_storage_updated"
@@ -17,7 +17,7 @@ func give_player_unreceived_xp():
 		var xp_to_give = xp_received - xp_given
 		if xp_to_give > 0:
 			RunData.add_xp(xp_to_give)
-			_ap_session.set_value(
+			_ap_client.set_value(
 				_received_xp_data_storage_key,
 				"add",
 				xp_to_give,
@@ -33,9 +33,9 @@ func on_item_received(item_name: String, _item):
 func on_connected_to_multiworld():
 	# Reset received XP. The items will tell how much we have for this multiworld.
 	xp_received = 0
-	_received_xp_data_storage_key = "%s_xp_given" % _ap_session.player
+	_received_xp_data_storage_key = "%s_xp_given" % _ap_client.player
 	# Initialize the data storage value if it wasn't set yet
-	_ap_session.set_value(
+	_ap_client.set_value(
 		_received_xp_data_storage_key,
 		"default",
 		0,
