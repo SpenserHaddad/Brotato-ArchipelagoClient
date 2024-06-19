@@ -1,8 +1,9 @@
 extends "res://ui/menus/run/character_selection.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/character_selection"
-
+const BrotatoApConstants = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd")
 var _ap_client
+var _constants
 var _unlocked_characters: Array = []
 var _progress_panel
 
@@ -21,6 +22,7 @@ func _ensure_ap_client():
 		return
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_ap_client = mod_node.brotato_ap_client
+	_constants = BrotatoApConstants.new()
 	if _ap_client.game_state.connected_to_multiworld():
 		var character_info = _ap_client.character_progress.character_info
 		for character in character_info:
@@ -29,7 +31,7 @@ func _ensure_ap_client():
 		var _status = _ap_client.connect("character_received", self, "_on_character_received")
 
 func _add_character(character_name: String):
-	var character_id = _ap_client.constants.CHARACTER_NAME_TO_ID[character_name]
+	var character_id = _constants.CHARACTER_NAME_TO_ID[character_name]
 	_unlocked_characters.append(character_id)
 
 func _on_character_received(character: String):
