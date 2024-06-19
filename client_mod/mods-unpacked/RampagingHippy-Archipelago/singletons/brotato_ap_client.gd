@@ -1,12 +1,10 @@
-extends ApPlayerSession
+extends Node
 class_name BrotatoApClient
 
 const LOG_NAME = "RampagingHippy-Archipelago/Brotato Client"
-
 const GAME: String = "Brotato"
 
-onready var ap_session
-
+var ap_session
 var game_state
 
 # New progress trackers

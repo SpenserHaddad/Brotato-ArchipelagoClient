@@ -219,7 +219,6 @@ func set_value(key: String, operations, values, default=null, want_reply: bool=f
 		operations = [operations]
 		values = [values]
 	for i in range(operations.size()):
-		# var operation_name = _AP_TYPES.data_storage_operation_to_name[operations[i]]
 		var operation_obj = {"operation": operations[i],"value": values[i]}
 		ap_ops.append(operation_obj)
 	websocket_client.set_value(key, default, want_reply, ap_ops)
