@@ -1,3 +1,10 @@
+## Godot Archipelago Client
+##
+## Manages the connection to the server, raises signals when Server-Client packets are
+## received, and stores information about the connect multiworld room and slot.
+##
+## In addition, provides methods for sending Client-Server commands, and high-level API
+## for common workflows such as establishing the connection.
 extends Node
 class_name GodotApClient
 # Hard-code mod name to avoid cyclical dependency
@@ -72,9 +79,15 @@ var room_info: Dictionary
 var data_package: ApDataPackage
 
 signal _received_connect_response(message)
+## Sent when the connection status to the server changes.
+##
+## Includes the new server state (one of `GodotApClient.ConnectResult`), and an error
+## code if the connection encountered an error.
 signal connection_state_changed(state, error)
 signal item_received(item_name, item)
+## Sent when a `SetReply` packet is received. Contains the key and new and old values.
 signal data_storage_updated(key, new_value, original_value)
+## Emitted when a `RoomUpdate` packet is received. Contains the new room information.
 signal room_updated(updated_room_info)
 
 func _init(websocket_client_):
@@ -91,6 +104,30 @@ func _connected_or_connection_refused_received(message: Dictionary):
 	emit_signal("_received_connect_response", message)
 
 func connect_to_multiworld(password: String="", get_data_pacakge: bool=true) -> int:
+	## Connect to the multiworld using the host/port/player/password provided.
+	##
+	## NOTE: The game, server, and player fields for the class MUST be set before
+	## calling this. Otherwise, this will not attempt to connect will return an error
+	## code.
+	##
+	## This follows the Archipelago Connection Handshake as closely as possible to
+	## connect to the server. Depending on the current connection state, this behaves
+	## differently:
+	##	- If the client is not connected, establishes the connection to the server, then
+	##	  sends a `Connect` packet to connect to a slot in the room using the provided
+	##	  player name and password.
+	##	- If the client is connected to a server, but hasn't connected to a slot in the
+	##	  room yet, it uses the existing server connection and skips to sending the
+	##	  `Connect` packet.
+	##		- This allows the client to be connected in steps, in case the player name
+	##		  or password was invalid. It also matches the AP Text Client behavior.
+	##	- If the client is already connected to a server, does nothing and returns 
+	##	  ALREADY_CONNECTED. 
+	##		- The client must be explicitly disconnected with `disconnect` to change 
+	##		  servers.
+	##
+	## Returns a status code, whichis one of `GodotApClient.ConnectResult`, indicating
+	## the connection result.
 	if websocket_client.connected_to_server() and self.connect_state == ConnectState.CONNECTED_TO_MULTIWORLD:
 		return ConnectResult.ALREADY_CONNECTED
 	elif player.strip_edges().empty():
@@ -188,6 +225,7 @@ func connect_to_multiworld(password: String="", get_data_pacakge: bool=true) -> 
 	return ConnectResult.SUCCESS
 
 func disconnect_from_multiworld():
+	## Disconnect from the server. Can be called even when not connected.
 	_set_connection_state(ConnectState.DISCONNECTING)
 	self.websocket_client.disconnect_from_server()
 	_set_connection_state(ConnectState.DISCONNECTED)
@@ -198,20 +236,31 @@ func _set_connection_state(state: int, error: int=0):
 	emit_signal("connection_state_changed", self.connect_state, error)
 
 func set_status(status: int):
+	## Send a `StatusUpdate` packet with the new client status.
 	# TODO: bounds checking
 	websocket_client.status_update(status)
 
 func check_location(location_id: int):
-	# TODO: allow name or id?
+	## Send a `LocationChecks` packet with the provided location ID(s).
+	## A single integer/location ID will be wrapped in an array berfore sending.
 	websocket_client.send_location_checks([location_id])
 
 func get_value(keys: Array):
+	## Send a `Get` packet to query the server's data storage.
+	##
+	## Note that the name does not match the sent packet, since `get` is a predefined
+	## method on Godot Objects.
 	websocket_client.get_value(keys)
 
 func set_notify(keys: Array):
+	## Send a `SetNotify` packet to the server with the provided keys.
 	websocket_client.set_notify(keys)
 
 func set_value(key: String, operations, values, default=null, want_reply: bool=false):
+	## Send a `Set` packet to the server to update the server's data storage.
+	##
+	## Note that the name does not match the sent packet, because `set` is a predefined
+	## method on Godot Objects.
 	var ap_ops = Array()
 	# Shorthand to allow more concise single operation argument
 	if not (operations is Array):
