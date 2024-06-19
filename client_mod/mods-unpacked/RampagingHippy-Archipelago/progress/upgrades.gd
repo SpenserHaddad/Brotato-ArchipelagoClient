@@ -8,8 +8,6 @@ signal upgrade_received(upgrade_tier)
 # can set the level of each item correctly.
 var processed_upgrades_by_tier: Dictionary
 
-var _game_state
-
 var received_upgrades_by_tier: Dictionary = {
 	Tier.COMMON: 0,
 	Tier.UNCOMMON: 0,
@@ -17,8 +15,7 @@ var received_upgrades_by_tier: Dictionary = {
 	Tier.LEGENDARY: 0
 }
 
-func _init(ap_session, game_state).(ap_session):
-	_game_state = game_state
+func _init(ap_session, game_state).(ap_session, game_state):
 	var _status = game_state.connect("run_started", self, "_on_run_started")
 
 func process_ap_upgrade(upgrade_tier: int):

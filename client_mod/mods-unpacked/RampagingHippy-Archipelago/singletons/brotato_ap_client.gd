@@ -1,4 +1,4 @@
-extends Node
+extends ApPlayerSession
 class_name BrotatoApClient
 
 const LOG_NAME = "RampagingHippy-Archipelago/Brotato Client"
@@ -27,8 +27,8 @@ signal on_connection_refused(reasons)
 func _init(ap_session_):
 	ap_session = ap_session_
 	game_state = ApBrotatoGameInfo.new(ap_session)
-	character_progress = ApCharacterProgress.new(ap_session)
-	shop_slots_progress = ApShopSlotsProgress.new(ap_session)
+	character_progress = ApCharacterProgress.new(ap_session, game_state)
+	shop_slots_progress = ApShopSlotsProgress.new(ap_session, game_state)
 	gold_progress = ApGoldProgress.new(ap_session, game_state)
 	xp_progress = ApXpProgress.new(ap_session, game_state)
 	items_progress = ApItemsProgress.new(ap_session, game_state)
@@ -39,7 +39,6 @@ func _init(ap_session_):
 	wins_progress = ApWinsProgress.new(ap_session, game_state)
 
 	ModLoaderLog.debug("Brotato AP adapter initialized", LOG_NAME)
-
 
 func connected_to_multiworld() -> bool:
 	# Convenience method to check if connected to AP, so other scenes don't need to 

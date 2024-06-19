@@ -8,7 +8,7 @@ class CharacterProgress:
 
 var character_info: Dictionary
 	
-func _init(ap_session).(ap_session):
+func _init(ap_session, game_state).(ap_session, game_state):
 	character_info = {}
 	for character in constants.CHARACTER_NAME_TO_ID:
 		character_info[character] = CharacterProgress.new()

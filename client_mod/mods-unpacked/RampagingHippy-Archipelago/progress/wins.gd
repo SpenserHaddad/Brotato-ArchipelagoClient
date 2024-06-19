@@ -5,10 +5,7 @@ var wins_for_goal: int
 var num_wins: int = 0
 var characters_won_with: PoolStringArray = []
 
-var _game_state
-
-func _init(ap_session, game_state).(ap_session):
-	_game_state = game_state
+func _init(ap_session, game_state).(ap_session, game_state):
 	_game_state.connect("run_finished", self, "_on_run_finished")
 
 func _on_run_finished(won_run: bool, character_id: String):

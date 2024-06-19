@@ -1,11 +1,9 @@
 extends ApProgressBase
 class_name ApWavesProgress
 
-var _game_state
 var waves_with_checks: PoolIntArray
 
-func _init(ap_session, game_state).(ap_session):
-	_game_state = game_state
+func _init(ap_session, game_state).(ap_session, game_state):
 	var _status = _game_state.connect("wave_finished", self, "_on_wave_finished")
 
 func _on_wave_finished(wave_number: int, character_id: String):

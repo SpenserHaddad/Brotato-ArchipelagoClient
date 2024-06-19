@@ -7,8 +7,9 @@ var wins_for_goal: int
 var num_wins: int = 0
 var characters_won_with: PoolStringArray = []
 
-func _init(ap_session).(ap_session):
-	_ap_session = ap_session
+func _init(ap_session, game_state).(ap_session, game_state):
+	# Need this for Godot to pass through to the base class
+	return
 
 func on_item_received(item_name: String, _item):
 	if item_name == constants.SHOP_SLOT_ITEM_NAME:

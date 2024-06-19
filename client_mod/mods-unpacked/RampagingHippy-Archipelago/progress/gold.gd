@@ -1,14 +1,11 @@
 extends ApProgressBase
 class_name ApGoldProgress
 
-var _game_state
-
 var gold_received: int = 0
 var gold_given: int = 0
 var _received_gold_data_storage_key: String = ""
 
-func _init(ap_session, game_state).(ap_session):
-	_game_state = game_state
+func _init(ap_session, game_state).(ap_session, game_state):
 	var _status = _ap_session.connect(
 		"data_storage_updated",
 		self,
@@ -17,7 +14,7 @@ func _init(ap_session, game_state).(ap_session):
 	_status = _game_state.connect("run_started", self, "_on_run_started")
 
 func give_player_unreceived_gold():
-	var in_run  = _game_state.is_in_ap_run()
+	var in_run = _game_state.is_in_ap_run()
 	if _game_state.is_in_ap_run():
 		var gold_to_give = gold_received - gold_given
 		if gold_to_give > 0:

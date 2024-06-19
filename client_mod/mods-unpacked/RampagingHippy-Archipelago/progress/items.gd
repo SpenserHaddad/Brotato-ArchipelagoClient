@@ -3,10 +3,7 @@ class_name ApItemsProgress
 
 signal item_received(item_tier)
 
-var _game_state
-
-func _init(ap_session, game_state).(ap_session):
-	_game_state = game_state
+func _init(ap_session, game_state).(ap_session, game_state):
 	var _status = game_state.connect("run_started", self, "_on_run_started")
 
 var received_items_by_tier: Dictionary = {

@@ -26,12 +26,10 @@ var crates_spawned: int = 0
 var _wins_received: int = 0
 
 var crate_type: String # Should be either "common" or "legendary"
-var game_state
 
-func _init(ap_session, game_state, crate_type_: String).(ap_session):
-	game_state = game_state
+func _init(ap_session, game_state, crate_type_: String).(ap_session, game_state):
 	crate_type = crate_type_
-	var _status = game_state.connect("run_started", self, "_on_run_started")
+	var _status = _game_state.connect("run_started", self, "_on_run_started")
 
 func notify_crate_spawned():
 	crates_spawned += 1
