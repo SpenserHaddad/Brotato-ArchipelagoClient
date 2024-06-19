@@ -31,6 +31,8 @@ func on_item_received(item_name: String, _item):
 		give_player_unreceived_xp()
 
 func on_connected_to_multiworld():
+	# Reset received XP. The items will tell how much we have for this multiworld.
+	xp_received = 0
 	_received_xp_data_storage_key = "%s_xp_given" % _ap_session.player
 	# Initialize the data storage value if it wasn't set yet
 	_ap_session.set_value(
@@ -38,7 +40,7 @@ func on_connected_to_multiworld():
 		"default",
 		0,
 		0,
-		false
+		true
 	)
 
 func on_run_started(_character_id: String):

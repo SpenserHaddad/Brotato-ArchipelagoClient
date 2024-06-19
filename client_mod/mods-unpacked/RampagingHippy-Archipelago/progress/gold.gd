@@ -32,6 +32,8 @@ func on_item_received(item_name: String, _item):
 		give_player_unreceived_gold()
 
 func on_connected_to_multiworld():
+	# Reset received gold. The items will tell how much we have for this multiworld.
+	gold_received = 0
 	_received_gold_data_storage_key = "%s_gold_given" % _ap_session.player
 	# Initialize the data storage value if it wasn't set yet
 	_ap_session.set_value(
@@ -39,7 +41,7 @@ func on_connected_to_multiworld():
 		"default",
 		0,
 		0,
-		false
+		true
 	)
 
 func on_run_started(_character_id: String):
