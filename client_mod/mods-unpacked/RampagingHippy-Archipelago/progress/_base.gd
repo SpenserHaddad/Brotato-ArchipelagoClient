@@ -2,7 +2,7 @@ extends Object
 class_name ApProgressBase
 
 const BrotatoApConstants = preload ("../singletons/constants.gd")
-const ApPlayerSession = preload ("../singletons/ap_player_session.gd")
+const GodotApClient = preload ("../singletons/godot_ap_client.gd")
 
 var _ap_session
 var _game_state
@@ -26,9 +26,9 @@ func on_connected_to_multiworld():
 func on_run_started(_character_id: String):
 	pass
 
-func on_wave_finished(wave: int, character_id: String):
+func on_wave_finished(_wave: int, _character_id: String):
 	pass
 
 func _on_session_connection_state_changed(state: int, _error: int=0):
-	if state == ApPlayerSession.ConnectState.CONNECTED_TO_MULTIWORLD:
+	if state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD:
 		on_connected_to_multiworld()
