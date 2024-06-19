@@ -1,7 +1,7 @@
 extends Node
-class_name ApPlayerSession
+class_name GodotApClient
 # Hard-code mod name to avoid cyclical dependency
-var LOG_NAME = "RampagingHippy-Archipelago/ap_player_session"
+var LOG_NAME = "RampagingHippy-Archipelago/GodotApClient"
 
 const _AP_TYPES = preload ("./ap_types.gd")
 enum ConnectState {
