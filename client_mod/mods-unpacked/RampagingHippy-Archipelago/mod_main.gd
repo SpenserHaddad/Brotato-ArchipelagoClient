@@ -2,12 +2,16 @@ class_name ArchipelagoModBase
 extends Node
 
 # Brotato Archipelago Multiworld Randomizer Client
-
 const MOD_NAME = "RampagingHippy-Archipelago"
 const LOG_NAME = MOD_NAME + "/mod_main"
+
+const ApWebSocketConnection = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_websocket_connection.gd")
+const GodotApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/godot_ap_client.gd")
+const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/brotato_ap_client.gd")
+
 export onready var ap_websocket_connection
 export onready var brotato_ap_client
-export onready var ap_player_session
+export onready var godot_ap_client
 
 func _init():
 	ModLoaderLog.info("Init", LOG_NAME)
@@ -42,20 +46,17 @@ func _ready() -> void:
 
 	# TODO: Can we turn the service into a singleton somehow? Adding a node to the root
 	# didn't seem to work.
-	var _ap_websocket_connection_namespace = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_websocket_connection.gd")
-	ap_websocket_connection = _ap_websocket_connection_namespace.new()
+	ap_websocket_connection = ApWebSocketConnection.new()
 	self.add_child(ap_websocket_connection)
 
-	var _ap_player_session_namespace = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_player_session.gd")
-	ap_player_session = _ap_player_session_namespace.new(ap_websocket_connection)
-	ap_player_session.game = "Brotato"
-	self.add_child(ap_player_session)
-	ModLoaderLog.debug("Added AP session", LOG_NAME)
+	godot_ap_client = GodotApClient.new(ap_websocket_connection)
+	godot_ap_client.game = "Brotato"
+	self.add_child(godot_ap_client)
 
-	var _brotato_ap_client_namespace = load("res://mods-unpacked/RampagingHippy-Archipelago/singletons/brotato_ap_client.gd")
-	brotato_ap_client = _brotato_ap_client_namespace.new(ap_player_session)
+	brotato_ap_client = BrotatoApClient.new(godot_ap_client)
 	self.add_child(brotato_ap_client)
-	ModLoaderLog.debug("Added AP client", LOG_NAME)
+
+	ModLoaderLog.debug("Archipelago mod initialized", LOG_NAME)
 
 	# We deliberately DON'T add the AP consumables to the full list because we want to 
 	# manually control how/when they drop, instead of just adding to the drop pool.
