@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
 
 from Options import PerGameCommonOptions, Range, TextChoice
@@ -93,9 +91,9 @@ class NumberCommonCrateDropsPerCheck(Range):
     """
 
     range_start = 0
-    range_end = MAX_NORMAL_CRATE_DROPS
+    range_end: int = MAX_NORMAL_CRATE_DROPS
 
-    display_name = "Loot Crates per Check"
+    display_name: str = "Loot Crates per Check"
 
 
 class NumberCommonCrateDropGroups(Range):
@@ -109,9 +107,9 @@ class NumberCommonCrateDropGroups(Range):
     """
 
     range_start = 1
-    range_end = MAX_NORMAL_CRATE_DROP_GROUPS
+    range_end: int = MAX_NORMAL_CRATE_DROP_GROUPS
 
-    display_name = "Loot Crate Groups"
+    display_name: str = "Loot Crate Groups"
     default = 1
 
 
@@ -124,9 +122,9 @@ class NumberLegendaryCrateDropLocations(Range):
     """
 
     range_start = 0
-    range_end = MAX_LEGENDARY_CRATE_DROPS
+    range_end: int = MAX_LEGENDARY_CRATE_DROPS
 
-    display_name = "Number of legendary crate drop locations"
+    display_name: str = "Number of legendary crate drop locations"
     default = 5
 
 
@@ -137,10 +135,10 @@ class NumberLegendaryCrateDropsPerCheck(Range):
     """
 
     range_start = 0
-    range_end = MAX_NORMAL_CRATE_DROPS
+    range_end: int = MAX_NORMAL_CRATE_DROPS
     default = 1
 
-    display_name = "Loot crates per check"
+    display_name: str = "Loot crates per check"
 
 
 class NumberLegendaryCrateDropGroups(Range):
@@ -154,18 +152,18 @@ class NumberLegendaryCrateDropGroups(Range):
     """
 
     range_start = 1
-    range_end = MAX_LEGENDARY_CRATE_DROP_GROUPS
+    range_end: int = MAX_LEGENDARY_CRATE_DROP_GROUPS
     default = 1
-    display_name = "Loot Crate Groups"
+    display_name: str = "Loot Crate Groups"
 
 
 class NumberCommonUpgrades(Range):
     """The normal of level 1 upgrades to include in the item pool."""
 
     range_start = 0
-    range_end = MAX_COMMON_UPGRADES
+    range_end: int = MAX_COMMON_UPGRADES
 
-    display_name = "Number of level 1 upgrades"
+    display_name: str = "Number of level 1 upgrades"
     default = 15
 
 
@@ -173,9 +171,9 @@ class NumberUncommonUpgrades(Range):
     """The normal of level 2 upgrades to include in the item pool."""
 
     range_start = 0
-    range_end = MAX_UNCOMMON_UPGRADES
+    range_end: int = MAX_UNCOMMON_UPGRADES
 
-    display_name = "Number of level 2 upgrades"
+    display_name: str = "Number of level 2 upgrades"
     default = 10
 
 
@@ -183,9 +181,9 @@ class NumberRareUpgrades(Range):
     """The normal of level 3 upgrades to include in the item pool."""
 
     range_start = 0
-    range_end = MAX_RARE_UPGRADES
+    range_end: int = MAX_RARE_UPGRADES
 
-    display_name = "Number of level 3 upgrades"
+    display_name: str = "Number of level 3 upgrades"
     default = 5
 
 
@@ -203,8 +201,8 @@ class StartingShopSlots(Range):
     """How many slot the shop begins with. Missing slots are added as items."""
 
     range_start = 0
-    range_end = MAX_SHOP_SLOTS
-    display_name = "Starting shop slots"
+    range_end: int = MAX_SHOP_SLOTS
+    display_name: str = "Starting shop slots"
     default = 4
 
 
@@ -212,8 +210,8 @@ class NumberShopItems(Range):
     """The number of items to place in the shop"""
 
     range_start = 0
-    range_end = MAX_SHOP_LOCATIONS_PER_TIER[ItemRarity.COMMON]
-    display_name = "Shop items"
+    range_end: int = MAX_SHOP_LOCATIONS_PER_TIER[ItemRarity.COMMON]
+    display_name: str = "Shop items"
     default = 10
 
 

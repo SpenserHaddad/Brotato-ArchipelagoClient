@@ -1,8 +1,7 @@
-from __future__ import annotations
-
 from dataclasses import dataclass, field
 from enum import Enum
 from itertools import count
+from typing import Dict, List, Set
 
 from BaseClasses import Item, ItemClassification
 
@@ -12,14 +11,14 @@ _id_generator = count(BASE_ID, step=1)
 
 
 class BrotatoItem(Item):
-    game = "Brotato"
+    game: str = "Brotato"
 
 
 @dataclass(frozen=True)
 class BrotatoItemBase:
     """Hold item data before we assign to a player."""
 
-    name: ItemName
+    name: "ItemName"
     classification: ItemClassification
     # Auto-increments ID without us having to manually set it, so item definition order matters.
     code: int = field(default_factory=_id_generator.__next__)
@@ -28,7 +27,6 @@ class BrotatoItemBase:
         return BrotatoItem(self.name.value, self.classification, self.code, player)
 
 
-# TODO: Add upgrade items
 class ItemName(Enum):
     COMMON_ITEM = "Common Item"
     UNCOMMON_ITEM = "Uncommon Item"
@@ -97,9 +95,9 @@ class ItemName(Enum):
     CHARACTER_DEMON = "Demon"
 
 
-_char_items = [x for x in ItemName if x.name.startswith("CHARACTER_")]
+_char_items: List[ItemName] = [x for x in ItemName if x.name.startswith("CHARACTER_")]
 
-_items: list[BrotatoItemBase] = [
+_items: List[BrotatoItemBase] = [
     BrotatoItemBase(name=ItemName.COMMON_ITEM, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.UNCOMMON_ITEM, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.RARE_ITEM, classification=ItemClassification.useful),
@@ -125,11 +123,13 @@ _items: list[BrotatoItemBase] = [
     *[BrotatoItemBase(name=c, classification=ItemClassification.progression) for c in _char_items],
 ]
 
-item_table = {item.code: item for item in _items}
-item_name_to_id = {item.name.value: item.code for item in _items}
-filler_items = [item.name.value for item in item_table.values() if item.classification == ItemClassification.filler]
+item_table: Dict[int, BrotatoItemBase] = {item.code: item for item in _items}
+item_name_to_id: Dict[str, int] = {item.name.value: item.code for item in _items}
+filler_items: List[str] = [
+    item.name.value for item in item_table.values() if item.classification == ItemClassification.filler
+]
 
-item_name_groups = {
+item_name_groups: Dict[str, Set[str]] = {
     "Item Drops": {
         ItemName.COMMON_ITEM.value,
         ItemName.UNCOMMON_ITEM.value,

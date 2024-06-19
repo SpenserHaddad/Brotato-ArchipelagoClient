@@ -1,8 +1,6 @@
-from __future__ import annotations
-
 import logging
 from dataclasses import asdict
-from typing import Any, List, Literal, Sequence
+from typing import Any, ClassVar, Dict, List, Literal, Sequence, Set, Tuple, Union
 
 from BaseClasses import MultiWorld, Region, Tutorial
 from worlds.AutoWorld import WebWorld, World
@@ -60,19 +58,19 @@ class BrotatoWorld(World):
 
     options_dataclass = BrotatoOptions
     options: BrotatoOptions  # type: ignore
-    game = "Brotato"
+    game: ClassVar[str] = "Brotato"
     web = BrotatoWeb()
     data_version = 0
-    required_client_version = (0, 4, 2)
+    required_client_version: Tuple[int, int, int] = (0, 4, 2)
 
-    item_name_to_id = item_name_to_id
-    item_name_groups = item_name_groups
+    item_name_to_id: ClassVar[Dict[str, int]] = item_name_to_id
+    item_name_groups: ClassVar[Dict[str, Set[str]]] = item_name_groups
 
-    _filler_items = filler_items
-    _starting_characters: list[str]
+    _filler_items: List[str] = filler_items
+    _starting_characters: List[str]
 
-    location_name_to_id = location_name_to_id
-    location_name_groups = location_name_groups
+    location_name_to_id: ClassVar[Dict[str, int]] = location_name_to_id
+    location_name_groups: ClassVar[Dict[str, Set[str]]] = location_name_groups
 
     waves_with_checks: Sequence[int]
     """Which waves will count as locations.
@@ -95,7 +93,7 @@ class BrotatoWorld(World):
     def __init__(self, world: MultiWorld, player: int):
         super().__init__(world, player)
 
-    def create_item(self, name: str | ItemName) -> BrotatoItem:
+    def create_item(self, name: Union[str, ItemName]) -> BrotatoItem:
         if isinstance(name, ItemName):
             name = name.value
         return item_table[self.item_name_to_id[name]].to_item(self.player)
@@ -134,7 +132,7 @@ class BrotatoWorld(World):
         loot_crate_regions = self._create_regions_for_loot_crate_groups(menu_region, "normal")
         legendary_crate_regions = self._create_regions_for_loot_crate_groups(menu_region, "legendary")
 
-        character_regions: list[Region] = []
+        character_regions: List[Region] = []
         for character in CHARACTERS:
             character_region = self._create_character_region(menu_region, character)
             character_regions.append(character_region)
@@ -148,7 +146,7 @@ class BrotatoWorld(World):
         self.multiworld.regions.extend([menu_region, *loot_crate_regions, *legendary_crate_regions, *character_regions])
 
     def create_items(self):
-        item_names: list[ItemName | str] = []
+        item_names: List[Union[ItemName, str]] = []
 
         for c in self._starting_characters:
             self.multiworld.push_precollected(self.create_item(c))
@@ -205,7 +203,7 @@ class BrotatoWorld(World):
     def get_filler_item_name(self):
         return self.random.choice(self._filler_items)
 
-    def fill_slot_data(self) -> dict[str, Any]:
+    def fill_slot_data(self) -> Dict[str, Any]:
         return {
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": self.options.num_victories.value,

@@ -1,12 +1,9 @@
-from __future__ import annotations
-
-from typing import List, Literal
+from typing import List, Literal, Optional
 
 from BaseClasses import Region
-from worlds.brotato import BrotatoWorld
-from worlds.brotato.locations import BrotatoLocation
 from worlds.generic.Rules import ItemRule, add_item_rule
 
+from . import BrotatoWorld
 from .constants import (
     CHARACTERS,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
@@ -16,7 +13,7 @@ from .constants import (
     RUN_COMPLETE_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
-from .locations import location_table
+from .locations import BrotatoLocation, location_table
 from .rules import create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
 
 
@@ -73,7 +70,7 @@ def _create_character_region(world: BrotatoWorld, parent_region: Region, charact
 def _create_loot_crate_regions(
     world: BrotatoWorld, parent_region: Region, crate_type: Literal["normal", "legendary"]
 ) -> List[Region]:
-    item_rule: ItemRule | None
+    item_rule: Optional[ItemRule]
     if crate_type == "normal":
         num_items = world.options.num_common_crate_drops.value
         num_groups = world.options.num_common_crate_drop_groups.value
