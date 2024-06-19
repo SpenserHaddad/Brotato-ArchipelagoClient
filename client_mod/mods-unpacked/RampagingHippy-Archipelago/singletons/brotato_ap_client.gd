@@ -31,8 +31,8 @@ func _init(ap_session_):
 	shop_slots_progress = ApShopSlotsProgress.new(ap_session)
 	gold_progress = ApGoldProgress.new(ap_session, game_state)
 	xp_progress = ApXpProgress.new(ap_session, game_state)
-	items_progress = ApItemsProgress.new(ap_session)
-	upgrades_progress = ApUpgradesProgress.new(ap_session)
+	items_progress = ApItemsProgress.new(ap_session, game_state)
+	upgrades_progress = ApUpgradesProgress.new(ap_session, game_state)
 	common_loot_crate_progress = ApLootCrateProgress.new(ap_session, game_state, "common")
 	legendary_loot_crate_progress = ApLootCrateProgress.new(ap_session, game_state, "legendary")
 	waves_progress = ApWavesProgress.new(ap_session, game_state)
@@ -40,20 +40,8 @@ func _init(ap_session_):
 
 	ModLoaderLog.debug("Brotato AP adapter initialized", LOG_NAME)
 
-func _ready():
-	var _status: int
-	# _status = ap_session.connect("connection_state_changed", self, "_on_connection_state_changed")
-	# _status = ap_session.connect("item_received", self, "_on_item_received")
-	# _status = ap_session.connect("data_storage_updated", self, "_on_data_storage_updated")
-	ModLoaderLog.debug("Loaded AP client. %d" % _status, LOG_NAME)
 
-func gift_item_processed(gift_tier: int) -> int:
-	## Notify the client that a gift item is being processed.
-	##
-	## Gift items are items received from the multiworld. This should be called when
-	## the consumables are processed at the end of the round for each item.
-	## This increments the number of items of the input tier processed this run,
-	## then returns the wave that the received item should be processed as.
-	game_state.run_state.gift_item_count_by_tier[gift_tier] += 1
-	# 20 being the total number of waves.
-	return int(ceil(game_state.run_state.gift_item_count_by_tier[gift_tier] / constants.NUM_ITEM_DROPS_PER_WAVE)) % 20
+func connected_to_multiworld() -> bool:
+	# Convenience method to check if connected to AP, so other scenes don't need to 
+	# reference the player session just to check this.
+	return ap_session.connect_state == ap_session.ConnectState.CONNECTED_TO_MULTIWORLD
