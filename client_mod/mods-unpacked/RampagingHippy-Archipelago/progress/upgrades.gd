@@ -1,3 +1,12 @@
+## Track the number of upgrades received from items, and give them to the player.
+##
+## Upgrades in this case refers to the stat bonuses received when levelling up.
+##
+## Listen to the client for upgrades received as Archipelago items, then give them to
+## the player immediately if they're in a run, or as soon as they start a new run.
+##
+## Upgrades are given to the player every run, so we track the total amount of items and
+## give them all to the player every time they start a run.
 extends ApProgressBase
 class_name ApUpgradesProgress
 
@@ -15,7 +24,7 @@ var received_upgrades_by_tier: Dictionary = {
 	Tier.LEGENDARY: 0
 }
 
-func _init(ap_session, game_state).(ap_session, game_state):
+func _init(ap_client, game_state).(ap_client, game_state):
 	# Need this for Godot to pass through to the base class
 	pass
 

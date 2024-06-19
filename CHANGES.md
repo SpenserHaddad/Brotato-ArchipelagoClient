@@ -8,23 +8,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-
 - Loot crate drops are now organized into "groups", which are not dropped by the game
   until a certain number of wins are obtained.
-- The number of normal and legendary loot crate groups can be configured by two new
-  options added for them.
-- Loot crates are evenly distributed among the groups, with a bias towards earlier
-  groups if there's excess.
-- Each group requires a certain number of wins before the game will drop them, which is
-  calculated by dividing the number of groups by the number of required victories for
-  goal completion. The first group is always unlocked at the start of the game.
-  - For example, if the world requires 20 wins and has 10 common crate drop groups, the
-    first group will be unlocked from the start, the second after two wins, the third
-    after four wins, etc.
-  - If the options specify more groups than the required number of wins, the number of
-    groups is clamped to the number of wins.
+  - The number of normal and legendary loot crate groups can be configured by two new
+    options added for them.
+  - Loot crates are evenly distributed among the groups, with a bias towards earlier
+    groups if there's excess.
+  - Each group requires a certain number of wins before the game will drop them, which is
+    calculated by dividing the number of groups by the number of required victories for
+    goal completion. The first group is always unlocked at the start of the game.
+    - For example, if the world requires 20 wins and has 10 common crate drop groups, the
+      first group will be unlocked from the start, the second after two wins, the third
+      after four wins, etc.
+    - If the options specify more groups than the required number of wins, the number of
+      groups is clamped to the number of wins.
 
+### Changed
+- (Internal) Broke the large class `BrotatoApSession` into multiple smaller "progress"
+objects for better organization and readability.
+- (Internal) Removed old game state tracker and replaced with simpler class to just
+  check when runs and waves start and finish.
+- (Internal) AP client now handles `RoomUpdate` commands.
+- (Internal) Rename `BrotatoApSession` to `BrotatoApClient`.
+- (Internal) Rename `ApPlayerSession` to `GodotApClient`.
 
+### Fixed
+- XP and gold given to player is now properly tracked between connections to the
+  multiworld.
 
 ## [0.0.6] - 2024-03-27
 

@@ -1,3 +1,4 @@
+## Track which characters have been unlocked for the player slot.
 extends ApProgressBase
 class_name ApCharacterProgress
 
@@ -8,7 +9,7 @@ class CharacterProgress:
 
 var character_info: Dictionary
 	
-func _init(ap_session, game_state).(ap_session, game_state):
+func _init(ap_client, game_state).(ap_client, game_state):
 	character_info = {}
 	for character in constants.CHARACTER_NAME_TO_ID:
 		character_info[character] = CharacterProgress.new()
@@ -34,7 +35,7 @@ func on_connected_to_multiworld():
 		# We'll determine if characters are unlocked when the item is received, 
 		# just check if they won or not here. (TODO: simul-play?)
 		var character_won_loc_name = constants.RUN_COMPLETE_LOCATION_TEMPLATE.format({"char": character})
-		var character_won_loc_id = _ap_session.data_package.location_name_to_id[character_won_loc_name]
-		var character_won = _ap_session.checked_locations.has(character_won_loc_id)
+		var character_won_loc_id = _ap_client.data_package.location_name_to_id[character_won_loc_name]
+		var character_won = _ap_client.checked_locations.has(character_won_loc_id)
 		character_info[character].won_run = character_won
 		character_info[character].won_run_location_id = character_won_loc_id

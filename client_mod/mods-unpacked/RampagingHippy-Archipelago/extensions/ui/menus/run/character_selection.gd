@@ -23,7 +23,7 @@ func _ensure_ap_client():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_ap_client = mod_node.brotato_ap_client
 	_constants = BrotatoApConstants.new()
-	if _ap_client.game_state.connected_to_multiworld():
+	if _ap_client.connected_to_multiworld():
 		var character_info = _ap_client.character_progress.character_info
 		for character in character_info:
 			if character_info[character].unlocked:
@@ -52,16 +52,16 @@ func _add_crate_progress_ui():
 	var parent_node_path = _description_container.get_path()
 #	_ui_crate_progress = load("res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_crate_progress.tscn").instance()
 #	_description_container.add_child(_ui_crate_progress)
-	ModLoaderMod.append_node_in_scene(
-		self,
-		"ApProgress",
-		_description_container.get_path(),
-		"res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.tscn"
-	)
-	_progress_panel = _description_container.get_child(3)
-	if _progress_panel.name == "ApProgress":
-		_progress_panel.set_client(_ap_client)
-		ModLoaderLog.debug("Created progress panel %s" % _progress_panel.get_path(), LOG_NAME)
-
-	_progress_panel.visible = _ap_client.connected_to_multiworld()
+#	ModLoaderMod.append_node_in_scene(
+#		self,
+#		"ApProgress",
+#		_description_container.get_path(),
+#		"res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.tscn"
+#	)
+#	_progress_panel = _description_container.get_child(3)
+#	if _progress_panel.name == "ApProgress":
+#		_progress_panel.set_client(_ap_client)
+#		ModLoaderLog.debug("Created progress panel %s" % _progress_panel.get_path(), LOG_NAME)
+#
+#	_progress_panel.visible = _ap_client.connected_to_multiworld()
 
