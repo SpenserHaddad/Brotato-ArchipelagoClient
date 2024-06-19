@@ -9,8 +9,8 @@ var _game_state
 var constants = BrotatoApConstants.new()
 
 # Called when the node enters the scene tree for the first time.
-func _init(ap_session, game_state):
-	_ap_client = ap_session
+func _init(ap_client, game_state):
+	_ap_client = ap_client
 	_game_state = game_state
 	var _status = _ap_client.connect("connection_state_changed", self, "_on_session_connection_state_changed")
 	_status = _ap_client.connect("item_received", self, "on_item_received")

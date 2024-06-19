@@ -27,7 +27,7 @@ var _wins_received: int = 0
 
 var crate_type: String # Should be either "common" or "legendary"
 
-func _init(ap_session, game_state, crate_type_: String).(ap_session, game_state):
+func _init(ap_client, game_state, crate_type_: String).(ap_client, game_state):
 	crate_type = crate_type_
 
 func notify_crate_spawned():

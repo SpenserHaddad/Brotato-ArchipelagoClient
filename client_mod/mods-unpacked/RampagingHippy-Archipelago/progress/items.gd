@@ -15,7 +15,7 @@ var received_items_by_tier: Dictionary = {
 # can set the level of each item correctly.
 var processed_items_by_tier: Dictionary
 
-func _init(ap_session, game_state).(ap_session, game_state):
+func _init(ap_client, game_state).(ap_client, game_state):
 	# Need this for Godot to pass through to the base class
 	pass
 

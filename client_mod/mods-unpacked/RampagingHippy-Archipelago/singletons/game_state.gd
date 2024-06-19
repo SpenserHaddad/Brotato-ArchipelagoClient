@@ -11,8 +11,8 @@ signal wave_finished()
 var _ap_client
 var in_run: bool = false
 
-func _init(ap_session):
-	_ap_client = ap_session
+func _init(ap_client):
+	_ap_client = ap_client
 	var _status = _ap_client.connect("connection_state_changed", self, "_on_session_connection_state_changed")
 
 func connected_to_multiworld():

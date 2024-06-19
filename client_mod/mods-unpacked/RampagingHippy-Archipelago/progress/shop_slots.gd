@@ -7,7 +7,7 @@ var wins_for_goal: int
 var num_wins: int = 0
 var characters_won_with: PoolStringArray = []
 
-func _init(ap_session, game_state).(ap_session, game_state):
+func _init(ap_client, game_state).(ap_client, game_state):
 	# Need this for Godot to pass through to the base class
 	pass
 

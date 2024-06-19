@@ -5,7 +5,7 @@ var gold_received: int = 0
 var gold_given: int = 0
 var _received_gold_data_storage_key: String = ""
 
-func _init(ap_session, game_state).(ap_session, game_state):
+func _init(ap_client, game_state).(ap_client, game_state):
 	var _status = _ap_client.connect(
 		"data_storage_updated",
 		self,
