@@ -2,7 +2,7 @@ extends MarginContainer
 
 signal back_button_pressed
 
-const _AP_PLAYER_SESSION_NS = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_player_session.gd")
+const GodotApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/godot_ap_client.gd")
 
 var _ap_icon_connected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_connected.png")
 var _ap_icon_disconnected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_disconnected.png")
@@ -30,7 +30,7 @@ func init():
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	
-	_ap_client = mod_node.ap_player_session
+	_ap_client = mod_node.godot_ap_client
 	_ap_client.connect("connection_state_changed", self, "_on_connection_state_changed")
 
 #func _input(_event):
@@ -38,30 +38,28 @@ func _ready():
 #		_on_ConnectButton_pressed()
 
 func _on_connection_state_changed(new_state: int, error: int=0):
-	# Break out ApPlayerSession.ConnectState so we have a shorter name
-	var ConnectState = _AP_PLAYER_SESSION_NS.ConnectState
-	# See ConnectState enum in ap_player_session.gd
+	# See ConnectState enum in godot_ap_client.gd
 	match new_state:
-		ConnectState.DISCONNECTED:
+		GodotApClient.ConnectState.DISCONNECTED:
 			# Disconnected
 			_connect_status_label.text = "Disconnected"
-		ConnectState.CONNECTING:
+		GodotApClient.ConnectState.CONNECTING:
 			# Connecting
 			_connect_status_label.text = "Connecting"
-		ConnectState.DISCONNECTING:
+		GodotApClient.ConnectState.DISCONNECTING:
 			# Disconnecting
 			_connect_status_label.text = "Disconnecting"
-		ConnectState.CONNECTED_TO_SERVER:
+		GodotApClient.ConnectState.CONNECTED_TO_SERVER:
 			# Connected to server
 			_connect_status_label.text = "Connected to server"
-		ConnectState.CONNECTED_TO_MULTIWORLD:
+		GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD:
 			# Connected to multiworld
 			_connect_status_label.text = "Connected to multiworld"
 
 	# Allow connecting if disconnected or connected to the server but not the multiworld
 	_connect_button.disabled = (
-		new_state == ConnectState.CONNECTED_TO_MULTIWORLD or
-		new_state == ConnectState.DISCONNECTING
+		new_state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD or
+		new_state == GodotApClient.ConnectState.DISCONNECTING
 	)
 	if _connect_button.disabled and _connect_button.has_focus():
 		# Disabled buttons having focus look ugly and don't make sense.
@@ -69,23 +67,23 @@ func _on_connection_state_changed(new_state: int, error: int=0):
 
 	# Allow disconnecting if connected to the server and/or multiworld
 	_disconnect_button.disabled = (
-		new_state == ConnectState.DISCONNECTED or
-		new_state == ConnectState.DISCONNECTED or
+		new_state == GodotApClient.ConnectState.DISCONNECTED or
+		new_state == GodotApClient.ConnectState.DISCONNECTED or
 		 # TODO: Remove below if we figure out how to cancel the connection process.
-		new_state == ConnectState.CONNECTING
+		new_state == GodotApClient.ConnectState.CONNECTING
 	)
 
 	if _disconnect_button.disabled and _disconnect_button.has_focus():
 		_disconnect_button.release_focus()
 
-	if new_state == ConnectState.CONNECTED_TO_MULTIWORLD:
+	if new_state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD:
 		_status_texture.texture = _ap_icon_connected
 	elif error != 0:
 		_status_texture.texture = _ap_icon_error
 	else:
 		_status_texture.texture = _ap_icon_disconnected
 		
-	if new_state == ConnectState.CONNECTING:
+	if new_state == GodotApClient.ConnectState.CONNECTING:
 		_animate_status_texture = true
 	else:
 		_animate_status_texture = false
@@ -97,29 +95,28 @@ func _on_connection_state_changed(new_state: int, error: int=0):
 		_clear_error()
 
 func _set_error(error_reason: int):
-	# See ConnectResult enum in ap_player_session.gd
-	var ConnectResult = _AP_PLAYER_SESSION_NS.ConnectResult
+	# See ConnectState enum in godot_ap_client.gd
 	var error_text: String
 	match error_reason:
-		ConnectResult.SERVER_CONNECT_FAILURE:
+		GodotApClient.ConnectResult.SERVER_CONNECT_FAILURE:
 			error_text = "Failed to connect to the server"
-		ConnectResult.PLAYER_NOT_SET:
+		GodotApClient.ConnectResult.PLAYER_NOT_SET:
 			error_text = "Need to set player name before connecting"
-		ConnectResult.GAME_NOT_SET:
+		GodotApClient.ConnectResult.GAME_NOT_SET:
 			error_text = "Client needs to set game name before connecting"
-		ConnectResult.INVALID_SERVER:
+		GodotApClient.ConnectResult.INVALID_SERVER:
 			error_text = "Invalid server name"
-		ConnectResult.AP_INVALID_SLOT:
+		GodotApClient.ConnectResult.AP_INVALID_SLOT:
 			error_text = "AP: Invalid player name"
-		ConnectResult.AP_INVALID_GAME:
+		GodotApClient.ConnectResult.AP_INVALID_GAME:
 			error_text = "AP: Invalid game"
-		ConnectResult.AP_INCOMPATIBLE_VERSION:
+		GodotApClient.ConnectResult.AP_INCOMPATIBLE_VERSION:
 			error_text = "AP: Incompatible versions"
-		ConnectResult.AP_INVALID_PASSWORD:
+		GodotApClient.ConnectResult.AP_INVALID_PASSWORD:
 			error_text = "AP: Invalid or missing password"
-		ConnectResult.AP_INVALID_ITEMS_HANDLING:
+		GodotApClient.ConnectResult.AP_INVALID_ITEMS_HANDLING:
 			error_text = "AP: Invalid items handling"
-		ConnectResult.AP_CONNECTION_REFUSED_UNKNOWN_REASON:
+		GodotApClient.ConnectResult.AP_CONNECTION_REFUSED_UNKNOWN_REASON:
 			error_text = "AP: Failed to connect (unknown error)"
 		_:
 			error_text = "Unknown error"
