@@ -10,5 +10,5 @@ func _ready():
 
 func _on_ConfirmButton_pressed() -> void:
 	ModLoaderLog.debug("Quitting current run", LOG_NAME)
-	_ap_client.run_finished()
+	_ap_client.game_state.notify_run_finished(false, RunData.current_character.my_id)
 	._on_ConfirmButton_pressed()

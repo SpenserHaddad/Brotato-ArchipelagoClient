@@ -75,6 +75,7 @@ signal _received_connect_response(message)
 signal connection_state_changed(state, error)
 signal item_received(item_name, item)
 signal data_storage_updated(key, new_value, original_value)
+signal room_updated(updated_room_info)
 
 func _init(websocket_client_):
 	self.websocket_client = websocket_client_
@@ -84,6 +85,7 @@ func _ready():
 	_status = websocket_client.connect("on_received_items", self, "_on_received_items")
 	_status = websocket_client.connect("on_set_reply", self, "_on_set_reply")
 	_status = websocket_client.connect("on_retrieved", self, "_on_retrieved")
+	_status = websocket_client.connect("on_room_update", self, "_on_room_update")
 
 func _connected_or_connection_refused_received(message: Dictionary):
 	emit_signal("_received_connect_response", message)
@@ -217,8 +219,8 @@ func set_value(key: String, operations, values, default=null, want_reply: bool=f
 		operations = [operations]
 		values = [values]
 	for i in range(operations.size()):
-		var operation_name = _AP_TYPES.data_storage_operation_to_name[operations[i]]
-		var operation_obj = {"operation": operation_name, "value": values[i]}
+		# var operation_name = _AP_TYPES.data_storage_operation_to_name[operations[i]]
+		var operation_obj = {"operation": operations[i],"value": values[i]}
 		ap_ops.append(operation_obj)
 	websocket_client.set_value(key, default, want_reply, ap_ops)
 
@@ -239,6 +241,14 @@ func _on_retrieved(command):
 			key,
 			command["keys"][key]
 		)
+
+func _on_room_update(command: Dictionary):
+	if command.has("checked_locations"):
+		for location in command["checked_locations"]:
+			checked_locations.append(location)
+			var missing_idx = missing_locations.find(location)
+			missing_locations.remove(missing_idx)
+	emit_signal("room_update", command)
 
 func _on_set_reply(command):
 	emit_signal(
