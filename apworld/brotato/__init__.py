@@ -6,6 +6,8 @@ from BaseClasses import MultiWorld, Region, Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import add_item_rule
 
+from apworld.brotato.Locations import BrotatoLocationBase
+
 from ._loot_crate_groups import BrotatoLootCrateGroup, build_loot_crate_groups
 from .constants import (
     CHARACTERS,
@@ -46,7 +48,7 @@ class BrotatoWeb(WebWorld):
             ["RampagingHippy"],
         )
     ]
-    theme = "dirt"
+    theme: str = "dirt"
 
 
 class BrotatoWorld(World):
@@ -90,7 +92,7 @@ class BrotatoWorld(World):
     Calculated from player options in generate_early.
     """
 
-    def __init__(self, world: MultiWorld, player: int):
+    def __init__(self, world: MultiWorld, player: int) -> None:
         super().__init__(world, player)
 
     def create_item(self, name: Union[str, ItemName]) -> BrotatoItem:
@@ -98,7 +100,7 @@ class BrotatoWorld(World):
             name = name.value
         return item_table[self.item_name_to_id[name]].to_item(self.player)
 
-    def generate_early(self):
+    def generate_early(self) -> None:
         waves_per_drop = self.options.waves_per_drop.value
         # Ignore 0 value, but choosing a different start gives the wrong wave results
         self.waves_with_checks = list(range(0, NUM_WAVES + 1, waves_per_drop))[1:]
@@ -121,7 +123,7 @@ class BrotatoWorld(World):
             num_starting_characters = self.options.num_starting_characters.value
             self._starting_characters = self.random.sample(CHARACTERS, num_starting_characters)
 
-    def set_rules(self):
+    def set_rules(self) -> None:
         num_required_victories = self.options.num_victories.value
         self.multiworld.completion_condition[self.player] = create_has_run_wins_rule(
             self.player, num_required_victories
@@ -145,7 +147,7 @@ class BrotatoWorld(World):
 
         self.multiworld.regions.extend([menu_region, *loot_crate_regions, *legendary_crate_regions, *character_regions])
 
-    def create_items(self):
+    def create_items(self) -> None:
         item_names: List[Union[ItemName, str]] = []
 
         for c in self._starting_characters:
@@ -194,13 +196,13 @@ class BrotatoWorld(World):
 
         # Place "Run Won" items at the Run Win event locations
         for loc in self.location_name_groups["Run Win Specific Character"]:
-            item = self.create_item(ItemName.RUN_COMPLETE)
+            item: BrotatoItem = self.create_item(ItemName.RUN_COMPLETE)
             self.multiworld.get_location(loc, self.player).place_locked_item(item)
 
-    def generate_basic(self):
+    def generate_basic(self) -> None:
         pass
 
-    def get_filler_item_name(self):
+    def get_filler_item_name(self) -> str:
         return self.random.choice(self._filler_items)
 
     def fill_slot_data(self) -> Dict[str, Any]:
@@ -217,11 +219,13 @@ class BrotatoWorld(World):
         }
 
     def _create_character_region(self, parent_region: Region, character: str) -> Region:
-        character_region = Region(f"In-Game ({character})", self.player, self.multiworld)
-        character_run_won_location = location_table[RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)]
+        character_region: Region = Region(f"In-Game ({character})", self.player, self.multiworld)
+        character_run_won_location: BrotatoLocationBase = location_table[
+            RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)
+        ]
         character_region.locations.append(character_run_won_location.to_location(self.player, parent=character_region))
 
-        character_wave_drop_location_names = [
+        character_wave_drop_location_names: List[str] = [
             WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=character) for w in self.waves_with_checks
         ]
         character_region.locations.extend(
