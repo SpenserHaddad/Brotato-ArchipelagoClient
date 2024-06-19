@@ -13,7 +13,6 @@ func _init(ap_session, game_state).(ap_session, game_state):
 	)
 
 func give_player_unreceived_gold():
-	var in_run = _game_state.is_in_ap_run()
 	if _game_state.is_in_ap_run():
 		var gold_to_give = gold_received - gold_given
 		if gold_to_give > 0:
