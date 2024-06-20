@@ -9,7 +9,7 @@ class BrotatoLootCrateGroup:
     wins_to_unlock: int
 
 
-def build_loot_crate_groups(num_crates: int, num_groups: int, num_victories: int) -> Tuple[BrotatoLootCrateGroup, ...]:
+def build_loot_crate_groups(num_crates: int, num_groups: int, num_victories: int) -> List[BrotatoLootCrateGroup]:
     # If the options specify more crate drop groups than number of required wins, clamp to the number of wins. This
     # makes the math simpler and ensures all items are accessible by go mode. Someone probably wants the option to have
     # items after completing their goal, but we're going to pretend they don't exist until they ask.
