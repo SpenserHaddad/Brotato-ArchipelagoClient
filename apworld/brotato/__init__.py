@@ -200,7 +200,7 @@ class BrotatoWorld(World):
         itempool = [self.create_item(item_name) for item_name in item_names]
 
         total_locations = (
-            num_common_crate_drops + num_legendary_crate_drops + (len(self.waves_with_checks) * len(CHARACTERS))
+            len(common_loot_crate_items) + num_legendary_crate_drops + (len(self.waves_with_checks) * len(CHARACTERS))
         )
         num_filler_items = total_locations - len(itempool)
         itempool += [self.create_filler() for _ in range(num_filler_items)]
