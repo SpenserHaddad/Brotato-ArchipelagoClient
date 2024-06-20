@@ -82,6 +82,18 @@ class BrotatoWorld(World):
     Calculated from player options in generate_early.
     """
 
+    wave_per_game_item: Dict[str, List[int]]
+    """The wave to use to generate each Brotato item received, by rarity. Stored as slot data.
+
+    Brotato items are generated from a pool determined by the rarity (or tier) and the wave the item was found/bought.
+    We want to emulate this behavior with the items we create here. When we generate the items to match the common loot
+    crate drop locations, we also assign a wave to each item. When the client receives the next item for a certain
+    rarity, it will lookup the next entry in the list for the rarity and use that as the wave when generating the
+    values.
+
+    We attempt to equally distribute the items over the 20 waves in a normal run, with a bias towards lower numbers.
+    """
+
     common_loot_crate_groups: Sequence[BrotatoLootCrateGroup]
     """Information about each common loot crate group, i.e. how many crates it has and how many wins it needs.
 
@@ -159,34 +171,8 @@ class BrotatoWorld(World):
 
         # Add an item to receive for each common crate drop location. Try to match the distribution of
         # common/uncommon/rare/legendary items as we can infer from the game itself.
-        num_common_crate_drops = self.options.num_common_crate_drops.value
-        # Use ceiling to bias towards having more items than less. We'll handle overflow next.
-        items_per_rarity: Dict[ItemRarity, int] = {
-            rarity: ceil(rarity_pct * num_common_crate_drops) for rarity, rarity_pct in ITEM_RARITY_WEIGHTS.items()
-        }
-
-        item_rarity_cycle = cycle(items_per_rarity.keys())
-        while sum(items_per_rarity.values()) > num_common_crate_drops:
-            # Remove extra items from the distribution, going from Common -> Legendary, so we keep the ratio as close to
-            # the desired as possible while biasing towards more rarer items (because that's more fun).
-            rarity_to_decrement_next = next(item_rarity_cycle)
-            current_count = items_per_rarity[rarity_to_decrement_next]
-            items_per_rarity[rarity_to_decrement_next] = max(current_count - 1, 0)
-
-        for rarity, items_to_make in items_per_rarity.items():
-            if rarity == ItemRarity.COMMON:
-                item_name = ItemName.COMMON_ITEM
-            elif rarity == ItemRarity.UNCOMMON:
-                item_name = ItemName.UNCOMMON_ITEM
-            elif rarity == ItemRarity.RARE:
-                item_name = ItemName.RARE_ITEM
-            elif rarity == ItemRarity.LEGENDARY:
-                item_name = ItemName.LEGENDARY_ITEM
-            else:
-                raise ValueError(f"Unknown item rarity {rarity}.")
-
-            for _ in range(items_to_make):
-                item_names.append(item_name)
+        common_loot_crate_items: List[ItemName] = self._create_common_loot_crate_items()
+        item_names.extend(common_loot_crate_items)
 
         num_legendary_crate_drops = self.options.num_legendary_crate_drops.value
         for _ in range(num_legendary_crate_drops):
@@ -243,6 +229,7 @@ class BrotatoWorld(World):
             "num_legendary_crate_locations": self.options.num_legendary_crate_drops.value,
             "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check.value,
             "legendary_crate_drop_groups": [asdict(g) for g in self.legendary_loot_crate_groups],
+            "wave_per_game_item": self.wave_per_game_item,
         }
 
     def _create_character_region(self, parent_region: Region, character: str) -> Region:
@@ -303,3 +290,58 @@ class BrotatoWorld(World):
             regions.append(group_region)
 
         return regions
+
+    def _create_common_loot_crate_items(self) -> List[ItemName]:
+        """Create a list of items corresponding to the common loot crate locations.
+
+        This is intended ot be called by `create_items`, but it's split out because of its side effect (see below), and
+        it's sort of involved.
+
+        Creates a Brotato Common/Uncommon/Rare/Legendary item for each loot crate location, with the number of each
+        rarity of item being chosen to match the odds of getting that rarity of item from a loot crate. See the large
+        comment above `.constants.ITEM_RARITY_WEIGHTS` for details.
+
+        This also has a side effect: it instantiates the `wave_per_game_item` field which is used to populate a slot
+        data entry with the same name. This defines the wave to use when determining what item to create client-side.
+        """
+        num_common_crate_drops = self.options.num_common_crate_drops.value
+        # Use ceiling to bias towards having more items than less. We'll handle overflow next.
+        items_per_rarity: Dict[ItemRarity, int] = {
+            rarity: ceil(rarity_pct * num_common_crate_drops) for rarity, rarity_pct in ITEM_RARITY_WEIGHTS.items()
+        }
+
+        item_rarity_cycle = cycle(items_per_rarity.keys())
+        while sum(items_per_rarity.values()) > num_common_crate_drops:
+            # Remove extra items from the distribution, going from Common -> Legendary, so we keep the ratio as close to
+            # the desired as possible while biasing towards more rarer items (because that's more fun).
+            rarity_to_decrement_next = next(item_rarity_cycle)
+            current_count = items_per_rarity[rarity_to_decrement_next]
+            items_per_rarity[rarity_to_decrement_next] = max(current_count - 1, 0)
+
+        item_names: List[ItemName] = []
+        # The slot_data entry. Use a string since that's JSON friendly
+        wave_per_game_item: Dict[str, List[int]] = {}
+        for rarity, items_to_make in items_per_rarity.items():
+            if rarity == ItemRarity.COMMON:
+                item_name = ItemName.COMMON_ITEM
+            elif rarity == ItemRarity.UNCOMMON:
+                item_name = ItemName.UNCOMMON_ITEM
+            elif rarity == ItemRarity.RARE:
+                item_name = ItemName.RARE_ITEM
+            elif rarity == ItemRarity.LEGENDARY:
+                item_name = ItemName.LEGENDARY_ITEM
+            else:
+                raise ValueError(f"Unknown item rarity {rarity}.")
+
+            wave_per_game_item[rarity.value] = []
+            for i in range(items_to_make):
+                item_names.append(item_name)
+                # Increment the wave to use for each item. This should generate integers in [1, 20].
+                wave_per_game_item[rarity.value].append((i % 20) + 1)
+
+            # Sort the wave per item so the item value steadily increases instead of cycling.
+            wave_per_game_item[rarity.value].sort()
+
+        # Set information to be used by slot_data
+        self.wave_per_game_item = wave_per_game_item
+        return item_names
