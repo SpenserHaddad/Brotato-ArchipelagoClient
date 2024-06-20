@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Dict, Tuple
+from typing import Dict
 
 from worlds.brotato.items import BrotatoItem
 
