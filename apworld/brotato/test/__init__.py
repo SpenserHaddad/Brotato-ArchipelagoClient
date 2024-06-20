@@ -8,7 +8,7 @@ from ._data_sets import TEST_DATA_SETS
 
 
 class BrotatoTestBase(WorldTestBase):
-    game: str = "Brotato"
+    game = "Brotato"
     world: BrotatoWorld  # type: ignore
     player: ClassVar[int] = 1
 
