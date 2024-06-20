@@ -2,7 +2,7 @@ import logging
 from dataclasses import asdict
 from itertools import cycle
 from math import ceil
-from typing import Any, ClassVar, Dict, List, Literal, Sequence, Set, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Literal, Set, Tuple, Union
 
 from BaseClasses import MultiWorld, Region, Tutorial
 from worlds.AutoWorld import WebWorld, World
@@ -76,7 +76,7 @@ class BrotatoWorld(World):
     location_name_to_id: ClassVar[Dict[str, int]] = location_name_to_id
     location_name_groups: ClassVar[Dict[str, Set[str]]] = location_name_groups
 
-    waves_with_checks: Sequence[int]
+    waves_with_checks: List[int]
     """Which waves will count as locations.
 
     Calculated from player options in generate_early.
@@ -94,13 +94,13 @@ class BrotatoWorld(World):
     We attempt to equally distribute the items over the 20 waves in a normal run, with a bias towards lower numbers.
     """
 
-    common_loot_crate_groups: Sequence[BrotatoLootCrateGroup]
+    common_loot_crate_groups: List[BrotatoLootCrateGroup]
     """Information about each common loot crate group, i.e. how many crates it has and how many wins it needs.
 
     Calculated from player options in generate_early.
     """
 
-    legendary_loot_crate_groups: Sequence[BrotatoLootCrateGroup]
+    legendary_loot_crate_groups: List[BrotatoLootCrateGroup]
     """Information about each legendary loot crate group, i.e. how many crates it has and how many wins it needs.
 
     Calculated from player options in generate_early.
