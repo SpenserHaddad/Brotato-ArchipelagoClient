@@ -1,12 +1,12 @@
 import logging
 from dataclasses import asdict
+from itertools import cycle
+from math import ceil
 from typing import Any, ClassVar, Dict, List, Literal, Sequence, Set, Tuple, Union
 
 from BaseClasses import MultiWorld, Region, Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import add_item_rule
-
-from apworld.brotato.Locations import BrotatoLocationBase
 
 from ._loot_crate_groups import BrotatoLootCrateGroup, build_loot_crate_groups
 from .constants import (
@@ -14,12 +14,14 @@ from .constants import (
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
     DEFAULT_CHARACTERS,
+    ITEM_RARITY_WEIGHTS,
     LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
     MAX_SHOP_SLOTS,
     NUM_WAVES,
     RUN_COMPLETE_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
+    ItemRarity,
 )
 from .items import (
     BrotatoItem,
@@ -29,7 +31,7 @@ from .items import (
     item_name_to_id,
     item_table,
 )
-from .locations import BrotatoLocation, location_name_groups, location_name_to_id, location_table
+from .locations import BrotatoLocation, BrotatoLocationBase, location_name_groups, location_name_to_id, location_table
 from .options import BrotatoOptions
 from .rules import create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
 
@@ -155,11 +157,36 @@ class BrotatoWorld(World):
 
         item_names += [c for c in item_name_groups["Characters"] if c not in self._starting_characters]
 
-        # Add an item to receive for each crate drop location, as backfill
+        # Add an item to receive for each common crate drop location. Try to match the distribution of
+        # common/uncommon/rare/legendary items as we can infer from the game itself.
         num_common_crate_drops = self.options.num_common_crate_drops.value
-        for _ in range(num_common_crate_drops):
-            # TODO: Can be any item rarity, but need to choose a ratio. Check wiki for rates?
-            item_names.append(ItemName.COMMON_ITEM)
+        # Use ceiling to bias towards having more items than less. We'll handle overflow next.
+        items_per_rarity: Dict[ItemRarity, int] = {
+            rarity: ceil(rarity_pct * num_common_crate_drops) for rarity, rarity_pct in ITEM_RARITY_WEIGHTS.items()
+        }
+
+        item_rarity_cycle = cycle(items_per_rarity.keys())
+        while sum(items_per_rarity.values()) > num_common_crate_drops:
+            # Remove extra items from the distribution, going from Common -> Legendary, so we keep the ratio as close to
+            # the desired as possible while biasing towards more rarer items (because that's more fun).
+            rarity_to_decrement_next = next(item_rarity_cycle)
+            current_count = items_per_rarity[rarity_to_decrement_next]
+            items_per_rarity[rarity_to_decrement_next] = max(current_count - 1, 0)
+
+        for rarity, items_to_make in items_per_rarity.items():
+            if rarity == ItemRarity.COMMON:
+                item_name = ItemName.COMMON_ITEM
+            elif rarity == ItemRarity.UNCOMMON:
+                item_name = ItemName.UNCOMMON_ITEM
+            elif rarity == ItemRarity.RARE:
+                item_name = ItemName.RARE_ITEM
+            elif rarity == ItemRarity.LEGENDARY:
+                item_name = ItemName.LEGENDARY_ITEM
+            else:
+                raise ValueError(f"Unknown item rarity {rarity}.")
+
+            for _ in range(items_to_make):
+                item_names.append(item_name)
 
         num_legendary_crate_drops = self.options.num_legendary_crate_drops.value
         for _ in range(num_legendary_crate_drops):
