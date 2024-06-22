@@ -37,11 +37,25 @@ objects for better organization and readability.
 - (Internal) AP client now handles `RoomUpdate` commands.
 - (Internal) Rename `BrotatoApSession` to `BrotatoApClient`.
 - (Internal) Rename `ApPlayerSession` to `GodotApClient`.
+- Options descriptions now use reStructuredText formatting to make them look nicer.
+- Updated names of all options to be shorter and have a more consistent style.
+- Reworded some option descriptions to reflect changes to the randomizer and make the
+  options clearer.
+- `(Legendary) Loot Crates per Check` has been renamed to `(Legendary) Crate Pickup
+  Step`.
+- `Number of normal crate drop locations` has been renamed to `Loot Crate Locations`.
+- `Number of legendary crate drop locations` has been renamed to `Legendary Loot Crate
+  Locations`.
+- Default value for `(Legendary) Crate Pickup Step` is now 1 instead of 0.
+  - 0 was a nonsensical value for this option.
 
 ### Fixed
 - XP and gold given to player is now properly tracked between connections to the
   multiworld.
 - Brotato items other than common items are now included in the Archipelago item pool.
+
+### Removed
+- Removed the unused option `Shop items`.
 
 ## [0.0.6] - 2024-03-27
 
