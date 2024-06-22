@@ -228,7 +228,7 @@ class LegendaryItemWeight(Range):
 
 
 class NumberCommonUpgrades(Range):
-    """The normal of level 1 upgrades to include in the item pool."""
+    """The number of Common/Tier 1/White upgrades to include in the item pool."""
 
     range_start = 0
     range_end: int = MAX_COMMON_UPGRADES
@@ -238,7 +238,7 @@ class NumberCommonUpgrades(Range):
 
 
 class NumberUncommonUpgrades(Range):
-    """The normal of level 2 upgrades to include in the item pool."""
+    """The number of Uncommon/Tier 2/Blue upgrades to include in the item pool."""
 
     range_start = 0
     range_end: int = MAX_UNCOMMON_UPGRADES
@@ -248,7 +248,7 @@ class NumberUncommonUpgrades(Range):
 
 
 class NumberRareUpgrades(Range):
-    """The normal of level 3 upgrades to include in the item pool."""
+    """The number of Rare/Tier 3/Purple upgrades to include in the item pool."""
 
     range_start = 0
     range_end: int = MAX_RARE_UPGRADES
@@ -258,7 +258,7 @@ class NumberRareUpgrades(Range):
 
 
 class NumberLegendaryUpgrades(Range):
-    """The normal of level 4 upgrades to include in the item pool."""
+    """The number of Legendary/Tier 4/Red upgrades to include in the item pool."""
 
     range_start = 0
     range_end = MAX_LEGENDARY_UPGRADES
