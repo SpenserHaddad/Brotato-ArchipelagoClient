@@ -307,7 +307,8 @@ class BrotatoWorld(World):
         in the use options to randomly determine how many of each tier to create.
 
         This also has a side effect: it instantiates the `wave_per_game_item` field which is used to populate a slot
-        data entry with the same name. This defines the wave to use when determining what item to create client-side.
+        data entry with the same name. This defines the wave to use when determining what item to create client-side. We
+        do this here since we have the information readily available.
         """
         weights: Tuple[int, int, int, int]
         if self.options.item_weight_mode.value == ItemWeights.option_default:
