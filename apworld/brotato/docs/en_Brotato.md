@@ -39,6 +39,8 @@ randomizer settings.
 
 - Additional characters that you can play as.
 - Item drops, as if you had picked up a loot crate during a wave.
+  - Item rarity is determined by the randomizer, and the total distribution of item
+    drops mimics the actual game's.
 - Upgrades, as if you had leveled up during a wave.
 - Additional items slots in the shop, up to the game's maximum of four.
 - Bonus XP, which is granted to your current run or the next run you play after

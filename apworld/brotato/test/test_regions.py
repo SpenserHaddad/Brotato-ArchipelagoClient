@@ -1,6 +1,6 @@
 from typing import Tuple, Union
 
-from ..Constants import (
+from ..constants import (
     CHARACTERS,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
@@ -10,7 +10,7 @@ from ..Constants import (
     MAX_NORMAL_CRATE_DROPS,
     RUN_COMPLETE_LOCATION_TEMPLATE,
 )
-from ..Items import ItemName
+from ..items import ItemName
 from . import BrotatoTestBase
 
 
@@ -44,7 +44,8 @@ class TestBrotatoRegions(BrotatoTestBase):
                 )
 
             for common_region_idx in range(
-                test_data.options.num_common_crate_drop_groups + 1, total_possible_normal_crate_groups + 1
+                test_data.options.num_common_crate_drop_groups + 1,
+                total_possible_normal_crate_groups + 1,
             ):
                 expected_missing_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
                 self.assertNotIn(
@@ -54,7 +55,8 @@ class TestBrotatoRegions(BrotatoTestBase):
                 )
 
             for legendary_region_idx in range(
-                test_data.options.num_legendary_crate_drop_groups + 1, total_possible_legendary_crate_groups
+                test_data.options.num_legendary_crate_drop_groups + 1,
+                total_possible_legendary_crate_groups,
             ):
                 expected_missing_group = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=legendary_region_idx)
                 self.assertNotIn(

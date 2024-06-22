@@ -8,10 +8,11 @@ combinations.
 Currently, the test data sets are focused on testing the crate drop region creation and access rules, but there's no
 reason it couldn't be expanded to handle more in the future.
 """
+
 from dataclasses import asdict, dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from ..Constants import (
+from ..constants import (
     MAX_LEGENDARY_CRATE_DROP_GROUPS,
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_NORMAL_CRATE_DROP_GROUPS,
@@ -195,7 +196,23 @@ TEST_DATA_SETS: List[BrotatoTestDataSet] = [
             common_crates_per_region=tuple(([3] * 5) + ([2] * 10)),
             num_legendary_crate_regions=5,
             legendary_crates_per_region=5,
-            wins_required_per_common_region=(0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28),
+            wins_required_per_common_region=(
+                0,
+                2,
+                4,
+                6,
+                8,
+                10,
+                12,
+                14,
+                16,
+                18,
+                20,
+                22,
+                24,
+                26,
+                28,
+            ),
             wins_required_per_legendary_region=(0, 6, 12, 18, 24),
         ),
     ),
