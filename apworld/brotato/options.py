@@ -32,9 +32,8 @@ class NumberRequiredWins(Range):
 class StartingCharacters(TextChoice):
     """Determines your set of starting characters.
 
-    Default: Start with Well Rounded, Brawler, Crazy, Ranger and Mage.
-
-    Shuffle: Start with a random selection of characters.
+    * Default: Start with Well Rounded, Brawler, Crazy, Ranger and Mage.
+    * Shuffle: Start with a random selection of characters.
     """
 
     option_default_characters = 0
@@ -55,7 +54,10 @@ class NumberStartingCharacters(Range):
 
 
 class WavesPerCheck(Range):
-    """How many waves to win to receive a check. Smaller values mean more frequent checks."""
+    """How many waves to win to receive a check.
+
+    1 means every wave is a check, 2 means every other wave, etc.
+    """
 
     # We'd make the start 1, but the number of items sent when the game is released is
     # so large that the resulting ReceivedItems command is bigger than Godot 3.5's
@@ -83,11 +85,9 @@ class NumberCommonCrateDropLocations(Range):
 
 
 class NumberCommonCrateDropsPerCheck(Range):
-    """The number of loot crates needed to check a location.
+    """The number of common loot crates which need to be picked up to count as a check.
 
-    1 means every loot crate pickup gives a check,
-    2 means every other loot crate,
-    etc.
+    1 means every crate is a check, 2 means every other crate, etc.
     """
 
     range_start = 0
@@ -99,9 +99,11 @@ class NumberCommonCrateDropsPerCheck(Range):
 class NumberCommonCrateDropGroups(Range):
     """The number of groups to separate loot crate locations into.
 
-    Once you check all the locations in a group, the randomizer will not drop more loot crate Archipelago items until you win more runs.
+    Once you check all the locations in a group, the randomizer will not drop more loot crate Archipelago items until
+    you win more runs.
 
-    The number of loot crate locations will be evenly split among the groups, and the groups will be evenly spread out over the number of wins you choose.
+    The number of loot crate locations will be evenly split among the groups, and the groups will be evenly spread out
+    over the number of wins you choose.
 
     Set to 1 to make all loot crate locations available from the start.
     """
@@ -129,9 +131,9 @@ class NumberLegendaryCrateDropLocations(Range):
 
 
 class NumberLegendaryCrateDropsPerCheck(Range):
-    """The number of legendary loot crates needed to check a location.
+    """The number of legendary loot crates which need to be picked up to count as a check.
 
-    1 means every loot crate pickup gives a check, 2 means every other loot crate, etc.
+    1 means every crate is a check, 2 means every other crate, etc.
     """
 
     range_start = 0
@@ -144,9 +146,11 @@ class NumberLegendaryCrateDropsPerCheck(Range):
 class NumberLegendaryCrateDropGroups(Range):
     """The number of groups to separate legendary loot crate locations into.
 
-    Once you check all the locations in a group, the randomizer will not drop more legendary loot crate Archipelago items until you win more runs.
+    Once you check all the locations in a group, the randomizer will not drop more legendary loot crate Archipelago
+    items until you win more runs.
 
-    The number of loot crate locations will be evenly split among the groups, and the groups will be evenly spread out over the number of wins you choose.
+    The number of loot crate locations will be evenly split among the groups, and the groups will be evenly spread out
+    over the number of wins you choose.
 
     Set to 1 to make all legendary loot crate locations available from the start.
     """
@@ -163,11 +167,12 @@ class ItemWeights(Choice):
     For every common crate drop location, a Brotato weapon/item will be added to the pool. This controls how the item
     tiers are chosen.
 
-    Note that legendary crate drop locations will ALWAYS add a legendary item to the pool, which is in addition to any legendary items added by common crate locations.
+    Note that legendary crate drop locations will ALWAYS add a legendary item to the pool, which is in addition to any
+    legendary items added by common crate locations.
 
-    - Default: Use the game's normal distribution. Equivalent to setting the custom weights to 100/60/25/8.
-    - Chaos: Each tier has a has a random weight.
-    - Custom: Use the custom weight options below.
+    * Default: Use the game's normal distribution. Equivalent to setting the custom weights to 100/60/25/8.
+    * Chaos: Each tier has a has a random weight.
+    * Custom: Use the custom weight options below.
     """
 
     option_default = 0
@@ -210,7 +215,8 @@ class RareItemWeight(Range):
 class LegendaryItemWeight(Range):
     """The weight of Legendary/Tier 4/Red items in the pool.
 
-    Note that this is for common crate drop locations only. An additional number of legendary items is also added for each legendary crate drop location.
+    Note that this is for common crate drop locations only. An additional number of legendary items is also added for
+    each legendary crate drop location.
     """
 
     range_start = 0
