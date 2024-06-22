@@ -49,7 +49,8 @@ class BrotatoWeb(WebWorld):
             ["RampagingHippy"],
         )
     ]
-    theme: str = "dirt"
+    theme = "dirt"
+    rich_text_options_doc = True
 
 
 class BrotatoWorld(World):
