@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict
+from typing import Dict, Tuple
 
 BASE_ID = 0x7A70_0000
 
@@ -78,20 +78,14 @@ MAX_LEGENDARY_CRATE_DROPS = 50
 MAX_NORMAL_CRATE_DROP_GROUPS = NUM_CHARACTERS
 MAX_LEGENDARY_CRATE_DROP_GROUPS = NUM_CHARACTERS
 
-# Percentage (Brotato) items of different rarities should be made when creating AP items to fill the common loot crate
-# drop locations. The different item rarity is never explicitly defined in Brotato's source code, but we can make a
-# reasonable guess by looking at the max chance of getting items of each rarity/tier from the shop, which is publically
-# documented here: https://brotato.wiki.spellsandguns.com/Shop#Rarity_of_Shop_Items_and_Luck. For below, we sum the Max
-# Chance percent for each rarity for all rarities, then divide each individual rarity Max Chance by the sum. We when
-# tweak the numbers slightly to get nice "clean" numbers for readability. The variation is negligible (ex. legendaries
-# would be 4% nominally but are 5% below). It's not perfect, but it "feels" correct and works better in lieu of actual
-# rarities.
-ITEM_RARITY_WEIGHTS: Dict[ItemRarity, float] = {
-    ItemRarity.COMMON: 0.5,
-    ItemRarity.UNCOMMON: 0.3,
-    ItemRarity.RARE: 0.15,
-    ItemRarity.LEGENDARY: 0.05,
-}
+# Weights to use when generating Brotato items using the "default item weights" option. These weights are intended to
+# match the rarity of each tier in the vanilla game. The distribution is not explicitly defined in the game, but we can
+# make a reasonable guess by looking at the max chances of getting items of each rarity/tier from the shop or loot
+# crates, which are publcially listed here: https://brotato.wiki.spellsandguns.com/Shop#Rarity_of_Shop_Items_and_Luck.
+# We use the values from the "Max Chance" column in the table in the linked sections as weights. It's not perfect, but
+# it "feels" right and seems close enough.s
+DEFAULT_ITEM_WEIGHTS: Tuple[int, int, int, int] = (100, 60, 25, 8)
+
 
 MAX_COMMON_UPGRADES = 50
 MAX_UNCOMMON_UPGRADES = 50
