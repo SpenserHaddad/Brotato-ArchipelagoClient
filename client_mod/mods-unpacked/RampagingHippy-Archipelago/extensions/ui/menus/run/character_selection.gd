@@ -54,8 +54,6 @@ func get_elements_unlocked() -> Array:
 		return .get_elements_unlocked()
 
 func _add_ap_progress_ui():
-	var test_name = self.name
-	ModLoaderLog.debug("Scene name is %s" % test_name, LOG_NAME)
 	if _ap_client.connected_to_multiworld():
 		ModLoaderMod.append_node_in_scene(
 			self,
@@ -64,7 +62,4 @@ func _add_ap_progress_ui():
 			"res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.tscn"
 		)
 		_progress_panel = _description_container.get_child(3)
-		if _progress_panel.name == "ApProgress":
-			_progress_panel.set_client(_ap_client)
-
-		_progress_panel.visible = _ap_client.connected_to_multiworld()
+		_progress_panel.set_client(_ap_client)
