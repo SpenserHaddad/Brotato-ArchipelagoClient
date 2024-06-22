@@ -1,4 +1,3 @@
-from ..items import ItemName
 from . import BrotatoTestBase
 
 
@@ -106,9 +105,9 @@ class TestBrotatoSlotData(BrotatoTestBase):
         self.assertEqual(
             slot_data["wave_per_game_item"],
             {
-                ItemName.COMMON_ITEM.value: expected_common_wave_per_item,
-                ItemName.UNCOMMON_ITEM.value: [],
-                ItemName.RARE_ITEM.value: [],
-                ItemName.LEGENDARY_ITEM.value: [],
+                "Common": expected_common_wave_per_item,
+                "Uncommon": [],
+                "Rare": [],
+                "Legendary": [],
             },
         )

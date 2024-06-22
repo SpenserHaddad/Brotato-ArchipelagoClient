@@ -20,6 +20,7 @@ from .constants import (
     NUM_WAVES,
     RUN_COMPLETE_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
+    ItemRarity,
 )
 from .items import BrotatoItem, ItemName, filler_items, item_name_groups, item_name_to_id, item_table
 from .locations import BrotatoLocation, BrotatoLocationBase, location_name_groups, location_name_to_id, location_table
@@ -327,9 +328,14 @@ class BrotatoWorld(World):
         else:
             raise ValueError(f"Unsupported item_weight_mode {self.options.item_weight_mode.value}.")
 
-        brotato_item_names = [ItemName.COMMON_ITEM, ItemName.UNCOMMON_ITEM, ItemName.RARE_ITEM, ItemName.LEGENDARY_ITEM]
+        item_names_to_rarity = {
+            ItemName.COMMON_ITEM: ItemRarity.COMMON,
+            ItemName.UNCOMMON_ITEM: ItemRarity.UNCOMMON,
+            ItemName.RARE_ITEM: ItemRarity.RARE,
+            ItemName.LEGENDARY_ITEM: ItemRarity.LEGENDARY,
+        }
         items = self.random.choices(
-            brotato_item_names,
+            list(item_names_to_rarity.keys()),
             weights=weights,
             k=self.options.num_common_crate_drops.value,
         )
@@ -346,7 +352,8 @@ class BrotatoWorld(World):
 
         # Use a default of 0 in case no items of a tier were created for whatever reason.
         self.wave_per_game_item: Dict[str, List[int]] = {
-            item_name.value: generate_waves_per_item(item_counts.get(item_name, 0)) for item_name in brotato_item_names
+            rarity.value: generate_waves_per_item(item_counts.get(name, 0))
+            for name, rarity in item_names_to_rarity.items()
         }
 
         return items
