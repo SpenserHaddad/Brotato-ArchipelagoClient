@@ -275,15 +275,6 @@ class StartingShopSlots(Range):
     default = 4
 
 
-class NumberShopItems(Range):
-    """The number of items to place in the shop"""
-
-    range_start = 0
-    range_end: int = MAX_SHOP_LOCATIONS_PER_TIER[ItemRarity.COMMON]
-    display_name: str = "Shop items"
-    default = 10
-
-
 @dataclass
 class BrotatoOptions(PerGameCommonOptions):
     num_victories: NumberRequiredWins
@@ -306,4 +297,3 @@ class BrotatoOptions(PerGameCommonOptions):
     num_rare_upgrades: NumberRareUpgrades
     num_legendary_upgrades: NumberLegendaryUpgrades
     num_starting_shop_slots: StartingShopSlots
-    num_shop_items: NumberShopItems
