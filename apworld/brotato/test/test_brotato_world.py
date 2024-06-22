@@ -10,7 +10,10 @@ class TestBrotatoWorld(BrotatoTestBase):
     def test_waves_with_drops_correct(self):
         # There's only 20 valid values for "Waves per Check" option, so we can test every possible value here.
         option_and_expected: List[Tuple[int, List[int]]] = [
-            (1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]),
+            (
+                1,
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+            ),
             (2, [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]),
             (3, [3, 6, 9, 12, 15, 18]),
             (4, [4, 8, 12, 16, 20]),

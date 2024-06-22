@@ -31,9 +31,19 @@ from .items import (
     item_name_to_id,
     item_table,
 )
-from .locations import BrotatoLocation, BrotatoLocationBase, location_name_groups, location_name_to_id, location_table
+from .locations import (
+    BrotatoLocation,
+    BrotatoLocationBase,
+    location_name_groups,
+    location_name_to_id,
+    location_table,
+)
 from .options import BrotatoOptions
-from .rules import create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
+from .rules import (
+    create_has_character_rule,
+    create_has_run_wins_rule,
+    legendary_loot_crate_item_rule,
+)
 
 logger = logging.getLogger("Brotato")
 
@@ -159,7 +169,14 @@ class BrotatoWorld(World):
             # crate_drop_region.connect(character_region, f"Exit drop crates for {character}", rule=has_character_rule)
             # character_regions.append(character_region)
 
-        self.multiworld.regions.extend([menu_region, *loot_crate_regions, *legendary_crate_regions, *character_regions])
+        self.multiworld.regions.extend(
+            [
+                menu_region,
+                *loot_crate_regions,
+                *legendary_crate_regions,
+                *character_regions,
+            ]
+        )
 
     def create_items(self) -> None:
         item_names: List[Union[ItemName, str]] = []

@@ -12,11 +12,36 @@ class TestBrotatoItems(BrotatoTestBase):
 
     def test_create_items_loot_crate_drops_correct_distribution(self):
         num_checks_and_expected_items: Dict[int, Dict[ItemName, int]] = {
-            1: {ItemName.COMMON_ITEM: 0, ItemName.UNCOMMON_ITEM: 0, ItemName.RARE_ITEM: 0, ItemName.LEGENDARY_ITEM: 1},
-            5: {ItemName.COMMON_ITEM: 2, ItemName.UNCOMMON_ITEM: 1, ItemName.RARE_ITEM: 1, ItemName.LEGENDARY_ITEM: 1},
-            10: {ItemName.COMMON_ITEM: 4, ItemName.UNCOMMON_ITEM: 3, ItemName.RARE_ITEM: 2, ItemName.LEGENDARY_ITEM: 1},
-            12: {ItemName.COMMON_ITEM: 5, ItemName.UNCOMMON_ITEM: 4, ItemName.RARE_ITEM: 2, ItemName.LEGENDARY_ITEM: 1},
-            18: {ItemName.COMMON_ITEM: 8, ItemName.UNCOMMON_ITEM: 6, ItemName.RARE_ITEM: 3, ItemName.LEGENDARY_ITEM: 1},
+            1: {
+                ItemName.COMMON_ITEM: 0,
+                ItemName.UNCOMMON_ITEM: 0,
+                ItemName.RARE_ITEM: 0,
+                ItemName.LEGENDARY_ITEM: 1,
+            },
+            5: {
+                ItemName.COMMON_ITEM: 2,
+                ItemName.UNCOMMON_ITEM: 1,
+                ItemName.RARE_ITEM: 1,
+                ItemName.LEGENDARY_ITEM: 1,
+            },
+            10: {
+                ItemName.COMMON_ITEM: 4,
+                ItemName.UNCOMMON_ITEM: 3,
+                ItemName.RARE_ITEM: 2,
+                ItemName.LEGENDARY_ITEM: 1,
+            },
+            12: {
+                ItemName.COMMON_ITEM: 5,
+                ItemName.UNCOMMON_ITEM: 4,
+                ItemName.RARE_ITEM: 2,
+                ItemName.LEGENDARY_ITEM: 1,
+            },
+            18: {
+                ItemName.COMMON_ITEM: 8,
+                ItemName.UNCOMMON_ITEM: 6,
+                ItemName.RARE_ITEM: 3,
+                ItemName.LEGENDARY_ITEM: 1,
+            },
             20: {
                 ItemName.COMMON_ITEM: 10,
                 ItemName.UNCOMMON_ITEM: 6,
@@ -60,7 +85,10 @@ class TestBrotatoItems(BrotatoTestBase):
                 ItemName.LEGENDARY_ITEM: 3,
             },
         }
-        for total_checks, expected_items_per_rarity in num_checks_and_expected_items.items():
+        for (
+            total_checks,
+            expected_items_per_rarity,
+        ) in num_checks_and_expected_items.items():
             with self.subTest(msg=f"{total_checks} crate drops"):
                 # Sanity check that our test case doesn't have a math error
                 self.assertEqual(
@@ -70,7 +98,12 @@ class TestBrotatoItems(BrotatoTestBase):
                 )
 
                 # Set num_legendary_crate_drops to 0 so the only legendary items created are from the the logic tested.
-                self._run({"num_common_crate_drops": total_checks, "num_legendary_crate_drops": 0})
+                self._run(
+                    {
+                        "num_common_crate_drops": total_checks,
+                        "num_legendary_crate_drops": 0,
+                    }
+                )
 
                 item_counts = Counter(self.multiworld.itempool)
 

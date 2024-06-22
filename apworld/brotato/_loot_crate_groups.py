@@ -35,9 +35,13 @@ def build_loot_crate_groups(num_crates: int, num_groups: int, num_victories: int
         crates_allocated += crates_in_group
 
         loot_crate_groups.append(
-            BrotatoLootCrateGroup(index=group_count, num_crates=crates_in_group, wins_to_unlock=wins_to_unlock_group)
+            BrotatoLootCrateGroup(
+                index=group_count,
+                num_crates=crates_in_group,
+                wins_to_unlock=wins_to_unlock_group,
+            )
         )
         # Set this for the next group now. This is the easiest way to ensure group 1 requires 0 victories.
         wins_to_unlock_group = min(wins_to_unlock_group + num_wins_to_unlock_group, num_victories)
 
-    return tuple(loot_crate_groups)
+    return loot_crate_groups
