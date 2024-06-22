@@ -345,6 +345,11 @@ class BrotatoWorld(World):
         # waves in increasing order.
         item_counts = Counter(items)
 
+        # Include the legendary items added from legendary crate drop checks as well
+        item_counts[ItemName.LEGENDARY_ITEM] = (
+            item_counts.get(ItemName.LEGENDARY_ITEM, 0) + self.options.num_legendary_crate_drops.value
+        )
+
         def generate_waves_per_item(num_items: int) -> List[int]:
             # Evenly distribute the items over 20 waves, then sort so items received are generated with steadily
             # increasing waves (aka they got steadily stronger).

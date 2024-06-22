@@ -108,6 +108,7 @@ class TestBrotatoSlotData(BrotatoTestBase):
                 0: expected_common_wave_per_item,
                 1: [],
                 2: [],
-                3: [],
+                # There are 20 legendary crate drop locations, so one wave per location.
+                3: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
             },
         )
