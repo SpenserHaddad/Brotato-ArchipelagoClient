@@ -66,6 +66,5 @@ func _add_ap_progress_ui():
 		_progress_panel = _description_container.get_child(3)
 		if _progress_panel.name == "ApProgress":
 			_progress_panel.set_client(_ap_client)
-			ModLoaderLog.debug("Created progress panel %s" % _progress_panel.get_path(), LOG_NAME)
 
 		_progress_panel.visible = _ap_client.connected_to_multiworld()
