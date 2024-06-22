@@ -201,9 +201,6 @@ class BrotatoWorld(World):
         num_shop_slot_items = max(MAX_SHOP_SLOTS - num_starting_shop_slots, 0)
         item_names += [ItemName.SHOP_SLOT] * num_shop_slot_items
 
-        for _ in range(self.options.num_shop_items):
-            pass
-
         itempool = [self.create_item(item_name) for item_name in item_names]
 
         total_locations = (
