@@ -50,10 +50,11 @@ func process_ap_item(item_tier: int) -> int:
 	## The returned value won't necessarily match the current wave. The "<rarity> Item"
 	## items in the multiworld are meant to be evenly distributed over 20 waves, which
 	## is what this function handles.
-	processed_items_by_tier[item_tier] += 1
+	var next_item_wave = processed_items_by_tier[item_tier] + 1
+	processed_items_by_tier[item_tier] = next_item_wave
 
 	# Lookup the wave to use to determine the item 
-	var wave = wave_per_game_item[item_tier][processed_items_by_tier[item_tier]]
+	var wave = wave_per_game_item[item_tier][next_item_wave]
 	return wave
 
 func on_item_received(item_name: String, _item):
