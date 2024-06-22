@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Tuple
+from typing import Tuple
 
 BASE_ID = 0x7A70_0000
 
