@@ -17,7 +17,7 @@ func _ready():
 	# selection menu. Check the scene name before doing anything else.
 	if name == CHAR_SELECT_MENU_NAME:
 		_ensure_ap_client()
-		_add_crate_progress_ui()
+		_add_ap_progress_ui()
 
 func _ensure_ap_client():
 	# Because Godot calls the base _ready() before this one, and the base
@@ -53,7 +53,7 @@ func get_elements_unlocked() -> Array:
 		ModLoaderLog.debug("Returning default characters", LOG_NAME)
 		return .get_elements_unlocked()
 
-func _add_crate_progress_ui():
+func _add_ap_progress_ui():
 	var test_name = self.name
 	ModLoaderLog.debug("Scene name is %s" % test_name, LOG_NAME)
 	if _ap_client.connected_to_multiworld():
