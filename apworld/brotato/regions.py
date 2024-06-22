@@ -14,7 +14,11 @@ from .constants import (
     WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
 from .locations import BrotatoLocation, location_table
-from .rules import create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
+from .rules import (
+    create_has_character_rule,
+    create_has_run_wins_rule,
+    legendary_loot_crate_item_rule,
+)
 
 
 class BrotatoRegionFactory:
@@ -42,7 +46,12 @@ def create_regions(world: BrotatoWorld) -> List[Region]:
         # crate_drop_region.connect(character_region, f"Exit drop crates for {character}", rule=has_character_rule)
         # character_regions.append(character_region)
 
-    return [menu_region, *loot_crate_regions, *legendary_crate_regions, *character_regions]
+    return [
+        menu_region,
+        *loot_crate_regions,
+        *legendary_crate_regions,
+        *character_regions,
+    ]
 
 
 def _create_character_region(world: BrotatoWorld, parent_region: Region, character: str) -> Region:
@@ -68,7 +77,9 @@ def _create_character_region(world: BrotatoWorld, parent_region: Region, charact
 
 
 def _create_loot_crate_regions(
-    world: BrotatoWorld, parent_region: Region, crate_type: Literal["normal", "legendary"]
+    world: BrotatoWorld,
+    parent_region: Region,
+    crate_type: Literal["normal", "legendary"],
 ) -> List[Region]:
     item_rule: Optional[ItemRule]
     if crate_type == "normal":
@@ -105,6 +116,10 @@ def _create_loot_crate_regions(
 
         region_wins_required = min(num_wins_to_unlock_group, world.options.num_victories.value - wins_count)
         crate_group_region_rule = create_has_run_wins_rule(world.player, region_wins_required)
-        parent_region.connect(crate_group_region, name=crate_group_region.name, rule=crate_group_region_rule)
+        parent_region.connect(
+            crate_group_region,
+            name=crate_group_region.name,
+            rule=crate_group_region_rule,
+        )
 
     return regions

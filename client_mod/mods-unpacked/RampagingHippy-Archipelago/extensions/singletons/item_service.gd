@@ -44,8 +44,8 @@ func process_item_box(wave: int, consumable_data: ConsumableData, fixed_tier: in
 		match consumable_data.my_id:
 			"ap_gift_item_common", "ap_gift_item_uncommon", "ap_gift_item_rare", "ap_gift_item_legendary":
 				var item_tier = consumable_data.tier
-				ModLoaderLog.debug("Processing AP item of tier %d" % item_tier, LOG_NAME)
 				var item_wave = _ap_client.items_progress.process_ap_item(item_tier)
+				ModLoaderLog.debug("Processing AP item of tier %d at wave %d" % [item_tier, item_wave], LOG_NAME)
 				return .process_item_box(item_wave, consumable_data, item_tier)
 
 			_:

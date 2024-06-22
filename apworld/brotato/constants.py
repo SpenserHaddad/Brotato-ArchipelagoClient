@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Tuple
 
 BASE_ID = 0x7A70_0000
 
@@ -8,10 +9,11 @@ MAX_DIFFICULTY = 5
 
 
 class ItemRarity(Enum):
-    COMMON = "Common"
-    UNCOMMON = "Uncommon"
-    RARE = "Rare"
-    LEGENDARY = "Legendary"
+    # These values match the constants in Brotato, which the client mod uses. Change at your own risk.
+    COMMON = 0
+    UNCOMMON = 1
+    RARE = 2
+    LEGENDARY = 3
 
 
 CHARACTERS = (
@@ -76,6 +78,14 @@ MAX_LEGENDARY_CRATE_DROPS = 50
 # So these are just aliases of NUM_CHARACTERS to make them more explicit.
 MAX_NORMAL_CRATE_DROP_GROUPS = NUM_CHARACTERS
 MAX_LEGENDARY_CRATE_DROP_GROUPS = NUM_CHARACTERS
+
+# Weights to use when generating Brotato items using the "default item weights" option. These weights are intended to
+# match the rarity of each tier in the vanilla game. The distribution is not explicitly defined in the game, but we can
+# make a reasonable guess by looking at the max chances of getting items of each rarity/tier from the shop or loot
+# crates, which are publcially listed here: https://brotato.wiki.spellsandguns.com/Shop#Rarity_of_Shop_Items_and_Luck.
+# We use the values from the "Max Chance" column in the table in the linked sections as weights. It's not perfect, but
+# it "feels" right and seems close enough.s
+DEFAULT_ITEM_WEIGHTS: Tuple[int, int, int, int] = (100, 60, 25, 8)
 
 
 MAX_COMMON_UPGRADES = 50

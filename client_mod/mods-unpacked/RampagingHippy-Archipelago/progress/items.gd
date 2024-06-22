@@ -11,16 +11,14 @@
 ## give them all to the player every time they start a run.
 ##
 ## When we receive an item from Archipelago, we don't actually know what in-game item it
-## is. It's similar to a loot crate, it will be "something" that's randomly determined
-## when the AP item is processed. We use Brotato's existing item drop logic to determine
-## what actual item to give the player. When creating an item, Brotato randomly selects
-## determines a pool of items based off the item's rarity (Common, Uncommon, Rare, or
-## Legendary), and the current wave of the run. There are Archipelago items for each
-## Brotato item rarity, which is passed to the item selection as-is. For the wave, we
-## want all items for a given rarity to be evenly distributed over the waves. We
-## calculate which wave each item should have when generating the multiworld and store
-## in the player's slot_data. When we give an item to the player, we lookup the value
-## for that item in the slot data and use it as the wave when selecting the actual item.
+## is. Trying to choose from the pool of all Brotato items in the randomizer is
+## impractical, so we use Brototo's existing item drop logic to create teh actual item.
+##
+## When creating an item, Brotato randomly selects from a pool of items based off the
+## item's rarity/tier (Common, Uncommon, Rare, or Legendary), and the current wave of
+## the run. There are Archipelago items for each Brotato item rarity, which is passed to
+## the item selection as-is. For the wave, we assign each item to a wave in Archipelago
+## save the information to slot_data, and then reference that data here.
 extends ApProgressBase
 class_name ApItemsProgress
 
@@ -38,6 +36,8 @@ var received_items_by_tier: Dictionary = {
 # can set the level of each item correctly.
 var processed_items_by_tier: Dictionary
 
+var wave_per_game_item: Dictionary
+
 func _init(ap_client, game_state).(ap_client, game_state):
 	# Need this for Godot to pass through to the base class
 	pass
@@ -50,10 +50,16 @@ func process_ap_item(item_tier: int) -> int:
 	## The returned value won't necessarily match the current wave. The "<rarity> Item"
 	## items in the multiworld are meant to be evenly distributed over 20 waves, which
 	## is what this function handles.
+	
+	# Clamp the index access in case the player added more items with the admin console
+	# or something.
+	var wave_for_next_item = min(processed_items_by_tier[item_tier], wave_per_game_item[item_tier].size())
 	processed_items_by_tier[item_tier] += 1
-	# 20 being the total number of waves.
-	# TODO: Actually space out items
-	return int(ceil(processed_items_by_tier[item_tier] / constants.NUM_ITEM_DROPS_PER_WAVE)) % 20
+
+	# Lookup the wave to use to determine the item 
+	# The slot_data JSONifies the wave_per_game_item
+	var wave = wave_per_game_item[item_tier][wave_for_next_item]
+	return wave
 
 func on_item_received(item_name: String, _item):
 	if item_name in constants.ITEM_DROP_NAME_TO_TIER:
@@ -63,6 +69,14 @@ func on_item_received(item_name: String, _item):
 		# If we received an item, that means we're connected to a multiworld.
 		# No reason to check if connected or in a run
 		emit_signal("item_received", item_tier)
+
+func on_connected_to_multiworld():
+	# The JSON version of the slot_data converts the integer keys to strings,
+	# since int keys aren't valid JSON. Convert the keys back to ints here for
+	# simplicity.
+	var wave_per_game_item_json = _ap_client.slot_data["wave_per_game_item"]
+	for tier in wave_per_game_item_json:
+		wave_per_game_item[int(tier)] = wave_per_game_item_json[tier]
 
 func on_run_started(_character_id: String):
 	# Reset the number of items processed

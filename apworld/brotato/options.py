@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import PerGameCommonOptions, Range, TextChoice
+from Options import Choice, PerGameCommonOptions, Range, TextChoice
 
 from .constants import (
     MAX_COMMON_UPGRADES,
@@ -157,6 +157,69 @@ class NumberLegendaryCrateDropGroups(Range):
     display_name: str = "Loot Crate Groups"
 
 
+class ItemWeights(Choice):
+    """Distribution of item tiers when adding (Brotato) items to the (Archipelago) item pool.
+
+    For every common crate drop location, a Brotato weapon/item will be added to the pool. This controls how the item
+    tiers are chosen.
+
+    Note that legendary crate drop locations will ALWAYS add a legendary item to the pool, which is in addition to any legendary items added by common crate locations.
+
+    - Default: Use the game's normal distribution. Equivalent to setting the custom weights to 100/60/25/8.
+    - Chaos: Each tier has a has a random weight.
+    - Custom: Use the custom weight options below.
+    """
+
+    option_default = 0
+    option_chaos = 1
+    option_custom = 2
+
+    display_name = "Item Weights"
+
+
+class CommonItemWeight(Range):
+    """The weight of Common/Tier 1/White items in the pool."""
+
+    range_start = 0
+    range_end = 100
+
+    display_name = "Common Items"
+    default = 100
+
+
+class UncommonItemWeight(Range):
+    """The weight of Unommon/Tier 2/Blue items in the pool."""
+
+    range_start = 0
+    range_end = 100
+
+    display_name = "Uncommon Items"
+    default = 60
+
+
+class RareItemWeight(Range):
+    """The weight of Rare/Tier 3/Purple items in the pool."""
+
+    range_start = 0
+    range_end = 100
+
+    display_name = "Rare Items"
+    default = 25
+
+
+class LegendaryItemWeight(Range):
+    """The weight of Legendary/Tier 4/Red items in the pool.
+
+    Note that this is for common crate drop locations only. An additional number of legendary items is also added for each legendary crate drop location.
+    """
+
+    range_start = 0
+    range_end = 100
+
+    display_name = "Legendary Items"
+    default = 8
+
+
 class NumberCommonUpgrades(Range):
     """The normal of level 1 upgrades to include in the item pool."""
 
@@ -227,6 +290,11 @@ class BrotatoOptions(PerGameCommonOptions):
     num_legendary_crate_drops: NumberLegendaryCrateDropLocations
     num_legendary_crate_drops_per_check: NumberLegendaryCrateDropsPerCheck
     num_legendary_crate_drop_groups: NumberLegendaryCrateDropGroups
+    item_weight_mode: ItemWeights
+    common_item_weight: CommonItemWeight
+    uncommon_item_weight: UncommonItemWeight
+    rare_item_weight: RareItemWeight
+    legendary_item_weight: LegendaryItemWeight
     num_common_upgrades: NumberCommonUpgrades
     num_uncommon_upgrades: NumberUncommonUpgrades
     num_rare_upgrades: NumberRareUpgrades

@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       after four wins, etc.
     - If the options specify more groups than the required number of wins, the number of
       groups is clamped to the number of wins.
+- The weights of Brotato item tiers (Common/Uncommon/Rare/Legendary) can now be
+  configured via new options:
+  - `Default` uses a weights that tries to match Brotato's item tier drop chances.
+  - `Chaos` uses random weights for the tiers.
+  - `Custom` uses user-specified weights.
+- Added new options to let the user set item rarity weights (see `Custom` option above).
 
 ### Changed
 - (Internal) Broke the large class `BrotatoApSession` into multiple smaller "progress"
@@ -35,6 +41,7 @@ objects for better organization and readability.
 ### Fixed
 - XP and gold given to player is now properly tracked between connections to the
   multiworld.
+- Brotato items other than common items are now included in the Archipelago item pool.
 
 ## [0.0.6] - 2024-03-27
 
