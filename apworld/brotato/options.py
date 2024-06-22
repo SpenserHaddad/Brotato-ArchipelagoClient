@@ -20,8 +20,8 @@ from .constants import (
 class NumberRequiredWins(Range):
     """The number of runs you need to win to complete your goal.
 
-
-    Each win must be done with a different character."""
+    Each win must be done with a different character.
+    """
 
     range_start = 1
     range_end = NUM_CHARACTERS
@@ -71,9 +71,7 @@ class WavesPerCheck(Range):
 
 
 class NumberCommonCrateDropLocations(Range):
-    """The number of loot crate locations.
-
-    This replaces the loot crate drops in-game with an Archipelago item which must be picked up.
+    """Replaces the in-game loot crate drops with an Archipelago item which must be picked up to generate a check.
 
     How the drops are made available and how many are needed to make a check are controlled by the next two settings.
     """
@@ -82,7 +80,7 @@ class NumberCommonCrateDropLocations(Range):
     range_end = MAX_NORMAL_CRATE_DROPS
 
     default = 25
-    display_name = "Number of normal crate drop locations"
+    display_name = "Loot Crate Locations"
 
 
 class NumberCommonCrateDropsPerCheck(Range):
@@ -118,9 +116,8 @@ class NumberCommonCrateDropGroups(Range):
 
 
 class NumberLegendaryCrateDropLocations(Range):
-    """The number of legendary loot crate locations.
-
-    This replaces the legendary loot crate drops in-game with an Archipelago item which must be picked up.
+    """Replaces the in-game legendary loot crate drops with an Archipelago item which must be picked up to generate a
+    check.
 
     How the drops are made available and how many are needed to make a check are controlled by the next two settings.
     """
@@ -129,7 +126,7 @@ class NumberLegendaryCrateDropLocations(Range):
     range_end: int = MAX_LEGENDARY_CRATE_DROPS
 
     default = 5
-    display_name: str = "Number of Legendary Crate Drop Locations"
+    display_name: str = "Legendary Loot Crate Locations"
 
 
 class NumberLegendaryCrateDropsPerCheck(Range):
