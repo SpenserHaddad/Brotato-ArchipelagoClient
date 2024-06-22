@@ -105,9 +105,9 @@ class TestBrotatoSlotData(BrotatoTestBase):
         self.assertEqual(
             slot_data["wave_per_game_item"],
             {
-                "Common": expected_common_wave_per_item,
-                "Uncommon": [],
-                "Rare": [],
-                "Legendary": [],
+                0: expected_common_wave_per_item,
+                1: [],
+                2: [],
+                3: [],
             },
         )

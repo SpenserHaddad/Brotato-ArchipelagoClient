@@ -9,10 +9,11 @@ MAX_DIFFICULTY = 5
 
 
 class ItemRarity(Enum):
-    COMMON = "Common"
-    UNCOMMON = "Uncommon"
-    RARE = "Rare"
-    LEGENDARY = "Legendary"
+    # These values match the constants in Brotato, which the client mod uses. Change at your own risk.
+    COMMON = 0
+    UNCOMMON = 1
+    RARE = 2
+    LEGENDARY = 3
 
 
 CHARACTERS = (

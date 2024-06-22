@@ -81,7 +81,7 @@ class BrotatoWorld(World):
     Calculated from player options in generate_early.
     """
 
-    wave_per_game_item: Dict[str, List[int]]
+    wave_per_game_item: Dict[int, List[int]]
     """The wave to use to generate each Brotato item received, by rarity. Stored as slot data.
 
     Brotato items are generated from a pool determined by the rarity (or tier) and the wave the item was found/bought.
@@ -351,7 +351,7 @@ class BrotatoWorld(World):
             return sorted((i % 20) + 1 for i in range(num_items))
 
         # Use a default of 0 in case no items of a tier were created for whatever reason.
-        self.wave_per_game_item: Dict[str, List[int]] = {
+        self.wave_per_game_item: Dict[int, List[int]] = {
             rarity.value: generate_waves_per_item(item_counts.get(name, 0))
             for name, rarity in item_names_to_rarity.items()
         }
