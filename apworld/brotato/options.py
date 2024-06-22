@@ -10,17 +10,18 @@ from .constants import (
     MAX_NORMAL_CRATE_DROP_GROUPS,
     MAX_NORMAL_CRATE_DROPS,
     MAX_RARE_UPGRADES,
-    MAX_SHOP_LOCATIONS_PER_TIER,
     MAX_SHOP_SLOTS,
     MAX_UNCOMMON_UPGRADES,
     NUM_CHARACTERS,
     NUM_WAVES,
-    ItemRarity,
 )
 
 
 class NumberRequiredWins(Range):
-    """The number of characters you must complete runs with to win."""
+    """The number of runs you need to win to complete your goal.
+
+
+    Each win must be done with a different character."""
 
     range_start = 1
     range_end = NUM_CHARACTERS
