@@ -26,7 +26,7 @@ class NumberRequiredWins(Range):
     range_start = 1
     range_end = NUM_CHARACTERS
 
-    display_name = "Number of runs required"
+    display_name = "Wins Required"
     default = 10
 
 
@@ -40,7 +40,7 @@ class StartingCharacters(TextChoice):
     option_default_characters = 0
     option_random_characters = 1
 
-    display_name = "Starting characters"
+    display_name = "Starting Characters"
     default = 0
 
 
@@ -50,7 +50,7 @@ class NumberStartingCharacters(Range):
     range_start = 1
     range_end = NUM_CHARACTERS
 
-    display_name = "Number of starting characters"
+    display_name = "Number of Starting Characters"
     default = 5
 
 
@@ -66,7 +66,7 @@ class WavesPerCheck(Range):
     range_start = 1
     range_end = NUM_WAVES
 
-    display_name = "Waves per check"
+    display_name = "Waves Per Check"
     default = 10
 
 
@@ -94,7 +94,7 @@ class NumberCommonCrateDropsPerCheck(Range):
     range_start = 0
     range_end: int = MAX_NORMAL_CRATE_DROPS
 
-    display_name: str = "Loot Crates per Check"
+    display_name: str = "Crate Pickup Step"
 
 
 class NumberCommonCrateDropGroups(Range):
@@ -127,7 +127,7 @@ class NumberLegendaryCrateDropLocations(Range):
     range_start = 0
     range_end: int = MAX_LEGENDARY_CRATE_DROPS
 
-    display_name: str = "Number of legendary crate drop locations"
+    display_name: str = "Number of Legendary Crate Drop Locations"
     default = 5
 
 
@@ -141,7 +141,7 @@ class NumberLegendaryCrateDropsPerCheck(Range):
     range_end: int = MAX_NORMAL_CRATE_DROPS
     default = 1
 
-    display_name: str = "Loot crates per check"
+    display_name: str = "Legendary Loot Crate Pickup Step"
 
 
 class NumberLegendaryCrateDropGroups(Range):
@@ -159,7 +159,7 @@ class NumberLegendaryCrateDropGroups(Range):
     range_start = 1
     range_end: int = MAX_LEGENDARY_CRATE_DROP_GROUPS
     default = 1
-    display_name: str = "Loot Crate Groups"
+    display_name: str = "Legendary Loot Crate Groups"
 
 
 class ItemWeights(Choice):
@@ -233,7 +233,7 @@ class NumberCommonUpgrades(Range):
     range_start = 0
     range_end: int = MAX_COMMON_UPGRADES
 
-    display_name: str = "Number of level 1 upgrades"
+    display_name: str = "Common Upgrades"
     default = 15
 
 
@@ -243,7 +243,7 @@ class NumberUncommonUpgrades(Range):
     range_start = 0
     range_end: int = MAX_UNCOMMON_UPGRADES
 
-    display_name: str = "Number of level 2 upgrades"
+    display_name: str = "Uncommon Upgrades"
     default = 10
 
 
@@ -253,7 +253,7 @@ class NumberRareUpgrades(Range):
     range_start = 0
     range_end: int = MAX_RARE_UPGRADES
 
-    display_name: str = "Number of level 3 upgrades"
+    display_name: str = "Rare Upgrades"
     default = 5
 
 
@@ -263,7 +263,7 @@ class NumberLegendaryUpgrades(Range):
     range_start = 0
     range_end = MAX_LEGENDARY_UPGRADES
 
-    display_name = "Number of level 4 upgrades"
+    display_name = "Legendary Upgrades"
     default = 5
 
 
@@ -272,7 +272,7 @@ class StartingShopSlots(Range):
 
     range_start = 0
     range_end: int = MAX_SHOP_SLOTS
-    display_name: str = "Starting shop slots"
+    display_name: str = "Starting Shop Slots"
     default = 4
 
 
