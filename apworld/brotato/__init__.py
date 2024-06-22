@@ -23,27 +23,10 @@ from .constants import (
     WAVE_COMPLETE_LOCATION_TEMPLATE,
     ItemRarity,
 )
-from .items import (
-    BrotatoItem,
-    ItemName,
-    filler_items,
-    item_name_groups,
-    item_name_to_id,
-    item_table,
-)
-from .locations import (
-    BrotatoLocation,
-    BrotatoLocationBase,
-    location_name_groups,
-    location_name_to_id,
-    location_table,
-)
+from .items import BrotatoItem, ItemName, filler_items, item_name_groups, item_name_to_id, item_table
+from .locations import BrotatoLocation, BrotatoLocationBase, location_name_groups, location_name_to_id, location_table
 from .options import BrotatoOptions
-from .rules import (
-    create_has_character_rule,
-    create_has_run_wins_rule,
-    legendary_loot_crate_item_rule,
-)
+from .rules import create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
 
 logger = logging.getLogger("Brotato")
 
