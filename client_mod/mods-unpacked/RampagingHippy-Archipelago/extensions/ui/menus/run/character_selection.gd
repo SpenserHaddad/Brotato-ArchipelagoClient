@@ -1,18 +1,23 @@
 extends "res://ui/menus/run/character_selection.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/character_selection"
+const CHAR_SELECT_MENU_NAME = "TraitSelection"
 const BrotatoApConstants = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd")
 var _ap_client
 var _constants
 var _unlocked_characters: Array = []
 var _progress_panel
 
-onready var _description_container: HBoxContainer = $MarginContainer / VBoxContainer / DescriptionContainer
+onready var _description_container: HBoxContainer = $MarginContainer/VBoxContainer/DescriptionContainer
 var _ui_crate_progress
 
 func _ready():
-	_ensure_ap_client()
-	_add_crate_progress_ui()
+	# The CharacterSelection scene is subclassed by the WeaponSelection and
+	# DifficultySelection classes, but we only want to extend the character
+	# selection menu. Check the scene name before doing anything else.
+	if name == CHAR_SELECT_MENU_NAME:
+		_ensure_ap_client()
+		_add_crate_progress_ui()
 
 func _ensure_ap_client():
 	# Because Godot calls the base _ready() before this one, and the base
@@ -49,19 +54,18 @@ func get_elements_unlocked() -> Array:
 		return .get_elements_unlocked()
 
 func _add_crate_progress_ui():
-	var parent_node_path = _description_container.get_path()
-#	_ui_crate_progress = load("res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_crate_progress.tscn").instance()
-#	_description_container.add_child(_ui_crate_progress)
-#	ModLoaderMod.append_node_in_scene(
-#		self,
-#		"ApProgress",
-#		_description_container.get_path(),
-#		"res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.tscn"
-#	)
-#	_progress_panel = _description_container.get_child(3)
-#	if _progress_panel.name == "ApProgress":
-#		_progress_panel.set_client(_ap_client)
-#		ModLoaderLog.debug("Created progress panel %s" % _progress_panel.get_path(), LOG_NAME)
-#
-#	_progress_panel.visible = _ap_client.connected_to_multiworld()
+	var test_name = self.name
+	ModLoaderLog.debug("Scene name is %s" % test_name, LOG_NAME)
+	if _ap_client.connected_to_multiworld():
+		ModLoaderMod.append_node_in_scene(
+			self,
+			"ApProgress",
+			_description_container.get_path(),
+			"res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.tscn"
+		)
+		_progress_panel = _description_container.get_child(3)
+		if _progress_panel.name == "ApProgress":
+			_progress_panel.set_client(_ap_client)
+			ModLoaderLog.debug("Created progress panel %s" % _progress_panel.get_path(), LOG_NAME)
 
+		_progress_panel.visible = _ap_client.connected_to_multiworld()
