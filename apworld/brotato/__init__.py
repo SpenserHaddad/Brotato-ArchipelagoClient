@@ -327,8 +327,9 @@ class BrotatoWorld(World):
         else:
             raise ValueError(f"Unsupported item_weight_mode {self.options.item_weight_mode.value}.")
 
+        brotato_item_names = [ItemName.COMMON_ITEM, ItemName.UNCOMMON_ITEM, ItemName.RARE_ITEM, ItemName.LEGENDARY_ITEM]
         items = self.random.choices(
-            [ItemName.COMMON_ITEM, ItemName.UNCOMMON_ITEM, ItemName.RARE_ITEM, ItemName.LEGENDARY_ITEM],
+            brotato_item_names,
             weights=weights,
             k=self.options.num_common_crate_drops.value,
         )
@@ -337,8 +338,15 @@ class BrotatoWorld(World):
         # looping over at 20 (the max number of waves in a run), then sort the result so we have an even distribution of
         # waves in increasing order.
         item_counts = Counter(items)
+
+        def generate_waves_per_item(num_items: int) -> List[int]:
+            # Evenly distribute the items over 20 waves, then sort so items received are generated with steadily
+            # increasing waves (aka they got steadily stronger).
+            return sorted((i % 20) + 1 for i in range(num_items))
+
+        # Use a default of 0 in case no items of a tier were created for whatever reason.
         self.wave_per_game_item: Dict[str, List[int]] = {
-            item_name.value: sorted((i % 20) + 1 for i in range(count)) for item_name, count in item_counts.items()
+            item_name.value: generate_waves_per_item(item_counts.get(item_name, 0)) for item_name in brotato_item_names
         }
 
         return items
