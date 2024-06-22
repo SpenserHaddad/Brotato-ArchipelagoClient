@@ -50,11 +50,15 @@ func process_ap_item(item_tier: int) -> int:
 	## The returned value won't necessarily match the current wave. The "<rarity> Item"
 	## items in the multiworld are meant to be evenly distributed over 20 waves, which
 	## is what this function handles.
-	var next_item_wave = processed_items_by_tier[item_tier] + 1
-	processed_items_by_tier[item_tier] = next_item_wave
+	
+	# Clamp the index access in case the player added more items with the admin console
+	# or something.
+	var wave_for_next_item = min(processed_items_by_tier[item_tier], wave_per_game_item[item_tier].size())
+	processed_items_by_tier[item_tier] += 1
 
 	# Lookup the wave to use to determine the item 
-	var wave = wave_per_game_item[item_tier][next_item_wave]
+	# The slot_data JSONifies the wave_per_game_item
+	var wave = wave_per_game_item[item_tier][wave_for_next_item]
 	return wave
 
 func on_item_received(item_name: String, _item):
@@ -67,7 +71,12 @@ func on_item_received(item_name: String, _item):
 		emit_signal("item_received", item_tier)
 
 func on_connected_to_multiworld():
-	wave_per_game_item = _ap_client.slot_data["wave_per_game_item"]
+	# The JSON version of the slot_data converts the integer keys to strings,
+	# since int keys aren't valid JSON. Convert the keys back to ints here for
+	# simplicity.
+	var wave_per_game_item_json = _ap_client.slot_data["wave_per_game_item"]
+	for tier in wave_per_game_item_json:
+		wave_per_game_item[int(tier)] = wave_per_game_item_json[tier]
 
 func on_run_started(_character_id: String):
 	# Reset the number of items processed
