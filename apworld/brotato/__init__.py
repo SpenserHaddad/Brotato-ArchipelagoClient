@@ -49,7 +49,8 @@ class BrotatoWeb(WebWorld):
             ["RampagingHippy"],
         )
     ]
-    theme: str = "dirt"
+    theme = "dirt"
+    rich_text_options_doc = True
 
 
 class BrotatoWorld(World):
@@ -199,9 +200,6 @@ class BrotatoWorld(World):
         num_starting_shop_slots = self.options.num_starting_shop_slots.value
         num_shop_slot_items = max(MAX_SHOP_SLOTS - num_starting_shop_slots, 0)
         item_names += [ItemName.SHOP_SLOT] * num_shop_slot_items
-
-        for _ in range(self.options.num_shop_items):
-            pass
 
         itempool = [self.create_item(item_name) for item_name in item_names]
 
