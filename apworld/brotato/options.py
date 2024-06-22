@@ -163,8 +163,7 @@ class ItemWeights(Choice):
     For every common crate drop location, a Brotato weapon/item will be added to the pool. This controls how the item
     tiers are chosen.
 
-    Note that legendary crate drop locations will ALWAYS add a legendary item to the pool, which is in addition to any
-    legendary items added by common crate locations.
+    Note that legendary crate drop locations will ALWAYS add a legendary item to the pool, which is in addition to any legendary items added by common crate locations.
 
     - Default: Use the game's normal distribution. Equivalent to setting the custom weights to 100/60/25/8.
     - Chaos: Each tier has a has a random weight.
@@ -174,6 +173,8 @@ class ItemWeights(Choice):
     option_default = 0
     option_chaos = 1
     option_custom = 2
+
+    display_name = "Item Weights"
 
 
 class CommonItemWeight(Range):
@@ -203,14 +204,13 @@ class RareItemWeight(Range):
     range_end = 100
 
     display_name = "Rare Items"
-    default = 60
+    default = 25
 
 
 class LegendaryItemWeight(Range):
     """The weight of Legendary/Tier 4/Red items in the pool.
 
-    Note that this is for common crate drop locations only. An additional number of legendary items is also added for
-    each legendary crate drop location.
+    Note that this is for common crate drop locations only. An additional number of legendary items is also added for each legendary crate drop location.
     """
 
     range_start = 0
