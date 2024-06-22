@@ -1,7 +1,4 @@
 from collections import Counter
-from typing import Dict
-
-from worlds.brotato.items import BrotatoItem
 
 from ..items import ItemName
 from . import BrotatoTestBase
@@ -10,106 +7,71 @@ from . import BrotatoTestBase
 class TestBrotatoItems(BrotatoTestBase):
     auto_construct = False
 
-    def test_create_items_loot_crate_drops_correct_distribution(self):
-        num_checks_and_expected_items: Dict[int, Dict[ItemName, int]] = {
-            1: {
-                ItemName.COMMON_ITEM: 0,
-                ItemName.UNCOMMON_ITEM: 0,
-                ItemName.RARE_ITEM: 0,
-                ItemName.LEGENDARY_ITEM: 1,
-            },
-            5: {
-                ItemName.COMMON_ITEM: 2,
-                ItemName.UNCOMMON_ITEM: 1,
-                ItemName.RARE_ITEM: 1,
-                ItemName.LEGENDARY_ITEM: 1,
-            },
-            10: {
-                ItemName.COMMON_ITEM: 4,
-                ItemName.UNCOMMON_ITEM: 3,
-                ItemName.RARE_ITEM: 2,
-                ItemName.LEGENDARY_ITEM: 1,
-            },
-            12: {
-                ItemName.COMMON_ITEM: 5,
-                ItemName.UNCOMMON_ITEM: 4,
-                ItemName.RARE_ITEM: 2,
-                ItemName.LEGENDARY_ITEM: 1,
-            },
-            18: {
-                ItemName.COMMON_ITEM: 8,
-                ItemName.UNCOMMON_ITEM: 6,
-                ItemName.RARE_ITEM: 3,
-                ItemName.LEGENDARY_ITEM: 1,
-            },
-            20: {
-                ItemName.COMMON_ITEM: 10,
-                ItemName.UNCOMMON_ITEM: 6,
-                ItemName.RARE_ITEM: 3,
-                ItemName.LEGENDARY_ITEM: 1,
-            },
-            23: {
-                ItemName.COMMON_ITEM: 11,
-                ItemName.UNCOMMON_ITEM: 6,
-                ItemName.RARE_ITEM: 4,
-                ItemName.LEGENDARY_ITEM: 2,
-            },
-            25: {
-                ItemName.COMMON_ITEM: 12,
-                ItemName.UNCOMMON_ITEM: 7,
-                ItemName.RARE_ITEM: 4,
-                ItemName.LEGENDARY_ITEM: 2,
-            },
-            30: {
-                ItemName.COMMON_ITEM: 14,
-                ItemName.UNCOMMON_ITEM: 9,
-                ItemName.RARE_ITEM: 5,
-                ItemName.LEGENDARY_ITEM: 2,
-            },
-            37: {
-                ItemName.COMMON_ITEM: 18,
-                ItemName.UNCOMMON_ITEM: 11,
-                ItemName.RARE_ITEM: 6,
-                ItemName.LEGENDARY_ITEM: 2,
-            },
-            40: {
-                ItemName.COMMON_ITEM: 20,
-                ItemName.UNCOMMON_ITEM: 12,
-                ItemName.RARE_ITEM: 6,
-                ItemName.LEGENDARY_ITEM: 2,
-            },
-            50: {
-                ItemName.COMMON_ITEM: 24,
-                ItemName.UNCOMMON_ITEM: 15,
-                ItemName.RARE_ITEM: 8,
-                ItemName.LEGENDARY_ITEM: 3,
-            },
-        }
-        for (
-            total_checks,
-            expected_items_per_rarity,
-        ) in num_checks_and_expected_items.items():
-            with self.subTest(msg=f"{total_checks} crate drops"):
-                # Sanity check that our test case doesn't have a math error
-                self.assertEqual(
-                    total_checks,
-                    sum(expected_items_per_rarity.values()),
-                    msg="Invalid test, number of expected crates does not equal number of total checks.",
-                )
+    def test_create_items_custom_item_weights(self):
+        """Check that custom item weights are respected by setting weights for all but one item tier to 0 and confirming
+        only items of that tier are made.
 
-                # Set num_legendary_crate_drops to 0 so the only legendary items created are from the the logic tested.
-                self._run(
-                    {
-                        "num_common_crate_drops": total_checks,
-                        "num_legendary_crate_drops": 0,
-                    }
-                )
+        It would be nice to test more option combinations, but there doesn't seem to be a good way to do so without
+        patching self.world.random, which makes the test tautological.
+        """
+        item_rarity_prefix_to_name = {
+            "common": ItemName.COMMON_ITEM,
+            "uncommon": ItemName.UNCOMMON_ITEM,
+            "rare": ItemName.RARE_ITEM,
+            "legendary": ItemName.LEGENDARY_ITEM,
+        }
+
+        for test_item_rarity, expected_populated_item in item_rarity_prefix_to_name.items():
+            with self.subTest(msg=test_item_rarity):
+                options = {"item_weight_mode": 2, "num_common_crate_drops": 50, "num_legendary_crate_drops": 0}
+                for rarity_prefix in item_rarity_prefix_to_name:
+                    item_weight_option = f"{rarity_prefix}_item_weight"
+                    item_weight = 100 if rarity_prefix == test_item_rarity else 0
+                    options[item_weight_option] = item_weight
+
+                self._run(options)
 
                 item_counts = Counter(self.multiworld.itempool)
 
-                for item_name, expected_item_count in expected_items_per_rarity.items():
-                    # Create a dummy item that we can use to index into the counter. This saves us the effort of trying
-                    # to build the item name from the base item name and player name.
-                    ref_item: BrotatoItem = self.world.create_item(item_name)
-                    item_count: int = item_counts[ref_item]
-                    self.assertEqual(expected_item_count, item_count)
+                for item_name in item_rarity_prefix_to_name.values():
+                    if item_name == expected_populated_item:
+                        expected_amount = options["num_common_crate_drops"]
+                    else:
+                        expected_amount = 0
+
+                    self.assertEqual(item_counts[self.world.create_item(item_name)], expected_amount)
+
+    def test_create_items_custom_weight_all_legendary_items(self):
+        self._run(
+            {
+                "item_weight_mode": 2,
+                "num_common_crate_drops": 50,
+                "num_legendary_crate_drops": 20,
+                "common_item_weight": 0,
+                "uncommon_item_weight": 0,
+                "rare_item_weight": 0,
+                "legendary_item_weight": 100,
+            }
+        )
+
+        item_counts = Counter(self.multiworld.itempool)
+        # All crate drop checks (50 common + 20 legendary) should be legendary items
+        self.assertEqual(item_counts[self.world.create_item(ItemName.LEGENDARY_ITEM)], 70)
+
+    def test_create_items_custom_weight_legendary_items_weight_zero(self):
+        self._run(
+            {
+                "item_weight_mode": 2,
+                "num_common_crate_drops": 50,
+                "num_legendary_crate_drops": 20,
+                "common_item_weight": 1,
+                "uncommon_item_weight": 1,
+                "rare_item_weight": 1,
+                "legendary_item_weight": 0,
+            }
+        )
+
+        item_counts = Counter(self.multiworld.itempool)
+        # All 20 legendary crate drop checks should be legendary items and nothing more. There's no way to tell how many
+        # of each other item there will be.
+        self.assertEqual(item_counts[self.world.create_item(ItemName.LEGENDARY_ITEM)], 20)
