@@ -31,6 +31,10 @@ func _init():
 		"ui/menus/title_screen/title_screen_menus.gd", # Swtich to connect menu when connect button is pressed
 		# Unlock only characters received in MultiWorld, show MultiWorld progress
 		"ui/menus/run/character_selection.gd",
+		# Show character win status in inventory elements
+		"ui/menus/shop/inventory.gd",
+		# Show character win status on character select screen
+		"global/inventory_element.gd",
 	]
 	
 	for ef in extension_files:

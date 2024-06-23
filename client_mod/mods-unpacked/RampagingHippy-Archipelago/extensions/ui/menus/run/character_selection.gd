@@ -1,7 +1,6 @@
 extends "res://ui/menus/run/character_selection.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/character_selection"
-const CHAR_SELECT_MENU_NAME = "TraitSelection"
 const BrotatoApConstants = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd")
 var _ap_client
 var _constants
@@ -13,16 +12,16 @@ var _ui_crate_progress
 
 func _ready():
 	# The CharacterSelection scene is subclassed by the WeaponSelection and
-	# DifficultySelection classes, but we only want to extend the character
-	# selection menu. Check the scene name before doing anything else.
-	if name == CHAR_SELECT_MENU_NAME:
+	# DifficultySelection classes, but we only want to extend the character selection
+	# menu.
+	if is_char_screen():
 		_ensure_ap_client()
 		_add_ap_progress_ui()
 
 func _ensure_ap_client():
-	# Because Godot calls the base _ready() before this one, and the base
-	# ready calls `get_elements_unlocked`, it's possible our override is called
-	# before it is ready. So, we can't just init the client in _ready() like normal.
+	# Because Godot calls the base _ready() before this one, and the base ready calls
+	# `get_elements_unlocked`, it's possible our override is called before it is ready.
+	# So, we can't just init the client in _ready() like normal.
 	if _ap_client != null:
 		return
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
@@ -34,6 +33,7 @@ func _ensure_ap_client():
 			if character_info[character].unlocked:
 				_add_character(character)
 		var _status = _ap_client.connect("character_received", self, "_on_character_received")
+		_inventory.init_char_select_inventory(_ap_client)
 
 func _add_character(character_name: String):
 	var character_id = _constants.CHARACTER_NAME_TO_ID[character_name]
