@@ -44,6 +44,7 @@ class LootCrateGroup:
 ## This is also always emitted at the start of a run to tell the game which type of
 ## crate to drop.
 signal can_spawn_crate_changed(can_spawn_crate, crate_type)
+signal crate_picked_up
 
 # The total number of loot crate checks available.
 var total_checks: int
@@ -109,6 +110,8 @@ func notify_crate_picked_up():
 			group_idx += 1
 			group_crate_idx = 0
 			_update_can_spawn_crate()
+		
+	emit_signal("crate_picked_up")
 
 func _update_can_spawn_crate(force_signal=false):
 	var new_can_spawn_crate = (
