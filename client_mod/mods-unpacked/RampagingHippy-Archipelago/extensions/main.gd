@@ -12,6 +12,7 @@ export(Resource) var ap_upgrade_to_process_icon = preload ("res://mods-unpacked/
 # Extensions
 var _drop_ap_pickup = true
 onready var _ap_client
+onready var _life_container = $UI/HUD/LifeContainer
 
 func _ready() -> void:
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
@@ -47,7 +48,15 @@ func _ready() -> void:
 		
 		var _status = _ap_client.items_progress.connect("item_received", self, "_on_ap_item_received")
 		_status = _ap_client.upgrades_progress.connect("upgrade_received", self, "_on_ap_upgrade_received")
-
+		
+		ModLoaderMod.append_node_in_scene(
+			self,
+			"ApLootCrateProgress",
+			_life_container.get_path(),
+			"res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/hud/ap_hud.tscn",
+			true
+		)
+		
 # Archipelago Item received handlers
 func _on_ap_item_received(item_tier: int):
 	var item_data
@@ -90,7 +99,6 @@ func spawn_consumables(unit: Unit) -> void:
 	# No reason to check if connected to the multiworld, this is vanilla if
 	# we're not connected since the game should never drop ap_pickups otherwise.
 	var consumable_count_start = _consumables.size()
-	.spawn_consumables(unit)
 	var consumable_count_after = _consumables.size()
 	var spawned_consumable = consumable_count_after > consumable_count_start
 	if spawned_consumable:
@@ -120,8 +128,9 @@ func on_consumable_picked_up(consumable: Node) -> void:
 	.on_consumable_picked_up(consumable)
 
 func clean_up_room(is_last_wave: bool=false, is_run_lost: bool=false, is_run_won: bool=false) -> void:
-	if is_run_lost or is_run_won:
-		_ap_client.game_state.notify_run_finished(is_run_won, RunData.current_character.my_id)
-
 	_ap_client.game_state.notify_wave_finished(RunData.current_wave, RunData.current_character.my_id)
+	# Exactly one of these will be set when the run is completed. Can't trust is_last_wave since
+	# it might be false on wave 20 if endless mode is selected.
+	if is_run_won or is_run_lost:
+		_ap_client.game_state.notify_run_finished(is_run_won, RunData.current_character.my_id)
 	.clean_up_room(is_last_wave, is_run_lost, is_run_won)
