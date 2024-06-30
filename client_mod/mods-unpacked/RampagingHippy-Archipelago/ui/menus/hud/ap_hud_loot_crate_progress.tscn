@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://resources/shaders/projectile_outline_shadermat.tres" type="Material" id=1]
+[ext_resource path="res://items/consumables/item_box/item_box.png" type="Texture" id=2]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.png" type="Texture" id=3]
+[ext_resource path="res://resources/fonts/raw/Anybody-Medium.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/hud/ap_hud_loot_crate_progress.gd" type="Script" id=5]
+
+[sub_resource type="DynamicFont" id=1]
+size = 25
+outline_size = 3
+outline_color = Color( 0, 0, 0, 1 )
+extra_spacing_top = 10
+font_data = ExtResource( 4 )
+
+[node name="HBoxContainer" type="HBoxContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 5 )
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+margin_right = 48.0
+margin_bottom = 48.0
+
+[node name="ApIconTexture" type="TextureRect" parent="MarginContainer"]
+material = ExtResource( 1 )
+margin_right = 48.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 48, 48 )
+texture = ExtResource( 3 )
+expand = true
+
+[node name="CrateTexture" type="TextureRect" parent="MarginContainer"]
+unique_name_in_owner = true
+margin_right = 48.0
+margin_bottom = 48.0
+texture = ExtResource( 2 )
+expand = true
+
+[node name="ProgressLabel" type="Label" parent="."]
+margin_left = 52.0
+margin_top = 6.0
+margin_right = 115.0
+margin_bottom = 42.0
+custom_fonts/font = SubResource( 1 )
+text = "0 / 10"

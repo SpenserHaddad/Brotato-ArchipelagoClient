@@ -1,0 +1,76 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://resources/shaders/projectile_outline_shadermat.tres" type="Material" id=2]
+[ext_resource path="res://resources/fonts/actual/base/font_small_title.tres" type="DynamicFont" id=3]
+[ext_resource path="res://items/consumables/item_box/item_box.png" type="Texture" id=4]
+[ext_resource path="res://items/consumables/legendary_item_box/legendary_item_box.png" type="Texture" id=5]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.png" type="Texture" id=6]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends HBoxContainer
+
+onready var _common_progress = $CommonCrateProgressBar
+onready var _legendary_progress = $LegendaryCrateProgressBar
+
+func adjust_for_x_scale(scale: float):
+	for child in [_common_progress, _legendary_progress]:
+		child.adjust_for_x_scale(scale)
+
+func set_ap_client(ap_client):
+	_common_progress.set_loot_crate_progress(ap_client.common_loot_crate_progress)
+	_legendary_progress.set_loot_crate_progress(ap_client.legendary_loot_crate_progress)
+"
+
+[node name="HBoxContainer" type="HBoxContainer"]
+margin_right = 400.0
+margin_bottom = 100.0
+script = SubResource( 1 )
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+margin_right = 100.0
+margin_bottom = 100.0
+
+[node name="ApIconTexture" type="TextureRect" parent="MarginContainer"]
+material = ExtResource( 2 )
+margin_right = 100.0
+margin_bottom = 100.0
+texture = ExtResource( 6 )
+stretch_mode = 3
+
+[node name="CrateTexture" type="TextureRect" parent="MarginContainer"]
+margin_right = 100.0
+margin_bottom = 100.0
+texture = ExtResource( 4 )
+
+[node name="CommonCrateLabel" type="Label" parent="."]
+margin_left = 104.0
+margin_top = 34.0
+margin_right = 142.0
+margin_bottom = 65.0
+custom_fonts/font = ExtResource( 3 )
+text = "0/2"
+
+[node name="LegendaryIcon" type="MarginContainer" parent="."]
+margin_left = 146.0
+margin_right = 246.0
+margin_bottom = 100.0
+
+[node name="ApIconTexture" type="TextureRect" parent="LegendaryIcon"]
+material = ExtResource( 2 )
+margin_right = 100.0
+margin_bottom = 100.0
+texture = ExtResource( 6 )
+stretch_mode = 3
+
+[node name="CrateTexture" type="TextureRect" parent="LegendaryIcon"]
+margin_right = 100.0
+margin_bottom = 100.0
+texture = ExtResource( 5 )
+
+[node name="LegendaryCrateLabel" type="Label" parent="."]
+margin_left = 250.0
+margin_top = 34.0
+margin_right = 288.0
+margin_bottom = 65.0
+custom_fonts/font = ExtResource( 3 )
+text = "0/2"
