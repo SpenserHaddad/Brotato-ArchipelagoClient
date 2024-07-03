@@ -6,6 +6,7 @@ const CHECK_COMPLETE_FADEOUT_START_ALPHA = 0.8
 onready var _crate_texture = $HBoxContainer/MarginContainer/CrateTexture
 onready var _progress_label: Label = $HBoxContainer/ProgressLabel
 onready var _tween: Tween = $Tween
+onready var _timer: Timer = $Timer
 export(String) var crate_type = "common"
 
 # TODO: Should be able to just query this off the Scene directly....
@@ -15,6 +16,7 @@ var _loot_crate_progress
 
 func _ready():
 	stylebox.bg_color = Color("#0000ff00")
+	_timer.connect("timeout", self, "_on_timer_timeout")
 	
 	add_stylebox_override("panel", stylebox)
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
@@ -33,6 +35,8 @@ func _ready():
 func update_progress(progress: int, total: int):
 	_progress_label.set_text("%d/%d" % [progress, total])
 	if progress == total:
+		# Highlight the Scene to show a check was completed and don't update the
+		# text for a short time so the player can see it.
 		var _tween_success = _tween.interpolate_property(
 			stylebox,
 			"bg_color:a",
@@ -43,3 +47,10 @@ func update_progress(progress: int, total: int):
 			Tween.EASE_IN
 		)
 		var _tween_started = _tween.start()
+		_timer.start()
+	else:
+		_progress_label.set_text("%d/%d" % [progress, total])
+
+func _on_timer_timeout():
+	update_progress(_loot_crate_progress.check_progress, _loot_crate_progress.crates_per_check)
+	
