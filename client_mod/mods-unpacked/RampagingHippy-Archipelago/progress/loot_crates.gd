@@ -44,7 +44,7 @@ class LootCrateGroup:
 ## This is also always emitted at the start of a run to tell the game which type of
 ## crate to drop.
 signal can_spawn_crate_changed(can_spawn_crate, crate_type)
-signal crate_picked_up
+signal check_progress_changed(progress, total)
 
 # The total number of loot crate checks available.
 var total_checks: int
@@ -94,6 +94,7 @@ func notify_crate_spawned():
 func notify_crate_picked_up():
 	## Called by the game extensions when an AP loot crate is picked up in-game.
 	check_progress += 1
+	emit_signal("check_progress_changed", check_progress, crates_per_check)	
 	if check_progress == crates_per_check:
 		# Got enough crates to generate a check
 		total_crate_drop_locations_checked += 1
@@ -111,7 +112,6 @@ func notify_crate_picked_up():
 			group_crate_idx = 0
 			_update_can_spawn_crate()
 		
-	emit_signal("crate_picked_up")
 
 func _update_can_spawn_crate(force_signal=false):
 	var new_can_spawn_crate = (
