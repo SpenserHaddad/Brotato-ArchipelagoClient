@@ -9,11 +9,6 @@ var _constants
 var _is_char_select_inventory: bool = false
 const ap_icon = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.png")
 
-
-#func _ready():
-#	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
-#	_ap_client = mod_node.brotato_ap_client
-
 func init_char_select_inventory(ap_client):
 	ModLoaderLog.debug("Initializing char select inventory", LOG_NAME)
 	_is_char_select_inventory = true
