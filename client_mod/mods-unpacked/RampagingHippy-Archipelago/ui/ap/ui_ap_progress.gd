@@ -47,7 +47,7 @@ func update_all_crate_progress_ui():
 	
 func _update_crate_progress_ui(progress_text: Label, wins_needed_text: Label, crate_progress):
 	var crate_type = crate_progress.crate_type.capitalize()
-	var num_checked = crate_progress.total_crate_drop_locations_checked
+	var num_checked = crate_progress.last_crate_drop_locations_checked
 	var total_checks = crate_progress.total_checks
 	var checks_available = 0
 	for g in range(crate_progress.num_unlocked_groups):

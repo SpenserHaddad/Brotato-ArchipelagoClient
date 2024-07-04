@@ -73,18 +73,28 @@ var can_spawn_crate: bool = false
 # received.
 var num_unlocked_groups: int = 1
 
-# The total number of loot crate locations checked across all groups
-var total_crate_drop_locations_checked: int = 0
+# The index of the last loot crate locations checked across all groups. We don't want to
+# use RoomInfo for this because locations can be checked without us finding them (ex.
+# release or send_location), and we always want to "find" them in order.
+var last_crate_drop_locations_checked: int = 0
 
 # The number of AP loot crates currently on the field.
 var crates_spawned: int = 0
 var _wins_received: int = 0
+
+var _check_progress_data_storage_key: String = ""
+var _last_location_checked_data_storage_key: String = ""
 
 # The type of loot crate drop to track. Either "common" or "legendary".
 var crate_type: String
 
 func _init(ap_client, game_state, crate_type_: String).(ap_client, game_state):
 	crate_type = crate_type_
+	var _status = _ap_client.connect(
+		"data_storage_updated",
+		self,
+		"_on_session_data_storage_updated"
+	)
 
 func notify_crate_spawned():
 	## Called by the game extensions when an AP loot crate is spawned in-game.
@@ -93,15 +103,22 @@ func notify_crate_spawned():
 
 func notify_crate_picked_up():
 	## Called by the game extensions when an AP loot crate is picked up in-game.
-	check_progress += 1
+	_update_check_progress(check_progress + 1)
+
+func _update_check_progress(new_value: int):
+	if check_progress == new_value:
+		# In case we get a data storage update for our last crate pickup.
+		return
+	check_progress = new_value
 	emit_signal("check_progress_changed", check_progress, crates_per_check)	
+	
 	if check_progress == crates_per_check:
 		# Got enough crates to generate a check
-		total_crate_drop_locations_checked += 1
+		last_crate_drop_locations_checked += 1
 		group_crate_idx += 1
 		check_progress = 0
 		# Send check
-		var location_name = "Loot Crate %d" % total_crate_drop_locations_checked
+		var location_name = "Loot Crate %d" % last_crate_drop_locations_checked
 		var location_id = _ap_client.data_package.location_name_to_id[location_name]
 		_ap_client.check_location(location_id)
 
@@ -112,6 +129,22 @@ func notify_crate_picked_up():
 			group_crate_idx = 0
 			_update_can_spawn_crate()
 		
+		_ap_client.set_value(
+			_last_location_checked_data_storage_key,
+			"replace",
+			last_crate_drop_locations_checked,
+			0,
+			false
+		)
+
+	_ap_client.set_value(
+		_check_progress_data_storage_key,
+		"replace",
+		check_progress,
+		0,
+		false
+	)
+
 
 func _update_can_spawn_crate(force_signal=false):
 	var new_can_spawn_crate = (
@@ -133,6 +166,10 @@ func on_item_received(item_name: String, _item):
 				_update_can_spawn_crate()
 
 func on_connected_to_multiworld():
+	# Reset these counters so we get the new values from data storage
+	check_progress = 0
+	last_crate_drop_locations_checked = 0
+
 	total_checks = _ap_client.slot_data["num_%s_crate_locations" % crate_type]
 	crates_per_check = _ap_client.slot_data["num_%s_crate_drops_per_check" % crate_type]
 	var loot_crate_groups_info = _ap_client.slot_data["%s_crate_drop_groups" % crate_type]
@@ -146,5 +183,35 @@ func on_connected_to_multiworld():
 			)
 		)
 
+	_check_progress_data_storage_key = "%s_%s_loot_crate_check_progress" % [_ap_client.player, crate_type]
+	_last_location_checked_data_storage_key = "%s_%s_loot_crate_last_location_checked" % [_ap_client.player, crate_type]
+
+	# Initialize the data storage to track the loot crate check progress
+	_ap_client.set_value(
+		_check_progress_data_storage_key,
+		"default",
+		0,
+		0,
+		true	
+	)
+
+	# Initialize the data storage to track the last loot crate check found.
+	_ap_client.set_value(
+		_last_location_checked_data_storage_key,
+		"default",
+		0,
+		0,
+		true
+	)
+
 func on_run_started(_character_id: String):
 	_update_can_spawn_crate(true)
+
+func _on_session_data_storage_updated(key: String, new_value, _original_value):
+	if key == _check_progress_data_storage_key:
+		# Prefer local updates so the UI updates immediately. This should help for coop
+		# though.
+		_update_check_progress(new_value)
+	elif key == _last_location_checked_data_storage_key:
+		if last_crate_drop_locations_checked != new_value:
+			last_crate_drop_locations_checked = new_value
