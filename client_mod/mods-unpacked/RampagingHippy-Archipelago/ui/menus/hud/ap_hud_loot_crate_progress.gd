@@ -48,7 +48,8 @@ func update_progress(progress: int, total: int):
 		)
 		var _tween_started = _tween.start()
 		_timer.start()
-	else:
+	elif _timer.is_stopped():
+		# Show the check complete number for a little longer
 		_progress_label.set_text("%d/%d" % [progress, total])
 
 func _on_timer_timeout():
