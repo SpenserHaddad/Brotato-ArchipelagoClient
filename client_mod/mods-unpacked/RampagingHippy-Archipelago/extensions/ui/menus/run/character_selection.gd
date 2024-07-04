@@ -7,17 +7,21 @@ var _constants
 var _unlocked_characters: Array = []
 var _progress_panel
 
-onready var _description_container: HBoxContainer = $MarginContainer / VBoxContainer / DescriptionContainer
+onready var _description_container: HBoxContainer = $MarginContainer/VBoxContainer/DescriptionContainer
 var _ui_crate_progress
 
 func _ready():
-	_ensure_ap_client()
-	_add_crate_progress_ui()
+	# The CharacterSelection scene is subclassed by the WeaponSelection and
+	# DifficultySelection classes, but we only want to extend the character selection
+	# menu.
+	if is_char_screen():
+		_ensure_ap_client()
+		_add_ap_progress_ui()
 
 func _ensure_ap_client():
-	# Because Godot calls the base _ready() before this one, and the base
-	# ready calls `get_elements_unlocked`, it's possible our override is called
-	# before it is ready. So, we can't just init the client in _ready() like normal.
+	# Because Godot calls the base _ready() before this one, and the base ready calls
+	# `get_elements_unlocked`, it's possible our override is called before it is ready.
+	# So, we can't just init the client in _ready() like normal.
 	if _ap_client != null:
 		return
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
@@ -29,6 +33,7 @@ func _ensure_ap_client():
 			if character_info[character].unlocked:
 				_add_character(character)
 		var _status = _ap_client.connect("character_received", self, "_on_character_received")
+		_inventory.init_char_select_inventory(_ap_client)
 
 func _add_character(character_name: String):
 	var character_id = _constants.CHARACTER_NAME_TO_ID[character_name]
@@ -48,20 +53,13 @@ func get_elements_unlocked() -> Array:
 		ModLoaderLog.debug("Returning default characters", LOG_NAME)
 		return .get_elements_unlocked()
 
-func _add_crate_progress_ui():
-	var parent_node_path = _description_container.get_path()
-#	_ui_crate_progress = load("res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_crate_progress.tscn").instance()
-#	_description_container.add_child(_ui_crate_progress)
-#	ModLoaderMod.append_node_in_scene(
-#		self,
-#		"ApProgress",
-#		_description_container.get_path(),
-#		"res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.tscn"
-#	)
-#	_progress_panel = _description_container.get_child(3)
-#	if _progress_panel.name == "ApProgress":
-#		_progress_panel.set_client(_ap_client)
-#		ModLoaderLog.debug("Created progress panel %s" % _progress_panel.get_path(), LOG_NAME)
-#
-#	_progress_panel.visible = _ap_client.connected_to_multiworld()
-
+func _add_ap_progress_ui():
+	if _ap_client.connected_to_multiworld():
+		ModLoaderMod.append_node_in_scene(
+			self,
+			"ApProgress",
+			_description_container.get_path(),
+			"res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.tscn"
+		)
+		_progress_panel = _description_container.get_child(3)
+		_progress_panel.set_client(_ap_client)
