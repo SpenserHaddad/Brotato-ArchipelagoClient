@@ -13,6 +13,9 @@ onready var _ap_crate_progress = $MarginContainer/VBoxContainer/ApCrateProgress
 
 var _ap_client
 
+func _ready():
+	theme.set_color("font_color", "TooltipLabel", Color(1, 1, 1))
+
 func set_client(ap_client):
 	_ap_client = ap_client
 	update_all_ui()
