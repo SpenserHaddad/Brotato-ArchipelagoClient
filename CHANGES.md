@@ -28,6 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `Chaos` uses random weights for the tiers.
   - `Custom` uses user-specified weights.
 - Added new options to let the user set item rarity weights (see `Custom` option above).
+- Add new panel to the character select screen to show info on the multiworld progress if connected:
+  - Number of runs completed and how many are needed for your goal.
+  - The number of loot crate checks found, available, and total.
+  - How many wins are needed to unlock the next set of loot crates.
+  - The number of shop slots available.
+- Add an AP icon to each character on the character select screen that you've won a run with.
+- Add new HUD elements to show the number of progress towards loot crate checks.
 
 ### Changed
 - (Internal) Broke the large class `BrotatoApSession` into multiple smaller "progress"
