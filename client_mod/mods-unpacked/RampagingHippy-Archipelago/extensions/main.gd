@@ -99,6 +99,7 @@ func spawn_consumables(unit: Unit) -> void:
 	# No reason to check if connected to the multiworld, this is vanilla if
 	# we're not connected since the game should never drop ap_pickups otherwise.
 	var consumable_count_start = _consumables.size()
+	.spawn_consumables(unit)
 	var consumable_count_after = _consumables.size()
 	var spawned_consumable = consumable_count_after > consumable_count_start
 	if spawned_consumable:
