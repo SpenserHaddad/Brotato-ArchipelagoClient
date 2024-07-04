@@ -31,7 +31,7 @@ func update_runs_won_ui():
 	
 func update_shop_slots_ui():
 	var shop_slots_progress = _ap_client.shop_slots_progress
-	_shop_slots_label.text = "Shop Slots: %d" % [_ap_client.shop_slots_progress.num_unlocked_shop_slots]
+	_shop_slots_label.text = "Shop Slots: %d (?)" % [_ap_client.shop_slots_progress.num_unlocked_shop_slots]
 	
 func update_all_crate_progress_ui():
 	_update_crate_progress_ui(
@@ -54,7 +54,7 @@ func _update_crate_progress_ui(progress_text: Label, wins_needed_text: Label, cr
 		checks_available += crate_progress.loot_crate_groups[g].num_crates
 	
 	# Crate locations checked / Available/ Total
-	progress_text.text = "%s Crates: %d / %d / %d" % [crate_type, num_checked, checks_available, total_checks]
+	progress_text.text = "%s Crates: %d / %d / %d (?)" % [crate_type, num_checked, checks_available, total_checks]
 	
 	var next_group_idx = crate_progress.num_unlocked_groups
 	if next_group_idx < crate_progress.loot_crate_groups.size():
