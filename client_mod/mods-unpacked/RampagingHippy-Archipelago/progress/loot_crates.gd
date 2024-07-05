@@ -23,6 +23,8 @@
 extends ApProgressBase
 class_name ApLootCrateProgress
 
+const LOG_NAME = "RampagingHippy-Archipelago/progress/loot_crates"
+
 ## Information about a "group" of loot crate checks
 ##
 ## We unlock loot crates in groups based on the total number of checks and wins
@@ -59,78 +61,106 @@ var loot_crate_groups: Array
 # crates_per_check, the next location will be checked.
 var check_progress: int = 0
 
-# The current loot crate group we're finding checks for.
-var group_idx: int = 0
-
-# The current loot crate check in the group we're progressing towards.
-var group_crate_idx: int = 0
-
 # Indicates if we can spawn AP loot crates. Determined by current check progress and the
 # number of AP loot crates already spawned in the current wave.
 var can_spawn_crate: bool = false
 
-# The total number of unlocked loot crate groups. Determined by the number of wins
-# received.
-var num_unlocked_groups: int = 1
+# The index of the last unlocked loot crate group. Determined by the number of wins.
+var last_unlocked_group_idx: int = 0
 
-# The total number of loot crate locations checked across all groups
-var total_crate_drop_locations_checked: int = 0
+# The number of available loot crate locations based on the number of wins.
+var num_unlocked_locations: int = 0
+
+# The index of the last loot crate locations checked across all groups. We don't want to
+# use RoomInfo for this because locations can be checked without us finding them (ex.
+# release or send_location), and we always want to "find" them in order.
+var num_locations_checked: int = 0
 
 # The number of AP loot crates currently on the field.
-var crates_spawned: int = 0
+var _num_crates_spawned: int = 0
 var _wins_received: int = 0
+
+var _check_progress_data_storage_key: String = ""
+var _num_locations_checked_storage_key: String = ""
 
 # The type of loot crate drop to track. Either "common" or "legendary".
 var crate_type: String
 
 func _init(ap_client, game_state, crate_type_: String).(ap_client, game_state):
 	crate_type = crate_type_
+	var _status = _ap_client.connect(
+		"data_storage_updated",
+		self,
+		"_on_session_data_storage_updated"
+	)
 
 func notify_crate_spawned():
 	## Called by the game extensions when an AP loot crate is spawned in-game.
-	crates_spawned += 1
+	_num_crates_spawned += 1
 	_update_can_spawn_crate()
 
 func notify_crate_picked_up():
 	## Called by the game extensions when an AP loot crate is picked up in-game.
-	check_progress += 1
+	_update_check_progress(check_progress + 1)
+
+func _update_check_progress(new_value: int):
+	if check_progress == new_value:
+		# In case we get a data storage update for our last crate pickup.
+		return
+	check_progress = new_value
 	emit_signal("check_progress_changed", check_progress, crates_per_check)	
+	
 	if check_progress == crates_per_check:
 		# Got enough crates to generate a check
-		total_crate_drop_locations_checked += 1
-		group_crate_idx += 1
 		check_progress = 0
-		# Send check
-		var location_name = "Loot Crate %d" % total_crate_drop_locations_checked
+		emit_signal("check_progress_changed", check_progress, crates_per_check)	
+		_update_num_locations_checked(num_locations_checked + 1)
+
+	_ap_client.set_value(
+		_check_progress_data_storage_key,
+		"replace",
+		check_progress,
+		0,
+		false
+	)
+
+func _update_num_locations_checked(new_value: int, send_check: bool = true):
+	if num_locations_checked == new_value:
+		return
+
+	num_locations_checked = new_value
+	if send_check:
+		var location_name = "Loot Crate %d" % num_locations_checked
 		var location_id = _ap_client.data_package.location_name_to_id[location_name]
 		_ap_client.check_location(location_id)
-
-		# Update latest tracked group
-		if group_crate_idx > loot_crate_groups[group_idx].num_crates:
-			# We've found all crates in this group, increment to the next one.
-			group_idx += 1
-			group_crate_idx = 0
-			_update_can_spawn_crate()
-		
+	_update_can_spawn_crate()
+	
+	_ap_client.set_value(
+		_num_locations_checked_storage_key,
+		"replace",
+		num_locations_checked,
+		0,
+		false
+	)
 
 func _update_can_spawn_crate(force_signal=false):
-	var new_can_spawn_crate = (
-		group_idx <= num_unlocked_groups and
-		group_crate_idx <= loot_crate_groups[group_idx].num_crates
-	)
+	var new_can_spawn_crate = (num_locations_checked + _num_crates_spawned) < num_unlocked_locations
 	if new_can_spawn_crate != can_spawn_crate or force_signal:
 		can_spawn_crate = new_can_spawn_crate
 		emit_signal("can_spawn_crate_changed", can_spawn_crate, crate_type)
 
 func on_item_received(item_name: String, _item):
 	if item_name == "Run Won":
+
 		_wins_received += 1
 		# Don't do anything if we're already in the last group
-		if num_unlocked_groups < loot_crate_groups.size() - 1:
-			var next_group = loot_crate_groups[num_unlocked_groups + 1]
+		if last_unlocked_group_idx < loot_crate_groups.size() - 1:
+			var next_group = loot_crate_groups[last_unlocked_group_idx + 1]
 			if _wins_received >= next_group.wins_to_unlock:
-				num_unlocked_groups += 1
+				last_unlocked_group_idx += 1
+				num_unlocked_locations += next_group.num_crates
 				_update_can_spawn_crate()
+				ModLoaderLog.debug("New %s group unlocked. Available checks = %d, Wins needed = %d" % [crate_type, num_unlocked_locations, loot_crate_groups[last_unlocked_group_idx].wins_to_unlock], LOG_NAME)
 
 func on_connected_to_multiworld():
 	total_checks = _ap_client.slot_data["num_%s_crate_locations" % crate_type]
@@ -146,5 +176,37 @@ func on_connected_to_multiworld():
 			)
 		)
 
+	# The first loot crate group is always unlocked
+	last_unlocked_group_idx = 0 
+	num_unlocked_locations = loot_crate_groups[0].num_crates
+
+	_check_progress_data_storage_key = "%s_%s_loot_crate_check_progress" % [_ap_client.player, crate_type]
+	_num_locations_checked_storage_key = "%s_%s_loot_crate_last_location_checked" % [_ap_client.player, crate_type]
+
+	# Initialize the data storage to track the loot crate check progress
+	_ap_client.set_value(
+		_check_progress_data_storage_key,
+		"default",
+		0,
+		0,
+		true	
+	)
+
+	# Initialize the data storage to track the last loot crate check found.
+	_ap_client.set_value(
+		_num_locations_checked_storage_key,
+		"default",
+		0,
+		0,
+		true
+	)
+
 func on_run_started(_character_id: String):
 	_update_can_spawn_crate(true)
+
+func _on_session_data_storage_updated(key: String, new_value, _original_value):
+	if key == _check_progress_data_storage_key:	
+		_update_check_progress(new_value)
+	elif key == _num_locations_checked_storage_key:
+		# Update value but don't send a check, since we have already found this location
+		_update_num_locations_checked(new_value, false)
