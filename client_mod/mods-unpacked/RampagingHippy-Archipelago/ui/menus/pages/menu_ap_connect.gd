@@ -2,7 +2,7 @@ extends MarginContainer
 
 signal back_button_pressed
 
-const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/brotato_ap_client.gd")
+const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/brotato_ap_client.gd")
 
 var _ap_icon_connected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_connected.png")
 var _ap_icon_disconnected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_disconnected.png")

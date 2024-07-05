@@ -16,8 +16,8 @@
 extends Object
 class_name ApProgressBase
 
-const BrotatoApConstants = preload ("../singletons/constants.gd")
-const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd")
+const BrotatoApConstants = preload ("../ap/constants.gd")
+const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/constants.gd")
 
 var _ap_client
 ## A BrotatoApClient instance which sub-classes can use to send/receive updates from the

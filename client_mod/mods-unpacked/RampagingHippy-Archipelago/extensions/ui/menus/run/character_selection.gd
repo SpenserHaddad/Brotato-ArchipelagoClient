@@ -1,7 +1,7 @@
 extends "res://ui/menus/run/character_selection.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/character_selection"
-const BrotatoApConstants = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd")
+const BrotatoApConstants = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/constants.gd")
 var _ap_client
 var _constants
 var _unlocked_characters: Array = []
