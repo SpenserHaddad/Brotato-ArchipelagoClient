@@ -3,6 +3,10 @@ class_name BrotatoApClient
 
 const _LOG_NAME = "RampagingHippy-Archipelago/Brotato Client"
 
+# "Import" classes for our attributes so we can create instances. The game doesn't know
+# how to implicitly find our classes in non-dev builds, so we need to help it along.
+
+# onready var <class_name> = preload(path...) doesn't seem to work with actual game.
 var ApBrotatoGameState = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/game_state.gd")
 var ApCharacterProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/characters.gd")
 var ApShopSlotsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/shop_slots.gd")
