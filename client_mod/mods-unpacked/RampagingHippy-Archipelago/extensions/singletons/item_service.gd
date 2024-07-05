@@ -19,7 +19,7 @@ func _ready():
 	_success = _ap_client.legendary_loot_crate_progress.connect(
 		"can_spawn_crate_changed",
 		self,
-		"_on_legendary_can_spawn_crate_changeds"
+		"_on_legendary_can_spawn_crate_changed"
 	)
 	
 	_item_box_original = item_box
