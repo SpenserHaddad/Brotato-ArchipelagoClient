@@ -17,10 +17,10 @@ extends Object
 class_name ApProgressBase
 
 const BrotatoApConstants = preload ("../singletons/constants.gd")
-const GodotApClient = preload ("../singletons/godot_ap_client.gd")
+const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/constants.gd")
 
 var _ap_client
-## A GodotApClient instance which sub-classes can use to send/receive updates from the
+## A BrotatoApClient instance which sub-classes can use to send/receive updates from the
 ## multiworld.
 
 ## An ApGameState instance which sub-classes can use to query when runs/waves are
