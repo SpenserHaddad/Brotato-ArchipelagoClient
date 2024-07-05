@@ -20,7 +20,7 @@
 ##
 ## We'll also tell the game to drop vanilla loot crates again when all locations are
 ## checked.
-extends ApProgressBase
+extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApLootCrateProgress
 
 const LOG_NAME = "RampagingHippy-Archipelago/progress/loot_crates"

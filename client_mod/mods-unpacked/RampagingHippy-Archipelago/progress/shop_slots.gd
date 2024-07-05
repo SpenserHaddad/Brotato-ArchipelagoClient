@@ -1,5 +1,5 @@
 ## Track the number of shop slots unlocked from Archipelago items.
-extends ApProgressBase
+extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApShopSlotsProgress
 
 var num_starting_shop_slots: int

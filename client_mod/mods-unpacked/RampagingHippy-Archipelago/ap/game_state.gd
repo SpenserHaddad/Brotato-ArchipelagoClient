@@ -5,7 +5,7 @@
 extends Object
 class_name ApBrotatoGameState
 
-const GodotApClient = preload ("./godot_ap_client.gd")
+const GodotApClient = load ("./godot_ap_client.gd")
 
 ## Signal that a new run has started with the given character.
 signal run_started(character_id)

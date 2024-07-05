@@ -7,7 +7,7 @@
 ##
 ## Upgrades are given to the player every run, so we track the total amount of items and
 ## give them all to the player every time they start a run.
-extends ApProgressBase
+extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApUpgradesProgress
 
 signal upgrade_received(upgrade_tier)
