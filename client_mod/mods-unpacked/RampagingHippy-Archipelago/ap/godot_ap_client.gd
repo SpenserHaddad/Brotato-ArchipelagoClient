@@ -45,7 +45,6 @@ class ApDataPackage:
 	var checksum: String
 
 	func _init(data_package_object: Dictionary):
-		version = data_package_object["version"]
 		checksum = data_package_object["checksum"]
 		item_name_to_id = data_package_object["item_name_to_id"]
 		location_name_to_id = data_package_object["location_name_to_id"]
@@ -69,8 +68,8 @@ var game: String = ""
 var team: int
 var slot: int
 var players: Array
-var missing_locations: PoolIntArray
-var checked_locations: PoolIntArray
+var missing_locations: Array
+var checked_locations: Array
 var slot_data: Dictionary
 var slot_info: Dictionary
 var hint_points: int
@@ -209,8 +208,8 @@ func connect_to_multiworld(password: String="", get_data_pacakge: bool=true) -> 
 	self.team = connect_response["team"]
 	self.slot = connect_response["slot"]
 	self.players = connect_response["players"]
-	self.missing_locations = connect_response["missing_locations"]
-	self.checked_locations = connect_response["checked_locations"]
+	self.missing_locations = connect_response["missing_locations"].duplicate()
+	self.checked_locations = connect_response["checked_locations"].duplicate()
 	self.slot_data = connect_response["slot_data"]
 	self.slot_info = connect_response["slot_info"]
 	self.hint_points = connect_response["hint_points"]

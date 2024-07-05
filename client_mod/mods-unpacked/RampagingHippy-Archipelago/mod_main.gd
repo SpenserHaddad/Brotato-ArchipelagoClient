@@ -5,13 +5,11 @@ extends Node
 const MOD_NAME = "RampagingHippy-Archipelago"
 const LOG_NAME = MOD_NAME + "/mod_main"
 
-const ApWebSocketConnection = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/ap_websocket_connection.gd")
-const GodotApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/godot_ap_client.gd")
-const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/singletons/brotato_ap_client.gd")
+const ApWebSocketConnection = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_websocket_connection.gd")
+const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/brotato_ap_client.gd")
 
 export onready var ap_websocket_connection
 export onready var brotato_ap_client
-export onready var godot_ap_client
 
 func _init():
 	ModLoaderLog.info("Init", LOG_NAME)
@@ -53,11 +51,7 @@ func _ready() -> void:
 	ap_websocket_connection = ApWebSocketConnection.new()
 	self.add_child(ap_websocket_connection)
 
-	godot_ap_client = GodotApClient.new(ap_websocket_connection)
-	godot_ap_client.game = "Brotato"
-	self.add_child(godot_ap_client)
-
-	brotato_ap_client = BrotatoApClient.new(godot_ap_client)
+	brotato_ap_client = BrotatoApClient.new(ap_websocket_connection)
 	self.add_child(brotato_ap_client)
 
 	ModLoaderLog.debug("Archipelago mod initialized", LOG_NAME)

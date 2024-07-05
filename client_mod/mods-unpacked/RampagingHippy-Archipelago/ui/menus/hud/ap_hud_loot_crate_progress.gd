@@ -33,7 +33,10 @@ func _ready():
 		update_progress(_loot_crate_progress.check_progress, _loot_crate_progress.crates_per_check)
 
 func update_progress(progress: int, total: int):
-	_progress_label.set_text("%d/%d" % [progress, total])
+	if _timer.is_stopped():
+		# Show the check complete number for a little longer
+		_progress_label.set_text("%d/%d" % [progress, total])
+
 	if progress == total:
 		# Highlight the Scene to show a check was completed and don't update the
 		# text for a short time so the player can see it.
@@ -48,9 +51,6 @@ func update_progress(progress: int, total: int):
 		)
 		var _tween_started = _tween.start()
 		_timer.start()
-	elif _timer.is_stopped():
-		# Show the check complete number for a little longer
-		_progress_label.set_text("%d/%d" % [progress, total])
 
 func _on_timer_timeout():
 	update_progress(_loot_crate_progress.check_progress, _loot_crate_progress.crates_per_check)

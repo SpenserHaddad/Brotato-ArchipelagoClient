@@ -5,7 +5,7 @@
 extends Object
 class_name ApBrotatoGameState
 
-const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/constants.gd")
+const GodotApClient = preload ("./godot_ap_client.gd")
 
 ## Signal that a new run has started with the given character.
 signal run_started(character_id)
