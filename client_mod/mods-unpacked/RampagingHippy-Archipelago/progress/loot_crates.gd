@@ -144,7 +144,8 @@ func _update_num_locations_checked(new_value: int, send_check: bool = true):
 	)
 
 func _update_can_spawn_crate(force_signal=false):
-	var new_can_spawn_crate = (num_locations_checked + _num_crates_spawned) < num_unlocked_locations
+	var possible_checks = floor((check_progress + _num_crates_spawned) / crates_per_check)
+	var new_can_spawn_crate = num_locations_checked + possible_checks < num_unlocked_locations
 	if new_can_spawn_crate != can_spawn_crate or force_signal:
 		can_spawn_crate = new_can_spawn_crate
 		emit_signal("can_spawn_crate_changed", can_spawn_crate, crate_type)
