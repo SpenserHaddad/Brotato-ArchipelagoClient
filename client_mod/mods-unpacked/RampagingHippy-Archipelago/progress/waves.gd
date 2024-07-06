@@ -6,7 +6,7 @@
 ##
 ## This then listens for every wave to be completed and sends a check if the completed 
 ## wave corresponds to one.
-extends ApProgressBase
+extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApWavesProgress
 
 var waves_with_checks: PoolIntArray

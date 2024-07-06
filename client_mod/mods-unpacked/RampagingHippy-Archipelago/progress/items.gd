@@ -19,7 +19,7 @@
 ## the run. There are Archipelago items for each Brotato item rarity, which is passed to
 ## the item selection as-is. For the wave, we assign each item to a wave in Archipelago
 ## save the information to slot_data, and then reference that data here.
-extends ApProgressBase
+extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApItemsProgress
 
 signal item_received(item_tier)

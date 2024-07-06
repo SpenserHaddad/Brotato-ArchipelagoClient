@@ -1,7 +1,22 @@
-extends GodotApClient
+extends "res://mods-unpacked/RampagingHippy-Archipelago/ap/godot_ap_client.gd"
 class_name BrotatoApClient
 
 const _LOG_NAME = "RampagingHippy-Archipelago/Brotato Client"
+
+# "Import" classes for our attributes so we can create instances. The game doesn't know
+# how to implicitly find our classes in non-dev builds, so we need to help it along.
+
+# onready var <class_name> = preload(path...) doesn't seem to work with actual game.
+var ApBrotatoGameState = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/game_state.gd")
+var ApCharacterProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/characters.gd")
+var ApShopSlotsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/shop_slots.gd")
+var ApGoldProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/gold.gd")
+var ApXpProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/xp.gd")
+var ApItemsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/items.gd")
+var ApUpgradesProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/upgrades.gd")
+var ApLootCrateProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/loot_crates.gd")
+var ApWavesProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/waves.gd")
+var ApWinsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/wins.gd")
 
 var game_state
 

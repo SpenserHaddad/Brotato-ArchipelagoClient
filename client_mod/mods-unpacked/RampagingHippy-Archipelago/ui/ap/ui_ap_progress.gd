@@ -9,7 +9,6 @@ onready var _common_crate_progress_label = $MarginContainer/VBoxContainer/Common
 onready var _common_crate_wins_needed_label = $MarginContainer/VBoxContainer/CommonCrateWinsNeeded
 onready var _legendary_crate_progress_label = $MarginContainer/VBoxContainer/LegendaryCrateProgress
 onready var _legendary_crate_wins_needed_label = $MarginContainer/VBoxContainer/LegendaryCrateWinsNeeded
-onready var _ap_crate_progress = $MarginContainer/VBoxContainer/ApCrateProgress
 
 var _ap_client
 

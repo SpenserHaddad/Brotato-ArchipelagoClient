@@ -1,5 +1,5 @@
 ## Track which characters have been unlocked for the player slot.
-extends ApProgressBase
+extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApCharacterProgress
 
 class CharacterProgress:

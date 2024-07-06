@@ -9,7 +9,7 @@
 ## storage key to keep track of the XP given to the player so we can track the value
 ## between multiple game sessions. This class handles initializing the key when first 
 ## connecting and updating it when we give the player XP.
-extends ApProgressBase
+extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApXpProgress
 
 var xp_received: int = 0
