@@ -254,4 +254,4 @@ func _build_location_name(index: int) -> String:
 	if crate_type == "legendary":
 		location_name_prefix = "Legendary "
 		
-	return "%sLoot Crate %d" % [location_name_prefix, num_locations_checked]
+	return "%sLoot Crate %d" % [location_name_prefix, index]
