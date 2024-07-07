@@ -82,6 +82,7 @@ margin_right = 738.0
 margin_bottom = 212.0
 focus_next = NodePath("../../../ConnectButton")
 focus_previous = NodePath("../PlayerEdit")
+secret = true
 clear_button_enabled = true
 placeholder_text = "Leave empty if no password"
 caret_blink = true
