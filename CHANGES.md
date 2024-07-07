@@ -71,6 +71,7 @@ objects for better organization and readability.
 
 ### Removed
 - Removed the unused option `Shop items`.
+- Removed the related shop item locations, they were never used.
 
 ## [0.0.6] - 2024-03-27
 
