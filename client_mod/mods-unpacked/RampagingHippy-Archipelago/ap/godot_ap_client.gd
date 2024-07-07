@@ -295,7 +295,7 @@ func _on_room_update(command: Dictionary):
 			checked_locations.append(location)
 			var missing_idx = missing_locations.find(location)
 			missing_locations.remove(missing_idx)
-	emit_signal("room_update", command)
+	emit_signal("room_updated", command)
 
 func _on_set_reply(command):
 	emit_signal(

@@ -108,12 +108,12 @@ func _update_check_progress(new_value: int):
 		# In case we get a data storage update for our last crate pickup.
 		return
 	check_progress = new_value
-	emit_signal("check_progress_changed", check_progress, crates_per_check)	
+	emit_signal("check_progress_changed", check_progress, crates_per_check)
 	
 	if check_progress == crates_per_check:
 		# Got enough crates to generate a check
 		check_progress = 0
-		emit_signal("check_progress_changed", check_progress, crates_per_check)	
+		emit_signal("check_progress_changed", check_progress, crates_per_check)
 		_update_num_locations_checked(num_locations_checked + 1)
 
 	_ap_client.set_value(
@@ -124,13 +124,17 @@ func _update_check_progress(new_value: int):
 		false
 	)
 
-func _update_num_locations_checked(new_value: int, send_check: bool = true):
+func _update_num_locations_checked(new_value: int, send_check: bool=true):
 	if num_locations_checked == new_value:
 		return
 
 	num_locations_checked = new_value
 	if send_check:
-		var location_name = "Loot Crate %d" % num_locations_checked
+		var location_name_prefix: String = ""
+		if crate_type == "legendary":
+			location_name_prefix = "Legendary "
+		
+		var location_name = "%sLoot Crate %d" % [location_name_prefix, num_locations_checked]
 		var location_id = _ap_client.data_package.location_name_to_id[location_name]
 		_ap_client.check_location(location_id)
 	_update_can_spawn_crate()
@@ -178,7 +182,7 @@ func on_connected_to_multiworld():
 		)
 
 	# The first loot crate group is always unlocked
-	last_unlocked_group_idx = 0 
+	last_unlocked_group_idx = 0
 	num_unlocked_locations = loot_crate_groups[0].num_crates
 
 	_check_progress_data_storage_key = "%s_%s_loot_crate_check_progress" % [_ap_client.player, crate_type]
@@ -190,7 +194,7 @@ func on_connected_to_multiworld():
 		"default",
 		0,
 		0,
-		true	
+		true
 	)
 
 	# Initialize the data storage to track the last loot crate check found.
@@ -206,7 +210,7 @@ func on_run_started(_character_id: String):
 	_update_can_spawn_crate(true)
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value):
-	if key == _check_progress_data_storage_key:	
+	if key == _check_progress_data_storage_key:
 		_update_check_progress(new_value)
 	elif key == _num_locations_checked_storage_key:
 		# Update value but don't send a check, since we have already found this location

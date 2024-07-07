@@ -27,7 +27,7 @@ func on_room_updated(updated_room_info: Dictionary):
 		var new_locations = updated_room_info["checked_locations"]
 		for character in character_info:
 			var char_info = character_info[character]
-			if not char_info.won_run and new_locations.has(char_info.won_run_location_id):
+			if not char_info.won_run and char_info.won_run_location_id in new_locations:
 				char_info.won_run = true
 
 func on_connected_to_multiworld():
@@ -36,6 +36,6 @@ func on_connected_to_multiworld():
 		# just check if they won or not here. (TODO: simul-play?)
 		var character_won_loc_name = constants.RUN_COMPLETE_LOCATION_TEMPLATE.format({"char": character})
 		var character_won_loc_id = _ap_client.data_package.location_name_to_id[character_won_loc_name]
-		var character_won = _ap_client.checked_locations.has(character_won_loc_id)
+		var character_won = character_won_loc_id in _ap_client.checked_locations
 		character_info[character].won_run = character_won
 		character_info[character].won_run_location_id = character_won_loc_id
