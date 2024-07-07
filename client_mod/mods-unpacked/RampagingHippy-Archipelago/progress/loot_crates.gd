@@ -183,6 +183,7 @@ func on_item_received(item_name: String, _item):
 				ModLoaderLog.debug("New %s group unlocked. Available checks = %d, Wins needed = %d" % [crate_type, num_unlocked_locations, loot_crate_groups[last_unlocked_group_idx].wins_to_unlock], LOG_NAME)
 
 func on_connected_to_multiworld():
+	_wins_received = 0
 	total_checks = _ap_client.slot_data["num_%s_crate_locations" % crate_type]
 	crates_per_check = _ap_client.slot_data["num_%s_crate_drops_per_check" % crate_type]
 	var loot_crate_groups_info = _ap_client.slot_data["%s_crate_drop_groups" % crate_type]
