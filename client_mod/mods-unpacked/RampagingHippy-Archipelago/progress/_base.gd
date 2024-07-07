@@ -43,7 +43,7 @@ func _init(ap_client, game_state):
 func on_item_received(_item_name: String, _item):
 	pass
 
-func on_room_updated(room_update: Dictionary):
+func on_room_updated(_room_update: Dictionary):
 	pass
 
 func on_connected_to_multiworld():
