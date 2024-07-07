@@ -107,6 +107,15 @@ func notify_crate_picked_up():
 	_num_crates_spawned -= 1
 	_update_check_progress(check_progress + 1)
 
+func total_locations_checked() -> int:
+	## The total number of loot crate locations checked, including those found by other
+	## games collecting/releasing the location
+	var num_found = 0
+	for location_id in location_check_status:
+		if location_check_status[location_id]:
+			num_found += 1
+	return num_found
+
 func _update_check_progress(new_value: int):
 	if check_progress == new_value:
 		# In case we get a data storage update for our last crate pickup.
