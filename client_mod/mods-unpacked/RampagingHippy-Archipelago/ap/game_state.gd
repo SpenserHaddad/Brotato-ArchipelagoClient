@@ -5,7 +5,7 @@
 extends Object
 class_name ApBrotatoGameState
 
-const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/constants.gd")
+var GodotApClient = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/godot_ap_client.gd")
 
 ## Signal that a new run has started with the given character.
 signal run_started(character_id)
@@ -46,6 +46,7 @@ func notify_run_finished(won_run: bool, character_id: String):
 	# Check if this was an AP run before flipping the in_run flag
 	var finished_ap_run = is_in_ap_run()
 	in_run = false
+	ModLoaderLog.debug("Sending run_finished", "RampagingHippy-Archipelago/game_state")
 	if finished_ap_run:
 		emit_signal("run_finished", won_run, character_id)
 
