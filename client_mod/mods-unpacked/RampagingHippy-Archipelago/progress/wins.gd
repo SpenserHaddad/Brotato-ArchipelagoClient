@@ -8,7 +8,7 @@
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApWinsProgress
 
-onready var ApTypes = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_types.gd")
+onready var ApTypes = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_types.gd")
 
 var wins_for_goal: int
 var num_wins: int = 0
@@ -17,10 +17,12 @@ var characters_won_with: PoolStringArray = []
 func _init(ap_client, game_state).(ap_client, game_state):
 	var _status = _game_state.connect("wave_finished", self, "_on_wave_finished")
 
-func _on_wave_finished(wave_number: int, character_id: String):
-	# Use wave_number to decide if we won the run or not, in case the player
-	# went into endless mode.
-	if wave_number == 20:
+func _on_wave_finished(wave_number: int, character_id: String, is_run_lost: bool, is_run_won: bool):
+	# Use wave_number and is_run_lost to decide if we won the run or not, in 
+	# case the player went into endless mode. is_run_lost=false means the wave
+	# ended with either a victory or going into endless mode, both of which
+	# count as a win for AP.
+	if wave_number == 20 and not is_run_lost:
 		var character_name = constants.CHARACTER_ID_TO_NAME[character_id]
 		var character_won_loc_name = constants.RUN_COMPLETE_LOCATION_TEMPLATE.format({"char": character_name})
 		var character_won_loc_id = _ap_client.data_package.location_name_to_id[character_won_loc_name]
