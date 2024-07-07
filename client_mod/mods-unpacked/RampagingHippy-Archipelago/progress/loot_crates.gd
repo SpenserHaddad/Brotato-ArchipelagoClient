@@ -108,10 +108,13 @@ func _update_check_progress(new_value: int):
 		# In case we get a data storage update for our last crate pickup.
 		return
 	check_progress = new_value
+	ModLoaderLog.debug("%s check progress updated to %d" % [crate_type, new_value], LOG_NAME)
 	emit_signal("check_progress_changed", check_progress, crates_per_check)
 	
 	if check_progress == crates_per_check:
 		# Got enough crates to generate a check
+		ModLoaderLog.debug("Got enough crates to make a check", LOG_NAME)
+		
 		check_progress = 0
 		emit_signal("check_progress_changed", check_progress, crates_per_check)
 		_update_num_locations_checked(num_locations_checked + 1)
@@ -128,6 +131,7 @@ func _update_num_locations_checked(new_value: int, send_check: bool=true):
 	if num_locations_checked == new_value:
 		return
 
+	ModLoaderLog.debug("Num %s locations checked updated to %d" % [crate_type, new_value], LOG_NAME)
 	num_locations_checked = new_value
 	if send_check:
 		var location_name_prefix: String = ""
@@ -150,13 +154,23 @@ func _update_num_locations_checked(new_value: int, send_check: bool=true):
 func _update_can_spawn_crate(force_signal=false):
 	var possible_checks = floor((check_progress + _num_crates_spawned) / crates_per_check)
 	var new_can_spawn_crate = num_locations_checked + possible_checks < num_unlocked_locations
+	ModLoaderLog.debug(
+		"Updating can_spawn_crate: check_progress=%d, crates_spawned=%d, crates_per_check=%d, num_locations_checked=%d, num_unlocked_locations=%d, new_can_spawn_crate=%s" % [
+			check_progress, 
+			_num_crates_spawned,
+			crates_per_check,
+			num_locations_checked,
+			num_unlocked_locations,
+			new_can_spawn_crate
+		], 
+		LOG_NAME
+	)
 	if new_can_spawn_crate != can_spawn_crate or force_signal:
 		can_spawn_crate = new_can_spawn_crate
 		emit_signal("can_spawn_crate_changed", can_spawn_crate, crate_type)
 
 func on_item_received(item_name: String, _item):
 	if item_name == "Run Won":
-
 		_wins_received += 1
 		# Don't do anything if we're already in the last group
 		if last_unlocked_group_idx < loot_crate_groups.size() - 1:
@@ -211,7 +225,9 @@ func on_run_started(_character_id: String):
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value):
 	if key == _check_progress_data_storage_key:
+		ModLoaderLog.debug("Received check progress DS update: key=%s, new_value=%d" % [key, new_value], LOG_NAME)
 		_update_check_progress(new_value)
 	elif key == _num_locations_checked_storage_key:
 		# Update value but don't send a check, since we have already found this location
+		ModLoaderLog.debug("Received num locations DS update: key=%s, new_value=%d" % [key, new_value], LOG_NAME)
 		_update_num_locations_checked(new_value, false)
