@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0]
+
 ### Added
 - Loot crate drops are now organized into "groups", which are not dropped by the game
   until a certain number of wins are obtained.
@@ -197,7 +199,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.6...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.1.0...HEAD
+[0.0.6]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.6...v0.1.0
 [0.0.6]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.0.3...v0.0.4
