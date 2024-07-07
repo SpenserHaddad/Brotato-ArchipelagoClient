@@ -146,6 +146,15 @@ func _on_BackButton_pressed():
 func _on_DisconnectButton_pressed():
 	_ap_client.disconnect_from_multiworld()
 
+func _on_ShowPasswordButton_pressed():
+	# Toggle if password edit text is secret
+	if _password_edit.secret:
+		_password_edit.secret = false
+		_show_password_button.text = "Hide"
+	else:
+		_password_edit.secret = true
+		_show_password_button.text = "Show"
+
 func _reset_status_texture():
 	_status_texture.set_rotation(0)
 
@@ -159,12 +168,3 @@ func _process(delta):
 			# Rotation goes from -360 to 360 degrees
 			new_angle -= _MAX_ANGLE_DEGREES * 2
 		_status_texture.rect_rotation = new_angle
-
-func _on_ShowPasswordButton_pressed():
-	# Toggle if password edit text is secret
-	if _password_edit.secret:
-		_password_edit.secret = false
-		_show_password_button.text = "Hide"
-	else:
-		_password_edit.secret = true
-		_show_password_button.text = "Show"
