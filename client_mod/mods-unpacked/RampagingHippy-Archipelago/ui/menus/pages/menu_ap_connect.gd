@@ -24,8 +24,7 @@ const _STATUS_TEXTURE_ROTATION_SPEED_DEGREES_PER_SECOND = 360
 var _animate_status_texture: bool = false
 
 func init():
-	# Needed to make the scene switch in title_screen_menus happy.
-	pass
+	_host_edit.grab_focus()
 
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")

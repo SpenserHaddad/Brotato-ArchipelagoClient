@@ -42,6 +42,7 @@ margin_left = 238.0
 margin_right = 738.0
 margin_bottom = 54.0
 rect_min_size = Vector2( 500, 0 )
+focus_neighbour_top = NodePath("../../../BackButton")
 focus_next = NodePath("../PlayerEdit")
 focus_previous = NodePath("../../../BackButton")
 text = "archipelago.gg"
@@ -91,7 +92,7 @@ unique_name_in_owner = true
 margin_top = 411.0
 margin_right = 768.0
 margin_bottom = 476.0
-focus_next = NodePath("../BackButton")
+focus_next = NodePath("../DisconnectButton")
 focus_previous = NodePath("../CenterContainer/GridContainer/PasswordEdit")
 text = "Connect"
 
@@ -99,16 +100,16 @@ text = "Connect"
 margin_top = 526.0
 margin_right = 768.0
 margin_bottom = 591.0
-focus_next = NodePath("../CenterContainer/GridContainer/HostEdit")
-focus_previous = NodePath("../CenterContainer/GridContainer/PasswordEdit")
+focus_next = NodePath("../BackButton")
+focus_previous = NodePath("../ConnectButton")
 text = "Disconnect"
 
 [node name="BackButton" type="Button" parent="VBoxContainer"]
 margin_top = 641.0
 margin_right = 768.0
 margin_bottom = 706.0
-focus_next = NodePath("../CenterContainer/GridContainer/HostEdit")
-focus_previous = NodePath("../ConnectButton")
+focus_neighbour_bottom = NodePath("../CenterContainer/GridContainer/HostEdit")
+focus_previous = NodePath("../DisconnectButton")
 text = "MENU_BACK"
 script = ExtResource( 3 )
 
