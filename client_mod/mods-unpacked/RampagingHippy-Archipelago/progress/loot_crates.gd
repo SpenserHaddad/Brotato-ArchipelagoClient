@@ -157,13 +157,13 @@ func _update_can_spawn_crate(force_signal=false):
 	var new_can_spawn_crate = num_locations_checked + possible_checks < num_unlocked_locations
 	ModLoaderLog.debug(
 		"Updating can_spawn_crate: check_progress=%d, crates_spawned=%d, crates_per_check=%d, num_locations_checked=%d, num_unlocked_locations=%d, new_can_spawn_crate=%s" % [
-			check_progress, 
+			check_progress,
 			_num_crates_spawned,
 			crates_per_check,
 			num_locations_checked,
 			num_unlocked_locations,
 			new_can_spawn_crate
-		], 
+		],
 		LOG_NAME
 	)
 	if new_can_spawn_crate != can_spawn_crate or force_signal:
@@ -222,6 +222,7 @@ func on_connected_to_multiworld():
 	)
 
 func on_run_started(_character_id: String):
+	_num_crates_spawned = 0
 	_update_can_spawn_crate(true)
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value):
