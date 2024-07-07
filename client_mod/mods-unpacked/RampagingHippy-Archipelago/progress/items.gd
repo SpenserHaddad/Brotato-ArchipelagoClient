@@ -31,10 +31,15 @@ var received_items_by_tier: Dictionary = {
 	Tier.LEGENDARY: 0
 }
 
-# The number of items processed in the currennt run. This is set at the start of each
+# The number of items processed in the current run. This is set at the start of each
 # run to keep track of how many items the player has received from items so far so we
 # can set the level of each item correctly.
-var processed_items_by_tier: Dictionary
+var processed_items_by_tier: Dictionary = {
+	Tier.COMMON: 0,
+	Tier.UNCOMMON: 0,
+	Tier.RARE: 0,
+	Tier.LEGENDARY: 0
+}
 
 var wave_per_game_item: Dictionary
 
