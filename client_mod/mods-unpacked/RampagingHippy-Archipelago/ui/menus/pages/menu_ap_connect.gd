@@ -33,6 +33,9 @@ func _ready():
 	_ap_client = mod_node.brotato_ap_client
 	_ap_client.connect("connection_state_changed", self, "_on_connection_state_changed")
 
+	_host_edit.text = _ap_client.server
+	_player_edit.text = _ap_client.player
+
 #func _input(_event):
 #	if get_tree().current_scene.name == self.name && Input.is_key_pressed(KEY_ENTER):
 #		_on_ConnectButton_pressed()
@@ -154,7 +157,6 @@ func _process(delta):
 			# Rotation goes from -360 to 360 degrees
 			new_angle -= _MAX_ANGLE_DEGREES * 2
 		_status_texture.rect_rotation = new_angle
-
 
 func _on_ShowPasswordButton_pressed():
 	# Toggle if password edit text is secret
