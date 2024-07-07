@@ -188,6 +188,7 @@ func on_connected_to_multiworld():
 	crates_per_check = _ap_client.slot_data["num_%s_crate_drops_per_check" % crate_type]
 	var loot_crate_groups_info = _ap_client.slot_data["%s_crate_drop_groups" % crate_type]
 
+	loot_crate_groups.clear()
 	for group in loot_crate_groups_info:
 		loot_crate_groups.append(
 			LootCrateGroup.new(
