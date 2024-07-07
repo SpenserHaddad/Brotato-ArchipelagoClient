@@ -74,8 +74,11 @@ func _on_ap_item_received(item_tier: int):
 
 func _on_ap_upgrade_received(upgrade_tier: int):
 	var upgrade_level: int
-	# Brotato gives items of set tiers at multiples of 5. Use this to give the correct
-	# tier item without modifying the original code too much.
+	# Brotato gives items of set tiers at multiples of 5. Use this info to give the
+	# correct tier item without modifying the original code too much. However, we also
+	# want to show a custom title on the upgrade select screen when processing an AP
+	# item. We don't have anything better to work with than the upgrade level integer without
+	# writing a lot of overhead
 	match upgrade_tier:
 		Tier.COMMON:
 			# We override get_upgrade_data to set the tier to COMMON if the level is -1.
@@ -86,7 +89,7 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 			upgrade_level = 10
 		Tier.LEGENDARY:
 			upgrade_level = 25
-	# Taken from on_levelled_up
+	# Taken from on_levelled_up (sic)
 	emit_signal("upgrade_to_process_added", ap_upgrade_to_process_icon, upgrade_level)
 	_upgrades_to_process.push_back(upgrade_level)
 	# Mark the upgrade as processed here insteard of where it's actually
