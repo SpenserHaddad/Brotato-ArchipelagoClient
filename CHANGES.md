@@ -55,11 +55,15 @@ objects for better organization and readability.
   Locations`.
 - Default value for `(Legendary) Crate Pickup Step` is now 1 instead of 0.
   - 0 was a nonsensical value for this option.
+- Archipelago password text is now hidden by default, with a button to toggle.
 
 ### Fixed
 - XP and gold given to player is now properly tracked between connections to the
   multiworld.
 - Brotato items other than common items are now included in the Archipelago item pool.
+- Archipelago connect button on the main menu can now be navigated to with controller
+  and keyboard.
+- Archipelago connect menu can now be navigated with controller and keyboard.
 
 ### Removed
 - Removed the unused option `Shop items`.
