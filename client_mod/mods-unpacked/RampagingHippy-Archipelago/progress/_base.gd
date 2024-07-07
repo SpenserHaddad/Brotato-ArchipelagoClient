@@ -40,8 +40,10 @@ func _init(ap_client, game_state):
 	_status = _ap_client.connect("item_received", self, "on_item_received")
 	_status = _ap_client.connect("room_updated", self, "on_room_updated")
 	_status = _game_state.connect("run_started", self, "on_run_started")
-
 func on_item_received(_item_name: String, _item):
+	pass
+
+func on_room_updated(room_update: Dictionary):
 	pass
 
 func on_connected_to_multiworld():
