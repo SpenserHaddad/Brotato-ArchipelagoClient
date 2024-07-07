@@ -129,7 +129,7 @@ func on_consumable_picked_up(consumable: Node) -> void:
 	.on_consumable_picked_up(consumable)
 
 func clean_up_room(is_last_wave: bool=false, is_run_lost: bool=false, is_run_won: bool=false) -> void:
-	_ap_client.game_state.notify_wave_finished(RunData.current_wave, RunData.current_character.my_id)
+	_ap_client.game_state.notify_wave_finished(RunData.current_wave, RunData.current_character.my_id, is_run_lost, is_run_won)
 	# Exactly one of these will be set when the run is completed. Can't trust is_last_wave since
 	# it might be false on wave 20 if endless mode is selected.
 	if is_run_won or is_run_lost:
