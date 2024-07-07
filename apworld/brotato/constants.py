@@ -94,12 +94,6 @@ MAX_RARE_UPGRADES = 50
 MAX_LEGENDARY_UPGRADES = 50
 
 MAX_SHOP_SLOTS = 4  # Brotato default, can't easily increase beyond this.
-MAX_SHOP_LOCATIONS_PER_TIER = {
-    ItemRarity.COMMON: 20,
-    ItemRarity.UNCOMMON: 10,
-    ItemRarity.RARE: 10,
-    ItemRarity.LEGENDARY: 10,
-}
 
 # Location name string templates
 CRATE_DROP_LOCATION_TEMPLATE = "Loot Crate {num}"

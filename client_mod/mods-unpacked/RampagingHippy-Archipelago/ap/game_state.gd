@@ -5,7 +5,9 @@
 extends Object
 class_name ApBrotatoGameState
 
-const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/constants.gd")
+const LOG_NAME = "RampagingHippy-Archipelago/game_state"
+
+var GodotApClient = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/godot_ap_client.gd")
 
 ## Signal that a new run has started with the given character.
 signal run_started(character_id)
@@ -19,7 +21,7 @@ signal run_finished(won_run, character_id)
 signal wave_started(wave_number, character_id)
 
 ## Signal that the current wave has finished.
-signal wave_finished()
+signal wave_finished(wave_number, character_id, is_run_lost, is_run_won)
 
 var _ap_client
 var in_run: bool = false
@@ -56,9 +58,9 @@ func notify_wave_started(wave_number: int, character_id: String):
 	if is_in_ap_run():
 		emit_signal("wave_started", wave_number, character_id)
 
-func notify_wave_finished(wave_number: int, character_id: String):
+func notify_wave_finished(wave_number: int, character_id: String, is_run_lost: bool, is_run_won: bool):
 	## Called by the game extensions when a wave is finished.
 	##
 	## Emits the `wave_finished` signal to notify progress trackers.
 	if is_in_ap_run():
-		emit_signal("wave_finished", wave_number, character_id)
+		emit_signal("wave_finished", wave_number, character_id, is_run_lost, is_run_won)

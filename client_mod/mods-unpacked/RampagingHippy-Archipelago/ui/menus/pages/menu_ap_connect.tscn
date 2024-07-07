@@ -82,7 +82,7 @@ margin_right = 738.0
 margin_bottom = 223.0
 
 [node name="PasswordEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer/HBoxContainer"]
-margin_right = 340.0
+margin_right = 358.0
 margin_bottom = 65.0
 focus_neighbour_right = NodePath("../ShowPasswordButton")
 focus_next = NodePath("../../../../ConnectButton")
@@ -152,6 +152,7 @@ rect_pivot_offset = Vector2( 384, 40 )
 texture = ExtResource( 4 )
 stretch_mode = 4
 
+[connection signal="text_changed" from="VBoxContainer/CenterContainer/GridContainer/PlayerEdit" to="." method="_on_PlayerEdit_text_changed"]
 [connection signal="pressed" from="VBoxContainer/CenterContainer/GridContainer/HBoxContainer/ShowPasswordButton" to="." method="_on_ShowPasswordButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/ConnectButton" to="." method="_on_ConnectButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/DisconnectButton" to="." method="_on_DisconnectButton_pressed"]

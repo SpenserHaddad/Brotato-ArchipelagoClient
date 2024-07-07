@@ -39,3 +39,5 @@ func on_connected_to_multiworld():
 		var character_won = character_won_loc_id in _ap_client.checked_locations
 		character_info[character].won_run = character_won
 		character_info[character].won_run_location_id = character_won_loc_id
+		# Clear unlocked flag. We'll unlock characters with on_item_received
+		character_info[character].unlocked = false

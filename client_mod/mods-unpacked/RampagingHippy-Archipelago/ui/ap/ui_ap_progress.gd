@@ -45,7 +45,7 @@ func update_all_crate_progress_ui():
 	
 func _update_crate_progress_ui(progress_text: Label, wins_needed_text: Label, crate_progress):
 	var crate_type = crate_progress.crate_type.capitalize()
-	var num_checked = crate_progress.num_locations_checked
+	var num_checked = crate_progress.total_locations_checked()
 	var checks_available = crate_progress.num_unlocked_locations
 	var total_checks = crate_progress.total_checks
 
@@ -57,6 +57,12 @@ func _update_crate_progress_ui(progress_text: Label, wins_needed_text: Label, cr
 		var next_crate_group = crate_progress.loot_crate_groups[next_group_idx]
 		var wins_needed = next_crate_group.wins_to_unlock - _ap_client.wins_progress.num_wins
 		var win_str = "wins" if wins_needed != 1 else "win"
+		ModLoaderLog.debug(
+			"Updating loot %s crate progress: checked=%d, available=%d, total=%d, wins_needed=%d, wins_to_unlock=%d, num_wins=%d" % [
+				crate_type, num_checked, checks_available, total_checks, wins_needed, next_crate_group.wins_to_unlock, _ap_client.wins_progress.num_wins
+			],
+			LOG_NAME
+		)
 		wins_needed_text.text = "%d %s needed to unlock next %d %s crates" % [wins_needed, win_str, next_crate_group.num_crates, crate_type]
 	else:
 		wins_needed_text.text = "All %s crates are available!" % crate_type

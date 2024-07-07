@@ -11,10 +11,8 @@ from .constants import (
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_NORMAL_CRATE_DROPS,
-    MAX_SHOP_LOCATIONS_PER_TIER,
     NUM_WAVES,
     RUN_COMPLETE_LOCATION_TEMPLATE,
-    SHOP_ITEM_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
 
@@ -61,13 +59,6 @@ for char in CHARACTERS:
     _character_run_won_locations.append(_char_run_complete_location)
 
 
-_shop_item_locations: List[BrotatoLocationBase] = []
-for tier, max_shop_locs in MAX_SHOP_LOCATIONS_PER_TIER.items():
-    _shop_item_locations += [
-        BrotatoLocationBase(name=SHOP_ITEM_LOCATION_TEMPLATE.format(tier=tier.value, num=i))
-        for i in range(1, max_shop_locs + 1)
-    ]
-
 _loot_crate_drop_locations: List[BrotatoLocationBase] = [
     BrotatoLocationBase(name=CRATE_DROP_LOCATION_TEMPLATE.format(num=i)) for i in range(1, MAX_NORMAL_CRATE_DROPS + 1)
 ]
@@ -81,7 +72,6 @@ _legendary_loot_crate_drop_locations: List[BrotatoLocationBase] = [
 _all_locations: List[BrotatoLocationBase] = [
     *_character_wave_complete_locations,
     *_character_run_won_locations,
-    *_shop_item_locations,
     *_loot_crate_drop_locations,
     *_legendary_loot_crate_drop_locations,
 ]
@@ -94,5 +84,5 @@ location_name_groups: Dict[str, Set[str]] = {
     "Run Win Specific Character": set(c.name for c in _character_run_won_locations),
     "Normal Crate Drops": set(c.name for c in _loot_crate_drop_locations),
     "Legendary Crate Drops": set(c.name for c in _legendary_loot_crate_drop_locations),
-    "Shop Items": set(c.name for c in _shop_item_locations),
+    # "Shop Items": set(c.name for c in _shop_item_locations),
 }

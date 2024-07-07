@@ -43,16 +43,13 @@ func _init(ap_client, game_state):
 func on_item_received(_item_name: String, _item):
 	pass
 
-func on_room_updated(room_update: Dictionary):
+func on_room_updated(_room_update: Dictionary):
 	pass
 
 func on_connected_to_multiworld():
 	pass
 
 func on_run_started(_character_id: String):
-	pass
-
-func on_wave_finished(_wave: int, _character_id: String):
 	pass
 
 func _on_client_connection_state_changed(state: int, _error: int=0):
