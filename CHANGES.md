@@ -56,6 +56,8 @@ objects for better organization and readability.
 - Default value for `(Legendary) Crate Pickup Step` is now 1 instead of 0.
   - 0 was a nonsensical value for this option.
 - Archipelago password text is now hidden by default, with a button to toggle.
+- Archipelago connect menu now shows correct server and player entered.
+  - This is still reset when the game exits, however (for now).
 
 ### Fixed
 - XP and gold given to player is now properly tracked between connections to the
