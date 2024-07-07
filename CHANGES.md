@@ -64,6 +64,8 @@ objects for better organization and readability.
 - Archipelago connect button on the main menu can now be navigated to with controller
   and keyboard.
 - Archipelago connect menu can now be navigated with controller and keyboard.
+- Completing wave 20 while going into endless mode now counts as a win.
+- Update minimum Archipelago version to 0.5.0 for .apworld and the mod.
 
 ### Removed
 - Removed the unused option `Shop items`.

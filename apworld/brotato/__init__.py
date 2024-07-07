@@ -65,7 +65,7 @@ class BrotatoWorld(World):
     game: ClassVar[str] = "Brotato"
     web = BrotatoWeb()
     data_version = 0
-    required_client_version: Tuple[int, int, int] = (0, 4, 2)
+    required_client_version: Tuple[int, int, int] = (0, 5, 0)
 
     item_name_to_id: ClassVar[Dict[str, int]] = item_name_to_id
     item_name_groups: ClassVar[Dict[str, Set[str]]] = item_name_groups
