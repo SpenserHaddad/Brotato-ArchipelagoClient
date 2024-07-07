@@ -118,7 +118,7 @@ func send_connect(game: String, user: String, password: String="", slot_data: bo
 		"name": user,
 		"password": password,
 		"uuid": "Godot %s: %s" % [game, user], # TODO: What do we need here? We can't generate an actual UUID in 3.5
-		"version": {"major": 0, "minor": 4, "build": 2, "class": "Version"},
+		"version": {"major": 0, "minor": 5, "build": 0, "class": "Version"},
 		"items_handling": 0b111, # TODO: argument
 		"tags": [],
 		"slot_data": slot_data
