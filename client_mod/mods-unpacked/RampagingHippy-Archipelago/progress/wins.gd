@@ -8,7 +8,7 @@
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApWinsProgress
 
-var ApTypes = load ("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_types.gd")
+var ApTypes = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_types.gd")
 
 var wins_for_goal: int
 var num_wins: int = 0
@@ -36,3 +36,5 @@ func on_item_received(item_name: String, _item):
 
 func on_connected_to_multiworld():
 	wins_for_goal = _ap_client.slot_data["num_wins_needed"]
+	num_wins = 0
+	characters_won_with = []
