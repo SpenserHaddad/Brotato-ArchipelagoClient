@@ -101,6 +101,7 @@ func notify_crate_spawned():
 
 func notify_crate_picked_up():
 	## Called by the game extensions when an AP loot crate is picked up in-game.
+	_num_crates_spawned -= 1
 	_update_check_progress(check_progress + 1)
 
 func _update_check_progress(new_value: int):
