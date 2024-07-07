@@ -62,10 +62,8 @@ func _on_connection_state_changed(new_state: int, error: int=0):
 			_connect_status_label.text = "Connected to multiworld"
 
 	# Allow connecting if disconnected or connected to the server but not the multiworld
-	_connect_button.disabled = (
-		new_state == BrotatoApClient.ConnectState.CONNECTED_TO_MULTIWORLD or
-		new_state == BrotatoApClient.ConnectState.DISCONNECTING
-	)
+	_update_connect_button_disabled()
+	
 	if _connect_button.disabled and _connect_button.has_focus():
 		# Disabled buttons having focus look ugly and don't make sense.
 		_connect_button.release_focus()
@@ -133,6 +131,13 @@ func _clear_error():
 	_connect_error_label.visible = false
 	_connect_error_label.text = ""
 
+func _update_connect_button_disabled():
+	_connect_button.disabled = (
+		_player_edit.text == "" or
+		_ap_client.connect_state == BrotatoApClient.ConnectState.CONNECTED_TO_MULTIWORLD or
+		_ap_client.connect_state == BrotatoApClient.ConnectState.DISCONNECTING
+	)
+
 func _on_ConnectButton_pressed():
 	_ap_client.server = _host_edit.text
 	_ap_client.player = _player_edit.text
@@ -154,6 +159,9 @@ func _on_ShowPasswordButton_pressed():
 	else:
 		_password_edit.secret = true
 		_show_password_button.text = "Show"
+		
+func _on_PlayerEdit_text_changed(new_text: String):
+	_update_connect_button_disabled()
 
 func _reset_status_texture():
 	_status_texture.set_rotation(0)
