@@ -52,9 +52,6 @@ func on_connected_to_multiworld():
 func on_run_started(_character_id: String):
 	pass
 
-func on_wave_finished(_wave: int, _character_id: String):
-	pass
-
 func _on_client_connection_state_changed(state: int, _error: int=0):
 	if state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD:
 		on_connected_to_multiworld()
