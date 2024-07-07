@@ -39,6 +39,15 @@ func _on_legendary_can_spawn_crate_changed(can_spawn_crate: bool, _crate_type: S
 	else:
 		legendary_item_box = _legendary_item_box_original
 
+func get_consumable_to_drop(tier: int=Tier.COMMON) -> ConsumableData:
+	if _ap_client.debug.auto_spawn_loot_crate:
+		if tier == Tier.LEGENDARY:
+			return legendary_item_box
+		else:
+			return item_box
+	else:
+		return .get_consumable_to_drop(tier)
+
 func process_item_box(wave: int, consumable_data: ConsumableData, fixed_tier: int=- 1) -> ItemParentData:
 		ModLoaderLog.debug("Processing box %s:" % consumable_data.my_id, LOG_NAME)
 		match consumable_data.my_id:

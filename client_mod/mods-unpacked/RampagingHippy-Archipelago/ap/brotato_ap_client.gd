@@ -17,10 +17,12 @@ var ApUpgradesProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/pr
 var ApLootCrateProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/loot_crates.gd")
 var ApWavesProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/waves.gd")
 var ApWinsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/wins.gd")
+var GodotApClientDebugSettings = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/debug.gd")
 
 var game_state
+var debug
 
-# New progress trackers
+# Progress trackers
 var character_progress
 var shop_slots_progress
 var gold_progress
@@ -32,7 +34,6 @@ var legendary_loot_crate_progress
 var waves_progress
 var wins_progress
 
-# Connection issue signals
 signal on_connection_refused(reasons)
 
 func _init(websocket_client).(websocket_client):
@@ -48,6 +49,7 @@ func _init(websocket_client).(websocket_client):
 	legendary_loot_crate_progress = ApLootCrateProgress.new(self, game_state, "legendary")
 	waves_progress = ApWavesProgress.new(self, game_state)
 	wins_progress = ApWinsProgress.new(self, game_state)
+	debug = GodotApClientDebugSettings.new()
 
 	ModLoaderLog.debug("Brotato AP adapter initialized", _LOG_NAME)
 
