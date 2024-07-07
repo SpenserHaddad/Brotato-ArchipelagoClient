@@ -10,9 +10,19 @@ signal ap_connect_button_pressed
 func init():
 	.init()
 	if _archipelago_button != null:
-		# Godot inheritance/call-order rules means we have to set the neighbor here for
-		# it take.
+		# Make AP button reachable with controller. We setup Quit -> AP in 
+		# _init() Godot inheritance/call-order rules means we have to set the 
+		# neighbor here for it take.
 		quit_button.focus_neighbour_bottom = _archipelago_button.get_path()
+		var bottom_neighbor
+		if ProgressData.current_run_state.has_run_state:
+			bottom_neighbor = continue_button
+		else:
+			bottom_neighbor = start_button
+
+		_archipelago_button.focus_neighbour_top = quit_button.get_path()
+		_archipelago_button.focus_neighbour_bottom = bottom_neighbor.get_path()
+		bottom_neighbor.focus_neighbour_top = _archipelago_button.get_path()
 
 func _ready():
 	._ready()
@@ -33,17 +43,6 @@ func _add_ap_button():
 	_archipelago_button = parent_node.get_node("ArchipelagoButton")
 	parent_node.move_child(_archipelago_button, 0)
 	_archipelago_button.connect("pressed", self, "_on_MainMenu_ap_connect_button_pressed")
-
-	# Make AP button reachable with controller. We setup Quit -> AP in _init()
-	var bottom_neighbor
-	if ProgressData.current_run_state.has_run_state:
-		bottom_neighbor = continue_button
-	else:
-		bottom_neighbor = start_button
-
-	_archipelago_button.focus_neighbour_top = quit_button.get_path()
-	_archipelago_button.focus_neighbour_bottom = bottom_neighbor.get_path()
-	bottom_neighbor.focus_neighbour_top = _archipelago_button.get_path()
 
 func _set_ap_button_icon(ws_state: int):
 	var icon: Texture
