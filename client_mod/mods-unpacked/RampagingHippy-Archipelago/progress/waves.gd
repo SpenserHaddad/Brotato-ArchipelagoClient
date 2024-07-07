@@ -17,8 +17,8 @@ func _init(ap_client, game_state).(ap_client, game_state):
 func on_connected_to_multiworld():
 	waves_with_checks = PoolIntArray(_ap_client.slot_data["waves_with_checks"])
 
-func _on_wave_finished(wave_number: int, character_id: String):
-	if waves_with_checks.has(wave_number):
+func _on_wave_finished(wave_number: int, character_id: String, is_run_lost: bool, is_run_won: bool):
+	if not is_run_lost and waves_with_checks.has(wave_number):
 		# TODO: check if location was checked already
 		var character_name = constants.CHARACTER_ID_TO_NAME[character_id]
 		var location_name = "Wave %d Completed (%s)" % [wave_number, character_name]
