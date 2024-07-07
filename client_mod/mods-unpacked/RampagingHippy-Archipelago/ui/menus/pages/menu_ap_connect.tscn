@@ -84,6 +84,7 @@ margin_bottom = 223.0
 [node name="PasswordEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer/HBoxContainer"]
 margin_right = 340.0
 margin_bottom = 65.0
+focus_neighbour_right = NodePath("../ShowPasswordButton")
 focus_next = NodePath("../../../../ConnectButton")
 focus_previous = NodePath("../../PlayerEdit")
 size_flags_horizontal = 3
@@ -97,6 +98,8 @@ caret_blink_speed = 0.5
 margin_left = 362.0
 margin_right = 500.0
 margin_bottom = 65.0
+focus_neighbour_left = NodePath("../PasswordEdit")
+focus_neighbour_bottom = NodePath("../../../../ConnectButton")
 text = "Show"
 
 [node name="ConnectButton" type="Button" parent="VBoxContainer"]
