@@ -15,10 +15,12 @@ var num_wins: int = 0
 var characters_won_with: PoolStringArray = []
 
 func _init(ap_client, game_state).(ap_client, game_state):
-	var _status = _game_state.connect("run_finished", self, "_on_run_finished")
+	var _status = _game_state.connect("wave_finished", self, "_on_wave_finished")
 
-func _on_run_finished(won_run: bool, character_id: String):
-	if won_run:
+func _on_wave_finished(wave_number: int, character_id: String):
+	# Use wave_number to decide if we won the run or not, in case the player
+	# went into endless mode.
+	if wave_number == 20:
 		var character_name = constants.CHARACTER_ID_TO_NAME[character_id]
 		var character_won_loc_name = constants.RUN_COMPLETE_LOCATION_TEMPLATE.format({"char": character_name})
 		var character_won_loc_id = _ap_client.data_package.location_name_to_id[character_won_loc_name]
