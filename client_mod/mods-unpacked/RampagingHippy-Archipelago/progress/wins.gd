@@ -8,7 +8,7 @@
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApWinsProgress
 
-onready var ApTypes = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_types.gd")
+var ApTypes = load ("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_types.gd")
 
 var wins_for_goal: int
 var num_wins: int = 0
