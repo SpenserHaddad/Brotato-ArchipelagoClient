@@ -31,6 +31,8 @@ func _init():
 		"ui/menus/run/character_selection.gd",
 		# Show character win status in inventory elements
 		"ui/menus/shop/inventory.gd",
+		# Show custom upgrade text when processing upgrade from AP item
+		"ui/menus/ingame/upgrades_ui.gd",
 		# Show character win status on character select screen
 		"global/inventory_element.gd",
 	]
