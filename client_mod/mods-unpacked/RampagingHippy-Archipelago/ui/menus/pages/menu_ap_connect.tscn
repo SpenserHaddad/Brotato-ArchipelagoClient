@@ -19,14 +19,14 @@ custom_constants/separation = 50
 alignment = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
-margin_top = 149.0
+margin_top = 143.0
 margin_right = 768.0
-margin_bottom = 361.0
+margin_bottom = 366.0
 
 [node name="GridContainer" type="GridContainer" parent="VBoxContainer/CenterContainer"]
 margin_left = 15.0
 margin_right = 753.0
-margin_bottom = 212.0
+margin_bottom = 223.0
 custom_constants/vseparation = 25
 custom_constants/hseparation = 25
 columns = 2
@@ -42,6 +42,7 @@ margin_left = 238.0
 margin_right = 738.0
 margin_bottom = 54.0
 rect_min_size = Vector2( 500, 0 )
+focus_neighbour_top = NodePath("../../../BackButton")
 focus_next = NodePath("../PlayerEdit")
 focus_previous = NodePath("../../../BackButton")
 text = "archipelago.gg"
@@ -61,7 +62,7 @@ margin_left = 238.0
 margin_top = 79.0
 margin_right = 738.0
 margin_bottom = 133.0
-focus_next = NodePath("../PasswordEdit")
+focus_next = NodePath("../HBoxContainer/PasswordEdit")
 focus_previous = NodePath("../HostEdit")
 clear_button_enabled = true
 placeholder_text = "Player Name"
@@ -69,53 +70,68 @@ caret_blink = true
 caret_blink_speed = 0.5
 
 [node name="PasswordLabel" type="Label" parent="VBoxContainer/CenterContainer/GridContainer"]
-margin_top = 162.0
+margin_top = 168.0
 margin_right = 213.0
-margin_bottom = 207.0
+margin_bottom = 213.0
 text = "Password:"
 
-[node name="PasswordEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/CenterContainer/GridContainer"]
 margin_left = 238.0
 margin_top = 158.0
 margin_right = 738.0
-margin_bottom = 212.0
-focus_next = NodePath("../../../ConnectButton")
-focus_previous = NodePath("../PlayerEdit")
+margin_bottom = 223.0
+
+[node name="PasswordEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer/HBoxContainer"]
+margin_right = 340.0
+margin_bottom = 65.0
+focus_neighbour_right = NodePath("../ShowPasswordButton")
+focus_next = NodePath("../../../../ConnectButton")
+focus_previous = NodePath("../../PlayerEdit")
+size_flags_horizontal = 3
+secret = true
 clear_button_enabled = true
 placeholder_text = "Leave empty if no password"
 caret_blink = true
 caret_blink_speed = 0.5
 
+[node name="ShowPasswordButton" type="Button" parent="VBoxContainer/CenterContainer/GridContainer/HBoxContainer"]
+margin_left = 362.0
+margin_right = 500.0
+margin_bottom = 65.0
+focus_neighbour_left = NodePath("../PasswordEdit")
+focus_neighbour_bottom = NodePath("../../../../ConnectButton")
+text = "Show"
+
 [node name="ConnectButton" type="Button" parent="VBoxContainer"]
 unique_name_in_owner = true
-margin_top = 411.0
+margin_top = 416.0
 margin_right = 768.0
-margin_bottom = 476.0
-focus_next = NodePath("../BackButton")
-focus_previous = NodePath("../CenterContainer/GridContainer/PasswordEdit")
+margin_bottom = 481.0
+focus_next = NodePath("../DisconnectButton")
+focus_previous = NodePath("../CenterContainer/GridContainer/HBoxContainer/PasswordEdit")
 text = "Connect"
 
 [node name="DisconnectButton" type="Button" parent="VBoxContainer"]
-margin_top = 526.0
+margin_top = 531.0
 margin_right = 768.0
-margin_bottom = 591.0
-focus_next = NodePath("../CenterContainer/GridContainer/HostEdit")
-focus_previous = NodePath("../CenterContainer/GridContainer/PasswordEdit")
+margin_bottom = 596.0
+focus_next = NodePath("../BackButton")
+focus_previous = NodePath("../ConnectButton")
 text = "Disconnect"
 
 [node name="BackButton" type="Button" parent="VBoxContainer"]
-margin_top = 641.0
+margin_top = 646.0
 margin_right = 768.0
-margin_bottom = 706.0
-focus_next = NodePath("../CenterContainer/GridContainer/HostEdit")
-focus_previous = NodePath("../ConnectButton")
+margin_bottom = 711.0
+focus_neighbour_bottom = NodePath("../CenterContainer/GridContainer/HostEdit")
+focus_previous = NodePath("../DisconnectButton")
 text = "MENU_BACK"
 script = ExtResource( 3 )
 
 [node name="ConnectStatusLabel" type="Label" parent="VBoxContainer"]
-margin_top = 756.0
+margin_top = 761.0
 margin_right = 768.0
-margin_bottom = 801.0
+margin_bottom = 806.0
 text = "Connection Status"
 align = 1
 
@@ -129,13 +145,14 @@ text = "Connection Error"
 align = 1
 
 [node name="StatusTexture" type="TextureRect" parent="VBoxContainer"]
-margin_top = 851.0
+margin_top = 856.0
 margin_right = 768.0
-margin_bottom = 931.0
+margin_bottom = 936.0
 rect_pivot_offset = Vector2( 384, 40 )
 texture = ExtResource( 4 )
 stretch_mode = 4
 
+[connection signal="pressed" from="VBoxContainer/CenterContainer/GridContainer/HBoxContainer/ShowPasswordButton" to="." method="_on_ShowPasswordButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/ConnectButton" to="." method="_on_ConnectButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/DisconnectButton" to="." method="_on_DisconnectButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/BackButton" to="." method="_on_BackButton_pressed"]

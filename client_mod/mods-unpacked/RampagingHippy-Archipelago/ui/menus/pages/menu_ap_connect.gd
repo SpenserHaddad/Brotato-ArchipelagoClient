@@ -14,7 +14,8 @@ onready var _connect_status_label: Label = $"VBoxContainer/ConnectStatusLabel"
 onready var _connect_error_label: Label = $"VBoxContainer/ConnectionErrorLabel"
 onready var _host_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/HostEdit"
 onready var _player_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PlayerEdit"
-onready var _password_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PasswordEdit"
+onready var _password_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/HBoxContainer/PasswordEdit"
+onready var _show_password_button = $"VBoxContainer/CenterContainer/GridContainer/HBoxContainer/ShowPasswordButton"
 onready var _status_texture: TextureRect = $"VBoxContainer/StatusTexture"
 
 onready var _ap_client
@@ -24,8 +25,7 @@ const _STATUS_TEXTURE_ROTATION_SPEED_DEGREES_PER_SECOND = 360
 var _animate_status_texture: bool = false
 
 func init():
-	# Needed to make the scene switch in title_screen_menus happy.
-	pass
+	_host_edit.grab_focus()
 
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
@@ -154,3 +154,13 @@ func _process(delta):
 			# Rotation goes from -360 to 360 degrees
 			new_angle -= _MAX_ANGLE_DEGREES * 2
 		_status_texture.rect_rotation = new_angle
+
+
+func _on_ShowPasswordButton_pressed():
+	# Toggle if password edit text is secret
+	if _password_edit.secret:
+		_password_edit.secret = false
+		_show_password_button.text = "Hide"
+	else:
+		_password_edit.secret = true
+		_show_password_button.text = "Show"
