@@ -9,6 +9,10 @@ signal ap_connect_button_pressed
 
 func init():
 	.init()
+	if _archipelago_button != null:
+		# Godot inheritance/call-order rules means we have to set the neighbor here for
+		# it take.
+		quit_button.focus_neighbour_bottom = _archipelago_button.get_path()
 
 func _ready():
 	._ready()
@@ -18,18 +22,28 @@ func _ready():
 	_set_ap_button_icon(_ap_websocket_connection.connection_state)
 
 func _add_ap_button():
-	var parent_node_name = "HBoxContainer/ButtonsLeft"
-	var parent_node: BoxContainer = get_node(parent_node_name)
+	var parent_node: Container = $HBoxContainer/ButtonsLeft
 
 	ModLoaderMod.append_node_in_scene(
 		self,
 		"ArchipelagoButton",
-		parent_node_name,
+		parent_node.get_path(),
 		"res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/archipelago_connect_button.tscn"
 	)
-	_archipelago_button = get_node(parent_node_name +"/ArchipelagoButton")
+	_archipelago_button = parent_node.get_node("ArchipelagoButton")
 	parent_node.move_child(_archipelago_button, 0)
 	_archipelago_button.connect("pressed", self, "_on_MainMenu_ap_connect_button_pressed")
+
+	# Make AP button reachable with controller. We setup Quit -> AP in _init()
+	var bottom_neighbor
+	if ProgressData.current_run_state.has_run_state:
+		bottom_neighbor = continue_button
+	else:
+		bottom_neighbor = start_button
+
+	_archipelago_button.focus_neighbour_top = quit_button.get_path()
+	_archipelago_button.focus_neighbour_bottom = bottom_neighbor.get_path()
+	bottom_neighbor.focus_neighbour_top = _archipelago_button.get_path()
 
 func _set_ap_button_icon(ws_state: int):
 	var icon: Texture
