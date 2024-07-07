@@ -3,6 +3,7 @@ extends Node
 
 # Brotato Archipelago Multiworld Randomizer Client
 const MOD_NAME = "RampagingHippy-Archipelago"
+const MOD_VERSION = "0.1.0"
 const LOG_NAME = MOD_NAME + "/mod_main"
 
 const ApWebSocketConnection = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_websocket_connection.gd")
@@ -43,8 +44,8 @@ func _init():
 
 func _ready() -> void:
 	# TODO: Proper translations
-	ModLoaderLog.info(str("Translation Demo: ", tr("MODNAME_READY_TEXT")), LOG_NAME)
-	ModLoaderLog.success("Loaded", LOG_NAME)
+	# ModLoaderLog.info(str("Translation Demo: ", tr("MODNAME_READY_TEXT")), LOG_NAME)
+	# ModLoaderLog.success("Loaded", LOG_NAME)
 
 	# TODO: Can we turn the service into a singleton somehow? Adding a node to the root
 	# didn't seem to work.
@@ -54,7 +55,7 @@ func _ready() -> void:
 	brotato_ap_client = BrotatoApClient.new(ap_websocket_connection)
 	self.add_child(brotato_ap_client)
 
-	ModLoaderLog.debug("Archipelago mod initialized", LOG_NAME)
+	ModLoaderLog.success("Archipelago mod v%s initialized" % MOD_VERSION, LOG_NAME)
 
 	# We deliberately DON'T add the AP consumables to the full list because we want to 
 	# manually control how/when they drop, instead of just adding to the drop pool.
