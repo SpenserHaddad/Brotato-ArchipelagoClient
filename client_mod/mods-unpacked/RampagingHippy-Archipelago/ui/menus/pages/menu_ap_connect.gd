@@ -36,6 +36,8 @@ func _ready():
 	_host_edit.text = _ap_client.server
 	_player_edit.text = _ap_client.player
 
+	_on_connection_state_changed(_ap_client.connect_state)
+
 #func _input(_event):
 #	if get_tree().current_scene.name == self.name && Input.is_key_pressed(KEY_ENTER):
 #		_on_ConnectButton_pressed()
