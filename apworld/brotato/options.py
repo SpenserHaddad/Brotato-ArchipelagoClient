@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
-from Options import Choice, PerGameCommonOptions, Range, TextChoice
+from Options import Choice, OptionSet, PerGameCommonOptions, Range, TextChoice
 
 from .constants import (
+    CHARACTERS,
     MAX_COMMON_UPGRADES,
     MAX_LEGENDARY_CRATE_DROP_GROUPS,
     MAX_LEGENDARY_CRATE_DROPS,
@@ -33,7 +34,7 @@ class NumberRequiredWins(Range):
 class StartingCharacters(TextChoice):
     """Determines your set of starting characters.
 
-    * Default: Start with Well Rounded, Brawler, Crazy, Ranger and Mage.
+    * Default: Start with Well Rounded, Brawler, Crazy, Ranger and Mage (unless they aren't in "Include Characters").
     * Shuffle: Start with a random selection of characters.
     """
 
@@ -52,6 +53,21 @@ class NumberStartingCharacters(Range):
 
     default = 5
     display_name = "Number of Starting Characters"
+
+
+class IncludeCharacters(OptionSet):
+    """Which characters to include for checks.
+
+    Characters not listed here will NOT be included in any locations or items. This
+    includes:
+
+    * Won runs for goal completion.
+    * Wave complete checks.
+    * Character items will not be included (so the character will always be locked).
+    """
+
+    default = frozenset(CHARACTERS)
+    display_name = "Include Characters"
 
 
 class WavesPerCheck(Range):
@@ -280,6 +296,7 @@ class StartingShopSlots(Range):
 class BrotatoOptions(PerGameCommonOptions):
     num_victories: NumberRequiredWins
     starting_characters: StartingCharacters
+    include_characters: IncludeCharacters
     num_starting_characters: NumberStartingCharacters
     waves_per_drop: WavesPerCheck
     num_common_crate_drops: NumberCommonCrateDropLocations
