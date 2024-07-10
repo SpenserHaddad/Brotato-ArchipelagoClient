@@ -9,6 +9,7 @@ from worlds.generic.Rules import add_item_rule
 
 from ._loot_crate_groups import BrotatoLootCrateGroup, build_loot_crate_groups
 from .constants import (
+    CHARACTER_REGION_TEMPLATE,
     CHARACTERS,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
@@ -72,6 +73,14 @@ class BrotatoWorld(World):
 
     _filler_items: List[str] = filler_items
     _starting_characters: List[str]
+    _include_characters: List[str]
+    """The characters to actually create items/checks for. Derived from options.include_characters.
+
+    This is a distinct list from the options value because:
+
+    * We want to sanitize the list to make sure typos or other errors don't cause bugs down the road.
+    * We want to keep things in character definition order for readability by using a list instead of a set.
+    """
 
     location_name_to_id: ClassVar[Dict[str, int]] = location_name_to_id
     location_name_groups: ClassVar[Dict[str, Set[str]]] = location_name_groups
@@ -130,15 +139,19 @@ class BrotatoWorld(World):
             self.options.num_victories.value,
         )
 
-        character_option = self.options.starting_characters.value
-        if character_option == 0:  # Default
-            self._starting_characters = list(DEFAULT_CHARACTERS)
+        # Filter out invalid characters from the option, just in case.
+        self._include_characters = [c for c in self.options.include_characters.value if c in CHARACTERS]
+
+        starting_character_option = self.options.starting_characters.value
+        if starting_character_option == 0:  # Default
+            self._starting_characters = [dc for dc in DEFAULT_CHARACTERS if dc in self._include_characters]
         else:
             num_starting_characters = self.options.num_starting_characters.value
             self._starting_characters = self.random.sample(CHARACTERS, num_starting_characters)
 
     def set_rules(self) -> None:
-        num_required_victories = self.options.num_victories.value
+        # Don't require more victories than included characters
+        num_required_victories = min(self.options.num_victories.value, len(self._include_characters))
         self.multiworld.completion_condition[self.player] = create_has_run_wins_rule(
             self.player, num_required_victories
         )
@@ -149,7 +162,7 @@ class BrotatoWorld(World):
         legendary_crate_regions = self._create_regions_for_loot_crate_groups(menu_region, "legendary")
 
         character_regions: List[Region] = []
-        for character in CHARACTERS:
+        for character in self._include_characters:
             character_region = self._create_character_region(menu_region, character)
             character_regions.append(character_region)
 
@@ -204,7 +217,9 @@ class BrotatoWorld(World):
         itempool = [self.create_item(item_name) for item_name in item_names]
 
         total_locations = (
-            len(common_loot_crate_items) + num_legendary_crate_drops + (len(self.waves_with_checks) * len(CHARACTERS))
+            len(common_loot_crate_items)
+            + num_legendary_crate_drops
+            + (len(self.waves_with_checks) * len(self._include_characters))
         )
         num_filler_items = total_locations - len(itempool)
         itempool += [self.create_filler() for _ in range(num_filler_items)]
@@ -212,9 +227,10 @@ class BrotatoWorld(World):
         self.multiworld.itempool += itempool
 
         # Place "Run Won" items at the Run Win event locations
-        for loc in self.location_name_groups["Run Win Specific Character"]:
+        for character in self._include_characters:  # self.location_name_groups["Run Win Specific Character"]:
             item: BrotatoItem = self.create_item(ItemName.RUN_COMPLETE)
-            self.multiworld.get_location(loc, self.player).place_locked_item(item)
+            run_won_location = RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)
+            self.multiworld.get_location(run_won_location, self.player).place_locked_item(item)
 
     def generate_basic(self) -> None:
         pass
@@ -237,7 +253,9 @@ class BrotatoWorld(World):
         }
 
     def _create_character_region(self, parent_region: Region, character: str) -> Region:
-        character_region: Region = Region(f"In-Game ({character})", self.player, self.multiworld)
+        character_region: Region = Region(
+            CHARACTER_REGION_TEMPLATE.format(char=character), self.player, self.multiworld
+        )
         character_run_won_location: BrotatoLocationBase = location_table[
             RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)
         ]
