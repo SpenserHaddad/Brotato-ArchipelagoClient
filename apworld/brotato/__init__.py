@@ -3,7 +3,7 @@ from collections import Counter
 from dataclasses import asdict
 from typing import Any, ClassVar, Dict, List, Literal, Set, Tuple, Union
 
-from BaseClasses import MultiWorld, Region, Tutorial
+from BaseClasses import Item, LocationProgressType, MultiWorld, Region, Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import add_item_rule
 
@@ -73,7 +73,8 @@ class BrotatoWorld(World):
 
     _filler_items: List[str] = filler_items
     _starting_characters: List[str]
-    _include_characters: List[str]
+    _include_characters: Set[str]
+    _exclude_characters: Set[str]
     """The characters to actually create items/checks for. Derived from options.include_characters.
 
     This is a distinct list from the options value because:
@@ -140,7 +141,13 @@ class BrotatoWorld(World):
         )
 
         # Filter out invalid characters from the option, just in case.
-        self._include_characters = [c for c in self.options.include_characters.value if c in CHARACTERS]
+        self._include_characters = set()
+        self._exclude_characters = set()
+        for character in CHARACTERS:
+            if character in self.options.include_characters:
+                self._include_characters.add(character)
+            else:
+                self._exclude_characters.add(character)
 
         starting_character_option = self.options.starting_characters.value
         if starting_character_option == 0:  # Default
@@ -162,8 +169,13 @@ class BrotatoWorld(World):
         legendary_crate_regions = self._create_regions_for_loot_crate_groups(menu_region, "legendary")
 
         character_regions: List[Region] = []
-        for character in self._include_characters:
+        for character in CHARACTERS:
             character_region = self._create_character_region(menu_region, character)
+
+            if character in self._exclude_characters:
+                for location in character_region.locations:
+                    location.progress_type = LocationProgressType.EXCLUDED
+
             character_regions.append(character_region)
 
             # # Crates can be gotten with any character...
@@ -214,7 +226,7 @@ class BrotatoWorld(World):
         num_shop_slot_items = max(MAX_SHOP_SLOTS - num_starting_shop_slots, 0)
         item_names += [ItemName.SHOP_SLOT] * num_shop_slot_items
 
-        itempool = [self.create_item(item_name) for item_name in item_names]
+        itempool: List[Union[Item, BrotatoItem]] = [self.create_item(item_name) for item_name in item_names]
 
         total_locations = (
             len(common_loot_crate_items)
