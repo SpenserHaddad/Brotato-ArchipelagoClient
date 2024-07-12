@@ -1,3 +1,7 @@
+import re
+
+from BaseClasses import LocationProgressType, Region
+
 from ..constants import CHARACTER_REGION_TEMPLATE, CHARACTERS, DEFAULT_CHARACTERS
 from ..items import ItemName
 from . import BrotatoTestBase
@@ -10,19 +14,41 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
         valid_include_characters = CHARACTERS[:10]
         invalid_include_characters = ["Jigglypuff", "asdfdadfdasdf", "", "ireallywishihadhypothesisrn"]
         include_characters = {*valid_include_characters, *invalid_include_characters}
-        self.options = {
-            "starting_characters": 1,
-            "include_characters": include_characters,
-        }
+        self.options = {"starting_characters": 1, "include_characters": include_characters}
         self.world_setup()
 
-        expected_regions = {CHARACTER_REGION_TEMPLATE.format(char=char) for char in valid_include_characters}
+        expected_regions = {CHARACTER_REGION_TEMPLATE.format(char=char) for char in CHARACTERS}
 
         character_regions = {
             r.name for r in self.multiworld.regions if r.player == self.player and r.name.startswith("In-Game")
         }
 
         self.assertSetEqual(expected_regions, character_regions)
+
+    def test_include_characters_excluded_character_locations_correct_progress_type(self):
+        include_characters = CHARACTERS[:10]
+        self.options = {"starting_characters": 1, "include_characters": include_characters}
+        self.world_setup()
+
+        character_regions: dict[str, Region] = {
+            r.name: r for r in self.multiworld.regions if r.player == self.player and r.name.startswith("In-Game")
+        }
+
+        for region_name, region in character_regions.items():
+            character_name_match = re.match(r"In-Game \(([\w ]+)\)", region_name)
+            if character_name_match is None:
+                raise RuntimeError(f"Found unexpected region looking for character regions: {region_name}.")
+
+            character = character_name_match.group(1)
+            if character in include_characters:
+                expected_progress_type = LocationProgressType.DEFAULT
+            else:
+                expected_progress_type = LocationProgressType.EXCLUDED
+
+            for location in region.locations:
+                self.assertEqual(
+                    expected_progress_type, location.progress_type, msg="Incorrect progress type in {region.n} "
+                )
 
     def test_include_characters_excludes_default_characters(self):
         include_characters = set(CHARACTERS)
