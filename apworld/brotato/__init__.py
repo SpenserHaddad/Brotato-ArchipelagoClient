@@ -273,13 +273,12 @@ class BrotatoWorld(World):
         ]
         character_region.locations.append(character_run_won_location.to_location(self.player, parent=character_region))
 
-        character_wave_drop_location_names: List[str] = [
-            WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=character) for w in self.waves_with_checks
-        ]
-        character_region.locations.extend(
-            location_table[loc].to_location(self.player, parent=character_region)
-            for loc in character_wave_drop_location_names
-        )
+        for wave in self.waves_with_checks:
+            wave_complete_location_name = WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=wave, char=character)
+            wave_complete_location = location_table[wave_complete_location_name].to_location(
+                self.player, parent=character_region
+            )
+            character_region.locations.append(wave_complete_location)
 
         has_character_rule = create_has_character_rule(self.player, character)
         parent_region.connect(
