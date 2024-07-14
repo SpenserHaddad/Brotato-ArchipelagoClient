@@ -181,12 +181,6 @@ class BrotatoWorld(World):
 
             character_regions.append(character_region)
 
-            # # Crates can be gotten with any character...
-            # character_region.connect(crate_drop_region, f"Drop crates for {character}")
-            # # ...but we need to make sure you don't go to another character's in-game before you have them.
-            # crate_drop_region.connect(character_region, f"Exit drop crates for {character}", rule=has_character_rule)
-            # character_regions.append(character_region)
-
         self.multiworld.regions.extend(
             [
                 menu_region,
