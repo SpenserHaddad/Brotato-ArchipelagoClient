@@ -74,14 +74,17 @@ class BrotatoWorld(World):
     _filler_items: List[str] = filler_items
     _starting_characters: List[str]
     _include_characters: Set[str]
-    _exclude_characters: Set[str]
-    """The characters to actually create items/checks for. Derived from options.include_characters.
+    """The characters whose locations (wave/run complete) may have progression and useful items.
+
+    This is derived from options.include_characters.
 
     This is a distinct list from the options value because:
 
     * We want to sanitize the list to make sure typos or other errors don't cause bugs down the road.
     * We want to keep things in character definition order for readability by using a list instead of a set.
     """
+    _exclude_characters: Set[str]
+    """All characters not inlcuded in options.include_characters. Their locations will be marked as EXCLUDED."""
 
     location_name_to_id: ClassVar[Dict[str, int]] = location_name_to_id
     location_name_groups: ClassVar[Dict[str, Set[str]]] = location_name_groups
