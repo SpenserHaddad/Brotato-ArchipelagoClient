@@ -1,6 +1,7 @@
-import re
+import random
+from typing import List
 
-from BaseClasses import LocationProgressType, Region
+from BaseClasses import Region
 
 from ..constants import CHARACTER_REGION_TEMPLATE, CHARACTERS, DEFAULT_CHARACTERS
 from ..items import ItemName
@@ -10,6 +11,18 @@ from . import BrotatoTestBase
 class TestBrotatoIncludeCharacters(BrotatoTestBase):
     auto_construct = False
 
+    def test_include_characters_can_fill(self):
+        # Which characters we pick to include shouldn't matter, just the amount. But let's randomize who we pick each
+        # time just in case.
+        r = random.Random(0x7A70)
+        for num_include_characters in range(1, len(CHARACTERS) + 1):
+            with self.subTest(msg=f"{num_include_characters=}", n=num_include_characters):
+                include_characters: List[str] = r.sample(CHARACTERS, k=num_include_characters)
+                self.options = {"starting_characters": 1, "include_characters": include_characters}
+                self.world_setup()
+                self.test_fill()
+                self.assertBeatable(True)
+
     def test_include_characters_ignores_invalid_values(self):
         valid_include_characters = CHARACTERS[:10]
         invalid_include_characters = ["Jigglypuff", "asdfdadfdasdf", "", "ireallywishihadhypothesisrn"]
@@ -17,7 +30,7 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
         self.options = {"starting_characters": 1, "include_characters": include_characters}
         self.world_setup()
 
-        expected_regions = {CHARACTER_REGION_TEMPLATE.format(char=char) for char in CHARACTERS}
+        expected_regions = {CHARACTER_REGION_TEMPLATE.format(char=char) for char in valid_include_characters}
 
         character_regions = {
             r.name for r in self.multiworld.regions if r.player == self.player and r.name.startswith("In-Game")
@@ -25,30 +38,19 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
 
         self.assertSetEqual(expected_regions, character_regions)
 
-    def test_include_characters_excluded_character_locations_correct_progress_type(self):
+    def test_include_characters_excluded_characters_do_not_have_regions(self):
         include_characters = CHARACTERS[:10]
         self.options = {"starting_characters": 1, "include_characters": include_characters}
         self.world_setup()
 
-        character_regions: dict[str, Region] = {
-            r.name: r for r in self.multiworld.regions if r.player == self.player and r.name.startswith("In-Game")
-        }
+        player_regions: dict[str, Region] = {r.name: r for r in self.multiworld.regions if r.player == self.player}
 
-        for region_name, region in character_regions.items():
-            character_name_match = re.match(r"In-Game \(([\w ]+)\)", region_name)
-            if character_name_match is None:
-                raise RuntimeError(f"Found unexpected region looking for character regions: {region_name}.")
-
-            character = character_name_match.group(1)
+        for character in CHARACTERS:
+            character_region_name = CHARACTER_REGION_TEMPLATE.format(char=character)
             if character in include_characters:
-                expected_progress_type = LocationProgressType.DEFAULT
+                self.assertIn(character_region_name, player_regions)
             else:
-                expected_progress_type = LocationProgressType.EXCLUDED
-
-            for location in region.locations:
-                self.assertEqual(
-                    expected_progress_type, location.progress_type, msg="Incorrect progress type in {region.n} "
-                )
+                self.assertNotIn(character_region_name, player_regions)
 
     def test_include_characters_excludes_default_characters(self):
         include_characters = set(CHARACTERS)
@@ -69,8 +71,8 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
         self.options = {"starting_characters": 1, "include_characters": include_characters, "wins_required": 30}
         self.world_setup()
 
-        self.assertBeatable(False)
+        self.assertFalse(self.multiworld.has_beaten_game(self.multiworld.state))
         # Create a "Run Won" item for each character included, give them to the player, then check that we've "won"
         run_won_items = [self.world.create_item(ItemName.RUN_COMPLETE) for _ in include_characters]
         self.collect(run_won_items)
-        self.assertBeatable(True)
+        self.assertTrue(self.multiworld.has_beaten_game(self.multiworld.state))
