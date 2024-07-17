@@ -58,11 +58,8 @@ class NumberStartingCharacters(Range):
 class IncludeCharacters(OptionSet):
     """Which characters to include for checks.
 
-    Characters not listed here will still be available and unlockable, but they will not have any progression or useful
-    items in their locations. This includes:
-
-    * Won runs for goal completion.
-    * Wave complete checks.
+    Characters not listed here will not be available to play. There will be no item to unlock them, and there will be
+    no run or wave complete checks associated with them.
     """
 
     default = frozenset(CHARACTERS)
