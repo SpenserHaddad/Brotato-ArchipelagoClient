@@ -3,7 +3,8 @@ from collections import Counter
 from dataclasses import asdict
 from typing import Any, ClassVar, Dict, List, Literal, Set, Tuple, Union
 
-from BaseClasses import Item, LocationProgressType, MultiWorld, Region, Tutorial
+from BaseClasses import Item, MultiWorld, Region, Tutorial
+from Options import OptionError
 from worlds.AutoWorld import WebWorld, World
 from worlds.generic.Rules import add_item_rule
 
@@ -83,8 +84,6 @@ class BrotatoWorld(World):
     * We want to sanitize the list to make sure typos or other errors don't cause bugs down the road.
     * We want to keep things in character definition order for readability by using a list instead of a set.
     """
-    _exclude_characters: Set[str]
-    """All characters not inlcuded in options.include_characters. Their locations will be marked as EXCLUDED."""
 
     location_name_to_id: ClassVar[Dict[str, int]] = location_name_to_id
     location_name_groups: ClassVar[Dict[str, Set[str]]] = location_name_groups
@@ -110,14 +109,25 @@ class BrotatoWorld(World):
     common_loot_crate_groups: List[BrotatoLootCrateGroup]
     """Information about each common loot crate group, i.e. how many crates it has and how many wins it needs.
 
-    Calculated from player options in generate_early.
+    Calculated from player options in generate_early().
     """
 
     legendary_loot_crate_groups: List[BrotatoLootCrateGroup]
     """Information about each legendary loot crate group, i.e. how many crates it has and how many wins it needs.
 
-    Calculated from player options in generate_early.
+    Calculated from player options in generate_early().
     """
+
+    _upgrade_and_item_counts: dict[ItemName, int]
+    """Amount of each upgrade tier and Brotato item to add to the item pool.
+
+    Calculated from player options in generate_early(). The counts may be less than the actual amount requested if there
+    is not enough locations for them all (which can happen if too many characters are excluded from having progression
+    items), in which case items from here will be randomly removed until they fit.
+    """
+
+    _num_filler_items: int
+    """The number of filler itmes to create. Calculated in generate_early()."""
 
     def __init__(self, world: MultiWorld, player: int) -> None:
         super().__init__(world, player)
@@ -143,21 +153,65 @@ class BrotatoWorld(World):
             self.options.num_victories.value,
         )
 
-        # Filter out invalid characters from the option, just in case.
+        # Filter out invalid entries from the option, just in case.
         self._include_characters = set()
-        self._exclude_characters = set()
         for character in CHARACTERS:
             if character in self.options.include_characters:
                 self._include_characters.add(character)
-            else:
-                self._exclude_characters.add(character)
 
         starting_character_option = self.options.starting_characters.value
         if starting_character_option == 0:  # Default
             self._starting_characters = [dc for dc in DEFAULT_CHARACTERS if dc in self._include_characters]
         else:
-            num_starting_characters = self.options.num_starting_characters.value
-            self._starting_characters = self.random.sample(CHARACTERS, num_starting_characters)
+            num_starting_characters = min(self.options.num_starting_characters.value, len(self._include_characters))
+            self._starting_characters = self.random.sample(list(self._include_characters), num_starting_characters)
+
+        # Initialize the number of upgrades and items to include, then adjust as necessary below.
+        self._upgrade_and_item_counts = {
+            ItemName.COMMON_UPGRADE: self.options.num_common_upgrades.value,
+            ItemName.UNCOMMON_UPGRADE: self.options.num_uncommon_upgrades.value,
+            ItemName.RARE_UPGRADE: self.options.num_rare_upgrades.value,
+            ItemName.LEGENDARY_UPGRADE: self.options.num_legendary_upgrades.value,
+        }
+
+        num_items_per_rarity: Counter[ItemName] = self._create_common_loot_crate_items()
+        self._upgrade_and_item_counts.update(num_items_per_rarity.items())
+
+        # Check that there's enough locations for all the items given in the options. If there isn't enough locations,
+        # remove non-progression items (i.e. Brotato items and upgrades) until there's no more extra.
+        # We already have an item for each common and legendary loot crate drop, as well as each run won location, so we
+        # need a filler item for every wave complete location not covered by a character unlock, shop slot, or upgrade.
+        num_wave_complete_locations = len(self.waves_with_checks) * len(self._include_characters)
+        num_shop_slot_items = max(MAX_SHOP_SLOTS - self.options.num_starting_shop_slots.value, 0)
+
+        # The number of locations available, not including the "Run Won" locations, which always have "Run Won" items.
+        num_locations = (
+            num_wave_complete_locations
+            + self.options.num_common_crate_drops.value
+            + self.options.num_legendary_crate_drops.value
+        )
+        num_claimed_locations = (
+            len(self._include_characters)  # For each character unlock
+            + num_shop_slot_items
+            + sum(self._upgrade_and_item_counts.values())
+        )
+        num_unclaimed_locations = num_locations - num_claimed_locations
+        if num_unclaimed_locations < 0:
+            # Too many items for the number of locations we have. Randomly remove items, upgrades, and excluded
+            # characters to make space for the progression items (characters and shop slots).
+            num_items_to_remove = abs(num_unclaimed_locations)
+            removable_items: Dict[ItemName, int] = self._upgrade_and_item_counts.copy()
+            if sum(removable_items.values()) < num_items_to_remove:
+                raise OptionError(
+                    "Not enough locations for all progression items with given options. Most likely too many characters"
+                    "were excluded by omitting them from 'Include Characters'. Add more characters and try again."
+                )
+            items_to_remove: List[ItemName] = self.random.sample(
+                list(removable_items.keys()), num_items_to_remove, counts=list(removable_items.values())
+            )
+            for item_to_remove in items_to_remove:
+                self._upgrade_and_item_counts[item_to_remove] -= 1
+        self._num_filler_items = max(num_unclaimed_locations, 0)
 
     def set_rules(self) -> None:
         # Don't require more victories than included characters
@@ -172,13 +226,8 @@ class BrotatoWorld(World):
         legendary_crate_regions = self._create_regions_for_loot_crate_groups(menu_region, "legendary")
 
         character_regions: List[Region] = []
-        for character in CHARACTERS:
+        for character in self._include_characters:
             character_region = self._create_character_region(menu_region, character)
-
-            if character in self._exclude_characters:
-                for location in character_region.locations:
-                    location.progress_type = LocationProgressType.EXCLUDED
-
             character_regions.append(character_region)
 
         self.multiworld.regions.extend(
@@ -191,58 +240,32 @@ class BrotatoWorld(World):
         )
 
     def create_items(self) -> None:
-        item_names: List[Union[ItemName, str]] = []
+        item_pool: List[BrotatoItem | Item] = []
 
-        for c in self._starting_characters:
-            self.multiworld.push_precollected(self.create_item(c))
+        for character in self._include_characters:
+            character_item: BrotatoItem = self.create_item(character)
+            if character in self._starting_characters:
+                self.multiworld.push_precollected(character_item)
+            else:
+                item_pool.append(character_item)
 
-        item_names += [c for c in item_name_groups["Characters"] if c not in self._starting_characters]
-
-        # Add an item to receive for each common crate drop location. Try to match the distribution of
-        # common/uncommon/rare/legendary items as we can infer from the game itself.
-        common_loot_crate_items: List[ItemName] = self._create_common_loot_crate_items()
-        item_names.extend(common_loot_crate_items)
-
-        num_legendary_crate_drops = self.options.num_legendary_crate_drops.value
-        for _ in range(num_legendary_crate_drops):
-            item_names.append(ItemName.LEGENDARY_ITEM)
-
-        num_common_upgrades = self.options.num_common_upgrades.value
-        item_names += [ItemName.COMMON_UPGRADE] * num_common_upgrades
-
-        num_uncommon_upgrades = self.options.num_uncommon_upgrades.value
-        item_names += [ItemName.UNCOMMON_UPGRADE] * num_uncommon_upgrades
-
-        num_rare_upgrades = self.options.num_rare_upgrades.value
-        item_names += [ItemName.RARE_UPGRADE] * num_rare_upgrades
-
-        num_legendary_upgrades = self.options.num_legendary_upgrades.value
-        item_names += [ItemName.LEGENDARY_UPGRADE] * num_legendary_upgrades
+        # Create an item for each (Brotato) item and upgrade. This counts are determined in generate_early().
+        for item_name, item_count in self._upgrade_and_item_counts.items():
+            item_pool += [self.create_item(item_name) for _ in range(item_count)]
 
         num_starting_shop_slots = self.options.num_starting_shop_slots.value
         num_shop_slot_items = max(MAX_SHOP_SLOTS - num_starting_shop_slots, 0)
-        item_names += [ItemName.SHOP_SLOT] * num_shop_slot_items
+        item_pool += [self.create_item(ItemName.SHOP_SLOT) for _ in range(num_shop_slot_items)]
+        item_pool += [self.create_filler() for _ in range(self._num_filler_items)]
 
-        itempool: List[Union[Item, BrotatoItem]] = [self.create_item(item_name) for item_name in item_names]
+        self.multiworld.itempool += item_pool
 
-        total_locations = (
-            len(common_loot_crate_items)
-            + num_legendary_crate_drops
-            + (len(self.waves_with_checks) * len(self._include_characters))
-        )
-        num_filler_items = total_locations - len(itempool)
-        itempool += [self.create_filler() for _ in range(num_filler_items)]
-
-        self.multiworld.itempool += itempool
-
+    def generate_basic(self) -> None:
         # Place "Run Won" items at the Run Win event locations
-        for character in self._include_characters:  # self.location_name_groups["Run Win Specific Character"]:
+        for character in self._include_characters:
             item: BrotatoItem = self.create_item(ItemName.RUN_COMPLETE)
             run_won_location = RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)
             self.multiworld.get_location(run_won_location, self.player).place_locked_item(item)
-
-    def generate_basic(self) -> None:
-        pass
 
     def get_filler_item_name(self) -> str:
         return self.random.choice(self._filler_items)
@@ -321,7 +344,7 @@ class BrotatoWorld(World):
 
         return regions
 
-    def _create_common_loot_crate_items(self) -> List[ItemName]:
+    def _create_common_loot_crate_items(self) -> Counter[ItemName]:
         """Create a list of items corresponding to the common loot crate locations.
 
         This is intended ot be called by `create_items`, but it's split out because of its side effect (see below), and
@@ -359,7 +382,7 @@ class BrotatoWorld(World):
             ItemName.RARE_ITEM: ItemRarity.RARE,
             ItemName.LEGENDARY_ITEM: ItemRarity.LEGENDARY,
         }
-        items = self.random.choices(
+        items: List[ItemName] = self.random.choices(
             list(item_names_to_rarity.keys()),
             weights=weights,
             k=self.options.num_common_crate_drops.value,
@@ -386,4 +409,4 @@ class BrotatoWorld(World):
             for name, rarity in item_names_to_rarity.items()
         }
 
-        return items
+        return item_counts
