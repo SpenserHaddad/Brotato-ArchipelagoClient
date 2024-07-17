@@ -51,6 +51,7 @@ class TestBrotatoItems(BrotatoTestBase):
                 "uncommon_item_weight": 0,
                 "rare_item_weight": 0,
                 "legendary_item_weight": 100,
+                "waves_per_drop": 5,  # Ensure there's enough locations to prevent removing items
             }
         )
 
@@ -68,6 +69,7 @@ class TestBrotatoItems(BrotatoTestBase):
                 "uncommon_item_weight": 1,
                 "rare_item_weight": 1,
                 "legendary_item_weight": 0,
+                "waves_per_drop": 5,  # Ensure there's enough locations to prevent removing items
             }
         )
 
