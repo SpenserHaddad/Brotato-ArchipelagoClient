@@ -3,9 +3,8 @@ from collections import Counter
 from dataclasses import asdict
 from typing import Any, ClassVar, Dict, List, Literal, Set, Tuple, Union
 
-from BaseClasses import MultiWorld, Region, Tutorial
+from BaseClasses import Item, LocationProgressType, MultiWorld, Region, Tutorial
 from worlds.AutoWorld import WebWorld, World
-from worlds.generic.Rules import add_item_rule
 
 from ._loot_crate_groups import BrotatoLootCrateGroup, build_loot_crate_groups
 from .constants import (
@@ -32,7 +31,7 @@ from .options import (
     RareItemWeight,
     UncommonItemWeight,
 )
-from .rules import create_has_character_rule, create_has_run_wins_rule, legendary_loot_crate_item_rule
+from .rules import create_has_character_rule, create_has_run_wins_rule
 
 logger = logging.getLogger("Brotato")
 
@@ -201,7 +200,7 @@ class BrotatoWorld(World):
         num_shop_slot_items = max(MAX_SHOP_SLOTS - num_starting_shop_slots, 0)
         item_names += [ItemName.SHOP_SLOT] * num_shop_slot_items
 
-        itempool = [self.create_item(item_name) for item_name in item_names]
+        itempool: List[Item] = [self.create_item(item_name) for item_name in item_names]
 
         total_locations = (
             len(common_loot_crate_items) + num_legendary_crate_drops + (len(self.waves_with_checks) * len(CHARACTERS))
@@ -266,12 +265,12 @@ class BrotatoWorld(World):
             loot_crate_groups = self.common_loot_crate_groups
             location_name_template = CRATE_DROP_LOCATION_TEMPLATE
             region_name_template = CRATE_DROP_GROUP_REGION_TEMPLATE
-            item_rule = None
+            progress_type = LocationProgressType.DEFAULT
         else:
             loot_crate_groups = self.legendary_loot_crate_groups
             location_name_template = LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE
             region_name_template = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE
-            item_rule = legendary_loot_crate_item_rule
+            progress_type = LocationProgressType.EXCLUDED
 
         regions: List[Region] = []
         crate_count = 1
@@ -283,8 +282,7 @@ class BrotatoWorld(World):
                 crate_location: BrotatoLocation = location_table[crate_location_name].to_location(
                     self.player, parent=group_region
                 )
-                if item_rule is not None:
-                    add_item_rule(crate_location, item_rule)
+                crate_location.progress_type = progress_type
 
                 group_region.locations.append(crate_location)
                 crate_count += 1
