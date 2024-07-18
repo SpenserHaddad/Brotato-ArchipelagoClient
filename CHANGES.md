@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- New option: "Include Characters", to include/exclude certain characters from the world
+  if players don't want to play as them.
+  - Characters not included in the option will not have an item to unlock them, and
+    their run and wave complete checks will be excluded from the world.
+  - Currently, the option is defined in the YAML only, NOT on the options page. This is
+    an Archipelago core limitation.
+
+### Changed
+- World generation will now remove Brotato items and upgrades from the Archipelago item
+  pool if there are not enough locations.
+  - This typically occurs if too few characters are included with the new "Include
+    Characters" option.
+
 ## [0.1.0] - 2024-07-07
 
 ### Added

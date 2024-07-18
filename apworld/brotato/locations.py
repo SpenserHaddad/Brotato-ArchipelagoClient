@@ -84,5 +84,4 @@ location_name_groups: Dict[str, Set[str]] = {
     "Run Win Specific Character": set(c.name for c in _character_run_won_locations),
     "Normal Crate Drops": set(c.name for c in _loot_crate_drop_locations),
     "Legendary Crate Drops": set(c.name for c in _legendary_loot_crate_drop_locations),
-    # "Shop Items": set(c.name for c in _shop_item_locations),
 }

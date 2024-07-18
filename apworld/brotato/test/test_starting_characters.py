@@ -22,8 +22,7 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
         self.world_setup()
 
         # Get precollected items
-        player_id = self.multiworld.player_ids[0]
-        player_precollected = self.multiworld.precollected_items[player_id]
+        player_precollected = self.multiworld.precollected_items[self.player]
         precollected_characters = [p for p in player_precollected if p.name in _character_items]
 
         # Check that the number of starting characters is correct
@@ -36,7 +35,7 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
                 len(expected_characters) == num_characters
             ), "Test configuration error, num_characters does not match len(expected_characters)."
             for ec in expected_characters:
-                expected_item = self.multiworld.worlds[player_id].create_item(ec)
+                expected_item = self.world.create_item(ec)
                 assert expected_item in precollected_characters
 
     def test_default_starting_characters(self):
@@ -47,14 +46,10 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
         )
 
     # TODO: Probably can't use pytest.paramterize, is there a better way?
-    def test_custom_starting_characters_1(self):
-        self._run_and_check(num_characters=1)
+    def test_custom_starting_characters(self):
+        for num_characters in range(1, len(CHARACTERS)):
+            with self.subTest(msg=f"{num_characters} starting characters"):
+                self._run_and_check(num_characters=num_characters)
 
-    def test_custom_starting_characters_5(self):
-        self._run_and_check(num_characters=5)
-
-    def test_custom_starting_characters_15(self):
-        self._run_and_check(num_characters=5)
-
-    def test_custom_starting_characters_max(self):
-        self._run_and_check(num_characters=len(CHARACTERS), expected_characters=CHARACTERS)
+        with self.subTest(msg=f"{len(CHARACTERS)} starting characters"):
+            self._run_and_check(num_characters=len(CHARACTERS), expected_characters=CHARACTERS)
