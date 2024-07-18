@@ -18,7 +18,7 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
         for num_include_characters in range(1, len(CHARACTERS) + 1):
             with self.subTest(msg=f"{num_include_characters=}", n=num_include_characters):
                 include_characters: List[str] = r.sample(CHARACTERS, k=num_include_characters)
-                self.options = {"starting_characters": 1, "include_characters": include_characters}
+                self.options = {"starting_characters": 1, "include_characters": include_characters, "waves_per_drop": 5}
                 self.world_setup()
                 self.test_fill()
                 self.assertBeatable(True)
