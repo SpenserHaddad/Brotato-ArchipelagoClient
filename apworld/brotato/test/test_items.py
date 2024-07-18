@@ -44,6 +44,7 @@ class TestBrotatoItems(BrotatoTestBase):
     def test_create_items_custom_weight_all_legendary_items(self):
         self._run(
             {
+                "waves_per_drop": 5,  # Increase to have enough locations for all the crates
                 "item_weight_mode": 2,
                 "num_common_crate_drops": 50,
                 "num_legendary_crate_drops": 20,
@@ -61,6 +62,7 @@ class TestBrotatoItems(BrotatoTestBase):
     def test_create_items_custom_weight_legendary_items_weight_zero(self):
         self._run(
             {
+                "waves_per_drop": 5,  # Increase to have enough locations for all the crates
                 "item_weight_mode": 2,
                 "num_common_crate_drops": 50,
                 "num_legendary_crate_drops": 20,
