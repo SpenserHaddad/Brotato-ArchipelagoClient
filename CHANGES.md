@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   pool if there are not enough locations.
   - This typically occurs if too few characters are included with the new "Include
     Characters" option.
+- Legendary loot crate drops are now marked as `EXCLUDED`, to account for how
+ infrequently they drop.  
+ - This may be reverted in a future update.
 
 ## [0.1.0] - 2024-07-07
 
