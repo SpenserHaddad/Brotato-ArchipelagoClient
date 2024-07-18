@@ -152,7 +152,7 @@ class BrotatoWorld(World):
             self.options.num_victories.value,
         )
 
-        # Filter out invalid entries from the option, just in case.
+        # Keep include characters in the defined order to make reading/debugging easier. Entries should all be valid.
         self._include_characters = set()
         for character in CHARACTERS:
             if character in self.options.include_characters:
