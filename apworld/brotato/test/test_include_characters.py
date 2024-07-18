@@ -23,20 +23,23 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
                 self.test_fill()
                 self.assertBeatable(True)
 
-    def test_include_characters_ignores_invalid_values(self):
+    def test_include_characters_invalid_values_raises_exception(self):
         valid_include_characters = CHARACTERS[:10]
-        invalid_include_characters = ["Jigglypuff", "asdfdadfdasdf", "", "ireallywishihadhypothesisrn"]
-        include_characters = {*valid_include_characters, *invalid_include_characters}
-        self.options = {"starting_characters": 1, "include_characters": include_characters}
-        self.world_setup()
+        invalid_include_characters = [
+            "Well-Rounded",
+            "Bul",
+            "Jigglypuff",
+            "asdfdadfdasdf",
+            "",
+            "ireallywishihadhypothesisrn",
+        ]
 
-        expected_regions = {CHARACTER_REGION_TEMPLATE.format(char=char) for char in valid_include_characters}
-
-        character_regions = {
-            r.name for r in self.multiworld.regions if r.player == self.player and r.name.startswith("In-Game")
-        }
-
-        self.assertSetEqual(expected_regions, character_regions)
+        for invalid_character in invalid_include_characters:
+            with self.subTest(invalid_character=invalid_character):
+                include_characters = {*valid_include_characters, invalid_character}
+                self.options = {"starting_characters": 1, "include_characters": include_characters}
+                # The VerifyKeys mixin on OptionSet raises a bare Exception when it encounters an invalid key.
+                self.assertRaises(Exception, self.world_setup)
 
     def test_include_characters_excluded_characters_do_not_have_regions(self):
         include_characters = CHARACTERS[:10]

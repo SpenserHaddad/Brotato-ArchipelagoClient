@@ -64,6 +64,7 @@ class IncludeCharacters(OptionSet):
 
     default = frozenset(CHARACTERS)
     display_name = "Include Characters"
+    valid_keys = CHARACTERS
 
 
 class WavesPerCheck(Range):
