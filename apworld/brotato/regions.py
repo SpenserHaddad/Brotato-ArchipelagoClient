@@ -5,6 +5,7 @@ from worlds.generic.Rules import ItemRule, add_item_rule
 
 from . import BrotatoWorld
 from .constants import (
+    CHARACTER_REGION_TEMPLATE,
     CHARACTERS,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
@@ -55,7 +56,7 @@ def create_regions(world: BrotatoWorld) -> List[Region]:
 
 
 def _create_character_region(world: BrotatoWorld, parent_region: Region, character: str) -> Region:
-    character_region = Region(f"In-Game ({character})", world.player, world.multiworld)
+    character_region = Region(CHARACTER_REGION_TEMPLATE.format(char=character), world.player, world.multiworld)
     character_run_won_location = location_table[RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)]
     character_region.locations.append(character_run_won_location.to_location(world.player, parent=character_region))
 
