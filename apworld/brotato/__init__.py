@@ -255,7 +255,7 @@ class BrotatoWorld(World):
 
         self.multiworld.itempool += item_pool
 
-    def generate_basic(self) -> None:
+    def pre_fill(self) -> None:
         # Place "Run Won" items at the Run Win event locations
         for character in self._include_characters:
             item: BrotatoItem = self.create_item(ItemName.RUN_COMPLETE)
