@@ -186,7 +186,7 @@ class BrotatoWorld(World):
         # The number of locations available, not including the "Run Won" locations, which always have "Run Won" items.
         num_locations = num_wave_complete_locations + self.options.num_common_crate_drops.value
         num_claimed_locations = (
-            len(self._include_characters)  # For each character unlock
+            (len(self._include_characters) - len(self._starting_characters))  # For each character unlock
             + num_shop_slot_items
             + sum(self._upgrade_and_item_counts.values())
         )
@@ -244,7 +244,7 @@ class BrotatoWorld(World):
             else:
                 item_pool.append(character_item)
 
-        # Create an item for each (Brotato) item and upgrade. This counts are determined in generate_early().
+        # Create an item for each (Brotato) item and upgrade. These counts are determined in generate_early().
         for item_name, item_count in self._upgrade_and_item_counts.items():
             item_pool += [self.create_item(item_name) for _ in range(item_count)]
 
@@ -255,7 +255,7 @@ class BrotatoWorld(World):
 
         self.multiworld.itempool += item_pool
 
-    def generate_basic(self) -> None:
+    def pre_fill(self) -> None:
         # Place "Run Won" items at the Run Win event locations
         for character in self._include_characters:
             item: BrotatoItem = self.create_item(ItemName.RUN_COMPLETE)
