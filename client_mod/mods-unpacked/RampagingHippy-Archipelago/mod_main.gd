@@ -3,11 +3,11 @@ extends Node
 
 # Brotato Archipelago Multiworld Randomizer Client
 const MOD_NAME = "RampagingHippy-Archipelago"
-const MOD_VERSION = "0.2.0"
+const MOD_VERSION = "0.2.1"
 const LOG_NAME = MOD_NAME + "/mod_main"
 
-const ApWebSocketConnection = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_websocket_connection.gd")
-const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/brotato_ap_client.gd")
+const ApWebSocketConnection = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_websocket_connection.gd")
+const BrotatoApClient = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/brotato_ap_client.gd")
 
 export onready var ap_websocket_connection
 export onready var brotato_ap_client
