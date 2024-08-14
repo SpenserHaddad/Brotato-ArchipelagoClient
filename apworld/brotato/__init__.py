@@ -87,6 +87,9 @@ class BrotatoWorld(World):
     location_name_to_id: ClassVar[Dict[str, int]] = location_name_to_id
     location_name_groups: ClassVar[Dict[str, Set[str]]] = location_name_groups
 
+    num_shop_slot_items: int
+    num_shop_lock_button_items: int
+
     waves_with_checks: List[int]
     """Which waves will count as locations.
 
@@ -181,13 +184,19 @@ class BrotatoWorld(World):
         # We already have an item for each common and legendary loot crate drop, as well as each run won location, so we
         # need a filler item for every wave complete location not covered by a character unlock, shop slot, or upgrade.
         num_wave_complete_locations = len(self.waves_with_checks) * len(self._include_characters)
-        num_shop_slot_items = max(MAX_SHOP_SLOTS - self.options.num_starting_shop_slots.value, 0)
+        self.num_shop_slot_items = max(MAX_SHOP_SLOTS - self.options.num_starting_shop_slots.value, 0)
+        if self.options.num_lock_button_items.value == self.options.num_lock_button_items.range_end:
+            # Special case: match the number of shop slots
+            self.num_shop_lock_button_items = self.num_shop_slot_items
+        else:
+            self.num_shop_lock_button_items = max(MAX_SHOP_SLOTS - self.options.num_lock_button_items.value, 0)
 
         # The number of locations available, not including the "Run Won" locations, which always have "Run Won" items.
         num_locations = num_wave_complete_locations + self.options.num_common_crate_drops.value
         num_claimed_locations = (
             (len(self._include_characters) - len(self._starting_characters))  # For each character unlock
-            + num_shop_slot_items
+            + self.num_shop_slot_items
+            + self.num_shop_lock_button_items
             + sum(self._upgrade_and_item_counts.values())
         )
         num_unclaimed_locations = num_locations - num_claimed_locations
@@ -248,9 +257,8 @@ class BrotatoWorld(World):
         for item_name, item_count in self._upgrade_and_item_counts.items():
             item_pool += [self.create_item(item_name) for _ in range(item_count)]
 
-        num_starting_shop_slots = self.options.num_starting_shop_slots.value
-        num_shop_slot_items = max(MAX_SHOP_SLOTS - num_starting_shop_slots, 0)
-        item_pool += [self.create_item(ItemName.SHOP_SLOT) for _ in range(num_shop_slot_items)]
+        item_pool += [self.create_item(ItemName.SHOP_SLOT) for _ in range(self.num_shop_slot_items)]
+        item_pool += [self.create_item(ItemName.SHOP_LOCK_BUTTON) for _ in range(self.num_shop_lock_button_items)]
         item_pool += [self.create_filler() for _ in range(self._num_filler_items)]
 
         self.multiworld.itempool += item_pool
