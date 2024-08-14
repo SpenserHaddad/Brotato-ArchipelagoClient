@@ -185,11 +185,11 @@ class BrotatoWorld(World):
         # need a filler item for every wave complete location not covered by a character unlock, shop slot, or upgrade.
         num_wave_complete_locations = len(self.waves_with_checks) * len(self._include_characters)
         self.num_shop_slot_items = max(MAX_SHOP_SLOTS - self.options.num_starting_shop_slots.value, 0)
-        if self.options.num_starting_lock_button_items.value == self.options.num_starting_lock_button_items.range_end:
+        if self.options.num_starting_lock_buttons.value == self.options.num_starting_lock_buttons.range_end:
             # Special case: match the number of shop slots
             self.num_shop_lock_button_items = self.num_shop_slot_items
         else:
-            self.num_shop_lock_button_items = max(MAX_SHOP_SLOTS - self.options.num_starting_lock_button_items.value, 0)
+            self.num_shop_lock_button_items = max(MAX_SHOP_SLOTS - self.options.num_starting_lock_buttons.value, 0)
 
         # The number of locations available, not including the "Run Won" locations, which always have "Run Won" items.
         num_locations = num_wave_complete_locations + self.options.num_common_crate_drops.value
@@ -278,6 +278,7 @@ class BrotatoWorld(World):
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": self.options.num_victories.value,
             "num_starting_shop_slots": self.options.num_starting_shop_slots.value,
+            "num_starting_shop_lock_buttons": self.options.num_starting_lock_buttons.value,
             "num_common_crate_locations": self.options.num_common_crate_drops.value,
             "num_common_crate_drops_per_check": self.options.num_common_crate_drops_per_check.value,
             "common_crate_drop_groups": [asdict(g) for g in self.common_loot_crate_groups],
