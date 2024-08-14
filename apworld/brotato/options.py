@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionSet, PerGameCommonOptions, Range, TextChoice
+from Options import Choice, NamedRange, OptionSet, PerGameCommonOptions, Range, TextChoice
 
 from .constants import (
     CHARACTERS,
@@ -287,6 +287,19 @@ class StartingShopSlots(Range):
 
     default = 4
     display_name: str = "Starting Shop Slots"
+
+
+class LockShopItems(NamedRange):
+    """Start with the the specified number of "Lock" buttons in the shop.
+
+    Missing buttons will not be usable until they are received as items.
+
+    The button and shop slot are different items, so it's possible to receive the button without the shop.
+    """
+
+    range_start = 0
+    range_end = MAX_SHOP_SLOTS + 1
+    special_range_names = {"match_shop_slot_items": MAX_SHOP_SLOTS + 1}
 
 
 @dataclass
