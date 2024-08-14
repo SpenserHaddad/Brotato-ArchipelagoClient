@@ -326,4 +326,4 @@ class BrotatoOptions(PerGameCommonOptions):
     num_rare_upgrades: NumberRareUpgrades
     num_legendary_upgrades: NumberLegendaryUpgrades
     num_starting_shop_slots: StartingShopSlots
-    num_starting_lock_button_items: NumberStartingShopLockButtons
+    num_starting_lock_buttons: NumberStartingShopLockButtons
