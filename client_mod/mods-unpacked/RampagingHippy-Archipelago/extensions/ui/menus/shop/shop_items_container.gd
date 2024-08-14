@@ -19,7 +19,7 @@ func _ready():
 func _update_lock_buttons():
 	for shop_item_idx in range(_shop_items.size()):
 		var shop_item = _shop_items[shop_item_idx]
-		if (shop_item_idx + 1) >= _lock_buttons_progress.num_unlocked_shop_lock_buttons:
+		if shop_item_idx < _lock_buttons_progress.num_unlocked_shop_lock_buttons:
 			shop_item.enable_lock_button()
 		else:
 			shop_item.disable_lock_button()
