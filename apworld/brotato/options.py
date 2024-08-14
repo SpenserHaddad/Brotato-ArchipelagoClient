@@ -289,8 +289,8 @@ class StartingShopSlots(Range):
     display_name: str = "Starting Shop Slots"
 
 
-class LockShopItems(NamedRange):
-    """Start with the the specified number of "Lock" buttons in the shop.
+class NumberShopLockButtons(NamedRange):
+    """Add the specified number of "Lock" buttons in the shop as items.
 
     Missing buttons will not be usable until they are received as items.
 
@@ -300,6 +300,7 @@ class LockShopItems(NamedRange):
     range_start = 0
     range_end = MAX_SHOP_SLOTS + 1
     special_range_names = {"match_shop_slot_items": MAX_SHOP_SLOTS + 1}
+    display_name = "Lock Button Items"
 
 
 @dataclass
@@ -325,3 +326,4 @@ class BrotatoOptions(PerGameCommonOptions):
     num_rare_upgrades: NumberRareUpgrades
     num_legendary_upgrades: NumberLegendaryUpgrades
     num_starting_shop_slots: StartingShopSlots
+    num_lock_button_items: NumberShopLockButtons
