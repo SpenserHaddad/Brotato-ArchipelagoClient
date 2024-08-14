@@ -185,10 +185,15 @@ class BrotatoWorld(World):
         # need a filler item for every wave complete location not covered by a character unlock, shop slot, or upgrade.
         num_wave_complete_locations = len(self.waves_with_checks) * len(self._include_characters)
         self.num_shop_slot_items = max(MAX_SHOP_SLOTS - self.options.num_starting_shop_slots.value, 0)
-        if self.options.num_starting_lock_buttons.value == self.options.num_starting_lock_buttons.range_end:
-            # Special case: match the number of shop slots
+        if self.options.shop_lock_buttons_mode.value == self.options.shop_lock_buttons_mode.option_all:
+            # Start with all lock buttons enabled, so no items
+            self.num_shop_lock_button_items = 0
+        elif self.options.shop_lock_buttons_mode.value == self.options.shop_lock_buttons_mode.option_none:
+            self.num_shop_lock_button_items = MAX_SHOP_SLOTS
+        elif self.options.shop_lock_buttons_mode.value == self.options.shop_lock_buttons_mode.option_match_shop_slots:
             self.num_shop_lock_button_items = self.num_shop_slot_items
         else:
+            # Custom option, use other option for value
             self.num_shop_lock_button_items = max(MAX_SHOP_SLOTS - self.options.num_starting_lock_buttons.value, 0)
 
         # The number of locations available, not including the "Run Won" locations, which always have "Run Won" items.

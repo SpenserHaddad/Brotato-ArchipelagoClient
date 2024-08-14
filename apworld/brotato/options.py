@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, NamedRange, OptionSet, PerGameCommonOptions, Range, TextChoice
+from Options import Choice, OptionSet, PerGameCommonOptions, Range, TextChoice
 
 from .constants import (
     CHARACTERS,
@@ -289,7 +289,29 @@ class StartingShopSlots(Range):
     display_name: str = "Starting Shop Slots"
 
 
-class NumberStartingShopLockButtons(NamedRange):
+class StartingShopLockButtonsMode(Choice):
+    """Add the "Lock" buttons in the shop as items.
+
+    Missing buttons will be disabled until they are received as items.
+
+    The button and shop slot are different items, so it's possible to receive the button without the shop.
+
+    * All: Start with all lock buttons enabled (vanilla behavior).
+    * None: Start with no lock buttons enabled at start.
+    * Match shop slots: Start with the same number of lock buttons as shop slots.
+    * Custom: Choose the number to start with using "Number of Lock Buttons".
+    """
+
+    option_all = 0
+    option_none = 1
+    option_match_shop_slots = 2
+    option_custom = 3
+
+    default = 2
+    display_name = "Starting Shop Lock Buttons"
+
+
+class NumberStartingShopLockButtons(Range):
     """The number of "Lock" buttons in the shop to start with.
 
     Missing buttons will not be usable until they are received as items.
@@ -298,9 +320,10 @@ class NumberStartingShopLockButtons(NamedRange):
     """
 
     range_start = 0
-    range_end = MAX_SHOP_SLOTS + 1
-    special_range_names = {"match_shop_slot_items": MAX_SHOP_SLOTS + 1}
-    display_name = "Lock Button Items"
+    range_end = MAX_SHOP_SLOTS
+
+    default = 0
+    display_name = "Number of Lock Buttons"
 
 
 @dataclass
@@ -326,4 +349,5 @@ class BrotatoOptions(PerGameCommonOptions):
     num_rare_upgrades: NumberRareUpgrades
     num_legendary_upgrades: NumberLegendaryUpgrades
     num_starting_shop_slots: StartingShopSlots
+    shop_lock_buttons_mode: StartingShopLockButtonsMode
     num_starting_lock_buttons: NumberStartingShopLockButtons
