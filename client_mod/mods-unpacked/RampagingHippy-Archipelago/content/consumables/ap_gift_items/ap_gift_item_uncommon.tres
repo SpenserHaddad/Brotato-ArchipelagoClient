@@ -1,6 +1,6 @@
 [gd_resource type="Resource" load_steps=4 format=2]
 
-[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.png" type="Texture" id=1]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80.png" type="Texture" id=1]
 [ext_resource path="res://items/consumables/consumable_data.gd" type="Script" id=2]
 [ext_resource path="res://items/consumables/item_box/item_box_pickup.wav" type="AudioStream" id=3]
 

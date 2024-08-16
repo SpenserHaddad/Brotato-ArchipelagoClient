@@ -2,8 +2,8 @@ extends "res://ui/menus/pages/main_menu.gd"
 
 onready var _archipelago_button
 onready var _ap_websocket_connection
-var _ap_icon_connected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_connected.png")
-var _ap_icon_disconnected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_disconnected.png")
+var _ap_icon_connected = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80.png")
+var _ap_icon_disconnected = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80_greyscale.png")
 
 signal ap_connect_button_pressed
 

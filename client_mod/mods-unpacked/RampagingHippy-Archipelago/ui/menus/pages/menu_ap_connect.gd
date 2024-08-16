@@ -2,11 +2,11 @@ extends MarginContainer
 
 signal back_button_pressed
 
-const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/brotato_ap_client.gd")
+const BrotatoApClient = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/brotato_ap_client.gd")
 
-var _ap_icon_connected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_connected.png")
-var _ap_icon_disconnected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_disconnected.png")
-var _ap_icon_error = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_error.png")
+var _ap_icon_connected = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80.png")
+var _ap_icon_disconnected = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80_greyscale.png")
+var _ap_icon_error = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80_red.png")
 
 onready var _connect_button: Button = $"VBoxContainer/ConnectButton"
 onready var _disconnect_button: Button = $"VBoxContainer/DisconnectButton"
@@ -42,7 +42,7 @@ func _ready():
 #	if get_tree().current_scene.name == self.name && Input.is_key_pressed(KEY_ENTER):
 #		_on_ConnectButton_pressed()
 
-func _on_connection_state_changed(new_state: int, error: int=0):
+func _on_connection_state_changed(new_state: int, error: int = 0):
 	# See ConnectState enum in godot_ap_client.gd
 	match new_state:
 		BrotatoApClient.ConnectState.DISCONNECTED:

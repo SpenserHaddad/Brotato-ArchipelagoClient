@@ -2,12 +2,12 @@ extends "res://main.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/main"
 
-var _ap_gift_common = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_common.tres")
-var _ap_gift_uncommon = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_uncommon.tres")
-var _ap_gift_rare = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_rare.tres")
-var _ap_gift_legendary = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_legendary.tres")
+var _ap_gift_common = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_common.tres")
+var _ap_gift_uncommon = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_uncommon.tres")
+var _ap_gift_rare = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_rare.tres")
+var _ap_gift_legendary = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_legendary.tres")
 
-export(Resource) var ap_upgrade_to_process_icon = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_upgrade_icon.png")
+export(Resource) var ap_upgrade_to_process_icon = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_100_upgrade_arrow_green_border.png")
 
 # Extensions
 var _drop_ap_pickup = true
@@ -139,7 +139,7 @@ func on_consumable_picked_up(consumable: Node) -> void:
 			RunData.tracked_item_effects["item_bag"] += RunData.effects["item_box_gold"]
 	.on_consumable_picked_up(consumable)
 
-func clean_up_room(is_last_wave: bool=false, is_run_lost: bool=false, is_run_won: bool=false) -> void:
+func clean_up_room(is_last_wave: bool = false, is_run_lost: bool = false, is_run_won: bool = false) -> void:
 	_ap_client.game_state.notify_wave_finished(RunData.current_wave, RunData.current_character.my_id, is_run_lost, is_run_won)
 	# Exactly one of these will be set when the run is completed. Can't trust is_last_wave since
 	# it might be false on wave 20 if endless mode is selected.
