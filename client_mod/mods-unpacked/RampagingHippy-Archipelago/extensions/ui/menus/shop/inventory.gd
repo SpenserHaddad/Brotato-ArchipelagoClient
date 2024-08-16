@@ -7,7 +7,7 @@ var _ap_client
 var _constants
 
 var _is_char_select_inventory: bool = false
-const ap_icon = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_pickup.png")
+const ap_icon = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80.png")
 
 func init_char_select_inventory(ap_client):
 	ModLoaderLog.debug("Initializing char select inventory", LOG_NAME)

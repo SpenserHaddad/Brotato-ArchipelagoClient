@@ -3,7 +3,7 @@
 [ext_resource path="res://resources/themes/base_theme.tres" type="Theme" id=1]
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/menu_ap_connect.gd" type="Script" id=2]
 [ext_resource path="res://ui/menus/global/my_menu_button.gd" type="Script" id=3]
-[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_disconnected.png" type="Texture" id=4]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_button_icon_disconnected.png" type="Texture" id=4]
 
 [node name="MarginContainer" type="MarginContainer"]
 anchor_left = 0.3

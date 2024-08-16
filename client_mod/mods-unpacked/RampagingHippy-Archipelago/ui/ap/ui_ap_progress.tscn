@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=2]
 
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_pickup.png" type="Texture" id=1]
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.gd" type="Script" id=2]
-[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.png" type="Texture" id=3]
 [ext_resource path="res://resources/fonts/actual/base/font_small_text.tres" type="DynamicFont" id=4]
 [ext_resource path="res://resources/fonts/actual/base/font_small_title.tres" type="DynamicFont" id=5]
 [ext_resource path="res://resources/themes/base_theme.tres" type="Theme" id=6]
@@ -32,7 +32,7 @@ custom_constants/separation = 25
 [node name="Icon" type="TextureRect" parent="MarginContainer/VBoxContainer"]
 margin_right = 402.0
 margin_bottom = 100.0
-texture = ExtResource( 3 )
+texture = ExtResource( 1 )
 stretch_mode = 4
 
 [node name="Progress" type="Label" parent="MarginContainer/VBoxContainer"]
