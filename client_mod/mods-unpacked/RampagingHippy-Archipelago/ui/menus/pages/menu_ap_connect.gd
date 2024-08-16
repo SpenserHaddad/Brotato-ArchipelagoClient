@@ -4,9 +4,9 @@ signal back_button_pressed
 
 const BrotatoApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/brotato_ap_client.gd")
 
-var _ap_icon_connected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_connected.png")
-var _ap_icon_disconnected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_disconnected.png")
-var _ap_icon_error = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_button_icon_error.png")
+var _ap_icon_connected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_button_icon_connected.png")
+var _ap_icon_disconnected = preload ("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_button_icon_disconnected.png")
+var _ap_icon_error = preload ("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_button_icon_error.png")
 
 onready var _connect_button: Button = $"VBoxContainer/ConnectButton"
 onready var _disconnect_button: Button = $"VBoxContainer/DisconnectButton"

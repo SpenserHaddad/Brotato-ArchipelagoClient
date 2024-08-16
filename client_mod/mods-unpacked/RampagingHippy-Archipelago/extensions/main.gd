@@ -7,7 +7,7 @@ var _ap_gift_uncommon = preload ("res://mods-unpacked/RampagingHippy-Archipelago
 var _ap_gift_rare = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_rare.tres")
 var _ap_gift_legendary = preload ("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_legendary.tres")
 
-export(Resource) var ap_upgrade_to_process_icon = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap_upgrade_icon.png")
+export(Resource) var ap_upgrade_to_process_icon = preload ("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_upgrade_icon.png")
 
 # Extensions
 var _drop_ap_pickup = true
