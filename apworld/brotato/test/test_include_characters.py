@@ -1,7 +1,8 @@
 import random
 from typing import List
 
-from BaseClasses import Region
+from BaseClasses import PlandoOptions, Region
+from Options import OptionError
 
 from ..constants import CHARACTER_REGION_TEMPLATE, CHARACTERS, DEFAULT_CHARACTERS
 from ..items import ItemName
@@ -39,7 +40,14 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
                 include_characters = {*valid_include_characters, invalid_character}
                 self.options = {"starting_characters": 1, "include_characters": include_characters}
                 # The VerifyKeys mixin on OptionSet raises a bare Exception when it encounters an invalid key.
-                self.assertRaises(Exception, self.world_setup)
+                self.world_setup()
+                self.assertRaises(
+                    OptionError,
+                    self.world.options.include_characters.verify,
+                    self.world,
+                    self.world.player_name,
+                    PlandoOptions.none,
+                )
 
     def test_include_characters_excluded_characters_do_not_have_regions(self):
         include_characters = CHARACTERS[:10]
