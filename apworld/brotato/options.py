@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionSet, PerGameCommonOptions, Range, TextChoice
+from Options import Choice, OptionSet, PerGameCommonOptions, Range, TextChoice, Toggle
 
 from .constants import (
     CHARACTERS,
@@ -174,6 +174,35 @@ class NumberLegendaryCrateDropGroups(Range):
     display_name: str = "Legendary Loot Crate Groups"
 
 
+class UsePerCharacterItems(Toggle):
+    """Whether items should be for all characters or just a single character.
+
+    Each character will have an equal number of items, with the same distribution for each (So, each character would
+    have 5 commons, 2 uncommons, 2 rares and 1 legendary).
+
+    This will mean each character has less items, making the game harder and probably requiring the game to take longer
+    to complete.
+    """
+
+    display_name = "Per-Character Items"
+
+
+class PerCharacterItemRatio(Range):
+    """What percentage of items should be for a single character versus for all characters.
+
+    The total number of items in the pool will be the same, except they will be sorted into buckets of "per-character"
+    and "all characters", and then the former will be further sorted into equal buckets for each character.
+
+    Does nothing if "Per-Character Items" is off.
+    """
+
+    range_start = 0
+    range_end = 100
+
+    default = 25
+    display_name = "Per-Character Item Ratio"
+
+
 class ItemWeights(Choice):
     """Distribution of item tiers when adding (Brotato) items to the (Archipelago) item pool.
 
@@ -339,6 +368,8 @@ class BrotatoOptions(PerGameCommonOptions):
     num_legendary_crate_drops: NumberLegendaryCrateDropLocations
     num_legendary_crate_drops_per_check: NumberLegendaryCrateDropsPerCheck
     num_legendary_crate_drop_groups: NumberLegendaryCrateDropGroups
+    per_character_items: UsePerCharacterItems
+    per_character_item_ratio: PerCharacterItemRatio
     item_weight_mode: ItemWeights
     common_item_weight: CommonItemWeight
     uncommon_item_weight: UncommonItemWeight
