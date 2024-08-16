@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- The "Lock" buttons in the shop can now be added as items in the randomizer.
+  - Two new options control if the buttons are randomized, and how many.
+  - If enabled, the buttons will disabled until the corresponding item is received.
+  - The lock buttons are progressive, so you will always receive the button for the
+    first shop slot, then the second, etc.
+
+### Changed
+- Resized the Archipelago logos used in various parts of the mod to make them closer in
+  size to similar images.
+- Added a black border to the logo used in-game to make it stand out better.
+
 ## [0.2.1] - 2024-08-05
 
 ### Fixed
