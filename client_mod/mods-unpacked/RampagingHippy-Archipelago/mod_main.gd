@@ -32,6 +32,9 @@ func _init():
 		"ui/menus/run/character_selection.gd",
 		# Show character win status in inventory elements
 		"ui/menus/shop/inventory.gd",
+		# Enable/Disable shop item lock buttons
+		"ui/menus/shop/shop_items_container.gd",
+		"ui/menus/shop/shop_item.gd",
 		# Show character win status on character select screen
 		"global/inventory_element.gd",
 	]

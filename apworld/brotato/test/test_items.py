@@ -1,6 +1,8 @@
 from collections import Counter
 
+from ..constants import MAX_SHOP_SLOTS
 from ..items import ItemName
+from ..options import StartingShopLockButtonsMode
 from . import BrotatoTestBase
 
 
@@ -77,3 +79,76 @@ class TestBrotatoItems(BrotatoTestBase):
         # All 20 legendary crate drop checks should be legendary items and nothing more. There's no way to tell how many
         # of each other item there will be.
         self.assertEqual(item_counts[self.world.create_item(ItemName.LEGENDARY_ITEM)], 20)
+
+    def test_create_items_shop_slot_items(self):
+        for num_starting_shop_slots in range(MAX_SHOP_SLOTS):
+            with self.subTest(num_starting_shop_slots=num_starting_shop_slots):
+                expected_num_slot_items = MAX_SHOP_SLOTS - num_starting_shop_slots
+
+                self._run({"num_starting_shop_slots": num_starting_shop_slots})
+                item_counts = Counter(self.multiworld.itempool)
+                self.assertEqual(item_counts[self.world.create_item(ItemName.SHOP_SLOT)], expected_num_slot_items)
+
+    def test_create_items_num_starting_lock_buttons(self):
+        for num_starting_lock_buttons in range(MAX_SHOP_SLOTS):
+            with self.subTest(num_starting_lock_buttons=num_starting_lock_buttons):
+                expected_num_lock_button_items = MAX_SHOP_SLOTS - num_starting_lock_buttons
+
+                self._run(
+                    {
+                        "shop_lock_buttons_mode": StartingShopLockButtonsMode.option_custom,
+                        "num_starting_lock_buttons": num_starting_lock_buttons,
+                    }
+                )
+                item_counts = Counter(self.multiworld.itempool)
+                self.assertEqual(
+                    item_counts[self.world.create_item(ItemName.SHOP_LOCK_BUTTON)], expected_num_lock_button_items
+                )
+
+    def test_create_items_shop_lock_buttons_mode_match_num_shop_slots_value(self):
+        for num_starting_shop_slots in range(MAX_SHOP_SLOTS):
+            with self.subTest(num_starting_shop_slots=num_starting_shop_slots):
+                expected_num_lock_button_items = MAX_SHOP_SLOTS - num_starting_shop_slots
+
+                self._run(
+                    {
+                        "shop_lock_buttons_mode": StartingShopLockButtonsMode.option_match_shop_slots,
+                        "num_starting_shop_slots": num_starting_shop_slots,
+                    }
+                )
+                item_counts = Counter(self.multiworld.itempool)
+                self.assertEqual(
+                    item_counts[self.world.create_item(ItemName.SHOP_LOCK_BUTTON)], expected_num_lock_button_items
+                )
+
+    def test_create_items_shop_lock_buttons_mode_no_starting_buttons(self):
+        for num_starting_shop_slots in range(MAX_SHOP_SLOTS):
+            with self.subTest(num_starting_shop_slots=num_starting_shop_slots):
+                expected_num_lock_button_items = MAX_SHOP_SLOTS
+
+                self._run(
+                    {
+                        "shop_lock_buttons_mode": StartingShopLockButtonsMode.option_none,
+                        "num_starting_shop_slots": num_starting_shop_slots,
+                    }
+                )
+                item_counts = Counter(self.multiworld.itempool)
+                self.assertEqual(
+                    item_counts[self.world.create_item(ItemName.SHOP_LOCK_BUTTON)], expected_num_lock_button_items
+                )
+
+    def test_create_items_shop_lock_buttons_mode_all_starting_buttons(self):
+        for num_starting_shop_slots in range(MAX_SHOP_SLOTS):
+            with self.subTest(num_starting_shop_slots=num_starting_shop_slots):
+                expected_num_lock_button_items = 0
+
+                self._run(
+                    {
+                        "shop_lock_buttons_mode": StartingShopLockButtonsMode.option_all,
+                        "num_starting_shop_slots": num_starting_shop_slots,
+                    }
+                )
+                item_counts = Counter(self.multiworld.itempool)
+                self.assertEqual(
+                    item_counts[self.world.create_item(ItemName.SHOP_LOCK_BUTTON)], expected_num_lock_button_items
+                )

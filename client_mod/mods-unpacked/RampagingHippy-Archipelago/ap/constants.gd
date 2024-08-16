@@ -66,6 +66,7 @@ const UPGRADE_NAME_TO_TIER = {
 }
 
 const SHOP_SLOT_ITEM_NAME = "Progressive Shop Slot"
+const SHOP_LOCK_BUTTON_ITEM_NAME = "Progressive Shop Lock Button"
 
 # The ItemService generates items using the current wave to choose the value. This value
 # defines how many items are dropped for each wave, going up. For example, if 2 then
