@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from typing import ClassVar
 
 from test.bases import WorldTestBase
@@ -15,7 +14,7 @@ class BrotatoTestBase(WorldTestBase):
     def _test_data_set_subtests(self):
         for test_data in TEST_DATA_SETS:
             with self.subTest(msg=test_data.test_name()):
-                self._run(asdict(test_data.options))
+                self._run(test_data.options_dict)
                 yield test_data
 
     def _run(self, options: dict):
