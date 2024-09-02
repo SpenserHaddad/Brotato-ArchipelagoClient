@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/ap_common_gift_item.png-8ff893fa726f4b348e91ac9ba2a5175d.stex"
+path="res://.import/ap_logo_80_gift_item_rare.png-99fdfb504d9ee65b21961b65a231c134.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_common_gift_item.png"
-dest_files=[ "res://.import/ap_common_gift_item.png-8ff893fa726f4b348e91ac9ba2a5175d.stex" ]
+source_file="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80_gift_item_rare.png"
+dest_files=[ "res://.import/ap_logo_80_gift_item_rare.png-99fdfb504d9ee65b21961b65a231c134.stex" ]
 
 [params]
 
