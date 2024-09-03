@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- (Internal) Added new utility for saving a Godot scene to an image. This helps a lot
+  with creating scenes which use Brotato's shader and font.
+
 ### Changed
 
 - The arrows in the Archipelago upgrade icon is now colored to match its tier.
