@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The arrows in the Archipelago upgrade icon is now colored to match its tier.
+- The Archipelago gift item icon now has a colored later to match its tier.
+
+### Fixed
+- The run won icon on the player select screen is now an appropriate size.
+- The uncommon gift item now uses the correct icon in the consumables list.
+
 ## [0.3.0] - 2024-08-15
 
 ### Added

@@ -10,6 +10,6 @@ func set_character_info(won_run: bool):
 		self,
 		"ApWonRunIcon",
 		null,
-		"res://mods-unpacked/RampagingHippy-Archipelago/ap_won_run_icon.tscn",
+		"res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_won_run_icon.tscn",
 		won_run
 	)
