@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://resources/fonts/actual/base/font_big_title.tres" type="DynamicFont" id=1]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80_upgrade_arrow_green.png" type="Texture" id=2]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/hud/shader_icon.gd" type="Script" id=3]
+[ext_resource path="res://resources/themes/base_theme.tres" type="Theme" id=4]
+
+[node name="Node2D" type="Viewport"]
+size = Vector2( 80, 80 )
+transparent_bg = true
+msaa = 4
+script = ExtResource( 3 )
+path = "C:\\Users\\sahko\\ap_legendary_item.png"
+
+[node name="TextureRect" type="TextureRect" parent="."]
+margin_right = 100.0
+margin_bottom = 100.0
+rect_scale = Vector2( 0.8, 0.8 )
+texture = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.6
+anchor_top = 0.173
+anchor_right = 0.75
+anchor_bottom = 0.5
+margin_right = 40.0
+margin_bottom = 45.0
+theme = ExtResource( 4 )
+custom_colors/font_color = Color( 1, 0.231373, 0.231373, 1 )
+custom_fonts/font = ExtResource( 1 )
+text = "L"
+uppercase = true
