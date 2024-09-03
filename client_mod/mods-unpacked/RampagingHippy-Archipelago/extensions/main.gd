@@ -7,7 +7,12 @@ var _ap_gift_uncommon = preload("res://mods-unpacked/RampagingHippy-Archipelago/
 var _ap_gift_rare = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_rare.tres")
 var _ap_gift_legendary = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_gift_items/ap_gift_item_legendary.tres")
 
-export(Resource) var ap_upgrade_to_process_icon = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_100_upgrade_arrow_green_border.png")
+onready var ap_upgrade_to_process_icons = {
+	Tier.COMMON: preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_100_gift_upgrade_common.png"),
+	Tier.UNCOMMON: preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_100_gift_upgrade_uncommon.png"),
+	Tier.RARE: preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_100_gift_upgrade_rare.png"),
+	Tier.LEGENDARY: preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_100_gift_upgrade_legendary.png"),
+}
 
 # Extensions
 var _drop_ap_pickup = true
@@ -87,7 +92,8 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 		Tier.LEGENDARY:
 			upgrade_level = 25
 	# Taken from on_levelled_up
-	emit_signal("upgrade_to_process_added", ap_upgrade_to_process_icon, upgrade_level)
+	var upgrade_icon = ap_upgrade_to_process_icons[upgrade_tier]
+	emit_signal("upgrade_to_process_added", upgrade_icon, upgrade_level)
 	_upgrades_to_process.push_back(upgrade_level)
 	# Mark the upgrade as processed here insteard of where it's actually
 	# processed in _on_EndWaveTimer_timeout. It's a lot simpler to do here and
