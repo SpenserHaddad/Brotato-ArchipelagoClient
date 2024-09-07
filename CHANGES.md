@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.4.0] - 2024-09-02
-
 ### Added
 
 - (Internal) Added new utility for saving a Godot scene to an image. This helps a lot
@@ -17,11 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The arrows in the Archipelago upgrade icon is now colored to match its tier.
-- The Archipelago gift item icon now has a colored later to match its tier.
+- The Archipelago gift item icon now has a colored letter to match its tier.
+- Resized all gift item icons to match the default loot box image.
 
 ### Fixed
 - The run won icon on the player select screen is now an appropriate size.
-- The uncommon gift item now uses the correct icon in the consumables list.
 
 ## [0.3.0] - 2024-08-15
 
