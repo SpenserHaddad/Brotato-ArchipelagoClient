@@ -198,6 +198,7 @@ func on_room_updated(updated_room_info: Dictionary):
 func on_connected_to_multiworld():
 	_wins_received = 0
 	location_check_status = {}
+	location_idx_to_id = {}
 	total_checks = _ap_client.slot_data["num_%s_crate_locations" % crate_type]
 	crates_per_check = _ap_client.slot_data["num_%s_crate_drops_per_check" % crate_type]
 
