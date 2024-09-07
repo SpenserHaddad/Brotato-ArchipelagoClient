@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a run.
   - Fix: only update the client status to `CLIENT_GOAL` if it is not set.
 - Fix shop lock buttons staying disabled after disconnecting from a multiworld.
+- Fix number of starting shop lock buttons not matching options.
+  - This unfortunately cannot be fixed for existing games, only for ones generated with
+    this fix.
+- Fix upgrades and items received being duplicated across slots if connecting to
+  multiple servers/players in the same game instance.
 
 ## [0.3.0] - 2024-08-15
 
