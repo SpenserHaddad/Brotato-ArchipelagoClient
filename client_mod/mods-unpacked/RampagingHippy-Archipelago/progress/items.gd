@@ -83,6 +83,21 @@ func on_connected_to_multiworld():
 	for tier in wave_per_game_item_json:
 		wave_per_game_item[int(tier)] = wave_per_game_item_json[tier]
 
+	# Clear the received and processed items in case there's data from a previous slot
+	received_items_by_tier = {
+		Tier.COMMON: 0,
+		Tier.UNCOMMON: 0,
+		Tier.RARE: 0,
+		Tier.LEGENDARY: 0
+	}
+
+	processed_items_by_tier = {
+		Tier.COMMON: 0,
+		Tier.UNCOMMON: 0,
+		Tier.RARE: 0,
+		Tier.LEGENDARY: 0
+	}
+
 func on_run_started(_character_id: String):
 	# Reset the number of items processed
 	processed_items_by_tier = {
