@@ -10,6 +10,7 @@ class_name ApWinsProgress
 
 var ApTypes = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_types.gd")
 
+var has_won_multiworld: bool = false
 var wins_for_goal: int
 var num_wins: int = 0
 var characters_won_with: PoolStringArray = []
@@ -31,10 +32,15 @@ func _on_wave_finished(wave_number: int, character_id: String, is_run_lost: bool
 func on_item_received(item_name: String, _item):
 	if item_name == "Run Won":
 		num_wins += 1
-		if num_wins >= wins_for_goal:
+		if num_wins >= wins_for_goal and not has_won_multiworld:
 			_ap_client.set_status(ApTypes.ClientStatus.CLIENT_GOAL)
+			# Set this so we don't set the status multiple times when connecting to a won slot.
+			has_won_multiworld = true
 
 func on_connected_to_multiworld():
 	wins_for_goal = _ap_client.slot_data["num_wins_needed"]
 	num_wins = 0
 	characters_won_with = []
+	
+	var client_status  = _ap_client.get_value(["client_status_%d_%d" % [_ap_client.team, _ap_client.slot]])
+	has_won_multiworld = client_status == ApTypes.ClientStatus.CLIENT_GOAL

@@ -41,6 +41,15 @@ func on_item_received(item_name: String, _item):
 		# No reason to check if connected or in a run
 		emit_signal("upgrade_received", upgrade_tier)
 
+func on_connected_to_multiworld():
+	# Reset the number of received upgrades in case there's data from a previous slot.
+	received_upgrades_by_tier = {
+		Tier.COMMON: 0,
+		Tier.UNCOMMON: 0,
+		Tier.RARE: 0,
+		Tier.LEGENDARY: 0
+	}
+
 func on_run_started(_character_id: String):
 	# Reset the number of upgrades processed
 	processed_upgrades_by_tier = {

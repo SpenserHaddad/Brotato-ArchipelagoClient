@@ -20,6 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - The run won icon on the player select screen is now an appropriate size.
+- Removed logs that would cause the game to hang when connecting to a multiworld.
+- Fix game freezing for a few seconds when connecting to a slot after winning a run.
+- Fix shop lock buttons staying disabled after disconnecting from a multiworld.
+- Fix number of starting shop lock buttons not matching options.
+  - This unfortunately cannot be fixed for existing games, only for ones generated with
+    this fix.
+- Fix upgrades and items received being duplicated across slots if connecting to
+  multiple servers/players in the same game instance.
 
 ## [0.3.0] - 2024-08-15
 

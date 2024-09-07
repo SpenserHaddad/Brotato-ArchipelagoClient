@@ -1,3 +1,4 @@
+from ..options import StartingShopLockButtonsMode
 from . import BrotatoTestBase
 
 
@@ -12,6 +13,8 @@ class TestBrotatoSlotData(BrotatoTestBase):
         "num_legendary_crate_drops_per_check": 1,
         "num_legendary_crate_drop_groups": 2,
         "num_starting_shop_slots": 1,
+        "shop_lock_buttons_mode": StartingShopLockButtonsMode.option_custom,
+        "num_starting_lock_buttons": 2,
         # Use custom item weights so we know that there are exactly 50 common items and 20 legendary items in the
         # itempool when we check the item_waves.
         "item_weight_mode": 2,
@@ -30,6 +33,11 @@ class TestBrotatoSlotData(BrotatoTestBase):
     def test_slot_data_num_starting_shop_slots(self):
         slot_data = self.world.fill_slot_data()
         self.assertEqual(slot_data["num_starting_shop_slots"], 1)
+
+    def test_slot_data_starting_shop_lock_buttons(self):
+        slot_data = self.world.fill_slot_data()
+        # There should be 2 lock button items, and therefore two starting lock buttons
+        self.assertEqual(slot_data["num_starting_shop_lock_buttons"], 2)
 
     def test_slot_data_num_common_crate_locations(self):
         slot_data = self.world.fill_slot_data()

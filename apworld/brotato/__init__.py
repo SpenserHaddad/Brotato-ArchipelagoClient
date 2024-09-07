@@ -283,7 +283,7 @@ class BrotatoWorld(World):
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": self.options.num_victories.value,
             "num_starting_shop_slots": self.options.num_starting_shop_slots.value,
-            "num_starting_shop_lock_buttons": self.options.num_starting_lock_buttons.value,
+            "num_starting_shop_lock_buttons": (MAX_SHOP_SLOTS - self.num_shop_lock_button_items),
             "num_common_crate_locations": self.options.num_common_crate_drops.value,
             "num_common_crate_drops_per_check": self.options.num_common_crate_drops_per_check.value,
             "common_crate_drop_groups": [asdict(g) for g in self.common_loot_crate_groups],

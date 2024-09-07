@@ -187,7 +187,6 @@ func on_item_received(item_name: String, _item):
 				last_unlocked_group_idx += 1
 				num_unlocked_locations += next_group.num_crates
 				_update_can_spawn_crate()
-				ModLoaderLog.debug("New %s group unlocked. Available checks = %d, Wins needed = %d" % [crate_type, num_unlocked_locations, loot_crate_groups[last_unlocked_group_idx].wins_to_unlock], LOG_NAME)
 
 func on_room_updated(updated_room_info: Dictionary):
 	if updated_room_info.has("checked_locations"):
@@ -199,6 +198,7 @@ func on_room_updated(updated_room_info: Dictionary):
 func on_connected_to_multiworld():
 	_wins_received = 0
 	location_check_status = {}
+	location_idx_to_id = {}
 	total_checks = _ap_client.slot_data["num_%s_crate_locations" % crate_type]
 	crates_per_check = _ap_client.slot_data["num_%s_crate_drops_per_check" % crate_type]
 
