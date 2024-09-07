@@ -249,7 +249,7 @@ func on_run_started(_character_id: String):
 	_num_crates_spawned = 0
 	_update_can_spawn_crate(true)
 
-func _on_session_data_storage_updated(key: String, new_value, _original_value):
+func _on_session_data_storage_updated(key: String, new_value, _original_value=null):
 	if key == _check_progress_data_storage_key:
 		ModLoaderLog.debug("Received check progress DS update: key=%s, new_value=%d" % [key, new_value], LOG_NAME)
 		_update_check_progress(new_value)
