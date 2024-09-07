@@ -14,7 +14,8 @@ func _ready():
 		self,
 		"_update_lock_buttons"
 	)
-	_update_lock_buttons()
+	if _ap_client.connected_to_multiworld():
+		_update_lock_buttons()
 
 func _update_lock_buttons():
 	for shop_item_idx in range(_shop_items.size()):
