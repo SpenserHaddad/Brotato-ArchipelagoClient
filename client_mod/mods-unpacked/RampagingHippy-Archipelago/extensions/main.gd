@@ -126,7 +126,7 @@ func spawn_consumables(unit: Unit) -> void:
 		elif spawned_consumable_id == "ap_legendary_pickup":
 			_ap_client.legendary_loot_crate_progress.notify_crate_spawned()
 
-func on_consumable_picked_up(consumable: Node) -> void:
+func on_consumable_picked_up(consumable: Node, player_index: int) -> void:
 	var is_ap_consumable = false
 	if consumable.consumable_data.my_id == "ap_pickup":
 		ModLoaderLog.debug("Picked up AP consumable", LOG_NAME)
@@ -140,10 +140,11 @@ func on_consumable_picked_up(consumable: Node) -> void:
 	if is_ap_consumable:
 		# Pretend we're a crate and add gold if the player has Bag, copy/pasted from the
 		# base function.
-		if RunData.effects["item_box_gold"] != 0:
-			RunData.add_gold(RunData.effects["item_box_gold"])
-			RunData.tracked_item_effects["item_bag"] += RunData.effects["item_box_gold"]
-	.on_consumable_picked_up(consumable)
+		var item_box_gold_effect = RunData.get_player_effect("item_box_gold", player_index)
+		if item_box_gold_effect != 0:
+			RunData.add_gold(item_box_gold_effect, player_index)
+			RunData.add_tracked_value(player_index, "item_bag", item_box_gold_effect)
+	.on_consumable_picked_up(consumable, player_index)
 
 func clean_up_room(is_last_wave: bool = false, is_run_lost: bool = false, is_run_won: bool = false) -> void:
 	_ap_client.game_state.notify_wave_finished(RunData.current_wave, RunData.current_character.my_id, is_run_lost, is_run_won)

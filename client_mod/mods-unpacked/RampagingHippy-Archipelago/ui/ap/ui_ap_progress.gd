@@ -1,3 +1,4 @@
+class_name ApMultiWorldProgress
 extends PanelContainer
 
 const LOG_NAME = "RampagingHippy-Archipelago/ui_crate_progress"
