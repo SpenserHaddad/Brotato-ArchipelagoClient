@@ -58,7 +58,7 @@ func on_connected_to_multiworld():
 		true
 	)
 
-func on_run_started(_character_id: String):
+func on_run_started(_character_ids: Array):
 	give_player_unreceived_gold()
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value = null):

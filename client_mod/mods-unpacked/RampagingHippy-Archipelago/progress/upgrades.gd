@@ -50,8 +50,9 @@ func on_connected_to_multiworld():
 		Tier.LEGENDARY: 0
 	}
 
-func on_run_started(_character_id: String):
+func on_run_started(_character_ids: Array):
 	# Reset the number of upgrades processed
+	# TODO: Per-player processing
 	processed_upgrades_by_tier = {
 		Tier.COMMON: 0,
 		Tier.UNCOMMON: 0,

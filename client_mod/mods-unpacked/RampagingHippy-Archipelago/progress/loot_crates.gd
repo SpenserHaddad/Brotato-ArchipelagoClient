@@ -245,7 +245,7 @@ func on_connected_to_multiworld():
 		true
 	)
 
-func on_run_started(_character_id: String):
+func on_run_started(_character_ids: Array):
 	_num_crates_spawned = 0
 	_update_can_spawn_crate(true)
 
