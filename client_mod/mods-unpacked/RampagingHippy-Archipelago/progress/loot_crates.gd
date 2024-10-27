@@ -158,15 +158,15 @@ func _update_num_locations_checked(new_value: int, send_check: bool=true):
 
 func _update_can_spawn_consumable():
 	var possible_checks = floor((check_progress + _num_crates_spawned) / crates_per_check)
-	var new_can_spawn_consumable = num_locations_checked + possible_checks < num_unlocked_locations
+	can_spawn_consumable = num_locations_checked + possible_checks < num_unlocked_locations
 	ModLoaderLog.debug(
-		"Updating can_spawn_consumable: check_progress=%d, crates_spawned=%d, crates_per_check=%d, num_locations_checked=%d, num_unlocked_locations=%d, new_can_spawn_consumable=%s" % [
+		"Updating can_spawn_consumable: check_progress=%d, crates_spawned=%d, crates_per_check=%d, num_locations_checked=%d, num_unlocked_locations=%d, can_spawn_consumable=%s" % [
 			check_progress,
 			_num_crates_spawned,
 			crates_per_check,
 			num_locations_checked,
 			num_unlocked_locations,
-			new_can_spawn_consumable
+			can_spawn_consumable
 		],
 		LOG_NAME
 	)
