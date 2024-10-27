@@ -122,6 +122,7 @@ func spawn_consumables(unit: Unit) -> void:
 		var old_unit_always_drop_consumable = unit.stats.always_drop_consumables
 		if _ap_client.debug.auto_spawn_loot_crate_counter == _ap_client.debug.auto_spawn_loot_crate_on_count:
 			_ap_client.debug.auto_spawn_loot_crate_counter = 0
+			ModLoaderLog.debug("Debug spawning consumable", LOG_NAME)
 			unit.stats.always_drop_consumables = true
 		else:
 			_ap_client.debug.auto_spawn_loot_crate_counter += 1
