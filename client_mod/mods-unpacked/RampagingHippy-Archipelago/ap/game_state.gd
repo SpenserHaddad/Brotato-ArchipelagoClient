@@ -25,6 +25,7 @@ signal wave_finished(wave_number, character_ids, is_run_lost, is_run_won)
 
 var _ap_client
 var in_run: bool = false
+var active_characters: Array = []
 
 func _init(ap_client):
 	_ap_client = ap_client
@@ -41,30 +42,31 @@ func notify_run_started(character_ids: Array):
 	##
 	## Emits the `run_started` signal to notify progress trackers.
 	in_run = true
-	var in_ap_run = is_in_ap_run()
+	active_characters = character_ids
 	if is_in_ap_run():
-		emit_signal("run_started", character_ids)
+		emit_signal("run_started", active_characters)
 
-func notify_run_finished(won_run: bool, character_ids: Array):
+func notify_run_finished(won_run: bool):
 	## Called by the game extensions when a run is finished, whether won or lost.
 	##
 	## Emits the `run_finished` signal to notify progress trackers.
 	# Check if this was an AP run before flipping the in_run flag
 	var finished_ap_run = is_in_ap_run()
 	in_run = false
+	active_characters = []
 	if finished_ap_run:
-		emit_signal("run_finished", won_run, character_ids)
+		emit_signal("run_finished", won_run, active_characters)
 
-func notify_wave_started(wave_number: int, character_ids: Array):
+func notify_wave_started(wave_number: int):
 	## Called by the game extensions when a wave is started.
 	##
 	## Emits the `wave_started` signal to notify progress trackers.
 	if is_in_ap_run():
-		emit_signal("wave_started", wave_number, character_ids)
+		emit_signal("wave_started", wave_number, active_characters)
 
-func notify_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool, is_run_won: bool):
+func notify_wave_finished(wave_number: int, is_run_lost: bool, is_run_won: bool):
 	## Called by the game extensions when a wave is finished.
 	##
 	## Emits the `wave_finished` signal to notify progress trackers.
 	if is_in_ap_run():
-		emit_signal("wave_finished", wave_number, character_ids, is_run_lost, is_run_won)
+		emit_signal("wave_finished", wave_number, active_characters, is_run_lost, is_run_won)
