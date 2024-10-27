@@ -18,7 +18,6 @@ onready var ap_upgrade_to_process_icons = {
 var _drop_ap_pickup = true
 onready var _ap_client
 onready var _life_container_p1 = $UI/HUD/LifeContainerP1 # Show AP progress under player 1
-var _active_characters: Array = [] # Array of the characters each player is using.
 
 func _ready() -> void:
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
@@ -27,8 +26,10 @@ func _ready() -> void:
 	if _ap_client.connected_to_multiworld():
 		if RunData.current_wave == DebugService.starting_wave:
 			# Run started, notify the AP game state tracker
-			_active_characters = _get_played_characters()
-			_ap_client.game_state.notify_run_started(_active_characters)
+			var active_characters = []
+			for player in RunData.players_data:
+				active_characters.append(player.current_character.my_id)
+			_ap_client.game_state.notify_run_started(active_characters)
 			
 		# Give player any unprocessed items and upgrades from the multiworld
 		for item_tier in _ap_client.items_progress.received_items_by_tier:
@@ -52,7 +53,7 @@ func _ready() -> void:
 					_on_ap_upgrade_received(upgrade_tier)
 
 		# Need to call after run is started otherwise some game state isn't ready yet.
-		_ap_client.game_state.notify_wave_started(RunData.current_wave, _active_characters)
+		_ap_client.game_state.notify_wave_started(RunData.current_wave)
 		
 		var _status = _ap_client.items_progress.connect("item_received", self, "_on_ap_item_received")
 		_status = _ap_client.upgrades_progress.connect("upgrade_received", self, "_on_ap_upgrade_received")
@@ -64,14 +65,6 @@ func _ready() -> void:
 			"res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/hud/ap_hud.tscn",
 			true
 		)
-
-# Utilities
-func _get_played_characters() -> Array:
-	# Get all the characters currently being played in-game. One for each player.
-	var played_characters = []
-	for player in RunData.players_data:
-		played_characters.append(player.current_character.my_id)
-	return played_characters
 
 # Archipelago Item received handlers
 func _on_ap_item_received(item_tier: int):
@@ -102,10 +95,14 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 			upgrade_level = 10
 		Tier.LEGENDARY:
 			upgrade_level = 25
-	# Taken from on_levelled_up
+	# Adapted from on_levelled_up
 	var upgrade_icon = ap_upgrade_to_process_icons[upgrade_tier]
-	emit_signal("upgrade_to_process_added", upgrade_icon, upgrade_level)
-	_upgrades_to_process.push_back(upgrade_level)
+	for player_index in range(RunData.get_player_count()):
+		_things_to_process_player_containers[player_index].upgrades.add_element(upgrade_icon, upgrade_level)
+		var upgrade_to_process = UpgradesUI.UpgradeToProcess.new()
+		upgrade_to_process.level = upgrade_level
+		upgrade_to_process.player_index = player_index
+		_upgrades_to_process[player_index].push_back(upgrade_to_process)
 	# Mark the upgrade as processed here insteard of where it's actually
 	# processed in _on_EndWaveTimer_timeout. It's a lot simpler to do here and
 	# the end result is the same either way.
@@ -158,9 +155,9 @@ func on_consumable_picked_up(consumable: Node, player_index: int) -> void:
 	.on_consumable_picked_up(consumable, player_index)
 
 func clean_up_room(is_last_wave: bool = false, is_run_lost: bool = false, is_run_won: bool = false) -> void:
-	_ap_client.game_state.notify_wave_finished(RunData.current_wave, _active_characters, is_run_lost, is_run_won)
-	# Exactly one of these will be set when the run is completed. Can't trust is_last_wave since
-	# it might be false on wave 20 if endless mode is selected.
+	_ap_client.game_state.notify_wave_finished(RunData.current_wave, is_run_lost, is_run_won)
+	# Exactly one of these will be set when the run is completed. Can't trust
+	# is_last_wave since it might be false on wave 20 if endless mode is selected.
 	if is_run_won or is_run_lost:
-		_ap_client.game_state.notify_run_finished(is_run_won, _active_characters)
+		_ap_client.game_state.notify_run_finished(is_run_won)
 	.clean_up_room(is_last_wave, is_run_lost, is_run_won)
