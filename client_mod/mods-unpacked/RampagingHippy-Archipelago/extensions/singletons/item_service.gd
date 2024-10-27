@@ -2,69 +2,34 @@ extends "res://singletons/item_service.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/item_service"
 
-var _ap_pickup = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.tres")
-var _ap_legendary_pickup = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_legendary_pickup/ap_legendary_pickup.tres")
-onready var _item_box_original
-onready var _legendary_item_box_original
+var _ap_normal_consuamble = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.tres")
+var _ap_legendary_consumable = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_legendary_pickup/ap_legendary_pickup.tres")
+
 onready var _ap_client
 
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_ap_client = mod_node.brotato_ap_client
-	var _success = _ap_client.common_loot_crate_progress.connect(
-		"can_spawn_crate_changed",
-		self,
-		"_on_common_can_spawn_crate_changed"
-	)
-	_success = _ap_client.legendary_loot_crate_progress.connect(
-		"can_spawn_crate_changed",
-		self,
-		"_on_legendary_can_spawn_crate_changed"
-	)
-	
-	# _item_box_original = item_box
-	# _legendary_item_box_original = legendary_item_box
 
-func _on_common_can_spawn_crate_changed(can_spawn_crate: bool, _crate_type: String):
-	if can_spawn_crate:
-		ModLoaderLog.debug("Crate is AP consumable", LOG_NAME)
-		# item_box = _ap_pickup
+func get_consumable_for_tier(tier: int = Tier.COMMON) -> ConsumableData:
+	if tier == Tier.LEGENDARY and _ap_client.legendary_loot_crate_progress.can_spawn_consumable:
+		return _ap_legendary_consumable.duplicate()
+	elif _ap_client.common_loot_crate_progress.can_spawn_consumable:
+		return _ap_normal_consuamble.duplicate()
 	else:
-		ModLoaderLog.debug("Crate is normal crate.", LOG_NAME)
-		# item_box = _item_box_original
-
-func _on_legendary_can_spawn_crate_changed(can_spawn_crate: bool, _crate_type: String):
-	if can_spawn_crate:
-		ModLoaderLog.debug("Legendary Crate is AP consumable", LOG_NAME)
-		# legendary_item_box = _ap_legendary_pickup
-	else:
-		ModLoaderLog.debug("Legendary Crate is normal legendary crate", LOG_NAME)
-		# legendary_item_box = _legendary_item_box_original
-
-func get_consumable_to_drop(unit: Unit, item_chance: float) -> ConsumableData:
-	# unit.stats.consumable_data.tier
-	if _ap_client.debug.auto_spawn_loot_crate:
-		if unit.stats.consumable_data.tier == Tier.LEGENDARY:
-			ModLoaderLog.debug("Debug would drop legendary Crate", LOG_NAME)
-			# return legendary_item_box
-		else:
-			ModLoaderLog.debug("Debug would drop normal Crate", LOG_NAME)
-			# return item_box
-	# else:
-	return .get_consumable_to_drop(unit, item_chance)
+		return .get_consumable_for_tier(tier)	
 
 func process_item_box(consumable_data: ConsumableData, wave: int, player_index: int) -> ItemParentData:
-		ModLoaderLog.debug("Processing box %s:" % consumable_data.my_id, LOG_NAME)
-		match consumable_data.my_id:
-			"ap_gift_item_common", "ap_gift_item_uncommon", "ap_gift_item_rare", "ap_gift_item_legendary":
-				var item_tier = consumable_data.tier
-				var item_wave = _ap_client.items_progress.process_ap_item(item_tier)
-				ModLoaderLog.debug("Processing AP item of tier %d at wave %d" % [item_tier, item_wave], LOG_NAME)
-				# TODO: Pass the right consumable
-				return .process_item_box(consumable_data, item_wave, player_index)
-
-			_:
-				return .process_item_box(consumable_data, wave, player_index)
+	ModLoaderLog.debug("Processing box %s:" % consumable_data.my_id, LOG_NAME)
+	match consumable_data.my_id:
+		"ap_gift_item_common", "ap_gift_item_uncommon", "ap_gift_item_rare", "ap_gift_item_legendary":
+			var item_tier = consumable_data.tier
+			var item_wave = _ap_client.items_progress.process_ap_item(item_tier)
+			ModLoaderLog.debug("Processing AP item of tier %d at wave %d" % [item_tier, item_wave], LOG_NAME)
+			# TODO: Pass the right consumable
+			return .process_item_box(consumable_data, item_wave, player_index)
+		_:
+			return .process_item_box(consumable_data, wave, player_index)
 
 func get_upgrade_data(level: int, player_index: int) -> UpgradeData:
 	if level >= 0:
