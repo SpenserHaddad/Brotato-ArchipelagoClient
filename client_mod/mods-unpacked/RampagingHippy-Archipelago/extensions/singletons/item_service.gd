@@ -43,16 +43,16 @@ func get_upgrade_data(level: int, player_index: int) -> UpgradeData:
 		# code the tier for the call to get_rand_element just as the base call would do.
 		return Utils.get_rand_element(_tiers_data[Tier.COMMON][TierData.UPGRADES])
 
-func get_shop_items(wave: int, number: int = NB_SHOP_ITEMS, shop_items: Array = [], locked_items: Array = []) -> Array:
+func get_player_shop_items(wave: int, player_index: int, args: ItemServiceGetShopItemsArgs) -> Array:
 	if _ap_client.connected_to_multiworld():
-		ModLoaderLog.debug("Get shop items called with: wave=%d, number=%d, shop_items=%s, locked_items=%s" % [wave, number, shop_items, locked_items], LOG_NAME)
+		ModLoaderLog.debug("Get shop items called with: wave=%d, player_index=%d, args=%s" % [wave, player_index, args], LOG_NAME)
 		var ap_num_shop_slots = _ap_client.shop_slots_progress.num_unlocked_shop_slots
-		var num_locked_items = locked_items.size()
+		var num_locked_items = args.locked_items.size()
 		if num_locked_items > 0:
 			# We're rerolling the shop with some slots locked, make sure we don't accidentally add slots
-			number = int(min(number, ap_num_shop_slots - num_locked_items))
-		elif number > ap_num_shop_slots:
-			number = ap_num_shop_slots
-		ModLoaderLog.debug("Calling get_shop_items base with number=%d" % number, LOG_NAME)
+			args.count = int(min(args.count, ap_num_shop_slots - num_locked_items))
+		elif args.count > ap_num_shop_slots:
+			args.count = ap_num_shop_slots
+		ModLoaderLog.debug("Calling get_player_shop_items base with args.count=%d" % args.count, LOG_NAME)
 	
-	return .get_shop_items(wave, number, shop_items, locked_items)
+	return .get_player_shop_items(wave, player_index, args)
