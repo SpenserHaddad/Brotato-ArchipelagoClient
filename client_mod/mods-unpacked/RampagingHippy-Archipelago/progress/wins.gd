@@ -18,7 +18,7 @@ var characters_won_with: PoolStringArray = []
 func _init(ap_client, game_state).(ap_client, game_state):
 	var _status = _game_state.connect("wave_finished", self, "_on_wave_finished")
 
-func _on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool, is_run_won: bool):
+func _on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool, _is_run_won: bool):
 	# Use wave_number and is_run_lost to decide if we won the run or not, in 
 	# case the player went into endless mode. is_run_lost=false means the wave
 	# ended with either a victory or going into endless mode, both of which
