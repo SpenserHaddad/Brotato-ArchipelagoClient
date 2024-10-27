@@ -20,14 +20,16 @@ func get_consumable_for_tier(tier: int = Tier.COMMON) -> ConsumableData:
 		return .get_consumable_for_tier(tier)	
 
 func process_item_box(consumable_data: ConsumableData, wave: int, player_index: int) -> ItemParentData:
-	ModLoaderLog.debug("Processing box %s:" % consumable_data.my_id, LOG_NAME)
 	match consumable_data.my_id:
 		"ap_gift_item_common", "ap_gift_item_uncommon", "ap_gift_item_rare", "ap_gift_item_legendary":
 			var item_tier = consumable_data.tier
 			var item_wave = _ap_client.items_progress.process_ap_item(item_tier)
 			ModLoaderLog.debug("Processing AP item of tier %d at wave %d" % [item_tier, item_wave], LOG_NAME)
-			# TODO: Pass the right consumable
-			return .process_item_box(consumable_data, item_wave, player_index)
+			# Adapted from the base process_item_box
+			var args = GetRandItemForWaveArgs.new()
+			args.owned_and_shop_items = RunData.get_player_items(player_index)
+			args.fixed_tier = item_tier
+			return _get_rand_item_for_wave(item_wave, player_index, TierData.ITEMS, args)
 		_:
 			return .process_item_box(consumable_data, wave, player_index)
 

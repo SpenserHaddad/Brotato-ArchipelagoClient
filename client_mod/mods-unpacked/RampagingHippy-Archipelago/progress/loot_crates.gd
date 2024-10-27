@@ -42,10 +42,7 @@ class LootCrateGroup:
 		num_crates = num_crates_
 		wins_to_unlock = wins_to_unlock_
 
-## Emitted when we have to change whether to drop AP loot crates or vanilla loot crates.
-## This is also always emitted at the start of a run to tell the game which type of
-## crate to drop.
-signal can_spawn_ap_consumable_changed(can_spawn)
+## Emitted when a crate is picked up to indicate the updated progress to the next check.
 signal check_progress_changed(progress, total)
 
 # The total number of loot crate checks available.
@@ -159,7 +156,7 @@ func _update_num_locations_checked(new_value: int, send_check: bool=true):
 		false
 	)
 
-func _update_can_spawn_consumable(force_signal=false):
+func _update_can_spawn_consumable():
 	var possible_checks = floor((check_progress + _num_crates_spawned) / crates_per_check)
 	var new_can_spawn_consumable = num_locations_checked + possible_checks < num_unlocked_locations
 	ModLoaderLog.debug(
@@ -173,9 +170,6 @@ func _update_can_spawn_consumable(force_signal=false):
 		],
 		LOG_NAME
 	)
-	if new_can_spawn_consumable != can_spawn_consumable or force_signal:
-		can_spawn_consumable = new_can_spawn_consumable
-		emit_signal("can_spawn_ap_consumable_changed", can_spawn_consumable)
 
 func on_item_received(item_name: String, _item):
 	if item_name == "Run Won":
@@ -247,7 +241,7 @@ func on_connected_to_multiworld():
 
 func on_run_started(_character_ids: Array):
 	_num_crates_spawned = 0
-	_update_can_spawn_consumable(true)
+	_update_can_spawn_consumable()
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value=null):
 	if key == _check_progress_data_storage_key:

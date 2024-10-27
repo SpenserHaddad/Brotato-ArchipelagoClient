@@ -43,7 +43,6 @@ func _ready() -> void:
 					_on_ap_item_received(item_tier)
 
 		for upgrade_tier in _ap_client.upgrades_progress.received_upgrades_by_tier:
-			var ug_progress = _ap_client.upgrades_progress
 			var upgrades_received = _ap_client.upgrades_progress.received_upgrades_by_tier[upgrade_tier]
 			var upgrades_processed = _ap_client.upgrades_progress.processed_upgrades_by_tier[upgrade_tier]
 			if upgrades_received > upgrades_processed:
@@ -78,8 +77,14 @@ func _on_ap_item_received(item_tier: int):
 			item_data = _ap_gift_rare
 		Tier.LEGENDARY:
 			item_data = _ap_gift_legendary
-	_consumables_to_process.push_back(item_data)
-	emit_signal("consumable_to_process_added", item_data)
+
+	# Adapted from on_consumable_picked_up
+	for player_index in range(RunData.get_player_count()):
+		var item_to_process = UpgradesUI.ConsumableToProcess.new()
+		item_to_process.consumable_data = item_data
+		item_to_process.player_index = player_index
+		_consumables_to_process[player_index].push_back(item_to_process)
+		_things_to_process_player_containers[player_index].consumables.add_element(item_data)
 
 func _on_ap_upgrade_received(upgrade_tier: int):
 	var upgrade_level: int
