@@ -13,5 +13,5 @@ func _on_ConfirmButton_pressed() -> void:
 	if confirm_button_pressed:
 		return
 	ModLoaderLog.debug("Restarting current run", LOG_NAME)
-	_ap_client.game_state.run_finished()
+	_ap_client.game_state.notify_run_finished(false)
 	._on_ConfirmButton_pressed()
