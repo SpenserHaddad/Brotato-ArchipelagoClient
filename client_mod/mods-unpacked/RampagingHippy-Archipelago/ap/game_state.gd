@@ -30,9 +30,6 @@ var active_characters: Array = []
 func _init(ap_client):
 	_ap_client = ap_client
 
-func _get_active_characters() -> Array:
-	return []
-
 func is_in_ap_run() -> bool:
 	## Returns true iff we're actively in a run and connected to an AP server.
 	return in_run and _ap_client.connect_state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD

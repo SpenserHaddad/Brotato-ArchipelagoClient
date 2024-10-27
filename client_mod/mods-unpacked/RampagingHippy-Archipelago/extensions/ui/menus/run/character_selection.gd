@@ -31,9 +31,6 @@ func _ensure_ap_client():
 		for character in character_info:
 			if character_info[character].unlocked:
 				_add_character(character)
-		# var _status = _ap_client.character_progress.connect("character_received", self, "_on_character_received")
-		# _inventory.init_char_select_inventory(_ap_client)
-		# _character_inventory.init_char_select_inventory(_ap_client)
 		ModLoaderLog.debug("Should init_char_select_inventory here", LOG_NAME)
 
 func _add_character(character_name: String):
