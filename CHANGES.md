@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Addded
+
+- (#45) Co-op mode can now be used. Progress will be made for all played characters
+  simultaneously.
+
+### Fixed
+
+- (#45) Various internal fixes and changes to make the mod work with the "Abyssal Terrors"
+  base game update.
+
 ## [0.4.0]
 
 ### Added
