@@ -11,11 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Addded
 
-- #45 Co-op mode can now be used. Progress will be made for all played characters
+- Co-op mode can now be used. Progress will be made for all played characters
   simultaneously.
-- #46 Support for enabling Abyssal Terrors DLC and including its characters as
+- Support for enabling Abyssal Terrors DLC and including its characters as
   checks.
-- #46 New options for setting default characters to:
+- New options for setting default characters to:
   - Default characters from the base game and all enabled DLCs.
   - Random selection of characters from the base game and all enabled DLCs.
   - Default characters from the base game.
@@ -23,10 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Default characters from the Abyssal Terrors DLC.
   - Random selection of characters from the Abyssal Terrors DLC.
 
-
 ### Fixed
 
-- #45 Various internal fixes and changes to make the mod work with the "Abyssal
+- Various internal fixes and changes to make the mod work with the "Abyssal
   Terrors" base game update.
 
 ## [0.4.0] - 2024-09-07
@@ -284,7 +283,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.4.0...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.2.0...v0.2.1
