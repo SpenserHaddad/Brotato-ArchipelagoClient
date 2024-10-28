@@ -23,8 +23,12 @@ func process_item_box(consumable_data: ConsumableData, wave: int, player_index: 
 	match consumable_data.my_id:
 		"ap_gift_item_common", "ap_gift_item_uncommon", "ap_gift_item_rare", "ap_gift_item_legendary":
 			var item_tier = consumable_data.tier
-			var item_wave = _ap_client.items_progress.process_ap_item(item_tier)
-			ModLoaderLog.debug("Processing AP item of tier %d at wave %d" % [item_tier, item_wave], LOG_NAME)
+			var item_wave = _ap_client.items_progress.process_ap_item(item_tier, player_index)
+			ModLoaderLog.debug(
+				"Processing AP item of tier %d at wave %d for player %d" 
+				% [item_tier, item_wave, player_index], 
+				LOG_NAME
+			)
 			# Adapted from the base process_item_box
 			var args = GetRandItemForWaveArgs.new()
 			args.owned_and_shop_items = RunData.get_player_items(player_index)

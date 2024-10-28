@@ -13,9 +13,9 @@ class_name ApUpgradesProgress
 signal upgrade_received(upgrade_tier)
 
 # The number of upgrades processed in the current run. This is set at the start of each
-# run to keep track of how many upgrades the player has received from items so far so we
+# run to keep track of how many upgrades each player has received from items so far so we
 # can set the level of each item correctly.
-var processed_upgrades_by_tier: Dictionary
+var processed_upgrades_by_player_by_tier: Array
 
 var received_upgrades_by_tier: Dictionary = {
 	Tier.COMMON: 0,
@@ -28,9 +28,9 @@ func _init(ap_client, game_state).(ap_client, game_state):
 	# Need this for Godot to pass through to the base class
 	pass
 
-func process_ap_upgrade(upgrade_tier: int):
+func process_ap_upgrade(upgrade_tier: int, player_index: int):
 	# Mark the upgrade as processed so we don't try to give again this run.
-	processed_upgrades_by_tier[upgrade_tier] += 1
+	processed_upgrades_by_player_by_tier[player_index][upgrade_tier] += 1
 
 func on_item_received(item_name: String, _item):
 	if item_name in constants.UPGRADE_NAME_TO_TIER:
@@ -50,12 +50,15 @@ func on_connected_to_multiworld():
 		Tier.LEGENDARY: 0
 	}
 
-func on_run_started(_character_ids: Array):
+func on_run_started(character_ids: Array):
 	# Reset the number of upgrades processed
-	# TODO: Per-player processing
-	processed_upgrades_by_tier = {
-		Tier.COMMON: 0,
-		Tier.UNCOMMON: 0,
-		Tier.RARE: 0,
-		Tier.LEGENDARY: 0
-	}
+	processed_upgrades_by_player_by_tier = []
+	for _char_id in character_ids:
+		processed_upgrades_by_player_by_tier.push_back(
+			{
+			Tier.COMMON: 0,
+			Tier.UNCOMMON: 0,
+			Tier.RARE: 0,
+			Tier.LEGENDARY: 0
+			}
+		)

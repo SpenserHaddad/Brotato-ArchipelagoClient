@@ -34,20 +34,22 @@ func _ready() -> void:
 		# Give player any unprocessed items and upgrades from the multiworld
 		for item_tier in _ap_client.items_progress.received_items_by_tier:
 			var items_received = _ap_client.items_progress.received_items_by_tier[item_tier]
-			var items_processed = _ap_client.items_progress.processed_items_by_tier[item_tier]
+			# We only need to check the first player, since items processed should all be in sync.
+			var items_processed = _ap_client.items_progress.processed_items_by_player_by_tier[0][item_tier]
 			# Check if there's items to process first to avoid log noise.
 			if items_received > items_processed:
 				var items_to_process = items_received - items_processed;
-				ModLoaderLog.debug("Giving player %d items of tier %d." % [items_to_process, item_tier], LOG_NAME)
+				ModLoaderLog.debug("Giving players %d items of tier %d." % [items_to_process, item_tier], LOG_NAME)
 				for _i in range(items_to_process):
 					_on_ap_item_received(item_tier)
 
 		for upgrade_tier in _ap_client.upgrades_progress.received_upgrades_by_tier:
 			var upgrades_received = _ap_client.upgrades_progress.received_upgrades_by_tier[upgrade_tier]
-			var upgrades_processed = _ap_client.upgrades_progress.processed_upgrades_by_tier[upgrade_tier]
+			# We only need to check the first player, since upgrades processed should all be in sync.
+			var upgrades_processed = _ap_client.upgrades_progress.processed_upgrades_by_player_by_tier[0][upgrade_tier]
 			if upgrades_received > upgrades_processed:
 				var upgrades_to_process = upgrades_received - upgrades_processed
-				ModLoaderLog.debug("Giving player %d upgrades of tier %d." % [upgrades_to_process, upgrade_tier], LOG_NAME)
+				ModLoaderLog.debug("Giving players %d upgrades of tier %d." % [upgrades_to_process, upgrade_tier], LOG_NAME)
 				for _i in range(upgrades_to_process):
 					_on_ap_upgrade_received(upgrade_tier)
 
@@ -108,10 +110,10 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 		upgrade_to_process.level = upgrade_level
 		upgrade_to_process.player_index = player_index
 		_upgrades_to_process[player_index].push_back(upgrade_to_process)
-	# Mark the upgrade as processed here insteard of where it's actually
-	# processed in _on_EndWaveTimer_timeout. It's a lot simpler to do here and
-	# the end result is the same either way.
-	_ap_client.upgrades_progress.process_ap_upgrade(upgrade_tier)
+		# Mark the upgrade as processed here instead of where it's actually
+		# processed in _on_EndWaveTimer_timeout. It's a lot simpler to do here and
+		# the end result is the same either way.
+		_ap_client.upgrades_progress.process_ap_upgrade(upgrade_tier, player_index)
 
 # Base overrides
 func spawn_consumables(unit: Unit) -> void:
