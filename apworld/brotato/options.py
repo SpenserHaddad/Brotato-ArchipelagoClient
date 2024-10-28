@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionSet, PerGameCommonOptions, Range, TextChoice
+from Options import Choice, OptionSet, PerGameCommonOptions, Range, TextChoice, Toggle
 
 from .constants import (
-    CHARACTERS,
+    ABYSSAL_TERRORS_CHARACTERS,
+    BASE_GAME_CHARACTERS,
     MAX_COMMON_UPGRADES,
     MAX_LEGENDARY_CRATE_DROP_GROUPS,
     MAX_LEGENDARY_CRATE_DROPS,
@@ -13,8 +14,8 @@ from .constants import (
     MAX_RARE_UPGRADES,
     MAX_SHOP_SLOTS,
     MAX_UNCOMMON_UPGRADES,
-    NUM_CHARACTERS,
     NUM_WAVES,
+    TOTAL_NUM_CHARACTERS,
 )
 
 
@@ -25,7 +26,7 @@ class NumberRequiredWins(Range):
     """
 
     range_start = 1
-    range_end = NUM_CHARACTERS
+    range_end = TOTAL_NUM_CHARACTERS
 
     default = 10
     display_name = "Wins Required"
@@ -34,37 +35,53 @@ class NumberRequiredWins(Range):
 class StartingCharacters(TextChoice):
     """Determines your set of starting characters.
 
-    * Default: Start with Well Rounded, Brawler, Crazy, Ranger and Mage (unless they aren't in "Include Characters").
-    * Shuffle: Start with a random selection of characters.
+    Characters omitted from "Include Characters" will not be included regardless of this option.
+
+    If a DLC option is chosen but the DLC is not enabled, an error will be raised during generation.
+
+    * Default All: Start with the default characters from the base game and all enabled DLCs.
+    * Random All: Start with random characters chosen from the baes game and all enabled DLCs.
+    * Default Base Game: Start with Well Rounded, Brawler, Crazy, Ranger and Mage.
+    * Random Base Game: Start with random characters from the base game only.
+    * Default Abyssal Terrors: Start with Sailor, Curious, Builder, Captain, and Creature.
+    * Random Abyssal Terrors: Start with random characters from the Abyssal Terrors DLC.
     """
 
-    option_default_characters = 0
-    option_random_characters = 1
+    option_default_all = 0
+    option_random_all = 1
+    option_default_base_game = 2
+    option_random_base_game = 3
+    option_default_abyssal_terrors = 4
+    option_random_abyssal_terrors = 5
 
     default = 0
     display_name = "Starting Characters"
 
 
 class NumberStartingCharacters(Range):
-    """The number of random characters to start with. Ignored if starting characters is set to 'Default'."""
+    """The number of random characters to start with.
+
+    This is ignored if "Starting Characters" is set to any of the "Default <x>" options, and is clamped to the maxium
+    number of characters in the enabled DLCs.
+    """
 
     range_start = 1
-    range_end = NUM_CHARACTERS
+    range_end = TOTAL_NUM_CHARACTERS
 
     default = 5
     display_name = "Number of Starting Characters"
 
 
-class IncludeCharacters(OptionSet):
-    """Which characters to include for checks.
+class IncludeBaseGameCharacters(OptionSet):
+    """Which base game characters to include for checks.
 
     Characters not listed here will not be available to play. There will be no item to unlock them, and there will be
     no run or wave complete checks associated with them.
     """
 
-    default = frozenset(CHARACTERS)
-    display_name = "Include Characters"
-    valid_keys = CHARACTERS
+    default = frozenset(BASE_GAME_CHARACTERS.characters)
+    display_name = "Include Base Game Characters"
+    valid_keys = BASE_GAME_CHARACTERS.characters
 
 
 class WavesPerCheck(Range):
@@ -326,11 +343,34 @@ class NumberStartingShopLockButtons(Range):
     display_name = "Number of Lock Buttons"
 
 
+class EnableAbyssalTerrorsDLC(Toggle):
+    """Enable options which require the "Abyssal Terrors" DLC.
+
+    Currently, this only enables adding the checks for all the DLC characters.
+    """
+
+    display_name = "Enable Abyssal Terrors DLC"
+
+
+class IncludeAbyssalTerrorsCharacters(OptionSet):
+    """Which characters from the "Abyssal Terrors" DLC to include for checks.
+
+    Characters not listed here will not be available to play. There will be no item to unlock them, and there will be
+    no run or wave complete checks associated with them.
+
+    Does nothing if "Enable Abyssal Terrors DLC" is not set.
+    """
+
+    default = frozenset(ABYSSAL_TERRORS_CHARACTERS.characters)
+    display_name = "Include Abyssal Terrors Characters"
+    valid_keys = ABYSSAL_TERRORS_CHARACTERS.characters
+
+
 @dataclass
 class BrotatoOptions(PerGameCommonOptions):
     num_victories: NumberRequiredWins
     starting_characters: StartingCharacters
-    include_characters: IncludeCharacters
+    include_base_game_characters: IncludeBaseGameCharacters
     num_starting_characters: NumberStartingCharacters
     waves_per_drop: WavesPerCheck
     num_common_crate_drops: NumberCommonCrateDropLocations
@@ -351,3 +391,5 @@ class BrotatoOptions(PerGameCommonOptions):
     num_starting_shop_slots: StartingShopSlots
     shop_lock_buttons_mode: StartingShopLockButtonsMode
     num_starting_lock_buttons: NumberStartingShopLockButtons
+    enable_abyssal_terrors_dlc: EnableAbyssalTerrorsDLC
+    include_abyssal_terrors_characters: IncludeAbyssalTerrorsCharacters
