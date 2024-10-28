@@ -52,16 +52,7 @@ func _get_unlocked_elements(player_index: int)->Array:
 		ModLoaderLog.debug("Returning default characters", LOG_NAME)
 		return ._get_unlocked_elements(player_index)
 
-func get_elements_unlocked() -> Array:
-	ModLoaderLog.debug("Getting unlocked characters", LOG_NAME)
-	_ensure_ap_client()
-	if _ap_client.connected_to_multiworld():
-		var character_str = ", ".join(_unlocked_characters)
-		ModLoaderLog.debug("Unlocking characters %s" % character_str, LOG_NAME)
-		return _unlocked_characters
-	else:
-		ModLoaderLog.debug("Returning default characters", LOG_NAME)
-		return .get_elements_unlocked()
+
 
 func _add_ap_progress_ui():
 	if _ap_client.connected_to_multiworld():
