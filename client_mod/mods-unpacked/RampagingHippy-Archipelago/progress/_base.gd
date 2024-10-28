@@ -40,6 +40,7 @@ func _init(ap_client, game_state):
 	_status = _ap_client.connect("item_received", self, "on_item_received")
 	_status = _ap_client.connect("room_updated", self, "on_room_updated")
 	_status = _game_state.connect("run_started", self, "on_run_started")
+
 func on_item_received(_item_name: String, _item):
 	pass
 
@@ -49,7 +50,7 @@ func on_room_updated(_room_update: Dictionary):
 func on_connected_to_multiworld():
 	pass
 
-func on_run_started(_character_id: String):
+func on_run_started(_character_ids: Array):
 	pass
 
 func _on_client_connection_state_changed(state: int, _error: int=0):

@@ -28,7 +28,8 @@ func give_player_unreceived_gold():
 	if _game_state.is_in_ap_run():
 		var gold_to_give = gold_received - gold_given
 		if gold_to_give > 0:
-			RunData.add_gold(gold_to_give)
+			for player_idx in range(RunData.get_player_count()):
+				RunData.add_gold(gold_to_give, player_idx)
 			_ap_client.set_value(
 				_received_gold_data_storage_key,
 				"add",
@@ -57,9 +58,9 @@ func on_connected_to_multiworld():
 		true
 	)
 
-func on_run_started(_character_id: String):
+func on_run_started(_character_ids: Array):
 	give_player_unreceived_gold()
 
-func _on_session_data_storage_updated(key: String, new_value, _original_value=null):
+func _on_session_data_storage_updated(key: String, new_value, _original_value = null):
 	if key == _received_gold_data_storage_key:
 		gold_given = new_value

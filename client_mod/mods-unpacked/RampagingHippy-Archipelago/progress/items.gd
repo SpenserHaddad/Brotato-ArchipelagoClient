@@ -31,15 +31,10 @@ var received_items_by_tier: Dictionary = {
 	Tier.LEGENDARY: 0
 }
 
-# The number of items processed in the current run. This is set at the start of each
-# run to keep track of how many items the player has received from items so far so we
-# can set the level of each item correctly.
-var processed_items_by_tier: Dictionary = {
-	Tier.COMMON: 0,
-	Tier.UNCOMMON: 0,
-	Tier.RARE: 0,
-	Tier.LEGENDARY: 0
-}
+# The number of items processed by each player in the current run. This is set at the
+# start of each run to keep track of how many items each player has received from items
+# so far so we can set the level of each item correctly.
+var processed_items_by_player_by_tier: Array
 
 var wave_per_game_item: Dictionary
 
@@ -47,7 +42,7 @@ func _init(ap_client, game_state).(ap_client, game_state):
 	# Need this for Godot to pass through to the base class
 	pass
 
-func process_ap_item(item_tier: int) -> int:
+func process_ap_item(item_tier: int, player_index: int) -> int:
 	## Called when AP consumables are processed at the end of the round for each item.
 	## This increments the number of items processed this run, then returns the wave to
 	## use to determine the item to give.
@@ -58,8 +53,11 @@ func process_ap_item(item_tier: int) -> int:
 	
 	# Clamp the index access in case the player added more items with the admin console
 	# or something.
-	var wave_for_next_item = min(processed_items_by_tier[item_tier], wave_per_game_item[item_tier].size())
-	processed_items_by_tier[item_tier] += 1
+	var wave_for_next_item = min(
+		processed_items_by_player_by_tier[player_index][item_tier], 
+		wave_per_game_item[item_tier].size()
+	)
+	processed_items_by_player_by_tier[player_index][item_tier] += 1
 
 	# Lookup the wave to use to determine the item 
 	# The slot_data JSONifies the wave_per_game_item
@@ -91,18 +89,16 @@ func on_connected_to_multiworld():
 		Tier.LEGENDARY: 0
 	}
 
-	processed_items_by_tier = {
-		Tier.COMMON: 0,
-		Tier.UNCOMMON: 0,
-		Tier.RARE: 0,
-		Tier.LEGENDARY: 0
-	}
-
-func on_run_started(_character_id: String):
+func on_run_started(character_ids: Array):
 	# Reset the number of items processed
-	processed_items_by_tier = {
-		Tier.COMMON: 0,
-		Tier.UNCOMMON: 0,
-		Tier.RARE: 0,
-		Tier.LEGENDARY: 0
-	}
+	# TODO: Per-player items
+	processed_items_by_player_by_tier = []
+	for _character_id in character_ids:
+		processed_items_by_player_by_tier.push_back(
+			{
+				Tier.COMMON: 0,
+				Tier.UNCOMMON: 0,
+				Tier.RARE: 0,
+				Tier.LEGENDARY: 0
+			}
+		)

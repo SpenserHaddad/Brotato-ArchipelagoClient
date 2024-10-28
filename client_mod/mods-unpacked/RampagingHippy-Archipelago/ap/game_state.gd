@@ -10,21 +10,22 @@ const LOG_NAME = "RampagingHippy-Archipelago/game_state"
 var GodotApClient = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/godot_ap_client.gd")
 
 ## Signal that a new run has started with the given character.
-signal run_started(character_id)
+signal run_started(character_ids)
 
 ## Signal that the current run has finished with the given character
 ##
 ## The first argument indicates if the run was won or not.
-signal run_finished(won_run, character_id)
+signal run_finished(won_run, character_ids)
 
 ## Signal that a new wave in the run as started.
-signal wave_started(wave_number, character_id)
+signal wave_started(wave_number, character_ids)
 
 ## Signal that the current wave has finished.
-signal wave_finished(wave_number, character_id, is_run_lost, is_run_won)
+signal wave_finished(wave_number, character_ids, is_run_lost, is_run_won)
 
 var _ap_client
 var in_run: bool = false
+var active_characters: Array = []
 
 func _init(ap_client):
 	_ap_client = ap_client
@@ -33,34 +34,36 @@ func is_in_ap_run() -> bool:
 	## Returns true iff we're actively in a run and connected to an AP server.
 	return in_run and _ap_client.connect_state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD
 
-func notify_run_started(character_id: String):
+func notify_run_started(character_ids: Array):
 	## Called by the game extensions when a new run is started.
 	##
 	## Emits the `run_started` signal to notify progress trackers.
 	in_run = true
+	active_characters = character_ids
 	if is_in_ap_run():
-		emit_signal("run_started", character_id)
+		emit_signal("run_started", active_characters)
 
-func notify_run_finished(won_run: bool, character_id: String):
+func notify_run_finished(won_run: bool):
 	## Called by the game extensions when a run is finished, whether won or lost.
 	##
 	## Emits the `run_finished` signal to notify progress trackers.
 	# Check if this was an AP run before flipping the in_run flag
 	var finished_ap_run = is_in_ap_run()
 	in_run = false
+	active_characters = []
 	if finished_ap_run:
-		emit_signal("run_finished", won_run, character_id)
+		emit_signal("run_finished", won_run, active_characters)
 
-func notify_wave_started(wave_number: int, character_id: String):
+func notify_wave_started(wave_number: int):
 	## Called by the game extensions when a wave is started.
 	##
 	## Emits the `wave_started` signal to notify progress trackers.
 	if is_in_ap_run():
-		emit_signal("wave_started", wave_number, character_id)
+		emit_signal("wave_started", wave_number, active_characters)
 
-func notify_wave_finished(wave_number: int, character_id: String, is_run_lost: bool, is_run_won: bool):
+func notify_wave_finished(wave_number: int, is_run_lost: bool, is_run_won: bool):
 	## Called by the game extensions when a wave is finished.
 	##
 	## Emits the `wave_finished` signal to notify progress trackers.
 	if is_in_ap_run():
-		emit_signal("wave_finished", wave_number, character_id, is_run_lost, is_run_won)
+		emit_signal("wave_finished", wave_number, active_characters, is_run_lost, is_run_won)

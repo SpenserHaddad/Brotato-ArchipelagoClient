@@ -28,7 +28,8 @@ func give_player_unreceived_xp():
 	if _game_state.is_in_ap_run():
 		var xp_to_give = xp_received - xp_given
 		if xp_to_give > 0:
-			RunData.add_xp(xp_to_give)
+			for player_idx in RunData.get_player_count():
+				RunData.add_xp(xp_to_give, player_idx)
 			_ap_client.set_value(
 				_received_xp_data_storage_key,
 				"add",
@@ -56,9 +57,9 @@ func on_connected_to_multiworld():
 		true
 	)
 
-func on_run_started(_character_id: String):
+func on_run_started(_character_ids: Array):
 	give_player_unreceived_xp()
 
-func _on_session_data_storage_updated(key: String, new_value, _original_value=null):
+func _on_session_data_storage_updated(key: String, new_value, _original_value = null):
 	if key == _received_xp_data_storage_key:
 		xp_given = new_value

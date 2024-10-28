@@ -42,10 +42,7 @@ class LootCrateGroup:
 		num_crates = num_crates_
 		wins_to_unlock = wins_to_unlock_
 
-## Emitted when we have to change whether to drop AP loot crates or vanilla loot crates.
-## This is also always emitted at the start of a run to tell the game which type of
-## crate to drop.
-signal can_spawn_crate_changed(can_spawn_crate, crate_type)
+## Emitted when a crate is picked up to indicate the updated progress to the next check.
 signal check_progress_changed(progress, total)
 
 # The total number of loot crate checks available.
@@ -63,7 +60,7 @@ var check_progress: int = 0
 
 # Indicates if we can spawn AP loot crates. Determined by current check progress and the
 # number of AP loot crates already spawned in the current wave.
-var can_spawn_crate: bool = false
+var can_spawn_consumable: bool = false
 
 # The index of the last unlocked loot crate group. Determined by the number of wins.
 var last_unlocked_group_idx: int = 0
@@ -100,7 +97,7 @@ func _init(ap_client, game_state, crate_type_: String).(ap_client, game_state):
 func notify_crate_spawned():
 	## Called by the game extensions when an AP loot crate is spawned in-game.
 	_num_crates_spawned += 1
-	_update_can_spawn_crate()
+	_update_can_spawn_consumable()
 
 func notify_crate_picked_up():
 	## Called by the game extensions when an AP loot crate is picked up in-game.
@@ -149,7 +146,7 @@ func _update_num_locations_checked(new_value: int, send_check: bool=true):
 	if send_check:
 		var location_id = location_idx_to_id[num_locations_checked]
 		_ap_client.check_location(location_id)
-	_update_can_spawn_crate()
+	_update_can_spawn_consumable()
 	
 	_ap_client.set_value(
 		_num_locations_checked_storage_key,
@@ -159,23 +156,20 @@ func _update_num_locations_checked(new_value: int, send_check: bool=true):
 		false
 	)
 
-func _update_can_spawn_crate(force_signal=false):
+func _update_can_spawn_consumable():
 	var possible_checks = floor((check_progress + _num_crates_spawned) / crates_per_check)
-	var new_can_spawn_crate = num_locations_checked + possible_checks < num_unlocked_locations
+	can_spawn_consumable = num_locations_checked + possible_checks < num_unlocked_locations
 	ModLoaderLog.debug(
-		"Updating can_spawn_crate: check_progress=%d, crates_spawned=%d, crates_per_check=%d, num_locations_checked=%d, num_unlocked_locations=%d, new_can_spawn_crate=%s" % [
+		"Updating can_spawn_consumable: check_progress=%d, crates_spawned=%d, crates_per_check=%d, num_locations_checked=%d, num_unlocked_locations=%d, can_spawn_consumable=%s" % [
 			check_progress,
 			_num_crates_spawned,
 			crates_per_check,
 			num_locations_checked,
 			num_unlocked_locations,
-			new_can_spawn_crate
+			can_spawn_consumable
 		],
 		LOG_NAME
 	)
-	if new_can_spawn_crate != can_spawn_crate or force_signal:
-		can_spawn_crate = new_can_spawn_crate
-		emit_signal("can_spawn_crate_changed", can_spawn_crate, crate_type)
 
 func on_item_received(item_name: String, _item):
 	if item_name == "Run Won":
@@ -186,7 +180,7 @@ func on_item_received(item_name: String, _item):
 			if _wins_received >= next_group.wins_to_unlock:
 				last_unlocked_group_idx += 1
 				num_unlocked_locations += next_group.num_crates
-				_update_can_spawn_crate()
+				_update_can_spawn_consumable()
 
 func on_room_updated(updated_room_info: Dictionary):
 	if updated_room_info.has("checked_locations"):
@@ -245,9 +239,9 @@ func on_connected_to_multiworld():
 		true
 	)
 
-func on_run_started(_character_id: String):
+func on_run_started(_character_ids: Array):
 	_num_crates_spawned = 0
-	_update_can_spawn_crate(true)
+	_update_can_spawn_consumable()
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value=null):
 	if key == _check_progress_data_storage_key:
