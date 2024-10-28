@@ -9,11 +9,11 @@ from worlds.AutoWorld import WebWorld, World
 
 from ._loot_crate_groups import BrotatoLootCrateGroup, build_loot_crate_groups
 from .constants import (
+    ABYSSAL_TERRORS_CHARACTERS,
+    BASE_GAME_CHARACTERS,
     CHARACTER_REGION_TEMPLATE,
-    CHARACTERS,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
-    DEFAULT_CHARACTERS,
     DEFAULT_ITEM_WEIGHTS,
     LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
@@ -21,6 +21,7 @@ from .constants import (
     NUM_WAVES,
     RUN_COMPLETE_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
+    CharacterGroup,
     ItemRarity,
 )
 from .items import BrotatoItem, ItemName, filler_items, item_name_groups, item_name_to_id, item_table
@@ -31,6 +32,7 @@ from .options import (
     ItemWeights,
     LegendaryItemWeight,
     RareItemWeight,
+    StartingCharacters,
     UncommonItemWeight,
 )
 from .rules import create_has_character_rule, create_has_run_wins_rule
@@ -155,18 +157,41 @@ class BrotatoWorld(World):
             self.options.num_victories.value,
         )
 
+        game_packs: dict[str, tuple[bool, set[str], CharacterGroup]] = {
+            BASE_GAME_CHARACTERS.name: (True, self.options.include_base_game_characters.value, BASE_GAME_CHARACTERS),
+            ABYSSAL_TERRORS_CHARACTERS.name: (
+                self.options.enable_abyssal_terrors_dlc.value == self.options.enable_abyssal_terrors_dlc.option_true,
+                self.options.include_abyssal_terrors_characters.value,
+                ABYSSAL_TERRORS_CHARACTERS,
+            ),
+        }
+
         # Keep include characters in the defined order to make reading/debugging easier. Entries should all be valid.
         self._include_characters = set()
-        for character in CHARACTERS:
-            if character in self.options.include_characters:
-                self._include_characters.add(character)
+        for pack_enabled, include_characters_from_pack, pack_characters in game_packs.values():
+            if pack_enabled:
+                characters_from_pack = set(c for c in pack_characters.characters if c in include_characters_from_pack)
+                self._include_characters |= characters_from_pack
 
         starting_character_option = self.options.starting_characters.value
-        if starting_character_option == 0:  # Default
-            self._starting_characters = [dc for dc in DEFAULT_CHARACTERS if dc in self._include_characters]
-        else:
-            num_starting_characters = min(self.options.num_starting_characters.value, len(self._include_characters))
-            self._starting_characters = self.random.sample(list(self._include_characters), num_starting_characters)
+        if starting_character_option == StartingCharacters.option_default_all:  # Defaults from all game packs
+            enabled_groups = [gp[2] for gp in game_packs.values() if gp[0]]
+            self._starting_characters = self._get_valid_default_characters(enabled_groups)
+        elif starting_character_option == StartingCharacters.option_random_all:
+            enabled_groups = [gp[2] for gp in game_packs.values() if gp[0]]
+            self._starting_characters = self._get_valid_random_characters(enabled_groups)
+        elif starting_character_option == StartingCharacters.option_default_base_game:
+            self._starting_characters = self._get_valid_default_characters([BASE_GAME_CHARACTERS])
+        elif starting_character_option == StartingCharacters.option_random_base_game:
+            self._starting_characters = self._get_valid_random_characters([BASE_GAME_CHARACTERS])
+        elif starting_character_option == StartingCharacters.option_default_abyssal_terrors:
+            if not game_packs[ABYSSAL_TERRORS_CHARACTERS.name][0]:
+                raise OptionError("Abyssal Terrors DLC is not enabled in options.")
+            self._starting_characters = self._get_valid_default_characters([ABYSSAL_TERRORS_CHARACTERS])
+        elif starting_character_option == StartingCharacters.option_random_abyssal_terrors:
+            if not game_packs[ABYSSAL_TERRORS_CHARACTERS.name][0]:
+                raise OptionError("Abyssal Terrors DLC is not enabled in options.")
+            self._starting_characters = self._get_valid_random_characters([ABYSSAL_TERRORS_CHARACTERS])
 
         # Initialize the number of upgrades and items to include, then adjust as necessary below.
         self._upgrade_and_item_counts = {
@@ -291,6 +316,7 @@ class BrotatoWorld(World):
             "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check.value,
             "legendary_crate_drop_groups": [asdict(g) for g in self.legendary_loot_crate_groups],
             "wave_per_game_item": self.wave_per_game_item,
+            "enable_abyssal_terrors_dlc": self.options.enable_abyssal_terrors_dlc.value,
         }
 
     def _create_character_region(self, parent_region: Region, character: str) -> Region:
@@ -418,3 +444,12 @@ class BrotatoWorld(World):
         }
 
         return item_counts
+
+    def _get_valid_default_characters(self, character_groups: list[CharacterGroup]) -> list[str]:
+        return [c for cg in character_groups for c in cg.default_characters if c in self._include_characters]
+
+    def _get_valid_random_characters(self, character_groups: list[CharacterGroup]) -> list[str]:
+        valid_characters = [c for cg in character_groups for c in cg.characters if c in self._include_characters]
+        # In case the number of included characters is less than the requested amount
+        num_characters_to_choose = min(len(valid_characters), self.options.num_starting_characters.value)
+        return self.random.sample(valid_characters, num_characters_to_choose)

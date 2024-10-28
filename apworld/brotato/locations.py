@@ -1,12 +1,13 @@
 from dataclasses import dataclass, field
 from itertools import count
-from typing import Dict, List, Optional, Set, Tuple, get_args
+from typing import Iterable, List, Optional, Tuple, get_args
 
 from BaseClasses import Location, LocationProgressType, Region
 
 from .constants import (
+    ALL_CHARACTERS,
     BASE_ID,
-    CHARACTERS,
+    CHARACTER_GROUPS,
     CRATE_DROP_LOCATION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
     MAX_LEGENDARY_CRATE_DROPS,
@@ -17,7 +18,7 @@ from .constants import (
 )
 
 # TypeVar that's a union of all character name string literals
-CHARACTER_NAMES: Tuple[str, ...] = get_args(CHARACTERS)
+CHARACTER_NAMES: Tuple[str, ...] = get_args(ALL_CHARACTERS)
 _id_generator = count(BASE_ID, step=1)
 
 
@@ -48,16 +49,29 @@ class BrotatoLocationBase:
 
 _wave_count = range(1, NUM_WAVES + 1)
 
-_character_wave_complete_locations: List[BrotatoLocationBase] = []
-_character_run_won_locations: List[BrotatoLocationBase] = []
-for char in CHARACTERS:
-    _char_wave_complete_locations = [
-        BrotatoLocationBase(name=WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=char)) for w in _wave_count
-    ]
-    _char_run_complete_location = BrotatoLocationBase(name=RUN_COMPLETE_LOCATION_TEMPLATE.format(char=char))
-    _character_wave_complete_locations += _char_wave_complete_locations
-    _character_run_won_locations.append(_char_run_complete_location)
 
+def _get_per_location_characters_for_characters(
+    characters: Iterable[str],
+) -> tuple[list[BrotatoLocationBase], list[BrotatoLocationBase]]:
+    wave_complete_locations: list[BrotatoLocationBase] = []
+    run_complete_locations: list[BrotatoLocationBase] = []
+    for character in characters:
+        wave_complete_locations += [
+            BrotatoLocationBase(name=WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=w, char=character))
+            for w in _wave_count
+        ]
+        run_complete_locations.append(BrotatoLocationBase(name=RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)))
+
+    return wave_complete_locations, run_complete_locations
+
+
+# Get the per-character locations (wave/run complete), separated by the game pack the characters come from.
+_character_wave_complete_locations: dict[str, list[BrotatoLocationBase]] = {}
+_character_run_won_locations: dict[str, list[BrotatoLocationBase]] = {}
+for group_name, group in CHARACTER_GROUPS.items():
+    _character_wave_complete_locations[group_name], _character_run_won_locations[group_name] = (
+        _get_per_location_characters_for_characters(group.characters)
+    )
 
 _loot_crate_drop_locations: List[BrotatoLocationBase] = [
     BrotatoLocationBase(name=CRATE_DROP_LOCATION_TEMPLATE.format(num=i)) for i in range(1, MAX_NORMAL_CRATE_DROPS + 1)
@@ -70,18 +84,24 @@ _legendary_loot_crate_drop_locations: List[BrotatoLocationBase] = [
 ]
 
 _all_locations: List[BrotatoLocationBase] = [
-    *_character_wave_complete_locations,
-    *_character_run_won_locations,
+    *[loc for group_locs in _character_wave_complete_locations.values() for loc in group_locs],
+    *[loc for group_locs in _character_run_won_locations.values() for loc in group_locs],
     *_loot_crate_drop_locations,
     *_legendary_loot_crate_drop_locations,
 ]
 
-location_table: Dict[str, BrotatoLocationBase] = {loc.name: loc for loc in _all_locations}
+location_table: dict[str, BrotatoLocationBase] = {loc.name: loc for loc in _all_locations}
 
-location_name_to_id: Dict[str, int] = {loc.name: loc.id for loc in _all_locations}
-location_name_groups: Dict[str, Set[str]] = {
-    "Wave Complete Specific Character": set(c.name for c in _character_wave_complete_locations),
-    "Run Win Specific Character": set(c.name for c in _character_run_won_locations),
+location_name_to_id: dict[str, int] = {loc.name: loc.id for loc in _all_locations}
+location_name_groups: dict[str, set[str]] = {
     "Normal Crate Drops": set(c.name for c in _loot_crate_drop_locations),
     "Legendary Crate Drops": set(c.name for c in _legendary_loot_crate_drop_locations),
 }
+
+for group_name, group in CHARACTER_GROUPS.items():
+    location_name_groups[f"Wave Complete ({group.name} Characters)"] = set(
+        c.name for c in _character_wave_complete_locations[group_name]
+    )
+    location_name_groups[f"Run Won ({group.name} Characters)"] = set(
+        c.name for c in _character_run_won_locations[group_name]
+    )

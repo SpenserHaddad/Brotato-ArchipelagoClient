@@ -5,8 +5,8 @@ from worlds.generic.Rules import ItemRule, add_item_rule
 
 from . import BrotatoWorld
 from .constants import (
+    ALL_CHARACTERS,
     CHARACTER_REGION_TEMPLATE,
-    CHARACTERS,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
     LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
@@ -37,7 +37,7 @@ def create_regions(world: BrotatoWorld) -> List[Region]:
     legendary_crate_regions = _create_loot_crate_regions(world, menu_region, "legendary")
 
     character_regions: list[Region] = []
-    for character in CHARACTERS:
+    for character in ALL_CHARACTERS:
         character_region = _create_character_region(world, menu_region, character)
         character_regions.append(character_region)
 

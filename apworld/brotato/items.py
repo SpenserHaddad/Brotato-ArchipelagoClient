@@ -50,6 +50,7 @@ class ItemName(Enum):
     GOLD_100 = "Gold (100)"
     GOLD_200 = "Gold (200)"
     RUN_COMPLETE = "Run Won"
+    # Base game characters
     CHARACTER_WELL_ROUNDED = "Well Rounded"
     CHARACTER_BRAWLER = "Brawler"
     CHARACTER_CRAZY = "Crazy"
@@ -94,6 +95,25 @@ class ItemName(Enum):
     CHARACTER_MASOCHIST = "Masochist"
     CHARACTER_KNIGHT = "Knight"
     CHARACTER_DEMON = "Demon"
+    # Abyssal Terrors Characters
+    CHARACTER_BABY = "Baby"
+    CHARACTER_VAGABOND = "Vagabond"
+    CHARACTER_TECHNOMAGE = "Technomage"
+    CHARACTER_VAMPIRE = "Vampire"
+    CHARACTER_SAILOR = "Sailor"
+    CHARACTER_CURIOUS = "Curious"
+    CHARACTER_BUILDER = "Builder"
+    CHARACTER_CAPTAIN = "Captain"
+    CHARACTER_CREATURE = "Creature"
+    CHARACTER_CHEF = "Chef"
+    CHARACTER_DRUID = "Druid"
+    CHARACTER_DWARF = "Dwarf"
+    CHARACTER_GANGSTER = "Gangster"
+    CHARACTER_DIVER = "Diver"
+    CHARACTER_HIKER = "Hiker"
+    CHARACTER_BUCCANEER = "Buccaneer"
+    CHARACTER_OGRE = "Ogre"
+    CHARACTER_ROMANTIC = "Romantic"
 
 
 _char_items: List[ItemName] = [x for x in ItemName if x.name.startswith("CHARACTER_")]
