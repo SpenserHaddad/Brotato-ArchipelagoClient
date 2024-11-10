@@ -120,16 +120,20 @@ func spawn_consumables(unit: Unit) -> void:
 	# No reason to check if connected to the multiworld, this is vanilla if
 	# we're not connected since the game should never drop ap_pickups otherwise.
 	var consumable_count_start = _consumables.size()
-	if _ap_client.debug.auto_spawn_loot_crate:
+	if _ap_client.debug.enable_auto_spawn_loot_crate:
 		var old_unit_always_drop_consumable = unit.stats.always_drop_consumables
 		if _ap_client.debug.auto_spawn_loot_crate_counter == _ap_client.debug.auto_spawn_loot_crate_on_count:
 			_ap_client.debug.auto_spawn_loot_crate_counter = 0
 			ModLoaderLog.debug("Debug spawning consumable", LOG_NAME)
+			# Tell the unit to drop a consumable
 			unit.stats.always_drop_consumables = true
+			# Tell our item_service extension to force the consumable to be a loot crate
+			_ap_client.debug.auto_spawn_loot_crate = true
 		else:
 			_ap_client.debug.auto_spawn_loot_crate_counter += 1
 		.spawn_consumables(unit)
 		unit.stats.always_drop_consumables = old_unit_always_drop_consumable
+		_ap_client.debug.auto_spawn_loot_crate = false
 	else:
 		.spawn_consumables(unit)
 
