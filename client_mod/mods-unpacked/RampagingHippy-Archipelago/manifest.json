@@ -1,7 +1,7 @@
 {
 	"name": "Archipelago",
 	"namespace": "RampagingHippy",
-	"version_number": "0.0.1",
+	"version_number": "0.5.0",
 	"description": "Archipelago MultiWorld Client",
 	"website_url": "https://github.com/SpenserHaddad/BrotatoArchipelago",
 	"dependencies": [],
@@ -12,10 +12,10 @@
 				"Spenser Haddad"
 			],
 			"compatible_mod_loader_version": [
-				"3.0.0"
+				"6.0.0"
 			],
 			"compatible_game_version": [
-				"0.6.1.6"
+				"1.1.0.0"
 			],
 			"config_defaults": {}
 		}
