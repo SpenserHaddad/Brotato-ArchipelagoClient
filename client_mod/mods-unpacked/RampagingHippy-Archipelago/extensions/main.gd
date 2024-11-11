@@ -142,8 +142,12 @@ func spawn_consumables(unit: Unit) -> void:
 		var spawned_consumable_id = _consumables.back().consumable_data.my_id
 		if spawned_consumable_id == "ap_pickup":
 			_ap_client.common_loot_crate_progress.notify_crate_spawned()
+			# Increment this to help the game calculate drops appropriately. They do the
+			# same for normal loot crate drops.
+			_items_spawned_this_wave += 1
 		elif spawned_consumable_id == "ap_legendary_pickup":
 			_ap_client.legendary_loot_crate_progress.notify_crate_spawned()
+			_items_spawned_this_wave += 1
 
 func on_consumable_picked_up(consumable: Node, player_index: int) -> void:
 	var is_ap_consumable = false
