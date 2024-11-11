@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2024-11-11
+
+### Fixed
+
+- Health pickups ("fruits") are no longer replaced with AP items.
+- Fix AP items being dropped without the required number of wins for the slot.
+- AP item progress HUD now properly dims when no more items are available.
+- Update mod manifest with latest version so it appears in-game.
+
 ## [0.5.0] - 2024-10-28
 
 ### Addded
@@ -283,7 +292,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.0...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.2.1...v0.3.0
