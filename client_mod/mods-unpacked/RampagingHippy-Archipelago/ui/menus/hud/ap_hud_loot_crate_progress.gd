@@ -2,7 +2,10 @@ extends PanelContainer
 
 const CHECK_COMPLETE_FADEOUT_TIME_SEC = 2.0
 const CHECK_COMPLETE_FADEOUT_START_ALPHA = 0.8
+const ENABLED_MODULATE_COLOR = Color.white
+const DISABLED_MODULATE_COLOR = Color.darkslategray
 
+onready var _ap_icon_texture = $HBoxContainer/MarginContainer/ApIconTexture 
 onready var _crate_texture = $HBoxContainer/MarginContainer/CrateTexture
 onready var _progress_label: Label = $HBoxContainer/ProgressLabel
 onready var _tween: Tween = $Tween
@@ -16,7 +19,7 @@ var _loot_crate_progress
 
 func _ready():
 	stylebox.bg_color = Color("#0000ff00")
-	_timer.connect("timeout", self, "_on_timer_timeout")
+	var _result = _timer.connect("timeout", self, "_on_timer_timeout")
 	
 	add_stylebox_override("panel", stylebox)
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
@@ -51,6 +54,16 @@ func update_progress(progress: int, total: int):
 		)
 		var _tween_started = _tween.start()
 		_timer.start()
+
+	var modulate_color = ENABLED_MODULATE_COLOR
+	if _loot_crate_progress.num_locations_checked >= _loot_crate_progress.num_unlocked_locations:
+		# We can't get more checks, make the display grey to indicate that to the player
+		modulate_color = DISABLED_MODULATE_COLOR
+
+	_ap_icon_texture.modulate = modulate_color	
+	_crate_texture.modulate = modulate_color
+	_progress_label.modulate = modulate_color
+
 
 func _on_timer_timeout():
 	update_progress(_loot_crate_progress.check_progress, _loot_crate_progress.crates_per_check)
