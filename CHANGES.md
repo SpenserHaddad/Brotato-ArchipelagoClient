@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2023-11-23
+
+### Fixed
+
+- Fixed game not opening on 1.1.7.1 Brotato release due to internal changes to the main
+  menu layout.
+
 ## [0.5.1] - 2024-11-11
 
 ### Fixed
@@ -292,7 +299,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.1...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.3.0...v0.4.0
