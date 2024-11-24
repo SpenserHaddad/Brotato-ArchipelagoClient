@@ -32,7 +32,7 @@ func _ready():
 	_set_ap_button_icon(_ap_websocket_connection.connection_state)
 
 func _add_ap_button():
-	var parent_node: Container = $HBoxContainer/ButtonsLeft
+	var parent_node: Container = $MarginContainer/VBoxContainer/HBoxContainer/ButtonsLeft
 
 	ModLoaderMod.append_node_in_scene(
 		self,
