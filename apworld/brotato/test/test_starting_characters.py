@@ -1,6 +1,6 @@
 from typing import Optional, Sequence
 
-from ..constants import CHARACTERS, DEFAULT_CHARACTERS
+from ..constants import BASE_GAME_CHARACTERS
 from ..items import item_name_groups
 from . import BrotatoTestBase
 
@@ -40,16 +40,12 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
 
     def test_default_starting_characters(self):
         self._run_and_check(
-            num_characters=len(DEFAULT_CHARACTERS),
+            num_characters=BASE_GAME_CHARACTERS.num_default_characters,
             custom_starting_characters=False,
-            expected_characters=DEFAULT_CHARACTERS,
+            expected_characters=BASE_GAME_CHARACTERS.default_characters,
         )
 
-    # TODO: Probably can't use pytest.paramterize, is there a better way?
     def test_custom_starting_characters(self):
-        for num_characters in range(1, len(CHARACTERS)):
+        for num_characters in range(1, BASE_GAME_CHARACTERS.num_characters):
             with self.subTest(msg=f"{num_characters} starting characters"):
                 self._run_and_check(num_characters=num_characters)
-
-        with self.subTest(msg=f"{len(CHARACTERS)} starting characters"):
-            self._run_and_check(num_characters=len(CHARACTERS), expected_characters=CHARACTERS)

@@ -138,14 +138,13 @@ TOTAL_NUM_CHARACTERS = len(ALL_CHARACTERS)
 
 MAX_REQUIRED_RUN_WINS = TOTAL_NUM_CHARACTERS
 
-
 MAX_NORMAL_CRATE_DROPS = 50
 MAX_LEGENDARY_CRATE_DROPS = 50
 
-# Since groups are unlocked by winning runs, the maximum number of groups there is the number of characters.
-# So these are just aliases of NUM_CHARACTERS to make them more explicit.
-MAX_NORMAL_CRATE_DROP_GROUPS = TOTAL_NUM_CHARACTERS
-MAX_LEGENDARY_CRATE_DROP_GROUPS = TOTAL_NUM_CHARACTERS
+# THe maximum number of groups is the maximum number of crates, otherwise we'd have
+# groups which could never be filled.
+MAX_NORMAL_CRATE_DROP_GROUPS = MAX_NORMAL_CRATE_DROPS
+MAX_LEGENDARY_CRATE_DROP_GROUPS = MAX_LEGENDARY_CRATE_DROPS
 
 # Weights to use when generating Brotato items using the "default item weights" option. These weights are intended to
 # match the rarity of each tier in the vanilla game. The distribution is not explicitly defined in the game, but we can
