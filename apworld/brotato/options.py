@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionSet, PerGameCommonOptions, Range, TextChoice, Toggle
+from Options import Choice, OptionSet, PerGameCommonOptions, Range, Toggle
 
 from .constants import (
     ABYSSAL_TERRORS_CHARACTERS,
@@ -32,7 +32,7 @@ class NumberRequiredWins(Range):
     display_name = "Wins Required"
 
 
-class StartingCharacters(TextChoice):
+class StartingCharacters(Choice):
     """Determines your set of starting characters.
 
     Characters omitted from "Include Characters" will not be included regardless of this option.

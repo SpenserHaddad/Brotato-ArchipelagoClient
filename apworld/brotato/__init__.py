@@ -192,6 +192,13 @@ class BrotatoWorld(World):
             if not game_packs[ABYSSAL_TERRORS_CHARACTERS.name][0]:
                 raise OptionError("Abyssal Terrors DLC is not enabled in options.")
             self._starting_characters = self._get_valid_random_characters([ABYSSAL_TERRORS_CHARACTERS])
+        else:
+            raise RuntimeError("Unsupported option!")
+
+        # Clamp the number of wins needed to goal to the number of included characters, so the game isn't unwinnable.
+        # Note that we need to actually change the option value, not just clamp it, otherwise other parts of the world
+        # will miss it. This has caused bugs in the past.
+        self.options.num_victories.value = min(self.options.num_victories.value, len(self._include_characters))
 
         # Initialize the number of upgrades and items to include, then adjust as necessary below.
         self._upgrade_and_item_counts = {
@@ -248,10 +255,8 @@ class BrotatoWorld(World):
         self._num_filler_items = max(num_unclaimed_locations, 0) + self.options.num_legendary_crate_drops.value
 
     def set_rules(self) -> None:
-        # Don't require more victories than included characters
-        num_required_victories = min(self.options.num_victories.value, len(self._include_characters))
         self.multiworld.completion_condition[self.player] = create_has_run_wins_rule(
-            self.player, num_required_victories
+            self.player, self.options.num_victories.value
         )
 
     def create_regions(self) -> None:
