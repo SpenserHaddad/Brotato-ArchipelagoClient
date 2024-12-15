@@ -65,13 +65,6 @@ func on_connected_to_multiworld():
 		if wins_for_goal > ap_world_num_base_game_characters:
 			ModLoaderLog.warning("Bug detected, not enough characters to win with without DLC. Updating value", LOG_NAME)
 			wins_for_goal = ap_world_num_base_game_characters
-#	var chars_in_world = []
-#	for character in ItemService.characters:
-#		var character_won_loc_name = constants.RUN_COMPLETE_LOCATION_TEMPLATE.format({"char": character})
-#		if character_won_loc_name in _ap_client.data_package.location_name_to_id:
-#			chars_in_world.append(character)
-#	ModLoaderLog.debug("Characters Available: %s" % ", ".join(chars_in_world), LOG_NAME)
-#	ModLoaderLog.debug("Number of wins: %d, number of characters in world: %d" % [wins_for_goal, chars_in_world.size()], LOG_NAME)
-	
+
 	var client_status  = _ap_client.get_value(["client_status_%d_%d" % [_ap_client.team, _ap_client.slot]])
 	has_won_multiworld = client_status == ApTypes.ClientStatus.CLIENT_GOAL
