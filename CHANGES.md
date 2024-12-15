@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2024-12-15
+
 ### Fixed
 
 - Baby, Vagabond, Technomage, and Vampire are now all properly categorized as base game
@@ -18,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The "Starting Characters" option is now a `Choice` instead of a `TextChoice`, so
   user-defined values are no longer accepted (which was always the intent).
 
-## [0.5.2] - 2023-11-23
+## [0.5.2] - 2024-11-23
 
 ### Fixed
 
@@ -310,7 +312,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.2...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.3...HEAD
+[0.5.3]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.4.0...v0.5.0
