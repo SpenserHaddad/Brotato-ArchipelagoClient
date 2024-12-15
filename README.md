@@ -13,36 +13,79 @@ to generate games.
   Archipelago WebSocket client and hooks for sending locations and receiving items from
   the Archipelago server.
 
-## Installing
+# Installing
 
-### From a release
+## apworld
 
 To host or generate games, you will need to add the apworld to your Archipelago
-installation. Download the latest apworld release from the releases page, then copy it
-into your Archipelago `worlds/` folder. On Windows by default, this is
-`C:\ProgramData\Archipelago\lib\worlds\`.
+installation. Download the [`brotato.apworld` from the latest
+   release.](https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/releases/latest)
+Then, either double click the file (on Windows), or copy into
+`<archipelago_installation/custom_worlds>` (on Linux) to install.
 
-To play Brotato as part of a randomizer, download the latest version of
-`RampagingHippy-Archipelago.zip`, then copy it **without unzipping** into your Steam
-workshop folder for Brotato. For example, on Windows by default this may be `C:\Program
-Files
-(x86)\steamapps\workshop\content\1942280\Archipelago\RampagingHippy-Archipelago.zip`
-(`1942280` being Brotato's Steam ID). Note that the `Archipelago` sub-folder can be
-named anything; the .zip file just needs to be within a sub-folder of the `1942280`
-folder.
+## Client Mod
 
-The client mod will eventually be hosted as a Steam workshop mod once it is more stable.
+Brotato can be played using either the version on
+[Steam](https://store.steampowered.com/app/1942280/Brotato/) or the version on [Epic
+Games Store](https://store.epicgames.com/en-US/p/brotato-ed4097). The Xbox/Game Pass
+version can NOT be used as it does not ship with `ModLoader`, which is necessary for the
+mod to work.
+
+### Steam (Workshop Install)
+
+**WARNING:** The workshop mod automatically updates whenever a new version is available.
+If you need to use an older version of the mod to complete a multiworld, you will need
+to use the manual intallation instructions below.
+
+1. Open the [Steam Workshop for
+   Brotato.](https://steamcommunity.com/app/1942280/workshop/)
+2. Search for the "Archipelago" mod.
+3. Subscribe to the mod to install it.
+
+### Steam (Manual Install)
+
+As of the 1.1.0.0 update, Brotato does not accept mods added any way apart from via the
+Workshop. As a workaround, we can use the placeholder mod, and place the Archipelago mod
+in that folder.
+
+1. Download [`RampagingHippy-Archipelago.zip` from the latest
+   release.](https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/releases/latest)
+2. Open the [Steam Workshop for
+   Brotato.](https://steamcommunity.com/app/1942280/workshop/)
+3. Subscribe to the [[Modders]
+   mode](https://steamcommunity.com/sharedfiles/filedetails/?id=3369699033) to download
+   it.
+4. In a File Explorer, navigate to your Brotato Steam Workshop folder. On Windows, this
+   defaults to `C:\Program Files (x86)\steamapps\workshop\content\1942280` (`1942280` is
+   Brotato's Steam ID).
+5. Open the folder titled `3369699033` in the above directory.
+6. Copy the zip file we downloaded in step 1. into this folder.
+  - **DO NOT UNZIP THE FILE.**
+  - **DO NOT REMOVE ANY OTHER FILES HERE.**
+
+### Epic Games Store
+
+1. Download [`RampagingHippy-Archipelago.zip` from the latest
+   release.](https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/releases/latest)
+2. Copy the zip file to `<brotato_installation>/mods`.
+  - **DO NOT UNZIP THE FILE.**
+  - To confirm, there is be a file called `add your zipped mods here` in the folder.
+  - If you don't know where to look:
+    1. Find Brotato in your EGS library
+    2. Click on the three horizontal dots next to its name.
+    3. In the window that opens, click the folder+magnifying glass next in the
+       "Installation" row.
 
 ### From source
 
 NOTE: This is not recommended since unreleased code is more likely to have bugs or
-unfinished features. This should only be done if you want to contribute to the project.
+unfinished features. This should only be done if you want to contribute to the project
+or really want the bleeding edge.
 
 Instead of downloading the .apworld file and mod zip from the releases page, copy the 
 `apworld/brotato` folder to the Archipelago `worlds/` folder, and zip the `client_mod`
 folder into a zip called `RampagingHippy-Archipelago.zip` and copy it to Brotato's mod
 folder as described above.
-
 
 ## Playing Brotato with the mod installed.
 
