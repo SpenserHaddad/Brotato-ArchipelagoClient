@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   available characters if the Abyssal Terrors DLC was not enabled.
 - HOTFIX: If the game detects the above bug when loaded, it will set the number of wins
   required to 44 so the game is winnable. This will likely be removed in a later patch.
+- The "Starting Characters" option is now a `Choice` instead of a `TextChoice`, so
+  user-defined values are no longer accepted (which was always the intent).
 
 ## [0.5.2] - 2023-11-23
 
