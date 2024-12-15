@@ -20,7 +20,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The "Starting Characters" option is now a `Choice` instead of a `TextChoice`, so
   user-defined values are no longer accepted (which was always the intent).
 
-## [0.5.2] - 2024-11-23
+### Changed
+
+- Updated install instructions in README and the AP setup guide to include setting up
+  the game using:
+  * Epic Games Store
+  * Steam via Steam Workshop
+  * Steam via manual setup (the process is now different)
+
+## [0.5.2] - 2023-11-23
 
 ### Fixed
 
