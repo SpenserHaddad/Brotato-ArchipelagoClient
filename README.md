@@ -26,7 +26,7 @@ Then, either double click the file (on Windows), or copy into
 ## Client Mod
 
 Brotato can be played using either the version on
-[Steam](https://store.steampowered.com/app/1942280/Brotato/) or the version on Epic
+[Steam](https://store.steampowered.com/app/1942280/Brotato/) or the version on [Epic
 Games Store](https://store.epicgames.com/en-US/p/brotato-ed4097). The Xbox/Game Pass
 version can NOT be used as it does not ship with `ModLoader`, which is necessary for the
 mod to work.
