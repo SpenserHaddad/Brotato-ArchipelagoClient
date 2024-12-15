@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Baby, Vagabond, Technomage, and Vampire are now all properly categorized as base game
+  characters when generating games.
+- Fixed a bug where the game could require more wins to goal than the number of
+  available characters if the Abyssal Terrors DLC was not enabled.
+- HOTFIX: If the game detects the above bug when loaded, it will set the number of wins
+  required to 44 so the game is winnable. This will likely be removed in a later patch.
+
 ## [0.5.2] - 2023-11-23
 
 ### Fixed
