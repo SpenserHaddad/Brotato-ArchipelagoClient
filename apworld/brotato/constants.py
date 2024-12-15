@@ -96,6 +96,10 @@ BASE_GAME_CHARACTERS = CharacterGroup(
         "Masochist",
         "Knight",
         "Demon",
+        "Baby",
+        "Vagabond",
+        "Technomage",
+        "Vampire",
     ),
     default_characters=("Well Rounded", "Brawler", "Crazy", "Ranger", "Mage"),
 )
@@ -103,10 +107,6 @@ BASE_GAME_CHARACTERS = CharacterGroup(
 ABYSSAL_TERRORS_CHARACTERS = CharacterGroup(
     name="Abyssal Terrors DLC",
     characters=(
-        "Baby",
-        "Vagabond",
-        "Technomage",
-        "Vampire",
         "Sailor",
         "Curious",
         "Builder",
@@ -138,21 +138,20 @@ TOTAL_NUM_CHARACTERS = len(ALL_CHARACTERS)
 
 MAX_REQUIRED_RUN_WINS = TOTAL_NUM_CHARACTERS
 
-
 MAX_NORMAL_CRATE_DROPS = 50
 MAX_LEGENDARY_CRATE_DROPS = 50
 
-# Since groups are unlocked by winning runs, the maximum number of groups there is the number of characters.
-# So these are just aliases of NUM_CHARACTERS to make them more explicit.
-MAX_NORMAL_CRATE_DROP_GROUPS = TOTAL_NUM_CHARACTERS
-MAX_LEGENDARY_CRATE_DROP_GROUPS = TOTAL_NUM_CHARACTERS
+# THe maximum number of groups is the maximum number of crates, otherwise we'd have
+# groups which could never be filled.
+MAX_NORMAL_CRATE_DROP_GROUPS = MAX_NORMAL_CRATE_DROPS
+MAX_LEGENDARY_CRATE_DROP_GROUPS = MAX_LEGENDARY_CRATE_DROPS
 
 # Weights to use when generating Brotato items using the "default item weights" option. These weights are intended to
 # match the rarity of each tier in the vanilla game. The distribution is not explicitly defined in the game, but we can
 # make a reasonable guess by looking at the max chances of getting items of each rarity/tier from the shop or loot
 # crates, which are publcially listed here: https://brotato.wiki.spellsandguns.com/Shop#Rarity_of_Shop_Items_and_Luck.
 # We use the values from the "Max Chance" column in the table in the linked sections as weights. It's not perfect, but
-# it "feels" right and seems close enough.s
+# it "feels" right and seems close enough.
 DEFAULT_ITEM_WEIGHTS: Tuple[int, int, int, int] = (100, 60, 25, 8)
 
 MAX_COMMON_UPGRADES = 50

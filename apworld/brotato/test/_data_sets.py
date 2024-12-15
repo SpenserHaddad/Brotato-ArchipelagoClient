@@ -13,11 +13,11 @@ from dataclasses import asdict, dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ..constants import (
+    BASE_GAME_CHARACTERS,
     MAX_LEGENDARY_CRATE_DROP_GROUPS,
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_NORMAL_CRATE_DROP_GROUPS,
     MAX_NORMAL_CRATE_DROPS,
-    NUM_CHARACTERS,
 )
 
 
@@ -217,7 +217,7 @@ TEST_DATA_SETS: List[BrotatoTestDataSet] = [
         ),
     ),
     BrotatoTestDataSet(
-        description="Max possible groups and crates, more groups than req. wins",
+        description="Max possible groups and crates, more groups than req. wins, no DLC",
         options=BrotatoTestOptions(
             num_common_crate_drops=MAX_NORMAL_CRATE_DROPS,
             num_common_crate_drop_groups=MAX_NORMAL_CRATE_DROP_GROUPS,
@@ -225,7 +225,7 @@ TEST_DATA_SETS: List[BrotatoTestDataSet] = [
             num_legendary_crate_drop_groups=MAX_LEGENDARY_CRATE_DROP_GROUPS,
         ),
         expected_results=BrotatoTestExpectedResults(
-            # The number of groups will be set to 30 when generating.
+            # The number of groups will be set to 30 (default # of wins) when generated.
             num_common_crate_regions=30,
             common_crates_per_region=tuple(([2] * 20) + ([1] * 10)),
             num_legendary_crate_regions=30,
@@ -236,28 +236,29 @@ TEST_DATA_SETS: List[BrotatoTestDataSet] = [
         ),
     ),
     BrotatoTestDataSet(
-        description="Max possible groups and crates",
+        description="Max wins, equal groups to characters, no DLC",
         options=BrotatoTestOptions(
-            num_victories=NUM_CHARACTERS,
+            num_victories=BASE_GAME_CHARACTERS.num_characters,
             num_common_crate_drops=MAX_NORMAL_CRATE_DROPS,
-            num_common_crate_drop_groups=MAX_NORMAL_CRATE_DROP_GROUPS,
-            num_legendary_crate_drops=MAX_LEGENDARY_CRATE_DROPS,
-            num_legendary_crate_drop_groups=MAX_LEGENDARY_CRATE_DROP_GROUPS,
+            # Assign one group per character, so each win makes more crates accessible.
+            num_common_crate_drop_groups=BASE_GAME_CHARACTERS.num_characters,
+            num_legendary_crate_drops=BASE_GAME_CHARACTERS.num_characters,
+            num_legendary_crate_drop_groups=BASE_GAME_CHARACTERS.num_characters,
         ),
         expected_results=BrotatoTestExpectedResults(
-            num_common_crate_regions=NUM_CHARACTERS,
-            common_crates_per_region=tuple(([2] * 6) + ([1] * 38)),
-            num_legendary_crate_regions=NUM_CHARACTERS,
-            legendary_crates_per_region=tuple(([2] * 6) + ([1] * 38)),
+            num_common_crate_regions=BASE_GAME_CHARACTERS.num_characters,
+            common_crates_per_region=tuple([1] * 44),
+            num_legendary_crate_regions=BASE_GAME_CHARACTERS.num_characters,
+            legendary_crates_per_region=tuple([1] * 44),
             # Every win will unlock a new crate drop group.
-            wins_required_per_common_region=tuple(range(MAX_NORMAL_CRATE_DROP_GROUPS)),
-            wins_required_per_legendary_region=tuple(range(MAX_LEGENDARY_CRATE_DROP_GROUPS)),
+            wins_required_per_common_region=tuple(range(BASE_GAME_CHARACTERS.num_characters)),
+            wins_required_per_legendary_region=tuple(range(BASE_GAME_CHARACTERS.num_characters)),
         ),
     ),
     BrotatoTestDataSet(
         description="Max number of crates, one group",
         options=BrotatoTestOptions(
-            num_victories=NUM_CHARACTERS,
+            num_victories=BASE_GAME_CHARACTERS.num_characters,
             num_common_crate_drops=MAX_NORMAL_CRATE_DROPS,
             num_common_crate_drop_groups=1,
             num_legendary_crate_drops=MAX_LEGENDARY_CRATE_DROPS,

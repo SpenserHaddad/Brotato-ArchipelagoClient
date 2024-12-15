@@ -10,6 +10,8 @@ class_name ApWinsProgress
 
 var ApTypes = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_types.gd")
 
+const LOG_NAME = "RampagingHippy-Archipelago/progress/wins"
+
 var has_won_multiworld: bool = false
 var wins_for_goal: int
 var num_wins: int = 0
@@ -44,5 +46,25 @@ func on_connected_to_multiworld():
 	num_wins = 0
 	characters_won_with = []
 	
+	# Hotfix: Clamp the number of wins needed to the number of character "Run
+	# Won" locations available in the data package. This fixes a bug in the
+	# apworld logic that allowed the game to state more wins were needed to goal
+	# in the slot data than there could be characters available, depending on
+	# DLC available. This hopefully should be resolved and removable in a future
+	# release, but for now it makes sure some broken games are winnable.
+	# Duplicate the logic from ./characters.gd so we don't need to figure out
+	# order of resolution here.
+	if ProgressData.available_dlcs.empty():
+		# We're guaranteed by the apworld to have enough characters to win with
+		# if Abyssal Terrors is installed, otherwise we need to detect the bug.
+		# Other bug: The four 1.1.0.0 base game characters were incorrectly
+		# listed as DLC characters in the apworld,so their checks are not
+		# defined if the DLC option was not enabled.
+		var num_characters = ItemService.characters.size()
+		var ap_world_num_base_game_characters = num_characters - 4
+		if wins_for_goal > ap_world_num_base_game_characters:
+			ModLoaderLog.warning("Bug detected, not enough characters to win with without DLC. Updating value", LOG_NAME)
+			wins_for_goal = ap_world_num_base_game_characters
+
 	var client_status  = _ap_client.get_value(["client_status_%d_%d" % [_ap_client.team, _ap_client.slot]])
 	has_won_multiworld = client_status == ApTypes.ClientStatus.CLIENT_GOAL
