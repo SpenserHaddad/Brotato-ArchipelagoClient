@@ -25,7 +25,14 @@ func _ready() -> void:
 	
 	if _ap_client.connected_to_multiworld():
 		if RunData.current_wave == DebugService.starting_wave:
-			# Run started, notify the AP game state tracker
+			# Run started, notify the AP game state tracker.
+			
+			# Wait a very short time before sending the notify_run_started event to
+			# ensure the rest of the game is initialized. As of the 1.1.8.0 patch,
+			# collecting enough XP to level up too early causes the game to crash
+			# because the "Level Up" floating text is not fully initialized yet. This
+			# isn't elegant, but it doesn't negatively impact UX and it works.
+			yield(get_tree().create_timer(0.01), "timeout")
 			var active_characters = []
 			for player in RunData.players_data:
 				active_characters.append(player.current_character.my_id)
