@@ -160,7 +160,7 @@ func _on_ShowPasswordButton_pressed():
 		_password_edit.secret = true
 		_show_password_button.text = "Show"
 		
-func _on_PlayerEdit_text_changed(new_text: String):
+func _on_PlayerEdit_text_changed(_new_text: String):
 	_update_connect_button_disabled()
 
 func _reset_status_texture():

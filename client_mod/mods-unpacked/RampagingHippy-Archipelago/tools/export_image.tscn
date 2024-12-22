@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://resources/fonts/actual/base/font_big_title.tres" type="DynamicFont" id=1]
+[ext_resource path="res://resources/fonts/actual/base/font_26_outline_thick.tres" type="DynamicFont" id=1]
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80_upgrade_arrow_green.png" type="Texture" id=2]
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/tools/export_image.gd" type="Script" id=3]
 [ext_resource path="res://resources/themes/base_theme.tres" type="Theme" id=4]

@@ -17,7 +17,7 @@ func _init(ap_client, game_state).(ap_client, game_state):
 func on_connected_to_multiworld():
 	waves_with_checks = PoolIntArray(_ap_client.slot_data["waves_with_checks"])
 
-func _on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool, is_run_won: bool):
+func _on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool, _is_run_won: bool):
 	if not is_run_lost and waves_with_checks.has(wave_number):
 		# TODO: check if location was checked already
 		for character_id in character_ids:
