@@ -74,12 +74,6 @@ func _ready() -> void:
 			true
 		)
 
-func _start_of_run_update_delay_timer_timeout():
-	var active_characters = []
-	for player in RunData.players_data:
-		active_characters.append(player.current_character.my_id)
-	_ap_client.game_state.notify_run_started(active_characters)
-
 # Archipelago Item received handlers
 func _on_ap_item_received(item_tier: int):
 	var item_data
