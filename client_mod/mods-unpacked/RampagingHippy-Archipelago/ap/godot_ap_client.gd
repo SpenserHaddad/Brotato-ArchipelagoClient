@@ -62,8 +62,9 @@ class ApDataPackage:
 var websocket_client
 var config
 var connect_state = ConnectState.DISCONNECTED
-var player: String = ""
 var server: String = "archipelago.gg"
+var player: String = ""
+var password: String = ""
 var game: String = ""
 
 var team: int
@@ -96,6 +97,7 @@ func _init(websocket_client_, config_):
 	# Load last used connection info from the configuration
 	server = config.data["ap_server"]
 	player = config.data["ap_player"]
+	password = config.data["ap_password"]
 
 func _ready():
 	var _status: int
@@ -107,7 +109,7 @@ func _ready():
 func _connected_or_connection_refused_received(message: Dictionary):
 	emit_signal("_received_connect_response", message)
 
-func connect_to_multiworld(password: String="", get_data_pacakge: bool=true) -> int:
+func connect_to_multiworld(get_data_pacakge: bool=true) -> int:
 	## Connect to the multiworld using the host/port/player/password provided.
 	##
 	## NOTE: The game, server, and player fields for the class MUST be set before
