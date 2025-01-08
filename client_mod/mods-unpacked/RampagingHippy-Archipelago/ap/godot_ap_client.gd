@@ -60,6 +60,7 @@ class ApDataPackage:
 			location_id_to_name[location_id] = location_name
 
 var websocket_client
+var config
 var connect_state = ConnectState.DISCONNECTED
 var player: String = ""
 var server: String = "archipelago.gg"
@@ -89,8 +90,12 @@ signal data_storage_updated(key, new_value, original_value)
 ## Emitted when a `RoomUpdate` packet is received. Contains the new room information.
 signal room_updated(updated_room_info)
 
-func _init(websocket_client_):
-	self.websocket_client = websocket_client_
+func _init(websocket_client_, config_):
+	websocket_client = websocket_client_
+	config = config_
+	# Load last used connection info from the configuration
+	server = config.data["ap_server"]
+	player = config.data["ap_player"]
 
 func _ready():
 	var _status: int
@@ -221,6 +226,14 @@ func connect_to_multiworld(password: String="", get_data_pacakge: bool=true) -> 
 	#    connection.
 
 	_set_connection_state(ConnectState.CONNECTED_TO_MULTIWORLD)
+	
+	# Mod-specific: Save the connection parameters in the configuration file so
+	# the user doesn't need to enter them twice.
+	config.data["ap_server"] = server
+	config.data["ap_player"] = player
+	config.data["ap_password"] = password
+	ModLoaderConfig.update_config(config)
+	
 	return ConnectResult.SUCCESS
 
 func disconnect_from_multiworld():

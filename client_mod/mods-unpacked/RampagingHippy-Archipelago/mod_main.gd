@@ -7,7 +7,7 @@ const MOD_VERSION = "0.5.4"
 const LOG_NAME = MOD_NAME + "/mod_main"
 
 const ApWebSocketConnection = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_websocket_connection.gd")
-const BrotatoApClient = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/brotato_ap_client.gd")
+var BrotatoApClient = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/brotato_ap_client.gd")
 
 export onready var ap_websocket_connection
 export onready var brotato_ap_client
@@ -52,10 +52,17 @@ func _ready() -> void:
 
 	# TODO: Can we turn the service into a singleton somehow? Adding a node to the root
 	# didn't seem to work.
+
+	var config = ModLoaderConfig.get_config(MOD_NAME, "ap_config")
+	if config == null:
+		var default_config = ModLoaderConfig.get_default_config(MOD_NAME)
+		ModLoaderConfig.create_config(MOD_NAME, "ap_config", default_config.data)
+		config = ModLoaderConfig.get_config(MOD_NAME, "ap_config")
+
 	ap_websocket_connection = ApWebSocketConnection.new()
 	self.add_child(ap_websocket_connection)
 
-	brotato_ap_client = BrotatoApClient.new(ap_websocket_connection)
+	brotato_ap_client = BrotatoApClient.new(ap_websocket_connection, config)
 	self.add_child(brotato_ap_client)
 
 	ModLoaderLog.success("Archipelago mod v%s initialized" % MOD_VERSION, LOG_NAME)

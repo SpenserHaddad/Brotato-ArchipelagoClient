@@ -38,7 +38,7 @@ var wins_progress
 
 signal on_connection_refused(reasons)
 
-func _init(websocket_client).(websocket_client):
+func _init(websocket_client, config).(websocket_client, config):
 	self.game = "Brotato"
 	game_state = ApBrotatoGameState.new(self)
 	character_progress = ApCharacterProgress.new(self, game_state)
