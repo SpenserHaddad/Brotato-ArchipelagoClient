@@ -2,7 +2,7 @@ from collections import Counter
 
 from ..constants import MAX_SHOP_SLOTS
 from ..items import ItemName
-from ..options import StartingShopLockButtonsMode
+from ..options import ItemWeights, StartingShopLockButtonsMode
 from . import BrotatoTestBase
 
 
@@ -25,7 +25,14 @@ class TestBrotatoItems(BrotatoTestBase):
 
         for test_item_rarity, expected_populated_item in item_rarity_prefix_to_name.items():
             with self.subTest(msg=test_item_rarity):
-                options = {"item_weight_mode": 2, "num_common_crate_drops": 50, "num_legendary_crate_drops": 0}
+                options = {
+                    "item_weight_mode": ItemWeights.option_custom,
+                    "num_common_crate_drops": 50,
+                    "num_legendary_crate_drops": 0,
+                    # Set the number of waves per drop to the max to ensure generate_early doesn't try to reduce the
+                    # number of crates.
+                    "waves_per_drop": 1,
+                }
                 for rarity_prefix in item_rarity_prefix_to_name:
                     item_weight_option = f"{rarity_prefix}_item_weight"
                     item_weight = 100 if rarity_prefix == test_item_rarity else 0
@@ -41,7 +48,8 @@ class TestBrotatoItems(BrotatoTestBase):
                     else:
                         expected_amount = 0
 
-                    self.assertEqual(item_counts[self.world.create_item(item_name)], expected_amount)
+                    world_item_count = item_counts[self.world.create_item(item_name)]
+                    self.assertEqual(world_item_count, expected_amount)
 
     def test_create_items_custom_weight_all_legendary_items(self):
         self._run(
