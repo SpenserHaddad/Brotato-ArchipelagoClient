@@ -106,7 +106,7 @@ class NumberCommonCrateDropLocations(Range):
     How the drops are made available and how many are needed to make a check are controlled by the next two settings.
     """
 
-    range_start = 0
+    range_start = 1
     range_end = MAX_NORMAL_CRATE_DROPS
 
     default = 25
@@ -120,7 +120,7 @@ class NumberCommonCrateDropsPerCheck(Range):
     """
 
     range_start = 1
-    range_end: int = MAX_NORMAL_CRATE_DROPS
+    range_end: int = 5
 
     default = 2
     display_name: str = "Crate Pickup Step"
@@ -166,7 +166,7 @@ class NumberLegendaryCrateDropsPerCheck(Range):
     """
 
     range_start = 1
-    range_end: int = MAX_NORMAL_CRATE_DROPS
+    range_end: int = 5
 
     default = 1
     display_name: str = "Legendary Loot Crate Pickup Step"
