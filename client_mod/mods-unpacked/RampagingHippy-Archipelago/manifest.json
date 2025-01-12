@@ -47,6 +47,11 @@
 						"type": "string",
 						"minLength": 0,
 						"default": ""
+					},
+					"has_saved_run": {
+						"title": "Archipelago Last Run Was Saved",
+						"type": "boolean",
+						"default": "false"
 					}
 				}
 			}
