@@ -50,9 +50,7 @@ func _ready() -> void:
 	# ModLoaderLog.info(str("Translation Demo: ", tr("MODNAME_READY_TEXT")), LOG_NAME)
 	# ModLoaderLog.success("Loaded", LOG_NAME)
 
-	# TODO: Can we turn the service into a singleton somehow? Adding a node to the root
-	# didn't seem to work.
-
+	# TODO: Config migrations, add version number and check for matching values.
 	var config = ModLoaderConfig.get_config(MOD_NAME, "ap_config")
 	if config == null:
 		var default_config = ModLoaderConfig.get_default_config(MOD_NAME)
