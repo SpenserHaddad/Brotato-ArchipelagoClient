@@ -247,9 +247,9 @@ TEST_DATA_SETS: List[BrotatoTestDataSet] = [
         ),
         expected_results=BrotatoTestExpectedResults(
             num_common_crate_regions=BASE_GAME_CHARACTERS.num_characters,
-            common_crates_per_region=tuple([1] * 44),
+            common_crates_per_region=tuple([1] * BASE_GAME_CHARACTERS.num_characters),
             num_legendary_crate_regions=BASE_GAME_CHARACTERS.num_characters,
-            legendary_crates_per_region=tuple([1] * 44),
+            legendary_crates_per_region=tuple([1] * BASE_GAME_CHARACTERS.num_characters),
             # Every win will unlock a new crate drop group.
             wins_required_per_common_region=tuple(range(BASE_GAME_CHARACTERS.num_characters)),
             wins_required_per_legendary_region=tuple(range(BASE_GAME_CHARACTERS.num_characters)),
