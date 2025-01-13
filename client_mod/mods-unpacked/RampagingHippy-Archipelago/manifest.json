@@ -17,7 +17,44 @@
 			"compatible_game_version": [
 				"1.1.0.0"
 			],
-			"config_defaults": {}
+			"config_schema": {
+				"$schema": "https://json-schema.org/draft/2020-12/schema",
+				"title": "Archipelago Config",
+				"description": "Configuration for the Archipelago Client mod",
+				"type": "object",
+				"properties": {
+					"ap_server": {
+						"title": "Archipelago Server",
+						"type": "string",
+						"anyOf": [
+							{"format": "hostname"},
+							{"format": "idn-hostname"},
+							{"format": "ipv4"},
+							{"format": "ipv6"}
+						],
+						"minLength": 1,
+						"default": "archipelago.gg"
+					},
+					"ap_player": {
+						"title": "Archipelago Player",
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 16,
+						"default": "Player"
+					},
+					"ap_password": {
+						"title": "Archipelago Password",
+						"type": "string",
+						"minLength": 0,
+						"default": ""
+					},
+					"has_saved_run": {
+						"title": "Archipelago Last Run Was Saved",
+						"type": "boolean",
+						"default": false
+					}
+				}
+			}
 		}
 	}
 }

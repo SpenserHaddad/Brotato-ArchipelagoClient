@@ -33,8 +33,10 @@ func _ready():
 	_ap_client = mod_node.brotato_ap_client
 	_ap_client.connect("connection_state_changed", self, "_on_connection_state_changed")
 
+	# Set connection values to whatever the client has, in case they loaded a config.
 	_host_edit.text = _ap_client.server
 	_player_edit.text = _ap_client.player
+	_password_edit.text = _ap_client.password
 
 	_on_connection_state_changed(_ap_client.connect_state)
 
@@ -141,9 +143,10 @@ func _update_connect_button_disabled():
 func _on_ConnectButton_pressed():
 	_ap_client.server = _host_edit.text
 	_ap_client.player = _player_edit.text
+	_ap_client.password = _password_edit.text
  
 	# Fire and forget this coroutine call, signal handlers will take care of the rest.
-	_ap_client.connect_to_multiworld(_password_edit.text)
+	_ap_client.connect_to_multiworld()
 
 func _on_BackButton_pressed():
 	emit_signal("back_button_pressed")
