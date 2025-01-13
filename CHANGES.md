@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The last used server, player name, and password are now all saved to the configuration
   file when successfully connecting to a server, and are loaded from the file when
   opening the game.
+- The mod now logs a lot more detail around sending and receiving checks, to help debug
+  issues with checks not sending.
 
 ## [0.5.4] - 2024-12-21
 
