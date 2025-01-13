@@ -112,7 +112,7 @@ func disconnect_from_server():
 	_client.disconnect_from_host()
 
 func send_connect(game: String, user: String, password: String="", slot_data: bool=true):
-	ModLoaderLog.info("Sending Connect command, game=%s, user=%s, has_pw=%b" % [game, user, password.empty()], LOG_NAME)
+	ModLoaderLog.info("Sending Connect command, game=%s, user=%s, has_pw=%s" % [game, user, not password.empty()], LOG_NAME)
 	_send_command({
 		"cmd": "Connect",
 		"game": game,
@@ -126,11 +126,14 @@ func send_connect(game: String, user: String, password: String="", slot_data: bo
 	})
 
 func send_sync():
-	ModLoaderLog.info("Sending Sync command", LOG_NAME)
+	ModLoaderLog.info("Sending Sync", LOG_NAME)
 	_send_command({"cmd": "Sync"})
 
 func send_location_checks(locations: Array):
-	ModLoaderLog.info("Sending LocationChecks command", LOG_NAME)
+	var location_strs = []
+	for loc in locations:
+		location_strs.append(str(loc))
+	ModLoaderLog.info("Sending LocationChecks: locations=%s" % ", ".join(location_strs), LOG_NAME)
 	_send_command(
 		{
 			"cmd": "LocationChecks",
@@ -140,6 +143,10 @@ func send_location_checks(locations: Array):
 
 # TODO: create_as_hint Enum
 func send_location_scouts(locations: Array, create_as_int: int):
+	var location_strs = []
+	for loc in locations:
+		location_strs.append(str(loc))
+	ModLoaderLog.info("Sending LocationScouts: create_as_int=%d, locations=%s" % [create_as_int, ", ".join(location_strs)], LOG_NAME)
 	_send_command({
 		"cmd": "LocationScouts",
 		"locations": locations,
@@ -147,24 +154,29 @@ func send_location_scouts(locations: Array, create_as_int: int):
 	})
 
 func status_update(status: int):
+	ModLoaderLog.info("Sending StatusUpdate:", LOG_NAME)
 	_send_command({
 		"cmd": "StatusUpdate",
 		"status": status,
 	})
 
 func say(text: String):
+	ModLoaderLog.info("Sending Say: text=%s" % text, LOG_NAME)
 	_send_command({
 		"cmd": "Say",
 		"text": text,
 	})
 
 func get_data_package(games: Array):
+	ModLoaderLog.info("Sending GetDataPackage: games=%s" % ", ".join(games), LOG_NAME)	
 	_send_command({
 		"cmd": "GetDataPackage",
 		"games": games,
 	})
 
 func bounce(games: Array, slots: Array, tags: Array, data: Dictionary):
+	# TODO: args
+	ModLoaderLog.info("Sending Bounce", LOG_NAME)
 	_send_command({
 		"cmd": "Bounce",
 		"games": games,
@@ -177,6 +189,7 @@ func bounce(games: Array, slots: Array, tags: Array, data: Dictionary):
 func get_value(keys: Array):
 	# This is Archipelago's "Get" command, we change the name 
 	# since "get" is already taken by "Object.get".
+	ModLoaderLog.info("Sending Get: keys=%s" % ", ".join(keys), LOG_NAME)
 	_send_command({
 		"cmd": "Get",
 		"keys": keys,
@@ -184,6 +197,11 @@ func get_value(keys: Array):
 
 # TODO: DataStorageOperation data type
 func set_value(key: String, default, want_reply: bool, operations: Array):
+	var op_names = []
+	for op in operations:
+		op_names.append(op["operation"])
+	var ops = ", ".join(op_names)
+	ModLoaderLog.info("Sending Set: key=%s, default=%s, want_reply=%s, operations=%s" % [key, default, want_reply, ops], LOG_NAME)
 	_send_command({
 		"cmd": "Set",
 		"key": key,
@@ -193,6 +211,7 @@ func set_value(key: String, default, want_reply: bool, operations: Array):
 	})
 
 func set_notify(keys: Array):
+	ModLoaderLog.info("Sending SetNotify: keys=%s" % ", ".join(keys), LOG_NAME)	
 	_send_command({
 		"cmd": "SetNotify",
 		"keys": keys,
@@ -201,23 +220,25 @@ func set_notify(keys: Array):
 # WebSocketClient callbacks
 func _on_connection_established(_proto=""):
 	# We succeeded, stop waiting and tell the caller.
-	ModLoaderLog.debug("Successfully connected.", LOG_NAME)
+	ModLoaderLog.info("Successfully connected.", LOG_NAME)
 	emit_signal("_stop_waiting_to_connect", true)
 
 func _on_connection_error():
 	# We failed, stop waiting and tell the caller.
-	ModLoaderLog.debug("Error connecting.", LOG_NAME)
+	ModLoaderLog.info("Connection error.", LOG_NAME)
 	emit_signal("_stop_waiting_to_connect", false)
 
 func _on_connection_closed(was_clean=false):
-	_set_connection_state(State.STATE_CLOSED)
 	ModLoaderLog.info("AP connection closed, clean: %s." % was_clean, LOG_NAME)
+	_set_connection_state(State.STATE_CLOSED)
 	_peer = null
 
 func _on_data_received():
+	ModLoaderLog.info("Data received", LOG_NAME)
 	if self._peer == null:
-		# Rare case where we have an dead connection to a server that suddenly
+		# Rare case where we have a dead connection to a server that suddenly
 		# becomes active. Just ignore because we're not setup for it.
+		ModLoaderLog.warning("Received data from server even though peer is not setup.", LOG_NAME)
 		return
 	var received_data_str = _peer.get_packet().get_string_from_utf8()
 	var received_data = JSON.parse(received_data_str)
@@ -229,10 +250,12 @@ func _on_data_received():
 
 # Internal plumbing
 func _send_command(args: Dictionary):
-	ModLoaderLog.info("Sending %s command" % args["cmd"], LOG_NAME)
 	var command_str = JSON.print([args])
 	if _peer != null:
-		var _result = _peer.put_packet(command_str.to_ascii())
+		ModLoaderLog.warning("Sending command over peer", LOG_NAME)
+		var result = _peer.put_packet(command_str.to_ascii())
+		if result != 0:
+			ModLoaderLog.warning("Failed to send command, put_packet response is %d" % result, LOG_NAME)
 	else:
 		ModLoaderLog.warning("Peer is null!", LOG_NAME)
 
@@ -265,7 +288,7 @@ func _make_connection_timeout(for_url: String):
 	if _waiting_to_connect_to_server == for_url:
 		# We took to long, stop waiting and tell the called we failed.
 		_waiting_to_connect_to_server = false
-		ModLoaderLog.debug("Timed out trying to connect.", LOG_NAME)
+		ModLoaderLog.info("Timed out trying to connect.", LOG_NAME)
 		emit_signal("_stop_waiting_to_connect", false)
 
 func _set_connection_state(state):
@@ -275,42 +298,31 @@ func _set_connection_state(state):
 	emit_signal("connection_state_changed", connection_state)
 
 func _handle_command(command: Dictionary):
+	ModLoaderLog.info("Received %s command: %s" % [command["cmd"], JSON.print(command)], LOG_NAME)	
 	match command["cmd"]:
 		"RoomInfo":
-			ModLoaderLog.debug("Received RoomInfo cmd.", LOG_NAME)
 			emit_signal("on_room_info", command)
 		"ConnectionRefused":
-			ModLoaderLog.debug("Received ConnectionRefused cmd.", LOG_NAME)
 			emit_signal("on_connection_refused", command)
 		"Connected":
-			ModLoaderLog.debug("Received Connected cmd.", LOG_NAME)
 			emit_signal("on_connected", command)
 		"ReceivedItems":
-			ModLoaderLog.debug("Received ReceivedItems cmd.", LOG_NAME)
 			emit_signal("on_received_items", command)
 		"LocationInfo":
-			ModLoaderLog.debug("Received LocationInfo cmd.", LOG_NAME)
 			emit_signal("on_location_info", command)
 		"RoomUpdate":
-			ModLoaderLog.debug("Received RoomUpdate cmd.", LOG_NAME)
 			emit_signal("on_room_update", command)
 		"PrintJSON":
-			ModLoaderLog.debug("Received PrintJSON cmd.", LOG_NAME)
 			emit_signal("on_print_json", command)
 		"DataPackage":
-			ModLoaderLog.debug("Received DataPackage cmd.", LOG_NAME)
 			emit_signal("on_data_package", command)
 		"Bounced":
-			ModLoaderLog.debug("Received Bounced cmd.", LOG_NAME)
 			emit_signal("on_bounced", command)
 		"InvalidPacket":
-			ModLoaderLog.debug("Received InvalidPacket cmd.", LOG_NAME)
 			emit_signal("on_invalid_packet", command)
 		"Retrieved":
-			ModLoaderLog.debug("Received Retrieved cmd.", LOG_NAME)
 			emit_signal("on_retrieved", command)
 		"SetReply":
-			ModLoaderLog.debug("Received SetReply cmd.", LOG_NAME)
 			emit_signal("on_set_reply", command)
 		_:
 			ModLoaderLog.warning("Received Unknown Command %s" % command["cmd"], LOG_NAME)

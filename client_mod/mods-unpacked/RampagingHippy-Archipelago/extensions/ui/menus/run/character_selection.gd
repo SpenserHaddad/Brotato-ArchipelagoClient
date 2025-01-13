@@ -31,7 +31,6 @@ func _ensure_ap_client():
 		for character in character_info:
 			if character_info[character].unlocked:
 				_add_character(character)
-		ModLoaderLog.debug("Should init_char_select_inventory here", LOG_NAME)
 
 func _add_character(character_name: String):
 	var character_id = _constants.CHARACTER_NAME_TO_ID[character_name]

@@ -293,6 +293,9 @@ func _on_received_items(command):
 		var item_name = null
 		if self.data_package:
 			item_name = data_package.item_id_to_name[item["item"]]
+		else:
+			ModLoaderLog.warning("Received item when data package was not loaded", LOG_NAME)
+		ModLoaderLog.info("Received item '%s'" % item_name, LOG_NAME)
 		emit_signal("item_received", item_name, item)
 
 func _on_retrieved(command):

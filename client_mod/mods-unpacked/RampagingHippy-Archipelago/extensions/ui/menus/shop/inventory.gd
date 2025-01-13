@@ -20,9 +20,7 @@ func init_char_select_inventory(ap_client):
 	
 func set_elements(elements: Array, reverse_order: bool = false, replace: bool = true, prioritize_gameplay_elements: bool = false) -> void:
 	.set_elements(elements, reverse_order, replace, prioritize_gameplay_elements)
-	ModLoaderLog.debug("In set_elements for char_select", LOG_NAME)
 	var ap_character_info = _ap_client.character_progress.character_info
-	ModLoaderLog.debug("Elements: %d" % get_child_count(), LOG_NAME)
 	var children = get_children()
 	for child in children:
 		if child.item != null:
