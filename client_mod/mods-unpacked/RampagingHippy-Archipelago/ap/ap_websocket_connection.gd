@@ -112,6 +112,7 @@ func disconnect_from_server():
 	_client.disconnect_from_host()
 
 func send_connect(game: String, user: String, password: String="", slot_data: bool=true):
+	ModLoaderLog.info("Sending Connect command, game=%s, user=%s, has_pw=%b" % [game, user, password.empty()], LOG_NAME)
 	_send_command({
 		"cmd": "Connect",
 		"game": game,
@@ -125,9 +126,11 @@ func send_connect(game: String, user: String, password: String="", slot_data: bo
 	})
 
 func send_sync():
+	ModLoaderLog.info("Sending Sync command", LOG_NAME)
 	_send_command({"cmd": "Sync"})
 
 func send_location_checks(locations: Array):
+	ModLoaderLog.info("Sending LocationChecks command", LOG_NAME)
 	_send_command(
 		{
 			"cmd": "LocationChecks",

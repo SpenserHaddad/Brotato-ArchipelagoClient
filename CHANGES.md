@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added configuration file for the client mod to save some settings outside of the game.
+  - The configuration file is located at
+    `%APPDATA%/configs/RampagingHippy-Archipelago/ap_config.json`.
+- The last used server, player name, and password are now all saved to the configuration
+  file when successfully connecting to a server, and are loaded from the file when
+  opening the game.
+
 ## [0.5.4] - 2024-12-21
 
 ### Fixed

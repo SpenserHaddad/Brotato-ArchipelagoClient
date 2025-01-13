@@ -1,7 +1,10 @@
 extends "res://ui/menus/pages/main_menu.gd"
 
+const LOG_NAME = "RampagingHippy-Archipelago/main_menu"
+
 onready var _archipelago_button
 onready var _ap_websocket_connection
+onready var _ap_client
 var _ap_icon_connected = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80.png")
 var _ap_icon_disconnected = preload("res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80_greyscale.png")
 
@@ -9,10 +12,14 @@ signal ap_connect_button_pressed
 
 func init():
 	.init()
+
+	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
+	_ap_client = mod_node.brotato_ap_client
+
 	if _archipelago_button != null:
-		# Make AP button reachable with controller. We setup Quit -> AP in 
-		# _init() Godot inheritance/call-order rules means we have to set the 
-		# neighbor here for it take.
+		# Make AP button reachable with controller. Because we setup Quit -> AP in
+		# _init() Godot inheritance/call-order rules means we have to set the neighbor
+		# here for it take.
 		quit_button.focus_neighbour_bottom = _archipelago_button.get_path()
 		var bottom_neighbor
 		if ProgressData.saved_run_state.size() > 0:
@@ -23,6 +30,19 @@ func init():
 		_archipelago_button.focus_neighbour_top = quit_button.get_path()
 		_archipelago_button.focus_neighbour_bottom = bottom_neighbor.get_path()
 		bottom_neighbor.focus_neighbour_top = _archipelago_button.get_path()
+
+	if (
+			_ap_client.connected_to_multiworld() and 
+			ProgressData.saved_run_state.has_run_state and
+			_ap_client.config.data["has_saved_run"]
+		):
+		var saved_run_characters = ProgressData.saved_run_state.players_data
+		var saved_run_last_wave = ProgressData.saved_run_state["current_wave"]
+		if (_ap_client.config.data["saved_run_characters"] != saved_run_characters or
+			_ap_client.config.data["saved_run_wave"] != saved_run_last_wave):
+			ModLoaderLog.info("Saved run does not AP's saved run, disabling resume button.", LOG_NAME)
+			continue_button.disabled = true
+			
 
 func _ready():
 	._ready()
