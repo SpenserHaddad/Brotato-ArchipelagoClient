@@ -141,7 +141,7 @@ func _update_num_locations_checked(new_value: int, send_check: bool=true):
 	if num_locations_checked == new_value:
 		return
 
-	ModLoaderLog.debug("Num %s locations checked updated to %d" % [crate_type, new_value], LOG_NAME)
+	ModLoaderLog.info("Num %s locations checked updated to %d" % [crate_type, new_value], LOG_NAME)
 	num_locations_checked = new_value
 	if send_check:
 		var location_id = location_idx_to_id[num_locations_checked]
@@ -161,7 +161,7 @@ func _update_num_locations_checked(new_value: int, send_check: bool=true):
 func _update_can_spawn_consumable():
 	var possible_checks = floor((check_progress + _num_crates_spawned) / crates_per_check)
 	can_spawn_consumable = num_locations_checked + possible_checks < num_unlocked_locations
-	ModLoaderLog.debug(
+	ModLoaderLog.info(
 		"Updating can_spawn_consumable: check_progress=%d, crates_spawned=%d, crates_per_check=%d, num_locations_checked=%d, num_unlocked_locations=%d, can_spawn_consumable=%s" % [
 			check_progress,
 			_num_crates_spawned,
@@ -247,11 +247,11 @@ func on_run_started(_character_ids: Array):
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value=null):
 	if key == _check_progress_data_storage_key:
-		ModLoaderLog.debug("Received check progress DS update: key=%s, new_value=%d" % [key, new_value], LOG_NAME)
+		ModLoaderLog.info("Received check progress DS update: key=%s, new_value=%d" % [key, new_value], LOG_NAME)
 		_update_check_progress(new_value)
 	elif key == _num_locations_checked_storage_key:
 		# Update value but don't send a check, since we have already found this location
-		ModLoaderLog.debug("Received num locations DS update: key=%s, new_value=%d" % [key, new_value], LOG_NAME)
+		ModLoaderLog.info("Received num locations DS update: key=%s, new_value=%d" % [key, new_value], LOG_NAME)
 		_update_num_locations_checked(new_value, false)
 
 func _build_location_name(index: int) -> String:

@@ -40,8 +40,12 @@ func notify_run_started(character_ids: Array):
 	## Emits the `run_started` signal to notify progress trackers.
 	in_run = true
 	active_characters = character_ids
+	var character_names = ", ".join(active_characters)
 	if is_in_ap_run():
+		ModLoaderLog.info("AP run started with characters; %s" % character_names , LOG_NAME)
 		emit_signal("run_started", active_characters)
+	else:
+		ModLoaderLog.info("Non-AP run started with characters; %s" % character_names , LOG_NAME)
 
 func notify_run_finished(won_run: bool):
 	## Called by the game extensions when a run is finished, whether won or lost.
@@ -52,18 +56,27 @@ func notify_run_finished(won_run: bool):
 	in_run = false
 	active_characters = []
 	if finished_ap_run:
+		ModLoaderLog.info("AP run finished, won_run=%s" % won_run, LOG_NAME)
 		emit_signal("run_finished", won_run, active_characters)
+	else:
+		ModLoaderLog.info("Non-AP run finished, won_run=%s" % won_run, LOG_NAME)
 
 func notify_wave_started(wave_number: int):
 	## Called by the game extensions when a wave is started.
 	##
 	## Emits the `wave_started` signal to notify progress trackers.
 	if is_in_ap_run():
+		ModLoaderLog.info("AP wave %d started" % wave_number, LOG_NAME)
 		emit_signal("wave_started", wave_number, active_characters)
+	else:
+		ModLoaderLog.info("Non-AP wave %d started" % wave_number, LOG_NAME)
 
 func notify_wave_finished(wave_number: int, is_run_lost: bool, is_run_won: bool):
 	## Called by the game extensions when a wave is finished.
 	##
 	## Emits the `wave_finished` signal to notify progress trackers.
 	if is_in_ap_run():
+		ModLoaderLog.info("AP wave %d finished, is_run_lost=%s, is_run_won=%s" % [wave_number, is_run_lost, is_run_won], LOG_NAME)
 		emit_signal("wave_finished", wave_number, active_characters, is_run_lost, is_run_won)
+	else:
+		ModLoaderLog.info("Non-AP wave %d finished, is_run_lost=%s, is_run_won=%s" % [wave_number, is_run_lost, is_run_won], LOG_NAME)

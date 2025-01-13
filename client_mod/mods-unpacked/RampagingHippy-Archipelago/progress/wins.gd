@@ -32,7 +32,7 @@ func _on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool
 			var character_name = constants.CHARACTER_ID_TO_NAME[character_id]
 			var character_won_loc_name = constants.RUN_COMPLETE_LOCATION_TEMPLATE.format({"char": character_name})
 			var character_won_loc_id = _ap_client.data_package.location_name_to_id[character_won_loc_name]
-			if _ap_client.missing_locations.has(location_id):
+			if _ap_client.missing_locations.has(character_won_loc_id):
 				ModLoaderLog.info("Sending location check for %s" % character_won_loc_name, LOG_NAME)
 				_ap_client.check_location(character_won_loc_id)
 			else:

@@ -250,10 +250,9 @@ func _on_data_received():
 
 # Internal plumbing
 func _send_command(args: Dictionary):
-	ModLoaderLog.info("Sending command %s" % args["cmd"], LOG_NAME)
 	var command_str = JSON.print([args])
 	if _peer != null:
-		ModLoaderLog.warning("Sending command over packet", LOG_NAME)
+		ModLoaderLog.warning("Sending command over peer", LOG_NAME)
 		var result = _peer.put_packet(command_str.to_ascii())
 		if result != 0:
 			ModLoaderLog.warning("Failed to send command, put_packet response is %d" % result, LOG_NAME)
