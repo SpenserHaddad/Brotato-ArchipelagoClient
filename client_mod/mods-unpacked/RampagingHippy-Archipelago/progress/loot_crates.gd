@@ -145,6 +145,8 @@ func _update_num_locations_checked(new_value: int, send_check: bool=true):
 	num_locations_checked = new_value
 	if send_check:
 		var location_id = location_idx_to_id[num_locations_checked]
+		var location_name = _build_location_name(num_locations_checked)
+		ModLoaderLog.info("Sending location check for %s (id=%d)" % [location_name, location_id], LOG_NAME)
 		_ap_client.check_location(location_id)
 	_update_can_spawn_consumable()
 	
