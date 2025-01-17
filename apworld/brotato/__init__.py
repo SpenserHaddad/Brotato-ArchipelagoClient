@@ -352,11 +352,19 @@ class BrotatoWorld(World):
         return self.random.choice(self._filler_items)
 
     def fill_slot_data(self) -> Dict[str, Any]:
+        # Define outside dict for readability
+        spawn_normal_loot_crates = (
+            self.options.spawn_normal_loot_crates.value == self.options.spawn_normal_loot_crates.option_true
+        )
         return {
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": self.options.num_victories.value,
+            "gold_reward_mode": self.options.gold_reward_mode.value,
+            "xp_reward_mode": self.options.xp_reward_mode.value,
+            "enable_enemy_xp": self.options.enable_enemy_xp.value == self.options.enable_enemy_xp.option_true,
             "num_starting_shop_slots": self.options.num_starting_shop_slots.value,
             "num_starting_shop_lock_buttons": (MAX_SHOP_SLOTS - self.num_shop_lock_button_items),
+            "spawn_normal_loot_crates": spawn_normal_loot_crates,
             "num_common_crate_locations": self.options.num_common_crate_drops.value,
             "num_common_crate_drops_per_check": self.options.num_common_crate_drops_per_check.value,
             "common_crate_drop_groups": [asdict(g) for g in self.common_loot_crate_groups],
