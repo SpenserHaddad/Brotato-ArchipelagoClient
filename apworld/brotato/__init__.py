@@ -75,7 +75,7 @@ class BrotatoWorld(World):
 
     _filler_items: List[str] = filler_items
     _starting_characters: List[str]
-    _include_characters: Set[str]
+    _include_characters: List[str]
     """The characters whose locations (wave/run complete) may have progression and useful items.
 
     This is derived from options.include_characters.
@@ -167,11 +167,11 @@ class BrotatoWorld(World):
         }
 
         # Keep include characters in the defined order to make reading/debugging easier. Entries should all be valid.
-        self._include_characters = set()
+        self._include_characters = []
         for pack_enabled, include_characters_from_pack, pack_characters in game_packs.values():
             if pack_enabled:
-                characters_from_pack = set(c for c in pack_characters.characters if c in include_characters_from_pack)
-                self._include_characters |= characters_from_pack
+                characters_from_pack = [c for c in pack_characters.characters if c in include_characters_from_pack]
+                self._include_characters += characters_from_pack
 
         starting_character_option = self.options.starting_characters.value
         if starting_character_option == StartingCharacters.option_default_all:  # Defaults from all game packs
