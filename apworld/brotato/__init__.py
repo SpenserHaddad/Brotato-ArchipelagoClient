@@ -4,9 +4,10 @@ from dataclasses import asdict
 from typing import Any, ClassVar, Dict, List, Literal, Set, Tuple, Union
 
 from BaseClasses import Item, LocationProgressType, MultiWorld, Region, Tutorial
-from Options import OptionError
+from Options import OptionError, OptionGroup
 from worlds.AutoWorld import WebWorld, World
 
+from . import options  # So we don't need to import every option class when defining option groups
 from ._loot_crate_groups import BrotatoLootCrateGroup, build_loot_crate_groups
 from .constants import (
     ABYSSAL_TERRORS_CHARACTERS,
@@ -54,6 +55,48 @@ class BrotatoWeb(WebWorld):
     ]
     theme = "dirt"
     rich_text_options_doc = True
+
+    option_groups = [
+        OptionGroup(
+            "Loot Crates",
+            [
+                options.SpawnNormalLootCrates,
+                options.NumberCommonCrateDropLocations,
+                options.NumberCommonCrateDropsPerCheck,
+                options.NumberCommonCrateDropGroups,
+                options.NumberLegendaryCrateDropLocations,
+                options.NumberLegendaryCrateDropsPerCheck,
+                options.NumberLegendaryCrateDropGroups,
+            ],
+        ),
+        OptionGroup(
+            "Item Rewards",
+            [
+                options.ItemWeights,
+                options.CommonItemWeight,
+                options.UncommonItemWeight,
+                options.RareItemWeight,
+                options.LegendaryItemWeight,
+            ],
+        ),
+        OptionGroup(
+            "Upgrades",
+            [
+                options.NumberCommonUpgrades,
+                options.NumberUncommonUpgrades,
+                options.NumberRareUpgrades,
+                options.NumberLegendaryUpgrades,
+            ],
+        ),
+        OptionGroup(
+            "Shop Slots",
+            [options.StartingShopSlots, options.StartingShopLockButtonsMode, options.NumberStartingShopLockButtons],
+        ),
+        OptionGroup(
+            "Abyssal Terrors DLC",
+            [options.EnableAbyssalTerrorsDLC, options.IncludeAbyssalTerrorsCharacters],
+        ),
+    ]
 
 
 class BrotatoWorld(World):
