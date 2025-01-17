@@ -50,9 +50,14 @@ func on_room_updated(_room_update: Dictionary):
 func on_connected_to_multiworld():
 	pass
 
+func on_disconnected_from_multiworld():
+	pass
+
 func on_run_started(_character_ids: Array):
 	pass
 
 func _on_client_connection_state_changed(state: int, _error: int=0):
 	if state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD:
 		on_connected_to_multiworld()
+	elif state == GodotApClient.ConnectState.DISCONNECTED:
+		on_disconnected_from_multiworld()
