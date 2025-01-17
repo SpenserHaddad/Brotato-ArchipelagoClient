@@ -29,7 +29,7 @@ func give_player_unreceived_xp():
 		var xp_to_give = xp_received - xp_given
 		if xp_to_give > 0:
 			for player_idx in RunData.get_player_count():
-				RunData.add_xp(xp_to_give, player_idx)
+				RunData.add_xp(xp_to_give, player_idx, true)
 			_ap_client.set_value(
 				_received_xp_data_storage_key,
 				"add",
