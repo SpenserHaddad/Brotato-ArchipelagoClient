@@ -125,7 +125,7 @@ class XpRewardMode(Choice):
     option_one_time = 0
     option_all_every_time = 1
 
-    default = 1
+    default = 0
     display_name = "XP Reward Mode"
 
 
