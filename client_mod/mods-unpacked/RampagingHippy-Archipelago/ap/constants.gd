@@ -108,6 +108,16 @@ const XP_ITEM_NAME_TO_VALUE = {
 	"XP (150)": 150,
 }
 
+enum GoldRewardMode {
+	ONE_TIME = 0
+	ALL_EVERY_TIME = 1
+}
+
+enum XpRewardMode {
+	ONE_TIME = 0
+	ALL_EVERY_TIME = 1
+}
+
 func _init():
 	for char_name in CHARACTER_NAME_TO_ID:
 		var char_id = CHARACTER_NAME_TO_ID[char_name]

@@ -100,6 +100,58 @@ class WavesPerCheck(Range):
     display_name = "Waves Per Check"
 
 
+class GoldRewardMode(Choice):
+    """Chooses how gold rewards are given.
+
+    #. One Time: Gold items are only given once, in either the current run or the next run after receiving the item.
+    #. All Every Time: The total amount of gold received is given to the player at the start of every run. Since gold is
+       a filler item, this can lead to the game being "won" very easily early on in larger multiworlds.
+    """
+
+    option_one_time = 0
+    option_all_every_time = 1
+
+    default = 0
+    display_name = "Gold Reward Mode"
+
+
+class XpRewardMode(Choice):
+    """Chooses how XP rewards are given.
+
+    #. One Time: XP items are only given once, in either the current run or the next run after receiving the item.
+    #. All Every Time: The total amount of XP received is given to the player at the start of every run.
+    """
+
+    option_one_time = 0
+    option_all_every_time = 1
+
+    default = 0
+    display_name = "XP Reward Mode"
+
+
+class EnableEnemyXp(Toggle):
+    """Sets enemies will give XP or not.
+
+    If disabled, enemies will not give XP. The only XP will be from XP items in the multiworld. Upgrades will be from
+    leveling up and upgrade items received.
+    """
+
+    display_name = "Enable Enemy XP"
+
+
+class SpawnNormalLootCrates(Toggle):
+    """Sets whether loot crates can still spawn when connected to a multiworld.
+
+    If off, then the only consumables that spawn will be the health items and the Archipelago drop item. No regular or
+    legendary loot crates will spawn.
+
+    If on, then loot crates will still spawn when there are no available Archipelago drops. See 'Loot Crate Groups' for
+    details.
+    """
+
+    display_name = "Spawn Normal Loot Crates"
+
+
 class NumberCommonCrateDropLocations(Range):
     """Replaces the in-game loot crate drops with an Archipelago item which must be picked up to generate a check.
 
@@ -373,6 +425,10 @@ class BrotatoOptions(PerGameCommonOptions):
     include_base_game_characters: IncludeBaseGameCharacters
     num_starting_characters: NumberStartingCharacters
     waves_per_drop: WavesPerCheck
+    gold_reward_mode: GoldRewardMode
+    xp_reward_mode: XpRewardMode
+    enable_enemy_xp: EnableEnemyXp
+    spawn_normal_loot_crates: SpawnNormalLootCrates
     num_common_crate_drops: NumberCommonCrateDropLocations
     num_common_crate_drops_per_check: NumberCommonCrateDropsPerCheck
     num_common_crate_drop_groups: NumberCommonCrateDropGroups

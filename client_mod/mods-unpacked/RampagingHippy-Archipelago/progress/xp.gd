@@ -12,8 +12,17 @@
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApXpProgress
 
+const LOG_NAME = "RampagingHippy-Archipelago/progress/xp"
+
+signal xp_received
+
+# The total XP received from items, given or not given.
 var xp_received: int = 0
+
+# The XP given to the player, which is either per run or per game depending on
+# the player's settings.
 var xp_given: int = 0
+var xp_reward_mode: int = 0
 var _received_xp_data_storage_key: String = ""
 
 func _init(ap_client, game_state).(ap_client, game_state):
@@ -28,15 +37,21 @@ func give_player_unreceived_xp():
 	if _game_state.is_in_ap_run():
 		var xp_to_give = xp_received - xp_given
 		if xp_to_give > 0:
-			for player_idx in RunData.get_player_count():
-				RunData.add_xp(xp_to_give, player_idx)
-			_ap_client.set_value(
-				_received_xp_data_storage_key,
-				"add",
-				xp_to_give,
-				0,
-				true
-			)
+			emit_signal("xp_received", xp_to_give)
+
+			if xp_reward_mode == constants.XpRewardMode.ONE_TIME:
+				# Send the gold received to the server so we don't give the
+				# player this gold again
+				_ap_client.set_value(
+					_received_xp_data_storage_key,
+					"add",
+					xp_to_give,
+					0,
+					true
+				)
+			else:
+				# Store the tracked gold locally
+				xp_given += xp_to_give
 
 func on_item_received(item_name: String, _item):
 	if item_name in constants.XP_ITEM_NAME_TO_VALUE:
@@ -47,8 +62,17 @@ func on_connected_to_multiworld():
 	# Reset received XP. As the multiworld sends us all our received items we'll
 	# recalculate the received XP.
 	xp_received = 0
+
+	if _ap_client.slot_data.has("xp_reward_mode"):
+		xp_reward_mode = _ap_client.slot_data["xp_reward_mode"]
+		ModLoaderLog.debug("XP reward mode is %d" % xp_reward_mode, LOG_NAME)
+	else:
+		xp_reward_mode = constants.XpRewardMode.ONE_TIME
+		ModLoaderLog.debug("Legacy mode, XP reward mode is one_time.", LOG_NAME)
+
+	# Initialize the data storage value if it wasn't set yet. Do this regardless of
+	# whether we'll use it for simplicity.
 	_received_xp_data_storage_key = "%s_xp_given" % _ap_client.player
-	# Initialize the data storage value if it wasn't set yet
 	_ap_client.set_value(
 		_received_xp_data_storage_key,
 		"default",
@@ -58,6 +82,9 @@ func on_connected_to_multiworld():
 	)
 
 func on_run_started(_character_ids: Array):
+	if xp_reward_mode == constants.XpRewardMode.ALL_EVERY_TIME:
+		# Reset the received XP so we give the player all gold items again.
+		xp_given = 0
 	give_player_unreceived_xp()
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value = null):

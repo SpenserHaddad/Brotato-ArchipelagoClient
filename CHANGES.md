@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added new option `enable_enemy_xp`, which controls whether enemies will grant XP when
+  killed.
+- Added new option `gold_reward_mode`, which controls how gold items are given to the
+  player. This has two values:
+    - `one_time` (`0`): Gold items are only given to the player once per game. This is
+      the same behavior as in previous versions.
+    - `all_every_time` (`1`): At the start of each run, the player is given ALL gold
+      received.
+- Added new option `xp_reward_mode`, which controls how XP items are given to the
+  player. This has two values:
+    - `one_time` (`0`): XP items are only given to the player once per game. This is
+      the same behavior as in previous versions.
+    - `all_every_time` (`1`): At the start of each run, the player is given ALL XP
+      received.
+
+
 ## [0.6.0] - 2025-01-12
 
 ### Added

@@ -21,6 +21,7 @@ func _init():
 	# Add extensions
 	var extension_files = [
 		"main.gd", # Update consumable drop logic to spawn AP items
+		"singletons/run_data.gd", # Override XP rewards
 		"singletons/item_service.gd", # Drop AP consumables
 		"ui/menus/pages/main_menu.gd", # Add AP connect
 		# Detect when game is quit when the "Return to main menu" confirmation button is pressed

@@ -11,6 +11,7 @@ var ApBrotatoGameState = load("res://mods-unpacked/RampagingHippy-Archipelago/ap
 var ApCharacterProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/characters.gd")
 var ApShopSlotsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/shop_slots.gd")
 var ApShopLockButtonsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/shop_lock_buttons.gd")
+var ApEnemyXpProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/enemy_xp.gd")
 var ApGoldProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/gold.gd")
 var ApXpProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/xp.gd")
 var ApItemsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/items.gd")
@@ -27,6 +28,7 @@ var debug
 var character_progress
 var shop_slots_progress
 var shop_lock_buttons_progress
+var enemy_xp_progress
 var gold_progress
 var xp_progress
 var items_progress
@@ -44,6 +46,7 @@ func _init(websocket_client, config).(websocket_client, config):
 	character_progress = ApCharacterProgress.new(self, game_state)
 	shop_slots_progress = ApShopSlotsProgress.new(self, game_state)
 	shop_lock_buttons_progress = ApShopLockButtonsProgress.new(self, game_state)
+	enemy_xp_progress = ApEnemyXpProgress.new(self, game_state)
 	gold_progress = ApGoldProgress.new(self, game_state)
 	xp_progress = ApXpProgress.new(self, game_state)
 	items_progress = ApItemsProgress.new(self, game_state)
