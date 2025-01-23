@@ -21,9 +21,10 @@ func _init(ap_client, game_state).(ap_client, game_state):
 	pass
 
 func on_connected_to_multiworld():
-	# Reset received XP. As the multiworld sends us all our received items we'll
-	# recalculate the received XP.
-	enable_enemy_xp = _ap_client.slot_data["enable_enemy_xp"]
+	# Check the slot data to see if enemies should give XP. Legacy behavior is
+	# to just set the value to true.
+	if _ap_client.slot_data.has("enable_enemy_xp"):
+		enable_enemy_xp = _ap_client.slot_data["enable_enemy_xp"]
 	ModLoaderLog.info("enable_enemy_xp set to %s" % enable_enemy_xp, LOG_NAME)
 
 func on_disconnected_from_multiworld():
