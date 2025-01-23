@@ -25,6 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       received.
 
 
+### Changed
+
+- Sorted options into option groups for easier viewing on WebHost.
+- Removed some of the logs from the previous update. They were lagging the game and
+  adding noise in the log files, making it hard to debug other issues.
+
 ## [0.6.0] - 2025-01-12
 
 ### Added
