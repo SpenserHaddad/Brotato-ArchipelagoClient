@@ -12,8 +12,17 @@
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApGoldProgress
 
+const LOG_NAME = "RampagingHippy-Archipelago/progress/gold"
+
+signal gold_received
+
+# The total gold received from items, given or not given.
 var gold_received: int = 0
+
+# The gold given to the player, which is either per run or per game depending on
+# the player's settings.
 var gold_given: int = 0
+var gold_reward_mode: int = 0
 var _received_gold_data_storage_key: String = ""
 
 func _init(ap_client, game_state).(ap_client, game_state):
@@ -28,15 +37,20 @@ func give_player_unreceived_gold():
 	if _game_state.is_in_ap_run():
 		var gold_to_give = gold_received - gold_given
 		if gold_to_give > 0:
-			for player_idx in range(RunData.get_player_count()):
-				RunData.add_gold(gold_to_give, player_idx)
-			_ap_client.set_value(
-				_received_gold_data_storage_key,
-				"add",
-				gold_to_give,
-				0,
-				true
-			)
+			emit_signal("gold_received", gold_to_give)
+
+			if gold_reward_mode == constants.GoldRewardMode.ONE_TIME:
+				# Send the gold received to the server so we don't give the
+				# player this gold again
+				_ap_client.set_value(
+					_received_gold_data_storage_key,
+					"add",
+					gold_to_give,
+					0,
+					true
+				)
+			else:
+				gold_given += gold_to_give
 
 func on_item_received(item_name: String, _item):
 	if item_name in constants.GOLD_DROP_NAME_TO_VALUE:
@@ -47,8 +61,18 @@ func on_connected_to_multiworld():
 	# Reset received gold. As the multiworld sends us all our received items we'll
 	# recalculate the received gold.
 	gold_received = 0
+	
+	# Check gold reward mode
+	if _ap_client.slot_data.has("gold_reward_mode"):
+		gold_reward_mode = _ap_client.slot_data["gold_reward_mode"]
+		ModLoaderLog.debug("Gold reward mode is %d" % gold_reward_mode, LOG_NAME)
+	else:
+		gold_reward_mode = constants.GoldRewardMode.ONE_TIME
+		ModLoaderLog.debug("Legacy mode, gold reward mode is one_time.", LOG_NAME)
+		
+	# Initialize the data storage value if it wasn't set yet. Do this regardless of
+	# whether we'll use it for simplicity.
 	_received_gold_data_storage_key = "%s_gold_given" % _ap_client.player
-	# Initialize the data storage value if it wasn't set yet
 	_ap_client.set_value(
 		_received_gold_data_storage_key,
 		"default",
@@ -59,6 +83,9 @@ func on_connected_to_multiworld():
 	)
 
 func on_run_started(_character_ids: Array):
+	if gold_reward_mode == constants.GoldRewardMode.ALL_EVERY_TIME:
+		# Reset the received gold so we give the player all gold items again.
+		gold_given = 0
 	give_player_unreceived_gold()
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value = null):
