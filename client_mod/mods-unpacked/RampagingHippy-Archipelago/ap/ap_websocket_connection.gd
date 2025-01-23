@@ -112,7 +112,6 @@ func disconnect_from_server():
 	_client.disconnect_from_host()
 
 func send_connect(game: String, user: String, password: String="", slot_data: bool=true):
-	ModLoaderLog.info("Sending Connect command, game=%s, user=%s, has_pw=%s" % [game, user, not password.empty()], LOG_NAME)
 	_send_command({
 		"cmd": "Connect",
 		"game": game,
@@ -126,14 +125,12 @@ func send_connect(game: String, user: String, password: String="", slot_data: bo
 	})
 
 func send_sync():
-	ModLoaderLog.info("Sending Sync", LOG_NAME)
 	_send_command({"cmd": "Sync"})
 
 func send_location_checks(locations: Array):
 	var location_strs = []
 	for loc in locations:
 		location_strs.append(str(loc))
-	ModLoaderLog.info("Sending LocationChecks: locations=%s" % ", ".join(location_strs), LOG_NAME)
 	_send_command(
 		{
 			"cmd": "LocationChecks",
@@ -146,7 +143,6 @@ func send_location_scouts(locations: Array, create_as_int: int):
 	var location_strs = []
 	for loc in locations:
 		location_strs.append(str(loc))
-	ModLoaderLog.info("Sending LocationScouts: create_as_int=%d, locations=%s" % [create_as_int, ", ".join(location_strs)], LOG_NAME)
 	_send_command({
 		"cmd": "LocationScouts",
 		"locations": locations,
@@ -154,21 +150,18 @@ func send_location_scouts(locations: Array, create_as_int: int):
 	})
 
 func status_update(status: int):
-	ModLoaderLog.info("Sending StatusUpdate:", LOG_NAME)
 	_send_command({
 		"cmd": "StatusUpdate",
 		"status": status,
 	})
 
 func say(text: String):
-	ModLoaderLog.info("Sending Say: text=%s" % text, LOG_NAME)
 	_send_command({
 		"cmd": "Say",
 		"text": text,
 	})
 
 func get_data_package(games: Array):
-	ModLoaderLog.info("Sending GetDataPackage: games=%s" % ", ".join(games), LOG_NAME)	
 	_send_command({
 		"cmd": "GetDataPackage",
 		"games": games,
@@ -176,7 +169,6 @@ func get_data_package(games: Array):
 
 func bounce(games: Array, slots: Array, tags: Array, data: Dictionary):
 	# TODO: args
-	ModLoaderLog.info("Sending Bounce", LOG_NAME)
 	_send_command({
 		"cmd": "Bounce",
 		"games": games,
@@ -189,7 +181,6 @@ func bounce(games: Array, slots: Array, tags: Array, data: Dictionary):
 func get_value(keys: Array):
 	# This is Archipelago's "Get" command, we change the name 
 	# since "get" is already taken by "Object.get".
-	ModLoaderLog.info("Sending Get: keys=%s" % ", ".join(keys), LOG_NAME)
 	_send_command({
 		"cmd": "Get",
 		"keys": keys,
@@ -201,7 +192,6 @@ func set_value(key: String, default, want_reply: bool, operations: Array):
 	for op in operations:
 		op_names.append(op["operation"])
 	var ops = ", ".join(op_names)
-	ModLoaderLog.info("Sending Set: key=%s, default=%s, want_reply=%s, operations=%s" % [key, default, want_reply, ops], LOG_NAME)
 	_send_command({
 		"cmd": "Set",
 		"key": key,
@@ -211,7 +201,6 @@ func set_value(key: String, default, want_reply: bool, operations: Array):
 	})
 
 func set_notify(keys: Array):
-	ModLoaderLog.info("Sending SetNotify: keys=%s" % ", ".join(keys), LOG_NAME)	
 	_send_command({
 		"cmd": "SetNotify",
 		"keys": keys,
@@ -234,7 +223,6 @@ func _on_connection_closed(was_clean=false):
 	_peer = null
 
 func _on_data_received():
-	ModLoaderLog.info("Data received", LOG_NAME)
 	if self._peer == null:
 		# Rare case where we have a dead connection to a server that suddenly
 		# becomes active. Just ignore because we're not setup for it.
@@ -252,7 +240,6 @@ func _on_data_received():
 func _send_command(args: Dictionary):
 	var command_str = JSON.print([args])
 	if _peer != null:
-		ModLoaderLog.warning("Sending command over peer", LOG_NAME)
 		var result = _peer.put_packet(command_str.to_ascii())
 		if result != 0:
 			ModLoaderLog.warning("Failed to send command, put_packet response is %d" % result, LOG_NAME)
@@ -298,7 +285,7 @@ func _set_connection_state(state):
 	emit_signal("connection_state_changed", connection_state)
 
 func _handle_command(command: Dictionary):
-	ModLoaderLog.info("Received %s command: %s" % [command["cmd"], JSON.print(command)], LOG_NAME)	
+	ModLoaderLog.info("Received %s command" % command["cmd"] , LOG_NAME)	
 	match command["cmd"]:
 		"RoomInfo":
 			emit_signal("on_room_info", command)
