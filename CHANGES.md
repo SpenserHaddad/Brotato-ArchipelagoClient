@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2025-01-23
+
 ### Added
 
 - Added new option `enable_enemy_xp`, which controls whether enemies will grant XP when
@@ -23,7 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       the same behavior as in previous versions.
     - `all_every_time` (`1`): At the start of each run, the player is given ALL XP
       received.
-
 
 ### Changed
 
@@ -365,8 +366,9 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.6.0...HEAD
-[0.5.4]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.4...v0.6.0
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.4...v0.6.0
 [0.5.4]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.1...v0.5.2
