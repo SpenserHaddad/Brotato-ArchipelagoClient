@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2025-01-28
+
 ### Fixed
 
 - Fix it being possible to lock shop slots without the appropriate shop lock AP item by
@@ -372,7 +374,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.0...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.4...v0.6.0
 [0.5.4]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.3...v0.5.4
