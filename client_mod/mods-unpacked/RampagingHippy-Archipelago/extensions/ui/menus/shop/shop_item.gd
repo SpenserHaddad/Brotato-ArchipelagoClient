@@ -14,6 +14,15 @@ func manage_lock_button_visibility() -> void:
 		# Trust that the game has set the lock button properly, just set the text back
 		# in case we changed it before and received an lock button item from AP.
 		_lock_button.text = "MENU_LOCK"
-
 	
-		
+
+func change_lock_status(button_pressed: bool) -> void:
+	# Intercept the call to lock/unlock the item and discard if we don't have the item.
+	# Even thugh we disable the button, this can still be triggered by a button press.
+	if ap_lock_button_enabled:
+		.change_lock_status(button_pressed)
+	else:
+		var old_text = _lock_button.text
+		_lock_button.text = "NOPE"
+		yield(get_tree().create_timer(0.5), "timeout")
+		_lock_button.text = old_text

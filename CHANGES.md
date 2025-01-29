@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix it being possible to lock shop slots without the appropriate shop lock AP item by
+  using the controller/keyboard button bound to lock items instead of pressing the UI
+  button.
+
 ## [0.7.0] - 2025-01-23
 
 ### Added
