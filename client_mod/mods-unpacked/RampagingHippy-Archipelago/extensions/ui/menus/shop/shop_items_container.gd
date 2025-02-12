@@ -18,7 +18,9 @@ func _ready():
 		_update_lock_buttons()
 
 func _update_lock_buttons():
+	ModLoaderLog.info("Updating lock buttons", LOG_NAME)
 	for shop_item_idx in range(_shop_items.size()):
 		var shop_item = _shop_items[shop_item_idx]
 		shop_item.ap_lock_button_enabled = shop_item_idx < _lock_buttons_progress.num_unlocked_shop_lock_buttons
+		ModLoaderLog.info("slot %d: lock_button_enabled=%s" % [shop_item_idx, shop_item.ap_lock_button_enabled], LOG_NAME)
 		shop_item.manage_lock_button_visibility()
