@@ -1,5 +1,6 @@
 from ..options import StartingShopLockButtonsMode
 from . import BrotatoTestBase
+from .data_sets.shop_slots import SHOP_SLOT_TEST_DATA_SETS
 
 
 class TestBrotatoSlotData(BrotatoTestBase):
@@ -35,9 +36,20 @@ class TestBrotatoSlotData(BrotatoTestBase):
         self.assertEqual(slot_data["num_starting_shop_slots"], 1)
 
     def test_slot_data_starting_shop_lock_buttons(self):
-        slot_data = self.world.fill_slot_data()
-        # There should be 2 lock button items, and therefore two starting lock buttons
-        self.assertEqual(slot_data["num_starting_shop_lock_buttons"], 2)
+        for test_case in SHOP_SLOT_TEST_DATA_SETS:
+            with self.subTest(msg=str(test_case)):
+                self._run(
+                    {
+                        "num_starting_shop_slots": test_case.num_starting_shop_slots,
+                        "shop_lock_buttons_mode": test_case.lock_button_mode.value,
+                        "num_starting_lock_buttons": test_case.num_starting_lock_buttons,
+                    }
+                )
+
+                slot_data = self.world.fill_slot_data()
+                self.assertEqual(
+                    slot_data["num_starting_shop_lock_buttons"], test_case.expected_num_starting_lock_buttons
+                )
 
     def test_slot_data_num_common_crate_locations(self):
         slot_data = self.world.fill_slot_data()
