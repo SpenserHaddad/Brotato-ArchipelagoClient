@@ -7,18 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2] - 2025-02-11
+
 ### Fixed
 
 - Fixed not being able to reach the AP connect button on the main menu when scrolling up
   through the menu options with a controller or the keyboard.
 - Fixed typos in the options descriptions and the setup guide.
 
-
 ### Changed
 
 - Added more logging to the lock shop slot button-related logic to try and track down a
   recurring issue where the buttons are disabled despite starting options.
-
 
 ## [0.7.1] - 2025-01-28
 
@@ -387,7 +387,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.1...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.2...HEAD
+[0.7.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.4...v0.6.0
