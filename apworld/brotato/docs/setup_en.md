@@ -13,7 +13,7 @@
 
 **WARNING:** The workshop mod automatically updates whenever a new version is available.
 If you need to use an older version of the mod to complete a multiworld, you will need
-to use the manual intallation instructions below.
+to use the manual installation instructions below.
 
 1. Open the [Steam Workshop for
    Brotato.](https://steamcommunity.com/app/1942280/workshop/)
