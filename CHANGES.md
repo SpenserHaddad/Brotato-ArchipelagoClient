@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed not being able to reach the AP connect button on the main menu when scrolling up
   through the menu options with a controller or the keyboard.
+- Fixed typos in the options descriptions and the setup guide.
+
 
 ### Changed
 
