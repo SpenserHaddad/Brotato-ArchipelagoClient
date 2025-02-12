@@ -40,7 +40,7 @@ class StartingCharacters(Choice):
     If a DLC option is chosen but the DLC is not enabled, an error will be raised during generation.
 
     * Default All: Start with the default characters from the base game and all enabled DLCs.
-    * Random All: Start with random characters chosen from the baes game and all enabled DLCs.
+    * Random All: Start with random characters chosen from the base game and all enabled DLCs.
     * Default Base Game: Start with Well Rounded, Brawler, Crazy, Ranger and Mage.
     * Random Base Game: Start with random characters from the base game only.
     * Default Abyssal Terrors: Start with Sailor, Curious, Builder, Captain, and Creature.
@@ -61,7 +61,7 @@ class StartingCharacters(Choice):
 class NumberStartingCharacters(Range):
     """The number of random characters to start with.
 
-    This is ignored if "Starting Characters" is set to any of the "Default <x>" options, and is clamped to the maxium
+    This is ignored if "Starting Characters" is set to any of the "Default <x>" options, and is clamped to the maximum
     number of characters in the enabled DLCs.
     """
 
@@ -275,7 +275,7 @@ class CommonItemWeight(Range):
 
 
 class UncommonItemWeight(Range):
-    """The weight of Unommon/Tier 2/Blue items in the pool."""
+    """The weight of Uncommon/Tier 2/Blue items in the pool."""
 
     range_start = 0
     range_end = 100

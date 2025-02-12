@@ -174,7 +174,7 @@ class BrotatoWorld(World):
     """
 
     _num_filler_items: int
-    """The number of filler itmes to create. Calculated in generate_early()."""
+    """The number of filler items to create. Calculated in generate_early()."""
 
     def __init__(self, world: MultiWorld, player: int) -> None:
         super().__init__(world, player)
@@ -440,7 +440,7 @@ class BrotatoWorld(World):
         This is intended ot be called by `create_items`, but it's split out because of its side effect (see below), and
         it's sort of involved.
 
-        Creates a Brotato Common/Uncommon/Rare/Legendary item for each loot crate location, usign the weights defined
+        Creates a Brotato Common/Uncommon/Rare/Legendary item for each loot crate location, using the weights defined
         in the use options to randomly determine how many of each tier to create.
 
         This also has a side effect: it instantiates the `wave_per_game_item` field which is used to populate a slot
