@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Added more logging to the lock shop slot button-related logic to try and track down a
+  recurring issue where the buttons are disabled despite starting options.
+
+
 ## [0.7.1] - 2025-01-28
 
 ### Fixed

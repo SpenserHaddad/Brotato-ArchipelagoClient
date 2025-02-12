@@ -3,7 +3,7 @@ from typing import ClassVar
 from test.bases import WorldTestBase
 
 from .. import BrotatoWorld
-from ._data_sets import TEST_DATA_SETS
+from .data_sets.loot_crates import TEST_DATA_SETS
 
 
 class BrotatoTestBase(WorldTestBase):
