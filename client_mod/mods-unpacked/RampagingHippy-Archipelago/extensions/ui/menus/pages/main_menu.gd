@@ -22,7 +22,7 @@ func init():
 		# here for it take.
 		quit_button.focus_neighbour_bottom = _archipelago_button.get_path()
 		var bottom_neighbor
-		if ProgressData.saved_run_state.size() > 0:
+		if ProgressData.saved_run_state.get("has_run_state", false):
 			bottom_neighbor = continue_button
 		else:
 			bottom_neighbor = start_button
