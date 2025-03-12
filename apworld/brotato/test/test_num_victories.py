@@ -13,9 +13,7 @@ class TestBrotatoNumVictoriesOption(BrotatoTestBase):
         We also check the output slot data to make sure the change, if made, propagates to it as well.
         """
         expected_final_num_victories_value = BASE_GAME_CHARACTERS.num_characters - 5
-        include_characters = BASE_GAME_CHARACTERS.characters[
-            :expected_final_num_victories_value
-        ]
+        include_characters = BASE_GAME_CHARACTERS.characters[:expected_final_num_victories_value]
         original_num_victories_value = BASE_GAME_CHARACTERS.num_characters
 
         options = {

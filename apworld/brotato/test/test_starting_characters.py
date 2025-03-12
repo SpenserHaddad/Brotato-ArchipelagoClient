@@ -31,9 +31,9 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
         # Check that we have exactly some characters. This works best for testing the default characters, it's flakier
         # for others since we rely on the seed and random() calls to be consistent.
         if expected_characters is not None:
-            assert (
-                len(expected_characters) == num_characters
-            ), "Test configuration error, num_characters does not match len(expected_characters)."
+            assert len(expected_characters) == num_characters, (
+                "Test configuration error, num_characters does not match len(expected_characters)."
+            )
             for ec in expected_characters:
                 expected_item = self.world.create_item(ec)
                 assert expected_item in precollected_characters

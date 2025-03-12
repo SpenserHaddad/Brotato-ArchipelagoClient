@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 
 from Options import OptionError
 
@@ -26,6 +27,16 @@ class BrotatoCharacterOptionDataSet:
     expected_exception: type[Exception] | None = None
     # Metadata
     description: str = ""
+
+    def to_options_dict(self) -> dict[str, Any]:
+        return {
+            "include_base_game_characters": self.include_base_game_characters,
+            "enable_abyssal_terrors_dlc": self.enable_abyssal_terrors_dlc,
+            "include_abyssal_terrors_characters": self.include_abyssal_terrors_characters,
+            "starting_characters_mode": self.starting_characters_mode,
+            "num_starting_characters": self.num_starting_characters,
+            "num_include_characters": self.num_include_characters,
+        }
 
 
 CHARACTER_TEST_DATA_SETS = [
