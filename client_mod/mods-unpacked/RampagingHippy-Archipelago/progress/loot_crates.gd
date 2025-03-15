@@ -97,11 +97,13 @@ func _init(ap_client, game_state, crate_type_: String).(ap_client, game_state):
 func notify_crate_spawned():
 	## Called by the game extensions when an AP loot crate is spawned in-game.
 	_num_crates_spawned += 1
+	ModLoaderLog.info("AP item spawned, total is %d" % _num_crates_spawned, LOG_NAME)
 	_update_can_spawn_consumable()
 
 func notify_crate_picked_up():
 	## Called by the game extensions when an AP loot crate is picked up in-game.
 	_num_crates_spawned -= 1
+	ModLoaderLog.info("AP item picked up, total is %d" % _num_crates_spawned, LOG_NAME)
 	_update_check_progress(check_progress + 1)
 
 func total_locations_checked() -> int:

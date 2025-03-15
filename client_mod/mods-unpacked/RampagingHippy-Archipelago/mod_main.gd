@@ -21,6 +21,7 @@ func _init():
 	# Add extensions
 	var extension_files = [
 		"main.gd", # Update consumable drop logic to spawn AP items
+		"entities/entity.gd", # Track when units are killed to drop consumables in debug mode
 		"singletons/run_data.gd", # Override XP rewards
 		"singletons/item_service.gd", # Drop AP consumables
 		"ui/menus/pages/main_menu.gd", # Add AP connect
@@ -50,7 +51,6 @@ func _ready() -> void:
 	# TODO: Proper translations
 	# ModLoaderLog.info(str("Translation Demo: ", tr("MODNAME_READY_TEXT")), LOG_NAME)
 	# ModLoaderLog.success("Loaded", LOG_NAME)
-
 	# TODO: Config migrations, add version number and check for matching values.
 	var config = ModLoaderConfig.get_config(MOD_NAME, "ap_config")
 	if config == null:

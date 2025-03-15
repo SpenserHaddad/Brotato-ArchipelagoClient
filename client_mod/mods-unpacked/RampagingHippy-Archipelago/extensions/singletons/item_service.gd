@@ -33,19 +33,22 @@ func get_consumable_for_tier(tier: int = Tier.COMMON) -> ConsumableData:
 	# actual instance is created later, so we can just drop the original return
 	# value if necessary without hurting anything.
 	var consumable
-	if _ap_client.debug.enable_auto_spawn_loot_crate and _ap_client.debug.auto_spawn_loot_crate:
+	if _ap_client.debug.auto_spawn_loot_crate:
 		# Debug tool is tellng is to forcibly drop an item box, ignore base game path
+		_ap_client.debug.notify_debug_crate_spawned()
 		if tier == Tier.LEGENDARY:
 			consumable = _base_game_legendary_item_box
 		else:
 			consumable = _base_game_item_box
 	else:
-		consumable = .get_consumable_for_tier(tier)
+		consumable =.get_consumable_for_tier(tier)
 
 	# Replace with corrsponding AP item if possible
 	if _ap_client.common_loot_crate_progress.can_spawn_consumable and consumable.my_id == ITEM_BOX_ID:
+		_ap_client.common_loot_crate_progress.notify_crate_spawned()
 		return _ap_normal_consuamble.duplicate()
 	elif _ap_client.legendary_loot_crate_progress.can_spawn_consumable and consumable.my_id == LEGENDARY_ITEM_BOX_ID:
+		_ap_client.legendary_loot_crate_progress.notify_crate_spawned()
 		return _ap_legendary_consumable.duplicate()
 	else:
 		return consumable
@@ -56,8 +59,8 @@ func process_item_box(consumable_data: ConsumableData, wave: int, player_index: 
 			var item_tier = consumable_data.tier
 			var item_wave = _ap_client.items_progress.process_ap_item(item_tier, player_index)
 			ModLoaderLog.debug(
-				"Processing AP item of tier %d at wave %d for player %d" 
-				% [item_tier, item_wave, player_index], 
+				"Processing AP item of tier %d at wave %d for player %d"
+				% [item_tier, item_wave, player_index],
 				LOG_NAME
 			)
 			# Adapted from the base process_item_box
@@ -66,11 +69,11 @@ func process_item_box(consumable_data: ConsumableData, wave: int, player_index: 
 			args.fixed_tier = item_tier
 			return _get_rand_item_for_wave(item_wave, player_index, TierData.ITEMS, args)
 		_:
-			return .process_item_box(consumable_data, wave, player_index)
+			return.process_item_box(consumable_data, wave, player_index)
 
 func get_upgrade_data(level: int, player_index: int) -> UpgradeData:
 	if level >= 0:
-		return .get_upgrade_data(level, player_index)
+		return.get_upgrade_data(level, player_index)
 	else:
 		# We set the level to -1 for AP common upgrade drops. For other tiers we can use
 		# existing logic by setting the level equal to a certain multiple of 5. This way
@@ -90,4 +93,4 @@ func get_player_shop_items(wave: int, player_index: int, args: ItemServiceGetSho
 			args.count = ap_num_shop_slots
 		ModLoaderLog.debug("Calling get_player_shop_items base with args.count=%d" % args.count, LOG_NAME)
 	
-	return .get_player_shop_items(wave, player_index, args)
+	return.get_player_shop_items(wave, player_index, args)

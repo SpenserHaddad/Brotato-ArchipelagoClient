@@ -122,46 +122,6 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 		_ap_client.upgrades_progress.process_ap_upgrade(upgrade_tier, player_index)
 
 # Base overrides
-func spawn_consumables(unit: Unit) -> void:
-	# No reason to check if connected to the multiworld, this is vanilla if
-	# we're not connected since the game should never drop ap_pickups otherwise.
-	var consumable_count_start = _consumables.size()
-	if _ap_client.debug.enable_auto_spawn_loot_crate:
-		_ap_client.debug.auto_spawn_loot_crate_counter += 1
-		var old_unit_always_drop_consumable = unit.stats.always_drop_consumables
-		if _ap_client.debug.auto_spawn_loot_crate_counter >= _ap_client.debug.auto_spawn_loot_crate_on_count:
-			_ap_client.debug.auto_spawn_loot_crate_counter = 0
-			ModLoaderLog.debug("Debug spawning consumable", LOG_NAME)
-			# Tell the unit to drop a consumable
-			unit.stats.always_drop_consumables = true
-			# Tell our item_service extension to force the consumable to be a
-			# loot crate
-			_ap_client.debug.auto_spawn_loot_crate = true
-		.spawn_consumables(unit)
-		unit.stats.always_drop_consumables = old_unit_always_drop_consumable
-		_ap_client.debug.auto_spawn_loot_crate = false
-	else:
-		.spawn_consumables(unit)
-	
-	# The base spawn_consumables yields until the spawned consumable is ready.
-	# For whatever reason, we can't chain off the yield here, so as a workaround
-	# we delay for a frame to wait for it to finish. There's no reason this
-	# should ever take more than a frame.
-	yield (get_tree(), "idle_frame")
-
-	var consumable_count_after = _consumables.size()
-	var spawned_consumable = consumable_count_after > consumable_count_start
-	if spawned_consumable:
-		var spawned_consumable_id = _consumables.back().consumable_data.my_id
-		if spawned_consumable_id == "ap_pickup":
-			_ap_client.common_loot_crate_progress.notify_crate_spawned()
-			# Increment this to help the game calculate drops appropriately.
-			# They do the same for normal loot crate drops.
-			_items_spawned_this_wave += 1
-		elif spawned_consumable_id == "ap_legendary_pickup":
-			_ap_client.legendary_loot_crate_progress.notify_crate_spawned()
-			_items_spawned_this_wave += 1
-
 func on_consumable_picked_up(consumable: Node, player_index: int) -> void:
 	var is_ap_consumable = false
 	if consumable.consumable_data.my_id == "ap_pickup":
