@@ -26,13 +26,12 @@ func _ready() -> void:
 	if _ap_client.connected_to_multiworld():
 		if RunData.current_wave == DebugService.starting_wave:
 			# Run started, notify the AP game state tracker.
-			
 			# Wait a very short time before sending the notify_run_started event to
 			# ensure the rest of the game is initialized. As of the 1.1.8.0 patch,
 			# collecting enough XP to level up too early causes the game to crash
 			# because the "Level Up" floating text is not fully initialized yet. This
 			# isn't elegant, but it doesn't negatively impact UX and it works.
-			yield(get_tree().create_timer(0.01), "timeout")
+			yield (get_tree().create_timer(0.01), "timeout")
 			var active_characters = []
 			for player in RunData.players_data:
 				active_characters.append(player.current_character.my_id)
@@ -97,8 +96,8 @@ func _on_ap_item_received(item_tier: int):
 
 func _on_ap_upgrade_received(upgrade_tier: int):
 	var upgrade_level: int
-	# Brotato gives items of set tiers at multiples of 5. Use this to give the correct
-	# tier item without modifying the original code too much.
+	# Brotato gives items of set tiers at multiples of 5. Use this to give the
+	# correct tier item without modifying the original code too much.
 	match upgrade_tier:
 		Tier.COMMON:
 			# We override get_upgrade_data to set the tier to COMMON if the level is -1.
@@ -118,8 +117,8 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 		upgrade_to_process.player_index = player_index
 		_upgrades_to_process[player_index].push_back(upgrade_to_process)
 		# Mark the upgrade as processed here instead of where it's actually
-		# processed in _on_EndWaveTimer_timeout. It's a lot simpler to do here and
-		# the end result is the same either way.
+		# processed in _on_EndWaveTimer_timeout. It's a lot simpler to do here
+		# and the end result is the same either way.
 		_ap_client.upgrades_progress.process_ap_upgrade(upgrade_tier, player_index)
 
 # Base overrides
@@ -135,13 +134,20 @@ func spawn_consumables(unit: Unit) -> void:
 			ModLoaderLog.debug("Debug spawning consumable", LOG_NAME)
 			# Tell the unit to drop a consumable
 			unit.stats.always_drop_consumables = true
-			# Tell our item_service extension to force the consumable to be a loot crate
+			# Tell our item_service extension to force the consumable to be a
+			# loot crate
 			_ap_client.debug.auto_spawn_loot_crate = true
 		.spawn_consumables(unit)
 		unit.stats.always_drop_consumables = old_unit_always_drop_consumable
 		_ap_client.debug.auto_spawn_loot_crate = false
 	else:
 		.spawn_consumables(unit)
+	
+	# The base spawn_consumables yields until the spawned consumable is ready.
+	# For whatever reason, we can't chain off the yield here, so as a workaround
+	# we delay for a frame to wait for it to finish. There's no reason this
+	# should ever take more than a frame.
+	yield (get_tree(), "idle_frame")
 
 	var consumable_count_after = _consumables.size()
 	var spawned_consumable = consumable_count_after > consumable_count_start
@@ -149,8 +155,8 @@ func spawn_consumables(unit: Unit) -> void:
 		var spawned_consumable_id = _consumables.back().consumable_data.my_id
 		if spawned_consumable_id == "ap_pickup":
 			_ap_client.common_loot_crate_progress.notify_crate_spawned()
-			# Increment this to help the game calculate drops appropriately. They do the
-			# same for normal loot crate drops.
+			# Increment this to help the game calculate drops appropriately.
+			# They do the same for normal loot crate drops.
 			_items_spawned_this_wave += 1
 		elif spawned_consumable_id == "ap_legendary_pickup":
 			_ap_client.legendary_loot_crate_progress.notify_crate_spawned()
