@@ -26,13 +26,12 @@ func _ready() -> void:
 	if _ap_client.connected_to_multiworld():
 		if RunData.current_wave == DebugService.starting_wave:
 			# Run started, notify the AP game state tracker.
-			
 			# Wait a very short time before sending the notify_run_started event to
 			# ensure the rest of the game is initialized. As of the 1.1.8.0 patch,
 			# collecting enough XP to level up too early causes the game to crash
 			# because the "Level Up" floating text is not fully initialized yet. This
 			# isn't elegant, but it doesn't negatively impact UX and it works.
-			yield(get_tree().create_timer(0.01), "timeout")
+			yield (get_tree().create_timer(0.01), "timeout")
 			var active_characters = []
 			for player in RunData.players_data:
 				active_characters.append(player.current_character.my_id)
@@ -65,7 +64,8 @@ func _ready() -> void:
 		
 		var _status = _ap_client.items_progress.connect("item_received", self, "_on_ap_item_received")
 		_status = _ap_client.upgrades_progress.connect("upgrade_received", self, "_on_ap_upgrade_received")
-		
+		_status = _ap_client.common_loot_crate_progress.connect("ap_crate_spawned", self, "_on_ap_crate_spawned")
+		_status = _ap_client.legendary_loot_crate_progress.connect("ap_crate_spawned", self, "_on_ap_crate_spawned")
 		ModLoaderMod.append_node_in_scene(
 			self,
 			"ApLootCrateProgress",
@@ -97,8 +97,8 @@ func _on_ap_item_received(item_tier: int):
 
 func _on_ap_upgrade_received(upgrade_tier: int):
 	var upgrade_level: int
-	# Brotato gives items of set tiers at multiples of 5. Use this to give the correct
-	# tier item without modifying the original code too much.
+	# Brotato gives items of set tiers at multiples of 5. Use this to give the
+	# correct tier item without modifying the original code too much.
 	match upgrade_tier:
 		Tier.COMMON:
 			# We override get_upgrade_data to set the tier to COMMON if the level is -1.
@@ -118,44 +118,17 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 		upgrade_to_process.player_index = player_index
 		_upgrades_to_process[player_index].push_back(upgrade_to_process)
 		# Mark the upgrade as processed here instead of where it's actually
-		# processed in _on_EndWaveTimer_timeout. It's a lot simpler to do here and
-		# the end result is the same either way.
+		# processed in _on_EndWaveTimer_timeout. It's a lot simpler to do here
+		# and the end result is the same either way.
 		_ap_client.upgrades_progress.process_ap_upgrade(upgrade_tier, player_index)
 
+func _on_ap_crate_spawned():
+	# Increment the item spawned counter when we drop a loot crate. The base
+	# game only checks the normal loot crates, so adding this helps the game
+	# calculate drops appropriately.
+	_items_spawned_this_wave += 1
+
 # Base overrides
-func spawn_consumables(unit: Unit) -> void:
-	# No reason to check if connected to the multiworld, this is vanilla if
-	# we're not connected since the game should never drop ap_pickups otherwise.
-	var consumable_count_start = _consumables.size()
-	if _ap_client.debug.enable_auto_spawn_loot_crate:
-		_ap_client.debug.auto_spawn_loot_crate_counter += 1
-		var old_unit_always_drop_consumable = unit.stats.always_drop_consumables
-		if _ap_client.debug.auto_spawn_loot_crate_counter >= _ap_client.debug.auto_spawn_loot_crate_on_count:
-			_ap_client.debug.auto_spawn_loot_crate_counter = 0
-			ModLoaderLog.debug("Debug spawning consumable", LOG_NAME)
-			# Tell the unit to drop a consumable
-			unit.stats.always_drop_consumables = true
-			# Tell our item_service extension to force the consumable to be a loot crate
-			_ap_client.debug.auto_spawn_loot_crate = true
-		.spawn_consumables(unit)
-		unit.stats.always_drop_consumables = old_unit_always_drop_consumable
-		_ap_client.debug.auto_spawn_loot_crate = false
-	else:
-		.spawn_consumables(unit)
-
-	var consumable_count_after = _consumables.size()
-	var spawned_consumable = consumable_count_after > consumable_count_start
-	if spawned_consumable:
-		var spawned_consumable_id = _consumables.back().consumable_data.my_id
-		if spawned_consumable_id == "ap_pickup":
-			_ap_client.common_loot_crate_progress.notify_crate_spawned()
-			# Increment this to help the game calculate drops appropriately. They do the
-			# same for normal loot crate drops.
-			_items_spawned_this_wave += 1
-		elif spawned_consumable_id == "ap_legendary_pickup":
-			_ap_client.legendary_loot_crate_progress.notify_crate_spawned()
-			_items_spawned_this_wave += 1
-
 func on_consumable_picked_up(consumable: Node, player_index: int) -> void:
 	var is_ap_consumable = false
 	if consumable.consumable_data.my_id == "ap_pickup":
