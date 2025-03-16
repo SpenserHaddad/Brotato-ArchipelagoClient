@@ -102,6 +102,7 @@ func notify_crate_spawned():
 	_num_crates_spawned += 1
 	ModLoaderLog.info("AP item spawned, total is %d" % _num_crates_spawned, LOG_NAME)
 	_update_can_spawn_consumable()
+	emit_signal("ap_crate_spawned")
 
 func notify_crate_picked_up():
 	## Called by the game extensions when an AP loot crate is picked up in-game.
