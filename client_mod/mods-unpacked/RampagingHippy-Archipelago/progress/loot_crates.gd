@@ -45,6 +45,9 @@ class LootCrateGroup:
 ## Emitted when a crate is picked up to indicate the updated progress to the next check.
 signal check_progress_changed(progress, total)
 
+## Emitted when the game decides to drop an AP item.
+signal ap_crate_spawned
+
 # The total number of loot crate checks available.
 var total_checks: int
 
@@ -139,7 +142,7 @@ func _update_check_progress(new_value: int):
 		false
 	)
 
-func _update_num_locations_checked(new_value: int, send_check: bool=true):
+func _update_num_locations_checked(new_value: int, send_check: bool = true):
 	if num_locations_checked == new_value:
 		return
 
@@ -247,7 +250,7 @@ func on_run_started(_character_ids: Array):
 	_num_crates_spawned = 0
 	_update_can_spawn_consumable()
 
-func _on_session_data_storage_updated(key: String, new_value, _original_value=null):
+func _on_session_data_storage_updated(key: String, new_value, _original_value = null):
 	if key == _check_progress_data_storage_key:
 		ModLoaderLog.info("Received check progress DS update: key=%s, new_value=%d" % [key, new_value], LOG_NAME)
 		_update_check_progress(new_value)

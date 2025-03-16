@@ -64,7 +64,8 @@ func _ready() -> void:
 		
 		var _status = _ap_client.items_progress.connect("item_received", self, "_on_ap_item_received")
 		_status = _ap_client.upgrades_progress.connect("upgrade_received", self, "_on_ap_upgrade_received")
-		
+		_status = _ap_client.common_loot_crate_progress.connect("ap_crate_spawned", self, "_on_ap_crate_spawned")
+		_status = _ap_client.legendary_loot_crate_progress.connect("ap_crate_spawned", self, "_on_ap_crate_spawned")
 		ModLoaderMod.append_node_in_scene(
 			self,
 			"ApLootCrateProgress",
@@ -120,6 +121,12 @@ func _on_ap_upgrade_received(upgrade_tier: int):
 		# processed in _on_EndWaveTimer_timeout. It's a lot simpler to do here
 		# and the end result is the same either way.
 		_ap_client.upgrades_progress.process_ap_upgrade(upgrade_tier, player_index)
+
+func _on_ap_crate_spawned():
+	# Increment the item spawned counter when we drop a loot crate. The base
+	# game only checks the normal loot crates, so adding this helps the game
+	# calculate drops appropriately.
+	_items_spawned_this_wave += 1
 
 # Base overrides
 func on_consumable_picked_up(consumable: Node, player_index: int) -> void:
