@@ -69,11 +69,11 @@ func process_item_box(consumable_data: ConsumableData, wave: int, player_index: 
 			args.fixed_tier = item_tier
 			return _get_rand_item_for_wave(item_wave, player_index, TierData.ITEMS, args)
 		_:
-			return.process_item_box(consumable_data, wave, player_index)
+			return .process_item_box(consumable_data, wave, player_index)
 
 func get_upgrade_data(level: int, player_index: int) -> UpgradeData:
 	if level >= 0:
-		return.get_upgrade_data(level, player_index)
+		return .get_upgrade_data(level, player_index)
 	else:
 		# We set the level to -1 for AP common upgrade drops. For other tiers we can use
 		# existing logic by setting the level equal to a certain multiple of 5. This way
@@ -93,4 +93,4 @@ func get_player_shop_items(wave: int, player_index: int, args: ItemServiceGetSho
 			args.count = ap_num_shop_slots
 		ModLoaderLog.debug("Calling get_player_shop_items base with args.count=%d" % args.count, LOG_NAME)
 	
-	return.get_player_shop_items(wave, player_index, args)
+	return .get_player_shop_items(wave, player_index, args)
