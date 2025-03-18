@@ -12,9 +12,15 @@ from ..constants import (
 )
 from ..items import ItemName
 from . import BrotatoTestBase
+from .data_sets.loot_crates import TEST_DATA_SETS
 
 
 class TestBrotatoRegions(BrotatoTestBase):
+    # For some reason, this option keeps getting overwritten so it is missing the last five base game characters. I
+    # suspect this has something to do with "test_num_victories_clamped_to_number_of_characters", which is the only case
+    # that alters this option in such a way, but I can't find a good workaround for it.
+    options = {"include_base_game_characters": BASE_GAME_CHARACTERS.characters}
+
     def test_correct_number_of_crate_drop_regions_created(self):
         """Test that only the location groups needed are created.
 
@@ -23,7 +29,7 @@ class TestBrotatoRegions(BrotatoTestBase):
         """
         total_possible_normal_crate_groups = MAX_NORMAL_CRATE_DROPS
         total_possible_legendary_crate_groups = MAX_LEGENDARY_CRATE_DROPS
-        for test_data in self._test_data_set_subtests():
+        for test_data in self.data_set_subtests(TEST_DATA_SETS):
             player_regions = self.multiworld.regions.region_cache[self.player]
             for common_region_idx in range(1, test_data.expected_results.num_common_crate_regions + 1):
                 expected_normal_crate_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
@@ -65,7 +71,7 @@ class TestBrotatoRegions(BrotatoTestBase):
                 )
 
     def test_crate_drop_regions_have_correct_locations(self):
-        for test_data in self._test_data_set_subtests():
+        for test_data in self.data_set_subtests(TEST_DATA_SETS):
             self._test_regions_have_correct_locations(
                 test_data.expected_results.common_crates_per_region,
                 test_data.expected_results.num_common_crate_regions,
@@ -88,7 +94,7 @@ class TestBrotatoRegions(BrotatoTestBase):
         """
         # run_won_item_name = ItemName.RUN_COMPLETE.value
         # run_won_item = self.world.create_item(run_won_item_name)
-        for test_data in self._test_data_set_subtests():
+        for test_data in self.data_set_subtests(TEST_DATA_SETS):
             self._test_regions_have_correct_access_rules(
                 test_data.expected_results.wins_required_per_common_region,
                 test_data.expected_results.num_common_crate_regions,
@@ -102,7 +108,7 @@ class TestBrotatoRegions(BrotatoTestBase):
         state and check region access at each step. Splitting the tests, with a common private test method, means less
         duplication and no need to try and clear state within a test.
         """
-        for test_data in self._test_data_set_subtests():
+        for test_data in self.data_set_subtests(TEST_DATA_SETS):
             self._test_regions_have_correct_access_rules(
                 test_data.expected_results.wins_required_per_legendary_region,
                 test_data.expected_results.num_legendary_crate_regions,

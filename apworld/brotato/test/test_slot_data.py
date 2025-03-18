@@ -25,6 +25,7 @@ class TestBrotatoSlotData(BrotatoTestBase):
         "uncommon_item_weight": 0,
         "rare_item_weight": 0,
         "legendary_item_weight": 0,
+        "foo": "bar",
     }
 
     def test_slot_data_num_wins_needed(self):
@@ -36,20 +37,20 @@ class TestBrotatoSlotData(BrotatoTestBase):
         self.assertEqual(slot_data["num_starting_shop_slots"], 1)
 
     def test_slot_data_starting_shop_lock_buttons(self):
-        for test_case in SHOP_SLOT_TEST_DATA_SETS:
-            with self.subTest(msg=str(test_case)):
-                self._run(
-                    {
-                        "num_starting_shop_slots": test_case.num_starting_shop_slots,
-                        "shop_lock_buttons_mode": test_case.lock_button_mode.value,
-                        "num_starting_lock_buttons": test_case.num_starting_lock_buttons,
-                    }
-                )
+        for test_case in self.data_set_subtests(SHOP_SLOT_TEST_DATA_SETS):
+            self._run(
+                {
+                    "num_starting_shop_slots": test_case.num_starting_shop_slots,
+                    "shop_lock_buttons_mode": test_case.lock_button_mode.value,
+                    "num_starting_lock_buttons": test_case.num_starting_lock_buttons,
+                }
+            )
 
-                slot_data = self.world.fill_slot_data()
-                self.assertEqual(
-                    slot_data["num_starting_shop_lock_buttons"], test_case.expected_num_starting_lock_buttons
-                )
+            slot_data = self.world.fill_slot_data()
+            self.assertEqual(
+                slot_data["num_starting_shop_lock_buttons"],
+                test_case.expected_num_starting_lock_buttons,
+            )
 
     def test_slot_data_num_common_crate_locations(self):
         slot_data = self.world.fill_slot_data()
@@ -129,6 +130,27 @@ class TestBrotatoSlotData(BrotatoTestBase):
                 1: [],
                 2: [],
                 # There are 20 legendary crate drop locations, so one wave per location.
-                3: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                3: [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                ],
             },
         )

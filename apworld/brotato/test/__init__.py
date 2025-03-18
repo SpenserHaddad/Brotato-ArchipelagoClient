@@ -1,9 +1,10 @@
-from typing import ClassVar
+from copy import deepcopy
+from typing import ClassVar, Iterable
 
 from test.bases import WorldTestBase
 
 from .. import BrotatoWorld
-from .data_sets.loot_crates import TEST_DATA_SETS
+from .data_sets.base import BrotatoTestDataSet
 
 
 class BrotatoTestBase(WorldTestBase):
@@ -11,11 +12,17 @@ class BrotatoTestBase(WorldTestBase):
     world: BrotatoWorld  # type: ignore
     player: ClassVar[int] = 1
 
-    def _test_data_set_subtests(self):
-        for test_data in TEST_DATA_SETS:
-            with self.subTest(msg=test_data.test_name()):
-                self._run(test_data.options_dict)
-                yield test_data
+    def data_set_subtests(self, data_set: Iterable[BrotatoTestDataSet]):
+        """Iterate over data sets and create a separate test case for each.
+
+        Handles creating the subTest, and applying the options to the test class and then tearing them down so
+        class-level options aren't overwritten between subTests, which can lead to tests because they're expected
+        options aren't set.
+        """
+        for ds in data_set:
+            with self.subTest(msg=ds.test_name()):
+                self._run(ds.options_dict)
+                yield ds
 
     def _run(self, options: dict):
         """Setup the world using the options from the dataset.
@@ -23,5 +30,10 @@ class BrotatoTestBase(WorldTestBase):
         We make this distinct from setUp() so tests can call this from subTests when
         iterating overt TEST_DATA_SETS.
         """
-        self.options.update(options)
-        self.world_setup()
+        original_options = deepcopy(self.options)
+        try:
+            self.options.update(options)
+            self.world_setup()
+        finally:
+            # Make sure we don't override class-level options between tests
+            self.options = deepcopy(original_options)

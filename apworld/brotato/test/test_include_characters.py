@@ -8,7 +8,7 @@ from ..constants import BASE_GAME_CHARACTERS, CHARACTER_REGION_TEMPLATE
 from ..items import ItemName
 from ..options import StartingCharacters
 from . import BrotatoTestBase
-from .data_sets.characters import CHARACTER_TEST_DATA_SETS
+from .data_sets.characters import NON_ERROR_CASE_CHARACTER_TEST_DATA_SETS
 
 
 class TestBrotatoIncludeCharacters(BrotatoTestBase):
@@ -21,7 +21,11 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
         for num_include_characters in range(1, BASE_GAME_CHARACTERS.num_characters + 1):
             with self.subTest(msg=f"{num_include_characters=}", n=num_include_characters):
                 include_characters: List[str] = r.sample(BASE_GAME_CHARACTERS.characters, k=num_include_characters)
-                self.options = {"starting_characters": 1, "include_characters": include_characters, "waves_per_drop": 5}
+                self.options = {
+                    "starting_characters": 1,
+                    "include_characters": include_characters,
+                    "waves_per_drop": 5,
+                }
                 self.world_setup()
                 self.test_fill()
                 self.assertBeatable(True)
@@ -40,7 +44,10 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
         for invalid_character in invalid_include_characters:
             with self.subTest(invalid_character=invalid_character):
                 include_characters = {*valid_include_characters, invalid_character}
-                self.options = {"starting_characters": 1, "include_base_game_characters": include_characters}
+                self.options = {
+                    "starting_characters": 1,
+                    "include_base_game_characters": include_characters,
+                }
                 # The VerifyKeys mixin on OptionSet raises a bare Exception when it encounters an invalid key.
                 self.world_setup()
                 self.assertRaises(
@@ -53,7 +60,10 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
 
     def test_include_characters_excluded_characters_do_not_have_regions(self):
         include_characters = BASE_GAME_CHARACTERS.characters[:10]
-        self.options = {"starting_characters": 1, "include_base_game_characters": include_characters}
+        self.options = {
+            "starting_characters": 1,
+            "include_base_game_characters": include_characters,
+        }
         self.world_setup()
 
         player_regions: dict[str, Region] = {r.name: r for r in self.multiworld.regions if r.player == self.player}
@@ -104,20 +114,12 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
         self.assertTrue(self.multiworld.has_beaten_game(self.multiworld.state))
 
     def test_include_characters_regions_data_set(self):
-        for data_set in CHARACTER_TEST_DATA_SETS:
-            if data_set.expected_exception:
-                # Don't bother with error states
-                continue
-            with self.subTest(msg=data_set.description):
-                self.options = data_set.to_options_dict()
-                self.world_setup()
-                player_regions: dict[str, Region] = {
-                    r.name: r for r in self.multiworld.regions if r.player == self.player
-                }
+        for data_set in self.data_set_subtests(NON_ERROR_CASE_CHARACTER_TEST_DATA_SETS):
+            player_regions: dict[str, Region] = {r.name: r for r in self.multiworld.regions if r.player == self.player}
 
-                for character in BASE_GAME_CHARACTERS.characters:
-                    character_region_name = CHARACTER_REGION_TEMPLATE.format(char=character)
-                    if character in data_set.valid_available_characters:
-                        self.assertIn(character_region_name, player_regions)
-                    else:
-                        self.assertNotIn(character_region_name, player_regions)
+            for character in BASE_GAME_CHARACTERS.characters:
+                character_region_name = CHARACTER_REGION_TEMPLATE.format(char=character)
+                if character in data_set.valid_available_characters:
+                    self.assertIn(character_region_name, player_regions)
+                else:
+                    self.assertNotIn(character_region_name, player_regions)

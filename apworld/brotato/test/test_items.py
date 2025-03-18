@@ -1,8 +1,7 @@
 from collections import Counter
 
-from ..constants import MAX_SHOP_SLOTS
 from ..items import ItemName
-from ..options import ItemWeights, StartingShopLockButtonsMode
+from ..options import ItemWeights
 from . import BrotatoTestBase
 from .data_sets.shop_slots import SHOP_SLOT_TEST_DATA_SETS
 
@@ -24,7 +23,10 @@ class TestBrotatoItems(BrotatoTestBase):
             "legendary": ItemName.LEGENDARY_ITEM,
         }
 
-        for test_item_rarity, expected_populated_item in item_rarity_prefix_to_name.items():
+        for (
+            test_item_rarity,
+            expected_populated_item,
+        ) in item_rarity_prefix_to_name.items():
             with self.subTest(msg=test_item_rarity):
                 options = {
                     "item_weight_mode": ItemWeights.option_custom,
@@ -90,26 +92,25 @@ class TestBrotatoItems(BrotatoTestBase):
         self.assertEqual(item_counts[self.world.create_item(ItemName.LEGENDARY_ITEM)], 20)
 
     def test_create_items_shop_slot_items(self):
-        for test_case in SHOP_SLOT_TEST_DATA_SETS:
-            with self.subTest(num_starting_shop_slots=test_case.num_starting_shop_slots):
-                self._run({"num_starting_shop_slots": test_case.num_starting_shop_slots})
-                item_counts = Counter(self.multiworld.itempool)
-                self.assertEqual(
-                    item_counts[self.world.create_item(ItemName.SHOP_SLOT)], test_case.expected_num_shop_slot_items
-                )
+        for test_case in self.data_set_subtests(SHOP_SLOT_TEST_DATA_SETS):
+            self._run({"num_starting_shop_slots": test_case.num_starting_shop_slots})
+            item_counts = Counter(self.multiworld.itempool)
+            self.assertEqual(
+                item_counts[self.world.create_item(ItemName.SHOP_SLOT)],
+                test_case.expected_num_shop_slot_items,
+            )
 
     def test_create_items_num_starting_lock_buttons(self):
-        for test_case in SHOP_SLOT_TEST_DATA_SETS:
-            with self.subTest(test_case=test_case):
-                self._run(
-                    {
-                        "num_starting_shop_slots": test_case.num_starting_shop_slots,
-                        "shop_lock_buttons_mode": test_case.lock_button_mode.value,
-                        "num_starting_lock_buttons": test_case.num_starting_lock_buttons,
-                    }
-                )
-                item_counts = Counter(self.multiworld.itempool)
-                self.assertEqual(
-                    item_counts[self.world.create_item(ItemName.SHOP_LOCK_BUTTON)],
-                    test_case.expected_num_lock_button_items,
-                )
+        for test_case in self.data_set_subtests(SHOP_SLOT_TEST_DATA_SETS):
+            self._run(
+                {
+                    "num_starting_shop_slots": test_case.num_starting_shop_slots,
+                    "shop_lock_buttons_mode": test_case.lock_button_mode.value,
+                    "num_starting_lock_buttons": test_case.num_starting_lock_buttons,
+                }
+            )
+            item_counts = Counter(self.multiworld.itempool)
+            self.assertEqual(
+                item_counts[self.world.create_item(ItemName.SHOP_LOCK_BUTTON)],
+                test_case.expected_num_lock_button_items,
+            )

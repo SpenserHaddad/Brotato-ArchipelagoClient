@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from itertools import product
+from typing import Any
 
 from ...constants import MAX_SHOP_SLOTS
 from ...options import StartingShopLockButtonsMode
+from .base import BrotatoTestDataSet
 
 
 @dataclass(frozen=True)
-class ShopSlotsTestCase:
+class ShopSlotsTestCase(BrotatoTestDataSet):
     num_starting_shop_slots: int
     lock_button_mode: StartingShopLockButtonsMode
     num_starting_lock_buttons: int
@@ -19,6 +21,24 @@ class ShopSlotsTestCase:
     @property
     def expected_num_lock_button_items(self) -> int:
         return MAX_SHOP_SLOTS - self.expected_num_starting_lock_buttons
+
+    def test_name(self) -> str:
+        props = {
+            "num_starting_shop_slots": self.num_starting_shop_slots,
+            "lock_button_mode": self.lock_button_mode,
+            "num_starting_lock_buttons": self.num_starting_lock_buttons,
+            "expected_num_starting_lock_buttons": self.expected_num_starting_lock_buttons,
+        }
+        value_str = ", ".join(f"{k}={v}" for k, v in props.items())
+        return value_str
+
+    @property
+    def options_dict(self) -> dict[str, Any]:
+        return {
+            "num_starting_shop_slots": self.num_starting_shop_slots,
+            "lock_button_mode": self.lock_button_mode,
+            "expected_num_starting_lock_buttons": self.expected_num_starting_lock_buttons,
+        }
 
 
 SHOP_SLOT_TEST_DATA_SETS: list[ShopSlotsTestCase] = []

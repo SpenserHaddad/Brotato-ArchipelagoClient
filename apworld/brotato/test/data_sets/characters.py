@@ -3,8 +3,14 @@ from typing import Any
 
 from Options import OptionError
 
-from ...constants import ABYSSAL_TERRORS_CHARACTERS, ALL_CHARACTERS, BASE_GAME_CHARACTERS, TOTAL_NUM_CHARACTERS
+from ...constants import (
+    ABYSSAL_TERRORS_CHARACTERS,
+    ALL_CHARACTERS,
+    BASE_GAME_CHARACTERS,
+    TOTAL_NUM_CHARACTERS,
+)
 from ...options import StartingCharacters
+from .base import BrotatoTestDataSet
 
 BASE_GAME_CHARACTERS_SET = set(BASE_GAME_CHARACTERS.characters)
 BASE_GAME_DEFAULT_CHARACTERS_SET = set(BASE_GAME_CHARACTERS.default_characters)
@@ -13,7 +19,7 @@ ABYSSAL_TERRORS_DEFAULT_CHARACTERS_SET = set(ABYSSAL_TERRORS_CHARACTERS.default_
 
 
 @dataclass(frozen=True)
-class BrotatoCharacterOptionDataSet:
+class BrotatoCharacterOptionDataSet(BrotatoTestDataSet):
     # World option equivalents
     include_base_game_characters: set[str]
     enable_abyssal_terrors_dlc: bool
@@ -28,7 +34,14 @@ class BrotatoCharacterOptionDataSet:
     # Metadata
     description: str = ""
 
-    def to_options_dict(self) -> dict[str, Any]:
+    def test_name(self) -> str:
+        if self.description:
+            return self.description
+        else:
+            return str(self)
+
+    @property
+    def options_dict(self) -> dict[str, Any]:
         return {
             "include_base_game_characters": self.include_base_game_characters,
             "enable_abyssal_terrors_dlc": self.enable_abyssal_terrors_dlc,
@@ -189,3 +202,6 @@ CHARACTER_TEST_DATA_SETS = [
         valid_available_characters=ABYSSAL_TERRORS_CHARACTERS_SET,
     ),
 ]
+
+NON_ERROR_CASE_CHARACTER_TEST_DATA_SETS = [ds for ds in CHARACTER_TEST_DATA_SETS if ds.expected_exception is None]
+ERROR_CASE_CHARACTER_TEST_DATA_SETS = [ds for ds in CHARACTER_TEST_DATA_SETS if ds.expected_exception is not None]
