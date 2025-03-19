@@ -204,7 +204,7 @@ class BrotatoWorld(World):
             self.options.include_abyssal_terrors_characters.value,
             self.options.starting_characters,
             self.options.num_starting_characters.value,
-            self.options.num_available_characters.value,
+            self.options.num_characters.value,
             self.random,
         )
 

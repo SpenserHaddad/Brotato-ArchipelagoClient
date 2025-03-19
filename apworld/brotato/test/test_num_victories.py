@@ -19,7 +19,7 @@ class TestBrotatoNumVictoriesOption(BrotatoTestBase):
         options = {
             "num_victories": num_victories_option_value,
             "include_base_game_characters": include_characters,
-            "num_available_characters": expected_final_num_victories_value,
+            "num_characters": expected_final_num_victories_value,
         }
 
         self._run(options)

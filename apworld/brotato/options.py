@@ -32,12 +32,12 @@ class NumberRequiredWins(Range):
     display_name = "Wins Required"
 
 
-class NumberAvailableCharacters(Range):
-    """The number of characters to include in the pool.
+class NumberCharacters(Range):
+    """The total number of characters in the world.
 
-    The actual characters included will be randomly selected from the "Include Characters" options.
+    The characters will be randomly selected from the valid characters determined by the "Include Characters" options.
 
-    The actual number of characters may be less ff there are not enough included characters in the options.
+    The actual number of characters may be less if there are not enough included characters in the options.
     """
 
     range_start = 1
@@ -436,10 +436,10 @@ class IncludeAbyssalTerrorsCharacters(OptionSet):
 @dataclass
 class BrotatoOptions(PerGameCommonOptions):
     num_victories: NumberRequiredWins
-    num_available_characters: NumberAvailableCharacters
+    num_characters: NumberCharacters
+    num_starting_characters: NumberStartingCharacters
     starting_characters: StartingCharacters
     include_base_game_characters: IncludeBaseGameCharacters
-    num_starting_characters: NumberStartingCharacters
     waves_per_drop: WavesPerCheck
     gold_reward_mode: GoldRewardMode
     xp_reward_mode: XpRewardMode
