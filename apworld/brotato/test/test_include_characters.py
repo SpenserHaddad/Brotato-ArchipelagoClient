@@ -17,10 +17,14 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
         # Which characters we pick to include shouldn't matter, just the amount. But let's randomize who we pick each
         # time just in case.
         r = random.Random(0x7A70)
-        for num_include_characters in range(1, BASE_GAME_CHARACTERS.num_characters + 1):
-            with self.subTest(msg=f"{num_include_characters=}", n=num_include_characters):
-                include_characters: List[str] = r.sample(BASE_GAME_CHARACTERS.characters, k=num_include_characters)
-                self.options = {"starting_characters": 1, "include_characters": include_characters, "waves_per_drop": 5}
+        for num_characters in range(1, BASE_GAME_CHARACTERS.num_characters + 1):
+            with self.subTest(msg=f"{num_characters=}", n=num_characters):
+                include_characters: List[str] = r.sample(BASE_GAME_CHARACTERS.characters, k=num_characters)
+                self.options = {
+                    "starting_characters": 1,
+                    "include_characters": include_characters,
+                    "waves_per_drop": 5,
+                }
                 self.world_setup()
                 self.test_fill()
                 self.assertBeatable(True)
@@ -39,7 +43,10 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
         for invalid_character in invalid_include_characters:
             with self.subTest(invalid_character=invalid_character):
                 include_characters = {*valid_include_characters, invalid_character}
-                self.options = {"starting_characters": 1, "include_base_game_characters": include_characters}
+                self.options = {
+                    "starting_characters": 1,
+                    "include_base_game_characters": include_characters,
+                }
                 # The VerifyKeys mixin on OptionSet raises a bare Exception when it encounters an invalid key.
                 self.world_setup()
                 self.assertRaises(
@@ -52,7 +59,10 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
 
     def test_include_characters_excluded_characters_do_not_have_regions(self):
         include_characters = BASE_GAME_CHARACTERS.characters[:10]
-        self.options = {"starting_characters": 1, "include_base_game_characters": include_characters}
+        self.options = {
+            "starting_characters": 1,
+            "include_base_game_characters": include_characters,
+        }
         self.world_setup()
 
         player_regions: dict[str, Region] = {r.name: r for r in self.multiworld.regions if r.player == self.player}

@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 from . import BrotatoTestBase
-from .data_sets.loot_crates import BrotatoLootCrateTestDataSet
+from .data_sets.loot_crates import TEST_DATA_SETS, BrotatoLootCrateTestDataSet
 
 
 class TestBrotatoWorld(BrotatoTestBase):
@@ -42,7 +42,7 @@ class TestBrotatoWorld(BrotatoTestBase):
 
     def test_common_loot_crate_groups_correct(self):
         test_data: BrotatoLootCrateTestDataSet
-        for test_data in self._test_data_set_subtests():
+        for test_data in self.data_set_subtests(TEST_DATA_SETS):
             common_crate_groups = self.world.common_loot_crate_groups
             assert len(common_crate_groups) == test_data.expected_results.num_common_crate_regions
             for index, group in enumerate(common_crate_groups):
@@ -56,7 +56,7 @@ class TestBrotatoWorld(BrotatoTestBase):
 
     def test_legendary_loot_crate_groups_correct(self):
         test_data: BrotatoLootCrateTestDataSet
-        for test_data in self._test_data_set_subtests():
+        for test_data in self.data_set_subtests(TEST_DATA_SETS):
             legendary_crate_groups = self.world.legendary_loot_crate_groups
             assert len(legendary_crate_groups) == test_data.expected_results.num_legendary_crate_regions
             for index, group in enumerate(legendary_crate_groups):

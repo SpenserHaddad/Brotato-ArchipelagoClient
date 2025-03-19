@@ -19,6 +19,7 @@ from ...constants import (
     MAX_NORMAL_CRATE_DROP_GROUPS,
     MAX_NORMAL_CRATE_DROPS,
 )
+from .base import BrotatoTestDataSet
 
 
 @dataclass(frozen=True)
@@ -86,7 +87,7 @@ class BrotatoLootCrateTestExpectedResults:
 
 
 @dataclass(frozen=True)
-class BrotatoLootCrateTestDataSet:
+class BrotatoLootCrateTestDataSet(BrotatoTestDataSet):
     options: BrotatoLootCrateTestOptions
     expected_results: BrotatoLootCrateTestExpectedResults
     description: Optional[str] = None

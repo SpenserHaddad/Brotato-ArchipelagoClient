@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added new option `num_characters` to determine how many characters to include
+  in the generated world.
+  - Character selection options behave the same, except we only choose
+    `num_characters` characters instead of all included characters now.
+
 ## [0.7.2] - 2025-02-11
 
 ### Fixed

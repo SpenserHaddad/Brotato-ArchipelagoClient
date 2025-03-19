@@ -9,9 +9,8 @@ from worlds.AutoWorld import WebWorld, World
 
 from . import options  # So we don't need to import every option class when defining option groups
 from ._loot_crate_groups import BrotatoLootCrateGroup, build_loot_crate_groups
+from .characters import get_available_and_starting_characters
 from .constants import (
-    ABYSSAL_TERRORS_CHARACTERS,
-    BASE_GAME_CHARACTERS,
     CHARACTER_REGION_TEMPLATE,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
@@ -33,7 +32,6 @@ from .options import (
     ItemWeights,
     LegendaryItemWeight,
     RareItemWeight,
-    StartingCharacters,
     UncommonItemWeight,
 )
 from .rules import create_has_character_rule, create_has_run_wins_rule
@@ -200,43 +198,15 @@ class BrotatoWorld(World):
             self.options.num_victories.value,
         )
 
-        game_packs: dict[str, tuple[bool, set[str], CharacterGroup]] = {
-            BASE_GAME_CHARACTERS.name: (True, self.options.include_base_game_characters.value, BASE_GAME_CHARACTERS),
-            ABYSSAL_TERRORS_CHARACTERS.name: (
-                self.options.enable_abyssal_terrors_dlc.value == self.options.enable_abyssal_terrors_dlc.option_true,
-                self.options.include_abyssal_terrors_characters.value,
-                ABYSSAL_TERRORS_CHARACTERS,
-            ),
-        }
-
-        # Keep include characters in the defined order to make reading/debugging easier. Entries should all be valid.
-        self._include_characters = []
-        for pack_enabled, include_characters_from_pack, pack_characters in game_packs.values():
-            if pack_enabled:
-                characters_from_pack = [c for c in pack_characters.characters if c in include_characters_from_pack]
-                self._include_characters += characters_from_pack
-
-        starting_character_option = self.options.starting_characters.value
-        if starting_character_option == StartingCharacters.option_default_all:  # Defaults from all game packs
-            enabled_groups = [gp[2] for gp in game_packs.values() if gp[0]]
-            self._starting_characters = self._get_valid_default_characters(enabled_groups)
-        elif starting_character_option == StartingCharacters.option_random_all:
-            enabled_groups = [gp[2] for gp in game_packs.values() if gp[0]]
-            self._starting_characters = self._get_valid_random_characters(enabled_groups)
-        elif starting_character_option == StartingCharacters.option_default_base_game:
-            self._starting_characters = self._get_valid_default_characters([BASE_GAME_CHARACTERS])
-        elif starting_character_option == StartingCharacters.option_random_base_game:
-            self._starting_characters = self._get_valid_random_characters([BASE_GAME_CHARACTERS])
-        elif starting_character_option == StartingCharacters.option_default_abyssal_terrors:
-            if not game_packs[ABYSSAL_TERRORS_CHARACTERS.name][0]:
-                raise OptionError("Abyssal Terrors DLC is not enabled in options.")
-            self._starting_characters = self._get_valid_default_characters([ABYSSAL_TERRORS_CHARACTERS])
-        elif starting_character_option == StartingCharacters.option_random_abyssal_terrors:
-            if not game_packs[ABYSSAL_TERRORS_CHARACTERS.name][0]:
-                raise OptionError("Abyssal Terrors DLC is not enabled in options.")
-            self._starting_characters = self._get_valid_random_characters([ABYSSAL_TERRORS_CHARACTERS])
-        else:
-            raise RuntimeError("Unsupported option!")
+        self._include_characters, self._starting_characters = get_available_and_starting_characters(
+            self.options.include_base_game_characters.value,
+            bool(self.options.enable_abyssal_terrors_dlc.value),
+            self.options.include_abyssal_terrors_characters.value,
+            self.options.starting_characters,
+            self.options.num_starting_characters.value,
+            self.options.num_characters.value,
+            self.random,
+        )
 
         # Clamp the number of wins needed to goal to the number of included characters, so the game isn't unwinnable.
         # Note that we need to actually change the option value, not just clamp it, otherwise other parts of the world
