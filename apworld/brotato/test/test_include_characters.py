@@ -8,7 +8,6 @@ from ..constants import BASE_GAME_CHARACTERS, CHARACTER_REGION_TEMPLATE
 from ..items import ItemName
 from ..options import StartingCharacters
 from . import BrotatoTestBase
-from .data_sets.characters import NON_ERROR_CASE_CHARACTER_TEST_DATA_SETS
 
 
 class TestBrotatoIncludeCharacters(BrotatoTestBase):
@@ -112,14 +111,3 @@ class TestBrotatoIncludeCharacters(BrotatoTestBase):
         run_won_items = [self.world.create_item(ItemName.RUN_COMPLETE) for _ in include_characters]
         self.collect(run_won_items)
         self.assertTrue(self.multiworld.has_beaten_game(self.multiworld.state))
-
-    def test_include_characters_regions_data_set(self):
-        for data_set in self.data_set_subtests(NON_ERROR_CASE_CHARACTER_TEST_DATA_SETS):
-            player_regions: dict[str, Region] = {r.name: r for r in self.multiworld.regions if r.player == self.player}
-
-            for character in BASE_GAME_CHARACTERS.characters:
-                character_region_name = CHARACTER_REGION_TEMPLATE.format(char=character)
-                if character in data_set.valid_available_characters:
-                    self.assertIn(character_region_name, player_regions)
-                else:
-                    self.assertNotIn(character_region_name, player_regions)

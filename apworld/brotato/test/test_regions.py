@@ -122,12 +122,12 @@ class TestBrotatoRegions(BrotatoTestBase):
 
         run_won_item_name = ItemName.RUN_COMPLETE.value
         run_won_item = self.world.create_item(run_won_item_name)
-        character_index = 0
         for region_idx, num_wins_to_reach in zip(range(1, num_regions + 1), wins_per_region):
             region_name = region_template.format(num=region_idx)
 
             # Add Run Won items by getting each character's Run Won location in order
             num_wins = self.count(run_won_item_name)
+            character_index = 0
             while num_wins < num_wins_to_reach:
                 # Make sure the region isn't reachable too early
                 self.assertFalse(
@@ -138,7 +138,7 @@ class TestBrotatoRegions(BrotatoTestBase):
                     ),
                 )
 
-                next_character_won = BASE_GAME_CHARACTERS.characters[character_index]
+                next_character_won = self.world._include_characters[character_index]
                 character_index += 1
                 try:
                     next_win_location = self.world.get_location(
