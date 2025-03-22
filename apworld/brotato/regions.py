@@ -9,10 +9,11 @@ from .constants import (
     CRATE_DROP_LOCATION_TEMPLATE,
     LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
+    NUM_WAVES,
     RUN_COMPLETE_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
-from .locations import BrotatoLocation, BrotatoLocationBase, location_table
+from .locations import BrotatoLocation, location_table
 from .loot_crates import BrotatoLootCrateGroup
 from .rules import (
     create_has_character_rule,
@@ -27,20 +28,18 @@ def create_character_region(parent_region: Region, character: str, waves_with_ch
     character_region: Region = Region(
         CHARACTER_REGION_TEMPLATE.format(char=character), parent_region.player, parent_region.multiworld
     )
-    character_run_won_location: BrotatoLocationBase = location_table[
-        RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)
-    ]
-    character_region.locations.append(
-        character_run_won_location.to_location(character_region.player, parent=character_region)
-    )
+    run_complete_location_name = RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)
+    region_locations: dict[str, int | None] = {
+        run_complete_location_name: location_table[run_complete_location_name].id
+    }
 
     for wave in waves_with_checks:
+        if wave not in range(1, NUM_WAVES + 1):
+            raise ValueError(f"Invalid wave number {wave}.")
         wave_complete_location_name = WAVE_COMPLETE_LOCATION_TEMPLATE.format(wave=wave, char=character)
-        wave_complete_location = location_table[wave_complete_location_name].to_location(
-            character_region.player, parent=character_region
-        )
-        character_region.locations.append(wave_complete_location)
+        region_locations[wave_complete_location_name] = location_table[wave_complete_location_name].id
 
+    character_region.add_locations(region_locations, BrotatoLocation)
     has_character_rule = create_has_character_rule(character_region.player, character)
     parent_region.connect(
         character_region,
@@ -50,7 +49,7 @@ def create_character_region(parent_region: Region, character: str, waves_with_ch
     return character_region
 
 
-def create_regions_for_loot_crate_groups(
+def create_loot_crate_group_regions(
     parent_region: Region,
     loot_crate_groups: list[BrotatoLootCrateGroup],
     crate_type: Literal["normal", "legendary"],
