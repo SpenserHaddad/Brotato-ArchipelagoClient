@@ -1,6 +1,6 @@
 import logging
 from dataclasses import asdict
-from typing import Any, ClassVar, Dict, List, Set, Tuple, Union
+from typing import Any, ClassVar
 
 from BaseClasses import Item, MultiWorld, Region, Tutorial
 from Options import OptionError, OptionGroup
@@ -35,7 +35,7 @@ class BrotatoWeb(WebWorld):
     # TODO: Add actual tutorial!
     tutorials = [
         Tutorial(
-            "Multiworld Setup Guide",
+            "Multiworld setup Guide",
             "A guide to setting up the Brotato randomizer connected to an Archipelago Multiworld",
             "English",
             "setup_en.md",
@@ -101,14 +101,14 @@ class BrotatoWorld(World):
     game: ClassVar[str] = "Brotato"
     web = BrotatoWeb()
     data_version = 0
-    required_client_version: Tuple[int, int, int] = (0, 5, 0)
+    required_client_version: tuple[int, int, int] = (0, 5, 0)
 
-    item_name_to_id: ClassVar[Dict[str, int]] = item_name_to_id
-    item_name_groups: ClassVar[Dict[str, Set[str]]] = item_name_groups
+    item_name_to_id: ClassVar[dict[str, int]] = item_name_to_id
+    item_name_groups: ClassVar[dict[str, set[str]]] = item_name_groups
 
-    _filler_items: List[str] = filler_items
-    _starting_characters: List[str]
-    _include_characters: List[str]
+    _filler_items: list[str] = filler_items
+    _starting_characters: list[str]
+    _include_characters: list[str]
     """The characters whose locations (wave/run complete) may have progression and useful items.
 
     This is derived from options.include_characters.
@@ -119,25 +119,25 @@ class BrotatoWorld(World):
     * We want to keep things in character definition order for readability by using a list instead of a set.
     """
 
-    location_name_to_id: ClassVar[Dict[str, int]] = location_name_to_id
-    location_name_groups: ClassVar[Dict[str, Set[str]]] = location_name_groups
+    location_name_to_id: ClassVar[dict[str, int]] = location_name_to_id
+    location_name_groups: ClassVar[dict[str, set[str]]] = location_name_groups
 
     num_shop_slot_items: int
     num_shop_lock_button_items: int
 
-    waves_with_checks: List[int]
+    waves_with_checks: list[int]
     """Which waves will count as locations.
 
     Calculated from player options in generate_early.
     """
 
-    common_loot_crate_groups: List[BrotatoLootCrateGroup]
+    common_loot_crate_groups: list[BrotatoLootCrateGroup]
     """Information about each common loot crate group, i.e. how many crates it has and how many wins it needs.
 
     Calculated from player options in generate_early().
     """
 
-    legendary_loot_crate_groups: List[BrotatoLootCrateGroup]
+    legendary_loot_crate_groups: list[BrotatoLootCrateGroup]
     """Information about each legendary loot crate group, i.e. how many crates it has and how many wins it needs.
 
     Calculated from player options in generate_early().
@@ -157,7 +157,7 @@ class BrotatoWorld(World):
     def __init__(self, world: MultiWorld, player: int) -> None:
         super().__init__(world, player)
 
-    def create_item(self, name: Union[str, ItemName]) -> BrotatoItem:
+    def create_item(self, name: str | ItemName) -> BrotatoItem:
         if isinstance(name, ItemName):
             name = name.value
         return item_table[self.item_name_to_id[name]].to_item(self.player)
@@ -236,13 +236,13 @@ class BrotatoWorld(World):
             # Too many items for the number of locations we have. Randomly remove items, upgrades, and excluded
             # characters to make space for the progression items (characters and shop slots).
             num_items_to_remove = abs(num_unclaimed_locations)
-            removable_items: Dict[ItemName, int] = self._upgrade_and_item_counts.copy()
+            removable_items: dict[ItemName, int] = self._upgrade_and_item_counts.copy()
             if sum(removable_items.values()) < num_items_to_remove:
                 raise OptionError(
                     "Not enough locations for all progression items with given options. Most likely too many characters"
                     "were excluded by omitting them from 'Include Characters'. Add more characters and try again."
                 )
-            items_to_remove: List[ItemName] = self.random.sample(
+            items_to_remove: list[ItemName] = self.random.sample(
                 list(removable_items.keys()), num_items_to_remove, counts=list(removable_items.values())
             )
             for item_to_remove in items_to_remove:
@@ -256,10 +256,10 @@ class BrotatoWorld(World):
 
     def create_regions(self) -> None:
         menu_region = Region("Menu", self.player, self.multiworld)
-        loot_crate_regions: List[Region] = create_regions_for_loot_crate_groups(
+        loot_crate_regions: list[Region] = create_regions_for_loot_crate_groups(
             menu_region, self.common_loot_crate_groups, "normal"
         )
-        legendary_crate_regions: List[Region] = create_regions_for_loot_crate_groups(
+        legendary_crate_regions: list[Region] = create_regions_for_loot_crate_groups(
             menu_region, self.legendary_loot_crate_groups, "legendary"
         )
 
@@ -278,7 +278,7 @@ class BrotatoWorld(World):
         )
 
     def create_items(self) -> None:
-        item_pool: List[BrotatoItem | Item] = []
+        item_pool: list[BrotatoItem | Item] = []
 
         for character in self._include_characters:
             character_item: BrotatoItem = self.create_item(character)
@@ -307,7 +307,7 @@ class BrotatoWorld(World):
     def get_filler_item_name(self) -> str:
         return self.random.choice(self._filler_items)
 
-    def fill_slot_data(self) -> Dict[str, Any]:
+    def fill_slot_data(self) -> dict[str, Any]:
         # Define outside dict for readability
         spawn_normal_loot_crates = (
             self.options.spawn_normal_loot_crates.value == self.options.spawn_normal_loot_crates.option_true
