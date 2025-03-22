@@ -1,10 +1,13 @@
+from collections.abc import Generator, Iterable
 from copy import deepcopy
-from typing import ClassVar, Iterable
+from typing import Any, ClassVar, TypeVar
 
 from test.bases import WorldTestBase
 
 from .. import BrotatoWorld
 from .data_sets.base import BrotatoTestDataSet
+
+_T = TypeVar("_T", bound=BrotatoTestDataSet)
 
 
 class BrotatoTestBase(WorldTestBase):
@@ -12,7 +15,7 @@ class BrotatoTestBase(WorldTestBase):
     world: BrotatoWorld  # type: ignore
     player: ClassVar[int] = 1
 
-    def data_set_subtests(self, data_set: Iterable[BrotatoTestDataSet]):
+    def data_set_subtests(self, data_set: Iterable[_T]) -> Generator[_T, Any, None]:
         """Iterate over data sets and create a separate test case for each.
 
         Handles creating the subTest, and applying the options to the test class and then tearing them down so
