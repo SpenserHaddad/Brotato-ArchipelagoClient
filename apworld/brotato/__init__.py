@@ -1,5 +1,4 @@
 import logging
-from collections import Counter
 from dataclasses import asdict
 from typing import Any, ClassVar, Dict, List, Literal, Set, Tuple, Union
 
@@ -14,27 +13,21 @@ from .constants import (
     CHARACTER_REGION_TEMPLATE,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
-    DEFAULT_ITEM_WEIGHTS,
     LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
     MAX_SHOP_SLOTS,
-    NUM_WAVES,
     RUN_COMPLETE_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
-    CharacterGroup,
-    ItemRarity,
 )
 from .items import BrotatoItem, ItemName, filler_items, item_name_groups, item_name_to_id, item_table
 from .locations import BrotatoLocation, BrotatoLocationBase, location_name_groups, location_name_to_id, location_table
+from .loot_crates import create_items_for_loot_crate_locations, get_wave_for_each_item
 from .options import (
     BrotatoOptions,
-    CommonItemWeight,
-    ItemWeights,
-    LegendaryItemWeight,
-    RareItemWeight,
-    UncommonItemWeight,
 )
 from .rules import create_has_character_rule, create_has_run_wins_rule
+from .shop_slots import get_num_shop_slot_and_lock_button_items
+from .waves import get_waves_with_checks
 
 logger = logging.getLogger("Brotato")
 
@@ -139,18 +132,6 @@ class BrotatoWorld(World):
     Calculated from player options in generate_early.
     """
 
-    wave_per_game_item: Dict[int, List[int]]
-    """The wave to use to generate each Brotato item received, by rarity. Stored as slot data.
-
-    Brotato items are generated from a pool determined by the rarity (or tier) and the wave the item was found/bought.
-    We want to emulate this behavior with the items we create here. When we generate the items to match the common loot
-    crate drop locations, we also assign a wave to each item. When the client receives the next item for a certain
-    rarity, it will lookup the next entry in the list for the rarity and use that as the wave when generating the
-    values.
-
-    We attempt to equally distribute the items over the 20 waves in a normal run, with a bias towards lower numbers.
-    """
-
     common_loot_crate_groups: List[BrotatoLootCrateGroup]
     """Information about each common loot crate group, i.e. how many crates it has and how many wins it needs.
 
@@ -183,9 +164,8 @@ class BrotatoWorld(World):
         return item_table[self.item_name_to_id[name]].to_item(self.player)
 
     def generate_early(self) -> None:
-        waves_per_drop = self.options.waves_per_drop.value
-        # Ignore 0 value, but choosing a different start gives the wrong wave results
-        self.waves_with_checks = list(range(0, NUM_WAVES + 1, waves_per_drop))[1:]
+        # Determine needed values from the options
+        self.waves_with_checks = get_waves_with_checks(self.options.waves_per_drop)
 
         self.common_loot_crate_groups = build_loot_crate_groups(
             self.options.num_common_crate_drops.value,
@@ -197,7 +177,6 @@ class BrotatoWorld(World):
             self.options.num_legendary_crate_drop_groups.value,
             self.options.num_victories.value,
         )
-
         self._include_characters, self._starting_characters = get_available_and_starting_characters(
             self.options.include_base_game_characters.value,
             bool(self.options.enable_abyssal_terrors_dlc.value),
@@ -221,25 +200,29 @@ class BrotatoWorld(World):
             ItemName.LEGENDARY_UPGRADE: self.options.num_legendary_upgrades.value,
         }
 
-        num_items_per_rarity: Counter[ItemName] = self._create_common_loot_crate_items()
+        num_items_per_rarity: dict[ItemName, int] = create_items_for_loot_crate_locations(
+            self.options.num_common_crate_drops,
+            self.options.num_legendary_crate_drops,
+            self.options.item_weight_mode,
+            self.options.common_item_weight,
+            self.options.uncommon_item_weight,
+            self.options.rare_item_weight,
+            self.options.legendary_item_weight,
+            self.random,
+        )
         self._upgrade_and_item_counts.update(num_items_per_rarity.items())
+
+        self.num_shop_slot_items, self.num_shop_lock_button_items = get_num_shop_slot_and_lock_button_items(
+            self.options.num_starting_shop_slots,
+            self.options.shop_lock_buttons_mode,
+            self.options.num_starting_lock_buttons,
+        )
 
         # Check that there's enough locations for all the items given in the options. If there isn't enough locations,
         # remove non-progression items (i.e. Brotato items and upgrades) until there's no more extra.
         # We already have an item for each common and legendary loot crate drop, as well as each run won location, so we
         # need a filler item for every wave complete location not covered by a character unlock, shop slot, or upgrade.
         num_wave_complete_locations = len(self.waves_with_checks) * len(self._include_characters)
-        self.num_shop_slot_items = max(MAX_SHOP_SLOTS - self.options.num_starting_shop_slots.value, 0)
-        if self.options.shop_lock_buttons_mode.value == self.options.shop_lock_buttons_mode.option_all:
-            # Start with all lock buttons enabled, so no items
-            self.num_shop_lock_button_items = 0
-        elif self.options.shop_lock_buttons_mode.value == self.options.shop_lock_buttons_mode.option_none:
-            self.num_shop_lock_button_items = MAX_SHOP_SLOTS
-        elif self.options.shop_lock_buttons_mode.value == self.options.shop_lock_buttons_mode.option_match_shop_slots:
-            self.num_shop_lock_button_items = self.num_shop_slot_items
-        else:
-            # Custom option, use other option for value
-            self.num_shop_lock_button_items = max(MAX_SHOP_SLOTS - self.options.num_starting_lock_buttons.value, 0)
 
         # The number of locations available, not including the "Run Won" locations, which always have "Run Won" items.
         num_locations = num_wave_complete_locations + self.options.num_common_crate_drops.value
@@ -326,6 +309,7 @@ class BrotatoWorld(World):
         spawn_normal_loot_crates = (
             self.options.spawn_normal_loot_crates.value == self.options.spawn_normal_loot_crates.option_true
         )
+        wave_per_loot_crate_item = get_wave_for_each_item(self._upgrade_and_item_counts)
         return {
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": self.options.num_victories.value,
@@ -341,7 +325,7 @@ class BrotatoWorld(World):
             "num_legendary_crate_locations": self.options.num_legendary_crate_drops.value,
             "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check.value,
             "legendary_crate_drop_groups": [asdict(g) for g in self.legendary_loot_crate_groups],
-            "wave_per_game_item": self.wave_per_game_item,
+            "wave_per_game_item": wave_per_loot_crate_item,
             "enable_abyssal_terrors_dlc": self.options.enable_abyssal_terrors_dlc.value,
         }
 
@@ -403,79 +387,3 @@ class BrotatoWorld(World):
             regions.append(group_region)
 
         return regions
-
-    def _create_common_loot_crate_items(self) -> Counter[ItemName]:
-        """Create a list of items corresponding to the common loot crate locations.
-
-        This is intended ot be called by `create_items`, but it's split out because of its side effect (see below), and
-        it's sort of involved.
-
-        Creates a Brotato Common/Uncommon/Rare/Legendary item for each loot crate location, using the weights defined
-        in the use options to randomly determine how many of each tier to create.
-
-        This also has a side effect: it instantiates the `wave_per_game_item` field which is used to populate a slot
-        data entry with the same name. This defines the wave to use when determining what item to create client-side. We
-        do this here since we have the information readily available.
-        """
-        weights: Tuple[int, int, int, int]
-        if self.options.item_weight_mode.value == ItemWeights.option_default:
-            weights = DEFAULT_ITEM_WEIGHTS
-        elif self.options.item_weight_mode.value == ItemWeights.option_chaos:
-            # Ask each weight class for their bounds separately in case we ever make them different.
-            weights = tuple(
-                self.random.randint(weight.range_start, weight.range_end)
-                for weight in [CommonItemWeight, UncommonItemWeight, RareItemWeight, LegendaryItemWeight]
-            )  # type: ignore
-        elif self.options.item_weight_mode.value == ItemWeights.option_custom:
-            weights = (
-                self.options.common_item_weight.value,
-                self.options.uncommon_item_weight.value,
-                self.options.rare_item_weight.value,
-                self.options.legendary_item_weight.value,
-            )
-        else:
-            raise ValueError(f"Unsupported item_weight_mode {self.options.item_weight_mode.value}.")
-
-        item_names_to_rarity = {
-            ItemName.COMMON_ITEM: ItemRarity.COMMON,
-            ItemName.UNCOMMON_ITEM: ItemRarity.UNCOMMON,
-            ItemName.RARE_ITEM: ItemRarity.RARE,
-            ItemName.LEGENDARY_ITEM: ItemRarity.LEGENDARY,
-        }
-        items: List[ItemName] = self.random.choices(
-            list(item_names_to_rarity.keys()),
-            weights=weights,
-            k=self.options.num_common_crate_drops.value,
-        )
-
-        # Create the wave each item should be generated with. In each rarity, increment the wave by one for each item,
-        # looping over at 20 (the max number of waves in a run), then sort the result so we have an even distribution of
-        # waves in increasing order.
-        item_counts = Counter(items)
-
-        # Include the legendary items added from legendary crate drop checks as well
-        item_counts[ItemName.LEGENDARY_ITEM] = (
-            item_counts.get(ItemName.LEGENDARY_ITEM, 0) + self.options.num_legendary_crate_drops.value
-        )
-
-        def generate_waves_per_item(num_items: int) -> List[int]:
-            # Evenly distribute the items over 20 waves, then sort so items received are generated with steadily
-            # increasing waves (aka they got steadily stronger).
-            return sorted((i % 20) + 1 for i in range(num_items))
-
-        # Use a default of 0 in case no items of a tier were created for whatever reason.
-        self.wave_per_game_item: Dict[int, List[int]] = {
-            rarity.value: generate_waves_per_item(item_counts.get(name, 0))
-            for name, rarity in item_names_to_rarity.items()
-        }
-
-        return item_counts
-
-    def _get_valid_default_characters(self, character_groups: list[CharacterGroup]) -> list[str]:
-        return [c for cg in character_groups for c in cg.default_characters if c in self._include_characters]
-
-    def _get_valid_random_characters(self, character_groups: list[CharacterGroup]) -> list[str]:
-        valid_characters = [c for cg in character_groups for c in cg.characters if c in self._include_characters]
-        # In case the number of included characters is less than the requested amount
-        num_characters_to_choose = min(len(valid_characters), self.options.num_starting_characters.value)
-        return self.random.sample(valid_characters, num_characters_to_choose)
