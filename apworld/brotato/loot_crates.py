@@ -30,7 +30,7 @@ def create_items_for_loot_crate_locations(
     rare_item_weight: RareItemWeight,
     legendary_item_weight: LegendaryItemWeight,
     random: Random,
-) -> Counter[ItemName]:
+) -> dict[ItemName, int]:
     weights: tuple[int, int, int, int] = _get_weights_for_mode(
         item_weight_mode, common_item_weight, uncommon_item_weight, rare_item_weight, legendary_item_weight, random
     )
@@ -44,11 +44,20 @@ def create_items_for_loot_crate_locations(
     return Counter(item_counts)
 
 
-def get_wave_for_each_item(item_counts: Counter[ItemName]) -> dict[int, list[int]]:
+def get_wave_for_each_item(item_counts: dict[ItemName, int]) -> dict[int, list[int]]:
     """Create the wave each item should be generated with.
 
-    In each rarity, increment the wave by one for each item,looping over at 20 (the max number of waves in a run),
-    then sort the result so we have an even distribution of waves in increasing order.
+    In each item rarity tier, increment the wave by one for each item, looping over at 20 (the max number of waves in a
+    run), then sort the result so we have an even distribution of waves in increasing order.
+
+    Brotato generates items from a pool determined by the rarity (or tier) of the item and the wave the item was found
+    or bought. We want to emulate this behavior with the items we create here, so items aren't just all from the weakest
+    or strongest pool when given to the player. This determines the effective wave to use for each item when it's
+    received. When the client receives the next item for a certain rarity, it will lookup the next entry in the list for
+    the rarity and use that as the wave when generating the values.
+
+    We attempt to equally distribute the items over the 20 waves in a normal run, with a bias towards lower numbers,
+    since it's already too easy to get overpowered.
     """
 
     def generate_waves_per_item(num_items: int) -> list[int]:
