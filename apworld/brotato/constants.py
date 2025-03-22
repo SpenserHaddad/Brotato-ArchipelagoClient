@@ -149,9 +149,9 @@ MAX_LEGENDARY_CRATE_DROP_GROUPS = MAX_LEGENDARY_CRATE_DROPS
 # Weights to use when generating Brotato items using the "default item weights" option. These weights are intended to
 # match the rarity of each tier in the vanilla game. The distribution is not explicitly defined in the game, but we can
 # make a reasonable guess by looking at the max chances of getting items of each rarity/tier from the shop or loot
-# crates, which are publcially listed here: https://brotato.wiki.spellsandguns.com/Shop#Rarity_of_Shop_Items_and_Luck.
-# We use the values from the "Max Chance" column in the table in the linked sections as weights. It's not perfect, but
-# it "feels" right and seems close enough.
+# crates, which are publicly listed here: https://brotato.wiki.spellsandguns.com/Shop#Rarity_of_Shop_Items_and_Luck. We
+# use the values from the "Max Chance" column in the table in the linked sections as weights. It's not perfect, but it
+# "feels" right and seems close enough.
 DEFAULT_ITEM_WEIGHTS: Tuple[int, int, int, int] = (100, 60, 25, 8)
 
 MAX_COMMON_UPGRADES = 50
