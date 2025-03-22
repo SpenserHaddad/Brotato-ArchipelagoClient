@@ -257,16 +257,20 @@ class BrotatoWorld(World):
 
     def create_regions(self) -> None:
         menu_region = Region("Menu", self.player, self.multiworld)
+
+        def create_region(region_name: str) -> Region:
+            return Region(region_name, self.player, self.multiworld)
+
         loot_crate_regions: list[Region] = create_loot_crate_group_regions(
-            menu_region, self.common_loot_crate_groups, "common"
+            create_region, self.common_loot_crate_groups, "common"
         )
         legendary_crate_regions: list[Region] = create_loot_crate_group_regions(
-            menu_region, self.legendary_loot_crate_groups, "legendary"
+            create_region, self.legendary_loot_crate_groups, "legendary"
         )
 
         character_regions: list[Region] = []
         for character in self._include_characters:
-            character_region = create_character_region(menu_region, character, self.waves_with_checks)
+            character_region = create_character_region(create_region, character, self.waves_with_checks)
             character_regions.append(character_region)
 
         self.multiworld.regions.extend(
