@@ -23,7 +23,7 @@ from .loot_crates import (
 from .options import (
     BrotatoOptions,
 )
-from .regions import create_character_region, create_regions_for_loot_crate_groups
+from .regions import create_character_region, create_loot_crate_group_regions
 from .rules import create_has_run_wins_rule
 from .shop_slots import get_num_shop_slot_and_lock_button_items
 from .waves import get_waves_with_checks
@@ -176,6 +176,7 @@ class BrotatoWorld(World):
             self.options.num_legendary_crate_drop_groups.value,
             self.options.num_victories.value,
         )
+
         self._include_characters, self._starting_characters = get_available_and_starting_characters(
             self.options.include_base_game_characters.value,
             bool(self.options.enable_abyssal_terrors_dlc.value),
@@ -256,10 +257,10 @@ class BrotatoWorld(World):
 
     def create_regions(self) -> None:
         menu_region = Region("Menu", self.player, self.multiworld)
-        loot_crate_regions: list[Region] = create_regions_for_loot_crate_groups(
-            menu_region, self.common_loot_crate_groups, "normal"
+        loot_crate_regions: list[Region] = create_loot_crate_group_regions(
+            menu_region, self.common_loot_crate_groups, "common"
         )
-        legendary_crate_regions: list[Region] = create_regions_for_loot_crate_groups(
+        legendary_crate_regions: list[Region] = create_loot_crate_group_regions(
             menu_region, self.legendary_loot_crate_groups, "legendary"
         )
 

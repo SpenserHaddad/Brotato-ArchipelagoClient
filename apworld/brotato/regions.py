@@ -52,11 +52,11 @@ def create_character_region(parent_region: Region, character: str, waves_with_ch
 def create_loot_crate_group_regions(
     parent_region: Region,
     loot_crate_groups: list[BrotatoLootCrateGroup],
-    crate_type: Literal["normal", "legendary"],
+    crate_type: Literal["common", "legendary"],
 ) -> list[Region]:
     assert parent_region.multiworld is not None
 
-    if crate_type == "normal":
+    if crate_type == "common":
         location_name_template = CRATE_DROP_LOCATION_TEMPLATE
         region_name_template = CRATE_DROP_GROUP_REGION_TEMPLATE
         progress_type = LocationProgressType.DEFAULT
