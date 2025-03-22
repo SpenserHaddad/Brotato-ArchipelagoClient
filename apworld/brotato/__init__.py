@@ -35,7 +35,7 @@ class BrotatoWeb(WebWorld):
     # TODO: Add actual tutorial!
     tutorials = [
         Tutorial(
-            "Multiworld setup Guide",
+            "Multiworld Setup Guide",
             "A guide to setting up the Brotato randomizer connected to an Archipelago Multiworld",
             "English",
             "setup_en.md",
