@@ -36,8 +36,8 @@ class ShopSlotsTestCase(BrotatoTestDataSet):
     def options_dict(self) -> dict[str, Any]:
         return {
             "num_starting_shop_slots": self.num_starting_shop_slots,
-            "lock_button_mode": self.lock_button_mode,
-            "expected_num_starting_lock_buttons": self.expected_num_starting_lock_buttons,
+            "shop_lock_buttons_mode": self.lock_button_mode.value,
+            "num_starting_lock_buttons": self.expected_num_starting_lock_buttons,
         }
 
 

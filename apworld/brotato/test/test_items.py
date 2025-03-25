@@ -102,13 +102,6 @@ class TestBrotatoItems(BrotatoTestBase):
 
     def test_create_items_num_starting_lock_buttons(self):
         for test_case in self.data_set_subtests(SHOP_SLOT_TEST_DATA_SETS):
-            self._run(
-                {
-                    "num_starting_shop_slots": test_case.num_starting_shop_slots,
-                    "shop_lock_buttons_mode": test_case.lock_button_mode.value,
-                    "num_starting_lock_buttons": test_case.num_starting_lock_buttons,
-                }
-            )
             item_counts = Counter(self.multiworld.itempool)
             self.assertEqual(
                 item_counts[self.world.create_item(ItemName.SHOP_LOCK_BUTTON)],
