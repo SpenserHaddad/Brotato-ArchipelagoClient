@@ -16,7 +16,7 @@ def get_num_shop_slot_and_lock_button_items(
         case StartingShopLockButtonsMode.option_none:
             num_shop_lock_buttons = MAX_SHOP_SLOTS
         case StartingShopLockButtonsMode.option_custom:
-            num_shop_lock_buttons = num_starting_lock_buttons.value
+            num_shop_lock_buttons = MAX_SHOP_SLOTS - num_starting_lock_buttons.value
         case StartingShopLockButtonsMode.option_match_shop_slots:
             num_shop_lock_buttons = num_shop_slot_items
         case _:
