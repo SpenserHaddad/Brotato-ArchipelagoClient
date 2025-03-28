@@ -23,7 +23,7 @@ from .loot_crates import (
 from .options import (
     BrotatoOptions,
 )
-from .regions import create_character_region, create_loot_crate_group_regions
+from .regions import create_regions
 from .rules import create_has_run_wins_rule
 from .shop_slots import get_num_shop_slot_and_lock_button_items
 from .waves import get_waves_with_checks
@@ -166,6 +166,8 @@ class BrotatoWorld(World):
         # Determine needed values from the options
         self.waves_with_checks = get_waves_with_checks(self.options.waves_per_drop)
 
+        # Thought: if num victories is clamped, do some of the groups become unreachable?
+
         self.common_loot_crate_groups = build_loot_crate_groups(
             self.options.num_common_crate_drops.value,
             self.options.num_common_crate_drop_groups.value,
@@ -256,31 +258,18 @@ class BrotatoWorld(World):
         )
 
     def create_regions(self) -> None:
-        menu_region = Region("Menu", self.player, self.multiworld)
-
         def create_region(region_name: str) -> Region:
             return Region(region_name, self.player, self.multiworld)
 
-        loot_crate_regions: list[Region] = create_loot_crate_group_regions(
-            create_region, self.common_loot_crate_groups, "common"
-        )
-        legendary_crate_regions: list[Region] = create_loot_crate_group_regions(
-            create_region, self.legendary_loot_crate_groups, "legendary"
+        regions: list[Region] = create_regions(
+            create_region,
+            self._include_characters,
+            self.waves_with_checks,
+            self.common_loot_crate_groups,
+            self.legendary_loot_crate_groups,
         )
 
-        character_regions: list[Region] = []
-        for character in self._include_characters:
-            character_region = create_character_region(create_region, character, self.waves_with_checks)
-            character_regions.append(character_region)
-
-        self.multiworld.regions.extend(
-            [
-                menu_region,
-                *loot_crate_regions,
-                *legendary_crate_regions,
-                *character_regions,
-            ]
-        )
+        self.multiworld.regions.extend(regions)
 
     def create_items(self) -> None:
         item_pool: list[BrotatoItem | Item] = []
