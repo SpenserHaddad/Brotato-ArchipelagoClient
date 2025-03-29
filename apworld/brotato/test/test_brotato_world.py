@@ -1,44 +1,51 @@
-from typing import List, Tuple
+# from typing import ClassVar
+
+# from test.param import classvar_matrix
 
 from . import BrotatoTestBase
 from .data_sets.loot_crates import TEST_DATA_SETS, BrotatoLootCrateTestDataSet
 
+# # There's only 20 valid values for "Waves per Check" option, so we can test every possible value here.
+# waves_with_drops_pairs: list[tuple[int, list[int]]] = [
+#     (
+#         1,
+#         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+#     ),
+#     (2, [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]),
+#     (3, [3, 6, 9, 12, 15, 18]),
+#     (4, [4, 8, 12, 16, 20]),
+#     (5, [5, 10, 15, 20]),
+#     (6, [6, 12, 18]),
+#     (7, [7, 14]),
+#     (8, [8, 16]),
+#     (9, [9, 18]),
+#     (10, [10, 20]),
+#     (11, [11]),
+#     (12, [12]),
+#     (13, [13]),
+#     (14, [14]),
+#     (15, [15]),
+#     (16, [16]),
+#     (17, [17]),
+#     (18, [18]),
+#     (19, [19]),
+#     (20, [20]),
+# ]
+
+
+# @classvar_matrix(value_and_expected=waves_with_drops_pairs)
+# class TestBrotatoWorldWavesWithDrops(BrotatoTestBase):
+#     value_and_expected: ClassVar[tuple[int, list[int]]]
+
+#     def test_waves_with_drops_correct(self):
+#         option_value, expected_waves_with_checks = self.value_and_expected
+#         self._run({"waves_per_drop": option_value})
+#         # Coerce to list so the types match
+#         assert list(self.world.waves_with_checks) == expected_waves_with_checks
+
 
 class TestBrotatoWorld(BrotatoTestBase):
     """Test attributes on the BrotatoWorld instance directly."""
-
-    def test_waves_with_drops_correct(self):
-        # There's only 20 valid values for "Waves per Check" option, so we can test every possible value here.
-        option_and_expected: List[Tuple[int, List[int]]] = [
-            (
-                1,
-                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
-            ),
-            (2, [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]),
-            (3, [3, 6, 9, 12, 15, 18]),
-            (4, [4, 8, 12, 16, 20]),
-            (5, [5, 10, 15, 20]),
-            (6, [6, 12, 18]),
-            (7, [7, 14]),
-            (8, [8, 16]),
-            (9, [9, 18]),
-            (10, [10, 20]),
-            (11, [11]),
-            (12, [12]),
-            (13, [13]),
-            (14, [14]),
-            (15, [15]),
-            (16, [16]),
-            (17, [17]),
-            (18, [18]),
-            (19, [19]),
-            (20, [20]),
-        ]
-        for option_value, expected_waves_with_checks in option_and_expected:
-            with self.subTest(msg=f"Waves per check = {option_value}"):
-                self._run({"waves_per_drop": option_value})
-                # Coerce to list so the types match
-                assert list(self.world.waves_with_checks) == expected_waves_with_checks
 
     def test_common_loot_crate_groups_correct(self):
         test_data: BrotatoLootCrateTestDataSet
