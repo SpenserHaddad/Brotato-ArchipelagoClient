@@ -4,6 +4,8 @@ from .data_sets.shop_slots import SHOP_SLOT_TEST_DATA_SETS
 
 
 class TestBrotatoSlotData(BrotatoTestBase):
+    run_default_tests = False  # type:ignore
+
     options = {
         # Only set options that are referenced by slot_data
         "num_victories": 10,
