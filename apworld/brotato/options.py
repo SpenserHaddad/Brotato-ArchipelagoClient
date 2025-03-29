@@ -258,27 +258,6 @@ class NumberLegendaryCrateDropGroups(Range):
     display_name: str = "Legendary Loot Crate Groups"
 
 
-class ItemWeights(Choice):
-    """Distribution of item tiers when adding (Brotato) items to the (Archipelago) item pool.
-
-    For every common crate drop location, a Brotato weapon/item will be added to the pool. This controls how the item
-    tiers are chosen.
-
-    Note that legendary crate drop locations will ALWAYS add a legendary item to the pool, which is in addition to any
-    legendary items added by common crate locations.
-
-    * Default: Use the game's normal distribution. Equivalent to setting the custom weights to 100/60/25/8.
-    * Chaos: Each tier has a has a random weight.
-    * Custom: Use the custom weight options below.
-    """
-
-    option_default = 0
-    option_chaos = 1
-    option_custom = 2
-
-    display_name = "Item Weights"
-
-
 class CommonItemWeight(Range):
     """The weight of Common/Tier 1/White items in the pool."""
 
@@ -323,7 +302,7 @@ class LegendaryItemWeight(Range):
     display_name = "Legendary Items"
 
 
-class NumberCommonUpgrades(Range):
+class CommonUpgradeWeight(Range):
     """The number of Common/Tier 1/White upgrades to include in the item pool."""
 
     range_start = 0
@@ -333,7 +312,7 @@ class NumberCommonUpgrades(Range):
     display_name: str = "Common Upgrades"
 
 
-class NumberUncommonUpgrades(Range):
+class UncommonUpgradeWeight(Range):
     """The number of Uncommon/Tier 2/Blue upgrades to include in the item pool."""
 
     range_start = 0
@@ -343,7 +322,7 @@ class NumberUncommonUpgrades(Range):
     display_name: str = "Uncommon Upgrades"
 
 
-class NumberRareUpgrades(Range):
+class RareUpgradeWeight(Range):
     """The number of Rare/Tier 3/Purple upgrades to include in the item pool."""
 
     range_start = 0
@@ -353,7 +332,7 @@ class NumberRareUpgrades(Range):
     display_name: str = "Rare Upgrades"
 
 
-class NumberLegendaryUpgrades(Range):
+class LegendaryUpgradeWeight(Range):
     """The number of Legendary/Tier 4/Red upgrades to include in the item pool."""
 
     range_start = 0
@@ -361,6 +340,45 @@ class NumberLegendaryUpgrades(Range):
 
     default = 5
     display_name = "Legendary Upgrades"
+
+
+class GoldWeight(Range):
+    """Weight of Gold items in the item pool.
+
+    The actual value of each gold item will we randomly picked from:
+
+    * 10
+    * 25
+    * 50
+    * 100
+    * 200
+    """
+
+    range_start = 0
+    range_end = 100
+
+    default = 5
+    display_name = "Gold Weight"
+
+
+class XpWeight(Range):
+    """Weight of XP items in the item pool.
+
+    The actual value of each XP item will we randomly picked from:
+
+    * 5
+    * 10
+    * 25
+    * 50
+    * 100
+    * 150
+    """
+
+    range_start = 0
+    range_end = 100
+
+    default = 5
+    display_name = "XP Weight"
 
 
 class StartingShopSlots(Range):
@@ -451,15 +469,16 @@ class BrotatoOptions(PerGameCommonOptions):
     num_legendary_crate_drops: NumberLegendaryCrateDropLocations
     num_legendary_crate_drops_per_check: NumberLegendaryCrateDropsPerCheck
     num_legendary_crate_drop_groups: NumberLegendaryCrateDropGroups
-    item_weight_mode: ItemWeights
     common_item_weight: CommonItemWeight
     uncommon_item_weight: UncommonItemWeight
     rare_item_weight: RareItemWeight
     legendary_item_weight: LegendaryItemWeight
-    num_common_upgrades: NumberCommonUpgrades
-    num_uncommon_upgrades: NumberUncommonUpgrades
-    num_rare_upgrades: NumberRareUpgrades
-    num_legendary_upgrades: NumberLegendaryUpgrades
+    common_upgrade_weight: CommonUpgradeWeight
+    uncommon_upgrade_weight: UncommonUpgradeWeight
+    rare_upgrade_weight: RareUpgradeWeight
+    legendary_upgrade_weight: LegendaryUpgradeWeight
+    gold_weight: GoldWeight
+    xp_weight: XpWeight
     num_starting_shop_slots: StartingShopSlots
     shop_lock_buttons_mode: StartingShopLockButtonsMode
     num_starting_lock_buttons: NumberStartingShopLockButtons
