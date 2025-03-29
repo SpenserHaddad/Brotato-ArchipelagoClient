@@ -166,19 +166,6 @@ class BrotatoWorld(World):
         # Determine needed values from the options
         self.waves_with_checks = get_waves_with_checks(self.options.waves_per_drop)
 
-        # Thought: if num victories is clamped, do some of the groups become unreachable?
-
-        self.common_loot_crate_groups = build_loot_crate_groups(
-            self.options.num_common_crate_drops.value,
-            self.options.num_common_crate_drop_groups.value,
-            self.options.num_victories.value,
-        )
-        self.legendary_loot_crate_groups = build_loot_crate_groups(
-            self.options.num_legendary_crate_drops.value,
-            self.options.num_legendary_crate_drop_groups.value,
-            self.options.num_victories.value,
-        )
-
         self._include_characters, self._starting_characters = get_available_and_starting_characters(
             self.options.include_base_game_characters.value,
             bool(self.options.enable_abyssal_terrors_dlc.value),
@@ -194,12 +181,53 @@ class BrotatoWorld(World):
         # will miss it. This has caused bugs in the past.
         self.options.num_victories.value = min(self.options.num_victories.value, len(self._include_characters))
 
+        # Thought: if num victories is clamped, do some of the groups become unreachable?
+        self.common_loot_crate_groups = build_loot_crate_groups(
+            self.options.num_common_crate_drops.value,
+            self.options.num_common_crate_drop_groups.value,
+            self.options.num_victories.value,
+        )
+        self.legendary_loot_crate_groups = build_loot_crate_groups(
+            self.options.num_legendary_crate_drops.value,
+            self.options.num_legendary_crate_drop_groups.value,
+            self.options.num_victories.value,
+        )
+
+        self.num_shop_slot_items, self.num_shop_lock_button_items = get_num_shop_slot_and_lock_button_items(
+            self.options.num_starting_shop_slots,
+            self.options.shop_lock_buttons_mode,
+            self.options.num_starting_lock_buttons,
+        )
+
+        num_total_locations = sum(
+            [
+                # Wave complete checks
+                len(self.waves_with_checks) * len(self._include_characters),
+                # Run won
+                len(self._include_characters),
+                # Common and legendary crate drops
+                self.options.num_common_crate_drops.value,
+                self.options.num_legendary_crate_drops.value,
+            ]
+        )
+
+        num_required_items = sum(
+            [
+                # Each character, and each run won item for each character
+                2 * len(self._include_characters),
+                self.num_shop_slot_items,
+                self.num_shop_lock_button_items,
+            ]
+        )
+
+        num_nonessential_items = num_total_locations - num_required_items
+
         # Initialize the number of upgrades and items to include, then adjust as necessary below.
         self._upgrade_and_item_counts = {
-            ItemName.COMMON_UPGRADE: self.options.num_common_upgrades.value,
-            ItemName.UNCOMMON_UPGRADE: self.options.num_uncommon_upgrades.value,
-            ItemName.RARE_UPGRADE: self.options.num_rare_upgrades.value,
-            ItemName.LEGENDARY_UPGRADE: self.options.num_legendary_upgrades.value,
+            ItemName.COMMON_UPGRADE: self.options.common_upgrade_weight.value,
+            ItemName.UNCOMMON_UPGRADE: self.options.uncommon_upgrade_weight.value,
+            ItemName.RARE_UPGRADE: self.options.rare_upgrade_weight.value,
+            ItemName.LEGENDARY_UPGRADE: self.options.legendary_upgrade_weight.value,
         }
 
         num_items_per_rarity: dict[ItemName, int] = create_items_for_loot_crate_locations(
@@ -213,12 +241,6 @@ class BrotatoWorld(World):
             self.random,
         )
         self._upgrade_and_item_counts.update(num_items_per_rarity.items())
-
-        self.num_shop_slot_items, self.num_shop_lock_button_items = get_num_shop_slot_and_lock_button_items(
-            self.options.num_starting_shop_slots,
-            self.options.shop_lock_buttons_mode,
-            self.options.num_starting_lock_buttons,
-        )
 
         # Check that there's enough locations for all the items given in the options. If there isn't enough locations,
         # remove non-progression items (i.e. Brotato items and upgrades) until there's no more extra.
