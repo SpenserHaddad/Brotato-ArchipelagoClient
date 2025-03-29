@@ -258,13 +258,42 @@ class NumberLegendaryCrateDropGroups(Range):
     display_name: str = "Legendary Loot Crate Groups"
 
 
+# Item weights
+#
+# The default values of each weight are meant to give a distribution of items matching:
+# - 20% Common Items
+# - 12% Uncommon Items
+# - 5% Rare Items
+# - 3% Legendary Items
+# - 20% Common Upgrades
+# - 12% Uncommon Upgrades
+# - 5% Rare Upgrades
+# - 3% Legendary Upgrades
+# - 10% Gold
+# - 10% XP
+#
+# Combining the items and upgrades of different rarities is:
+# - 40% Items
+# - 40% Upgrades
+# - 10% Gold
+# - 10% XP
+#
+# This distribution is a wild guess at a good default mix of items, upgrades, gold, and XP, and may be adjusted in the
+# future depending on player feedback.
+#
+# The ratios of common/uncommon/rare/legendary item and upgrades were chosen to roughly match the distribution of
+# common/uncommon/rare/legendary values in the game itself. This is determined by looking at the max chance of each
+# appearing in the shop as documented here: https://brotato.wiki.spellsandguns.com/Shop#Rarity_of_Shop_Items_and_Luck.
+# It's not a perfect approximation, but it "feels" correct.
+
+
 class CommonItemWeight(Range):
     """The weight of Common/Tier 1/White items in the pool."""
 
     range_start = 0
     range_end = 100
 
-    default = 100
+    default = 50
     display_name = "Common Items"
 
 
@@ -274,7 +303,7 @@ class UncommonItemWeight(Range):
     range_start = 0
     range_end = 100
 
-    default = 60
+    default = 30
     display_name = "Uncommon Items"
 
 
@@ -284,7 +313,7 @@ class RareItemWeight(Range):
     range_start = 0
     range_end = 100
 
-    default = 25
+    default = 12
     display_name = "Rare Items"
 
 
@@ -308,7 +337,7 @@ class CommonUpgradeWeight(Range):
     range_start = 0
     range_end: int = MAX_COMMON_UPGRADES
 
-    default = 15
+    default = 50
     display_name: str = "Common Upgrades"
 
 
@@ -318,7 +347,7 @@ class UncommonUpgradeWeight(Range):
     range_start = 0
     range_end: int = MAX_UNCOMMON_UPGRADES
 
-    default = 10
+    default = 30
     display_name: str = "Uncommon Upgrades"
 
 
@@ -328,7 +357,7 @@ class RareUpgradeWeight(Range):
     range_start = 0
     range_end: int = MAX_RARE_UPGRADES
 
-    default = 5
+    default = 12
     display_name: str = "Rare Upgrades"
 
 
@@ -338,7 +367,7 @@ class LegendaryUpgradeWeight(Range):
     range_start = 0
     range_end = MAX_LEGENDARY_UPGRADES
 
-    default = 5
+    default = 8
     display_name = "Legendary Upgrades"
 
 
@@ -357,7 +386,7 @@ class GoldWeight(Range):
     range_start = 0
     range_end = 100
 
-    default = 5
+    default = 10
     display_name = "Gold Weight"
 
 
@@ -377,7 +406,7 @@ class XpWeight(Range):
     range_start = 0
     range_end = 100
 
-    default = 5
+    default = 10
     display_name = "XP Weight"
 
 
