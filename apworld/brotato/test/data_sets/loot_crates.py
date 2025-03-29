@@ -10,7 +10,7 @@ reason it couldn't be expanded to handle more in the future.
 """
 
 from dataclasses import asdict, dataclass
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 from ...constants import (
     BASE_GAME_CHARACTERS,
@@ -42,11 +42,11 @@ class BrotatoLootCrateTestExpectedResults:
     # An int value means all regions have the same number of crates.
     # A tuple of ints means region "Crate Group {i}" has number of crates in index [i]
     num_common_crate_regions: int
-    common_crates_per_region: Union[int, Tuple[int, ...]]
+    common_crates_per_region: int | tuple[int, ...]
     num_legendary_crate_regions: int
-    legendary_crates_per_region: Union[int, Tuple[int, ...]]
-    wins_required_per_common_region: Tuple[int, ...]
-    wins_required_per_legendary_region: Tuple[int, ...]
+    legendary_crates_per_region: int | tuple[int, ...]
+    wins_required_per_common_region: tuple[int, ...]
+    wins_required_per_legendary_region: tuple[int, ...]
 
     def __post_init__(self):
         """Validate the expected results to make sure the fields are consistent.
@@ -90,7 +90,7 @@ class BrotatoLootCrateTestExpectedResults:
 class BrotatoLootCrateTestDataSet(BrotatoTestDataSet):
     options: BrotatoLootCrateTestOptions
     expected_results: BrotatoLootCrateTestExpectedResults
-    description: Optional[str] = None
+    description: str | None = None
 
     def test_name(self) -> str:
         options_str = ", ".join(
@@ -110,11 +110,11 @@ class BrotatoLootCrateTestDataSet(BrotatoTestDataSet):
         return name
 
     @property
-    def options_dict(self) -> Dict[str, Any]:
+    def options_dict(self) -> dict[str, Any]:
         return asdict(self.options)
 
 
-TEST_DATA_SETS: List[BrotatoLootCrateTestDataSet] = [
+TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
     BrotatoLootCrateTestDataSet(
         description="Easily divisible, common and legendary same (25 crates)",
         options=BrotatoLootCrateTestOptions(
