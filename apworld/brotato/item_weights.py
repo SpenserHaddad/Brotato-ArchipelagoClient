@@ -35,7 +35,8 @@ def create_items_from_weights(
         **gold_item_weights,
         **xp_item_weights,
     }
-    return random.sample(list(item_name_to_weight.keys()), num_items, counts=item_name_to_weight.values())
+
+    return random.choices(list(item_name_to_weight.keys()), weights=list(item_name_to_weight.values()), k=num_items)
 
 
 def _create_weights_for_item_group(weight: int, group: list[ItemName]) -> dict[ItemName, int]:
@@ -43,8 +44,6 @@ def _create_weights_for_item_group(weight: int, group: list[ItemName]) -> dict[I
 
     base_extra = math.ceil(base_extra)
     item_weights: dict[ItemName, int] = {item: base_weight for item in group}
-    while base_extra > 0:
-        for item in itertools.cycle(item_weights):
-            item_weights[item] += 1
-            base_extra -= 1
+    for _, item in zip(range(base_extra), itertools.cycle(item_weights)):
+        item_weights[item] += 1
     return item_weights
