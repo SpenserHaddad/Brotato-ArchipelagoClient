@@ -59,26 +59,23 @@ class BrotatoWeb(WebWorld):
             ],
         ),
         OptionGroup(
-            "Item Rewards",
+            "Shop Slots",
+            [options.StartingShopSlots, options.StartingShopLockButtonsMode, options.NumberStartingShopLockButtons],
+        ),
+        OptionGroup(
+            "Item Weights",
             [
                 options.CommonItemWeight,
                 options.UncommonItemWeight,
                 options.RareItemWeight,
                 options.LegendaryItemWeight,
-            ],
-        ),
-        OptionGroup(
-            "Upgrades",
-            [
                 options.CommonUpgradeWeight,
                 options.UncommonUpgradeWeight,
                 options.RareUpgradeWeight,
                 options.LegendaryUpgradeWeight,
+                options.GoldWeight,
+                options.XpWeight,
             ],
-        ),
-        OptionGroup(
-            "Shop Slots",
-            [options.StartingShopSlots, options.StartingShopLockButtonsMode, options.NumberStartingShopLockButtons],
         ),
         OptionGroup(
             "Abyssal Terrors DLC",
