@@ -1,7 +1,6 @@
 from typing import Tuple, Union
 
 from ..constants import (
-    BASE_GAME_CHARACTERS,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
     LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
@@ -19,8 +18,8 @@ class TestBrotatoRegions(BrotatoTestBase):
     # For some reason, this option keeps getting overwritten so it is missing the last five base game characters. I
     # suspect this has something to do with "test_num_victories_clamped_to_number_of_characters", which is the only case
     # that alters this option in such a way, but I can't find a good workaround for it.
-    options = {"include_base_game_characters": BASE_GAME_CHARACTERS.characters}
-    run_default_tests = False  # TODO: Flaky results, need to track down why
+    # options = {"include_base_game_characters": BASE_GAME_CHARACTERS.characters}
+    # run_default_tests = False  # TODO: Flaky results, need to track down why
 
     def test_correct_number_of_crate_drop_regions_created(self):
         """Test that only the location groups needed are created.
@@ -185,3 +184,6 @@ class TestBrotatoRegions(BrotatoTestBase):
             region = player_regions[region_template.format(num=region_idx + 1)]
             actual_location_names = [loc.name for loc in region.locations]
             self.assertListEqual(actual_location_names, expected_location_names)
+
+    def test_fill(self):
+        return super().test_fill()
