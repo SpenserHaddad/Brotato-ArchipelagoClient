@@ -165,18 +165,20 @@ item_name_groups: Dict[str, Set[str]] = {
         ItemName.LEGENDARY_UPGRADE.value,
     },
     "Shop": {ItemName.SHOP_SLOT.value, ItemName.SHOP_LOCK_BUTTON.value},
-    "Gold and XP": {
+    "Gold": {
+        ItemName.GOLD_10.value,
+        ItemName.GOLD_25.value,
+        ItemName.GOLD_50.value,
+        ItemName.GOLD_100.value,
+        ItemName.GOLD_200.value,
+    },
+    "XP": {
         ItemName.XP_5.value,
         ItemName.XP_10.value,
         ItemName.XP_25.value,
         ItemName.XP_50.value,
         ItemName.XP_100.value,
         ItemName.XP_150.value,
-        ItemName.GOLD_10.value,
-        ItemName.GOLD_25.value,
-        ItemName.GOLD_50.value,
-        ItemName.GOLD_100.value,
-        ItemName.GOLD_200.value,
     },
     "Characters": set(c.value for c in _char_items),
 }
