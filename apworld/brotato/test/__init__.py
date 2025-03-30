@@ -1,13 +1,10 @@
-from collections.abc import Generator, Iterable
-from copy import deepcopy
-from typing import Any, ClassVar, TypeVar
+from contextlib import contextmanager
+from typing import Any, ClassVar
 
 from test.bases import WorldTestBase
 
 from .. import BrotatoWorld
 from .data_sets.base import BrotatoTestDataSet
-
-_T = TypeVar("_T", bound=BrotatoTestDataSet)
 
 
 class BrotatoTestBase(WorldTestBase):
@@ -15,28 +12,23 @@ class BrotatoTestBase(WorldTestBase):
     world: BrotatoWorld  # type: ignore
     player: ClassVar[int] = 1
 
-    def data_set_subtests(self, data_set: Iterable[_T]) -> Generator[_T, Any, None]:
-        """Iterate over data sets and create a separate test case for each.
+    @contextmanager
+    def data_set_subtest(self, data_set: BrotatoTestDataSet, **kwargs):
+        with self.subTest(msg=data_set.test_name(), **kwargs), self._run(data_set.options_dict):
+            yield
 
-        Handles creating the subTest, and applying the options to the test class and then tearing them down so
-        class-level options aren't overwritten between subTests, which can lead to tests because they're expected
-        options aren't set.
-        """
-        for ds in data_set:
-            with self.subTest(msg=ds.test_name()):
-                self._run(ds.options_dict)
-                yield ds
-
-    def _run(self, options: dict):
+    @contextmanager
+    def _run(self, run_options: dict[str, Any]):
         """Setup the world using the options from the dataset.
 
         We make this distinct from setUp() so tests can call this from subTests when
         iterating overt TEST_DATA_SETS.
         """
-        original_options = deepcopy(self.options)
+        original_options = self.options
+        self.options = {**original_options, **run_options}
         try:
-            self.options.update(options)
-            self.world_setup()
+            self.setUp()
+            yield
         finally:
-            # Make sure we don't override class-level options between tests
-            self.options = deepcopy(original_options)
+            self.tearDown
+            self.options = original_options
