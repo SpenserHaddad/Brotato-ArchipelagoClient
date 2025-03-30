@@ -3,22 +3,23 @@ from dataclasses import asdict
 from typing import Any, ClassVar
 
 from BaseClasses import Item, MultiWorld, Region, Tutorial
-from Options import OptionError, OptionGroup
+from Options import OptionGroup
 from worlds.AutoWorld import WebWorld, World
 
 from . import options  # So we don't need to import every option class when defining option groups
 from .characters import get_available_and_starting_characters
 from .constants import (
     MAX_SHOP_SLOTS,
+    NUM_WAVES,
     RUN_COMPLETE_LOCATION_TEMPLATE,
+    ItemRarity,
 )
+from .item_weights import create_items_from_weights
 from .items import BrotatoItem, ItemName, filler_items, item_name_groups, item_name_to_id, item_table
 from .locations import location_name_groups, location_name_to_id
 from .loot_crates import (
     BrotatoLootCrateGroup,
     build_loot_crate_groups,
-    create_items_for_loot_crate_locations,
-    get_wave_for_each_item,
 )
 from .options import (
     BrotatoOptions,
@@ -60,27 +61,23 @@ class BrotatoWeb(WebWorld):
             ],
         ),
         OptionGroup(
-            "Item Rewards",
+            "Shop Slots",
+            [options.StartingShopSlots, options.StartingShopLockButtonsMode, options.NumberStartingShopLockButtons],
+        ),
+        OptionGroup(
+            "Item Weights",
             [
-                options.ItemWeights,
                 options.CommonItemWeight,
                 options.UncommonItemWeight,
                 options.RareItemWeight,
                 options.LegendaryItemWeight,
+                options.CommonUpgradeWeight,
+                options.UncommonUpgradeWeight,
+                options.RareUpgradeWeight,
+                options.LegendaryUpgradeWeight,
+                options.GoldWeight,
+                options.XpWeight,
             ],
-        ),
-        OptionGroup(
-            "Upgrades",
-            [
-                options.NumberCommonUpgrades,
-                options.NumberUncommonUpgrades,
-                options.NumberRareUpgrades,
-                options.NumberLegendaryUpgrades,
-            ],
-        ),
-        OptionGroup(
-            "Shop Slots",
-            [options.StartingShopSlots, options.StartingShopLockButtonsMode, options.NumberStartingShopLockButtons],
         ),
         OptionGroup(
             "Abyssal Terrors DLC",
@@ -143,16 +140,19 @@ class BrotatoWorld(World):
     Calculated from player options in generate_early().
     """
 
-    _upgrade_and_item_counts: dict[ItemName, int]
-    """Amount of each upgrade tier and Brotato item to add to the item pool.
+    nonessential_item_counts: dict[ItemName, int]
+    """The names and counts of the items in the pool that aren't characters, shop slots, or shop locks.
 
-    Calculated from player options in generate_early(). The counts may be less than the actual amount requested if there
-    is not enough locations for them all (which can happen if too many characters are excluded from having progression
-    items), in which case items from here will be randomly removed until they fit.
+    This includes the (Brotato) items, upgrades, gold and XP drops, which are populated from the respective weight
+    options to fill all locations not taken by the aforementioned items.
+
+    These are "nonessential" because they aren't strictly necessary for completion, like character items, or incredibly
+    useful with a strict cap, like the shop slots and locks. There's probably a better name for this, but I can't think
+    of it at the time of writing.
+
+    These are determined in generate_early() instead of create_items() so we can use the amount of them to determine
+    combat logic.
     """
-
-    _num_filler_items: int
-    """The number of filler items to create. Calculated in generate_early()."""
 
     def __init__(self, world: MultiWorld, player: int) -> None:
         super().__init__(world, player)
@@ -199,80 +199,40 @@ class BrotatoWorld(World):
             self.options.num_starting_lock_buttons,
         )
 
-        num_total_locations = sum(
+        # The number of locations available, not including the "Run Won" locations, which always have "Run Won" items.
+        num_locations = sum(
             [
-                # Wave complete checks
-                len(self.waves_with_checks) * len(self._include_characters),
-                # Run won
-                len(self._include_characters),
-                # Common and legendary crate drops
+                len(self._include_characters),  # Run Won Locations
+                len(self._include_characters) * len(self.waves_with_checks),  # Wave Complete Locations
                 self.options.num_common_crate_drops.value,
                 self.options.num_legendary_crate_drops.value,
             ]
         )
 
-        num_required_items = sum(
+        num_essential_items = sum(
             [
-                # Each character, and each run won item for each character
-                2 * len(self._include_characters),
+                len(self._include_characters),  # Run Won Items
+                len(self._include_characters) - len(self._starting_characters),  # The character items
                 self.num_shop_slot_items,
                 self.num_shop_lock_button_items,
             ]
         )
 
-        num_nonessential_items = num_total_locations - num_required_items
-
-        # Initialize the number of upgrades and items to include, then adjust as necessary below.
-        self._upgrade_and_item_counts = {
-            ItemName.COMMON_UPGRADE: self.options.common_upgrade_weight.value,
-            ItemName.UNCOMMON_UPGRADE: self.options.uncommon_upgrade_weight.value,
-            ItemName.RARE_UPGRADE: self.options.rare_upgrade_weight.value,
-            ItemName.LEGENDARY_UPGRADE: self.options.legendary_upgrade_weight.value,
-        }
-
-        num_items_per_rarity: dict[ItemName, int] = create_items_for_loot_crate_locations(
-            self.options.num_common_crate_drops,
-            self.options.num_legendary_crate_drops,
-            self.options.item_weight_mode,
+        num_nonessential_items = max(num_locations - num_essential_items, 0)
+        self.nonessential_item_counts = create_items_from_weights(
+            num_nonessential_items,
+            self.random,
             self.options.common_item_weight,
             self.options.uncommon_item_weight,
             self.options.rare_item_weight,
             self.options.legendary_item_weight,
-            self.random,
+            self.options.common_upgrade_weight,
+            self.options.uncommon_upgrade_weight,
+            self.options.rare_upgrade_weight,
+            self.options.legendary_upgrade_weight,
+            self.options.gold_weight,
+            self.options.xp_weight,
         )
-        self._upgrade_and_item_counts.update(num_items_per_rarity.items())
-
-        # Check that there's enough locations for all the items given in the options. If there isn't enough locations,
-        # remove non-progression items (i.e. Brotato items and upgrades) until there's no more extra.
-        # We already have an item for each common and legendary loot crate drop, as well as each run won location, so we
-        # need a filler item for every wave complete location not covered by a character unlock, shop slot, or upgrade.
-        num_wave_complete_locations = len(self.waves_with_checks) * len(self._include_characters)
-
-        # The number of locations available, not including the "Run Won" locations, which always have "Run Won" items.
-        num_locations = num_wave_complete_locations + self.options.num_common_crate_drops.value
-        num_claimed_locations = (
-            (len(self._include_characters) - len(self._starting_characters))  # For each character unlock
-            + self.num_shop_slot_items
-            + self.num_shop_lock_button_items
-            + sum(self._upgrade_and_item_counts.values())
-        )
-        num_unclaimed_locations = num_locations - num_claimed_locations
-        if num_unclaimed_locations < 0:
-            # Too many items for the number of locations we have. Randomly remove items, upgrades, and excluded
-            # characters to make space for the progression items (characters and shop slots).
-            num_items_to_remove = abs(num_unclaimed_locations)
-            removable_items: dict[ItemName, int] = self._upgrade_and_item_counts.copy()
-            if sum(removable_items.values()) < num_items_to_remove:
-                raise OptionError(
-                    "Not enough locations for all progression items with given options. Most likely too many characters"
-                    "were excluded by omitting them from 'Include Characters'. Add more characters and try again."
-                )
-            items_to_remove: list[ItemName] = self.random.sample(
-                list(removable_items.keys()), num_items_to_remove, counts=list(removable_items.values())
-            )
-            for item_to_remove in items_to_remove:
-                self._upgrade_and_item_counts[item_to_remove] -= 1
-        self._num_filler_items = max(num_unclaimed_locations, 0) + self.options.num_legendary_crate_drops.value
 
     def set_rules(self) -> None:
         self.multiworld.completion_condition[self.player] = create_has_run_wins_rule(
@@ -303,13 +263,12 @@ class BrotatoWorld(World):
             else:
                 item_pool.append(character_item)
 
-        # Create an item for each (Brotato) item and upgrade. These counts are determined in generate_early().
-        for item_name, item_count in self._upgrade_and_item_counts.items():
+        # Create an item for each nonessential item. These are determined in generate_early().
+        for item_name, item_count in self.nonessential_item_counts.items():
             item_pool += [self.create_item(item_name) for _ in range(item_count)]
 
         item_pool += [self.create_item(ItemName.SHOP_SLOT) for _ in range(self.num_shop_slot_items)]
         item_pool += [self.create_item(ItemName.SHOP_LOCK_BUTTON) for _ in range(self.num_shop_lock_button_items)]
-        item_pool += [self.create_filler() for _ in range(self._num_filler_items)]
 
         self.multiworld.itempool += item_pool
 
@@ -328,7 +287,7 @@ class BrotatoWorld(World):
         spawn_normal_loot_crates = (
             self.options.spawn_normal_loot_crates.value == self.options.spawn_normal_loot_crates.option_true
         )
-        wave_per_loot_crate_item = get_wave_for_each_item(self._upgrade_and_item_counts)
+        wave_per_game_item = self._get_wave_per_game_item(self.nonessential_item_counts)
         return {
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": self.options.num_victories.value,
@@ -344,6 +303,39 @@ class BrotatoWorld(World):
             "num_legendary_crate_locations": self.options.num_legendary_crate_drops.value,
             "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check.value,
             "legendary_crate_drop_groups": [asdict(g) for g in self.legendary_loot_crate_groups],
-            "wave_per_game_item": wave_per_loot_crate_item,
+            "wave_per_game_item": wave_per_game_item,
             "enable_abyssal_terrors_dlc": self.options.enable_abyssal_terrors_dlc.value,
         }
+
+    def _get_wave_per_game_item(self, item_counts: dict[ItemName, int]) -> dict[int, list[int]]:
+        """Determine the wave to use to generate each Brotato item received, by rarity.
+
+        Intended to be stored as slot data, which is why we use the (integer) enum values instead of the enums
+        themselves.
+
+        Brotato items are generated from a pool determined by the rarity (or tier) and the wave the item was
+        found/bought. We want to emulate this behavior with the items we create here. When we generate the items to
+        match the common loot crate drop locations, we also assign a wave to each item. When the client receives the
+        next item for a certain rarity, it will lookup the next entry in the list for the rarity and use that as the
+        wave when generating the values.
+
+        We attempt to equally distribute the items over the 20 waves in a normal run, with a bias towards lower numbers,
+        since it's already too easy to get overpowered in this.
+        """
+
+        item_names_to_rarity = {
+            ItemName.COMMON_ITEM: ItemRarity.COMMON,
+            ItemName.UNCOMMON_ITEM: ItemRarity.UNCOMMON,
+            ItemName.RARE_ITEM: ItemRarity.RARE,
+            ItemName.LEGENDARY_ITEM: ItemRarity.LEGENDARY,
+        }
+
+        def generate_waves_per_item(num_items: int) -> list[int]:
+            # Evenly distribute the items over 20 waves, then sort so items received are generated with steadily
+            # increasing waves (aka they got steadily stronger).
+            return sorted((i % NUM_WAVES) + 1 for i in range(num_items))
+
+        wave_per_item: dict[int, list[int]] = {}
+        for item_name, item_rarity in item_names_to_rarity.items():
+            wave_per_item[item_rarity.value] = generate_waves_per_item(item_counts[item_name])
+        return wave_per_item
