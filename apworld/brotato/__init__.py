@@ -139,14 +139,6 @@ class BrotatoWorld(World):
     Calculated from player options in generate_early().
     """
 
-    # _upgrade_and_item_counts: dict[ItemName, int]
-    """Amount of each upgrade tier and Brotato item to add to the item pool.
-
-    Calculated from player options in generate_early(). The counts may be less than the actual amount requested if there
-    is not enough locations for them all (which can happen if too many characters are excluded from having progression
-    items), in which case items from here will be randomly removed until they fit.
-    """
-
     nonessential_item_counts: dict[ItemName, int]
     """The names and counts of the items in the pool that aren't characters, shop slots, or shop locks.
 
