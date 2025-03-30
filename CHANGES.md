@@ -7,12 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- World generation should now be generally more reliable, with less fill errors.
+
 ### Added
 
 - Added new option `num_characters` to determine how many characters to include
   in the generated world.
   - Character selection options behave the same, except we only choose
     `num_characters` characters instead of all included characters now.
+- Added new options to specify item, upgrade, gold and XP drop weights.
+  - Weights are used to randomly create a pool of the above items for all unfilled
+    locations.
+  - The default value of the weights are chosen to give the following distribution:
+    - 40% Items
+    - 40% Upgrades
+    - 10% Gold
+    - 10% XP
+  - Further, the weights per-rarity for items and upgrades are chosen to give a
+    distribution of items roughly matching the base game.
+
+### Changed
+- Legendary loot crate locations are no longer classified as `EXCLUDED`, and progression
+  and useful items may now be placed at them.
+  - This was the source of several fill bugs, and the easiest way to fix this was to
+    just make them normal locations.
+  - These were originally excluded because it was assumed they would be difficult to
+    get, and could lead to blocks in multiworlds. In practice, players can get strong
+    enough to easily kill elites/bosses with the amount of items in the pool.
+
+### Removed
+
+- The `item_weight_mode` option has been removed, as it's no longer relevant with the
+  new weight options.
+  - The weight presets can be replicated by either:
+    - Keeping the weights as their default values (`option_default`).
+    - Setting some/all weights to be random (`option_chaos`).
+    - Setting some/all weights manually ('`option_custom`).
+- The `Number<Common/Uncommon/Rare/Legendary>Upgrades` options have been removed, as
+  they are no longer relevant with the new weight options.
+
 
 ## [0.7.2] - 2025-02-11
 
