@@ -1,8 +1,8 @@
-from typing import Any, ClassVar
-from unittest import TestCase
+from typing import Any
 
-from BaseClasses import MultiWorld, Region
-from worlds.brotato.test import BrotatoTestBase
+from BaseClasses import Region
+
+from apworld.brotato.loot_crates import BrotatoLootCrateGroup
 
 from ..constants import (
     CHARACTER_REGION_TEMPLATE,
@@ -14,22 +14,13 @@ from ..constants import (
     WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
 from ..items import ItemName
-from ..loot_crates import BrotatoLootCrateGroup
 from ..regions import create_character_region, create_loot_crate_group_region, create_regions
+from . import BrotatoTestBase
 
 
-class TestBrotatoRegions(TestCase):
-    multiworld: MultiWorld
-    player: int
-
-    def setUp(self) -> None:
-        self.multiworld = MultiWorld(1)
-        self.player = 1
-        self.multiworld.game[self.player] = "Brotato"
-        self.multiworld.player_name = {self.player: "Tester"}
-        # self.multiworld.state = CollectionState(self.multiworld)
-        # self.parent_region = Region("Test Region", 1, self.multiworld)
-        return super().setUp()
+class TestBrotatoRegions(BrotatoTestBase):
+    def test_correct_number_of_crate_drop_regions_created(self):
+        """Test that only the location groups needed are created."""
 
     def _create_region(self, name: str) -> Region:
         """Region factory to pass to the region creation functions."""

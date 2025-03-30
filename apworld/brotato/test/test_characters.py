@@ -8,7 +8,7 @@ from test.bases import TestBase
 from ..characters import get_available_and_starting_characters
 from .data_sets.characters import (
     CHARACTER_TEST_DATA_SETS,
-    NON_ERROR_CASE_CHARACTER_TEST_DATA_SETS,
+    NON_ERROR_CHARACTER_DATA_SETS,
 )
 
 
@@ -46,7 +46,7 @@ class TestBrotatoCharacterOptions(TestBase):
                     assert set(available_characters) <= data_set.valid_available_characters
 
     def test_get_available_and_starting_characters_data_sets_reproducible_results(self):
-        for data_set in NON_ERROR_CASE_CHARACTER_TEST_DATA_SETS:
+        for data_set in NON_ERROR_CHARACTER_DATA_SETS:
             with self.subTest(data_set=data_set):
                 available_characters, starting_characters = get_available_and_starting_characters(
                     data_set.include_base_game_characters,

@@ -8,7 +8,7 @@ class TestBrotatoNumVictoriesOption(BrotatoTestBase):
     def test_num_victories_clamped_to_number_of_characters(self):
         """Test that the number of victories is not more than the number of included characters.
 
-        This prevents unwinnable situtations where there aren't enough characters to reach the goal with.
+        This prevents unwinnable situations where there aren't enough characters to reach the goal with.
 
         We also check the output slot data to make sure the change, if made, propagates to it as well.
         """
