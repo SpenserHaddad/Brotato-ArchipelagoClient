@@ -5,15 +5,11 @@ from Options import Choice, OptionSet, PerGameCommonOptions, Range, Toggle
 from .constants import (
     ABYSSAL_TERRORS_CHARACTERS,
     BASE_GAME_CHARACTERS,
-    MAX_COMMON_UPGRADES,
     MAX_LEGENDARY_CRATE_DROP_GROUPS,
     MAX_LEGENDARY_CRATE_DROPS,
-    MAX_LEGENDARY_UPGRADES,
     MAX_NORMAL_CRATE_DROP_GROUPS,
     MAX_NORMAL_CRATE_DROPS,
-    MAX_RARE_UPGRADES,
     MAX_SHOP_SLOTS,
-    MAX_UNCOMMON_UPGRADES,
     NUM_WAVES,
     TOTAL_NUM_CHARACTERS,
 )
@@ -335,7 +331,7 @@ class CommonUpgradeWeight(Range):
     """The number of Common/Tier 1/White upgrades to include in the item pool."""
 
     range_start = 0
-    range_end: int = MAX_COMMON_UPGRADES
+    range_end: int = 100
 
     default = 50
     display_name: str = "Common Upgrades"
@@ -345,7 +341,7 @@ class UncommonUpgradeWeight(Range):
     """The number of Uncommon/Tier 2/Blue upgrades to include in the item pool."""
 
     range_start = 0
-    range_end: int = MAX_UNCOMMON_UPGRADES
+    range_end: int = 100
 
     default = 30
     display_name: str = "Uncommon Upgrades"
@@ -355,7 +351,7 @@ class RareUpgradeWeight(Range):
     """The number of Rare/Tier 3/Purple upgrades to include in the item pool."""
 
     range_start = 0
-    range_end: int = MAX_RARE_UPGRADES
+    range_end: int = 100
 
     default = 12
     display_name: str = "Rare Upgrades"
@@ -365,7 +361,7 @@ class LegendaryUpgradeWeight(Range):
     """The number of Legendary/Tier 4/Red upgrades to include in the item pool."""
 
     range_start = 0
-    range_end = MAX_LEGENDARY_UPGRADES
+    range_end = 100
 
     default = 8
     display_name = "Legendary Upgrades"
