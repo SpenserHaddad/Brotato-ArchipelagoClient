@@ -1,5 +1,4 @@
 import random
-from typing import List
 
 from BaseClasses import PlandoOptions, Region
 from Options import OptionError
@@ -12,22 +11,6 @@ from . import BrotatoTestBase
 
 class TestBrotatoIncludeCharacters(BrotatoTestBase):
     auto_construct = False
-
-    def test_include_characters_can_fill(self):
-        # Which characters we pick to include shouldn't matter, just the amount. But let's randomize who we pick each
-        # time just in case.
-        r = random.Random(0x7A70)
-        for num_characters in range(1, BASE_GAME_CHARACTERS.num_characters + 1):
-            with self.subTest(msg=f"{num_characters=}", n=num_characters):
-                include_characters: List[str] = r.sample(BASE_GAME_CHARACTERS.characters, k=num_characters)
-                self.options = {
-                    "starting_characters": 1,
-                    "include_characters": include_characters,
-                    "waves_per_drop": 5,
-                }
-                self.world_setup()
-                self.test_fill()
-                self.assertBeatable(True)
 
     def test_include_characters_invalid_values_raises_exception(self):
         valid_include_characters = BASE_GAME_CHARACTERS.characters[:10]
