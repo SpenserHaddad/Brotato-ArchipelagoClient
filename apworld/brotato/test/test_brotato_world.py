@@ -2,8 +2,10 @@
 
 # from test.param import classvar_matrix
 
+from worlds.brotato.loot_crates import BrotatoLootCrateGroup
+
 from . import BrotatoTestBase
-from .data_sets.loot_crates import TEST_DATA_SETS, BrotatoLootCrateTestDataSet
+from .data_sets.loot_crates import LOOT_CRATE_GROUP_DATA_SETS
 
 # # There's only 20 valid values for "Waves per Check" option, so we can test every possible value here.
 # waves_with_drops_pairs: list[tuple[int, list[int]]] = [
@@ -33,44 +35,23 @@ from .data_sets.loot_crates import TEST_DATA_SETS, BrotatoLootCrateTestDataSet
 # ]
 
 
-# @classvar_matrix(value_and_expected=waves_with_drops_pairs)
-# class TestBrotatoWorldWavesWithDrops(BrotatoTestBase):
-#     value_and_expected: ClassVar[tuple[int, list[int]]]
-
-#     def test_waves_with_drops_correct(self):
-#         option_value, expected_waves_with_checks = self.value_and_expected
-#         self._run({"waves_per_drop": option_value})
-#         # Coerce to list so the types match
-#         assert list(self.world.waves_with_checks) == expected_waves_with_checks
-
-
 class TestBrotatoWorld(BrotatoTestBase):
     """Test attributes on the BrotatoWorld instance directly."""
 
     def test_common_loot_crate_groups_correct(self):
-        test_data: BrotatoLootCrateTestDataSet
-        for test_data in self.data_set_subtests(TEST_DATA_SETS):
-            common_crate_groups = self.world.common_loot_crate_groups
-            assert len(common_crate_groups) == test_data.expected_results.num_common_crate_regions
-            for index, group in enumerate(common_crate_groups):
-                assert group.index == index + 1
-                if isinstance(test_data.expected_results.common_crates_per_region, int):
-                    assert group.num_crates == test_data.expected_results.common_crates_per_region
-                else:
-                    assert group.num_crates == test_data.expected_results.common_crates_per_region[index]
-
-                assert group.wins_to_unlock == test_data.expected_results.wins_required_per_common_region[index]
+        for idx, test_data in enumerate(LOOT_CRATE_GROUP_DATA_SETS):
+            with self.data_set_subtest(test_data, idx=idx):
+                groups: list[BrotatoLootCrateGroup] = self.world.common_loot_crate_groups
+                expected_groups: list[BrotatoLootCrateGroup] = test_data.expected_common_groups
+                self.assertEqual(len(groups), len(expected_groups))
+                for idx, (group, expected_group) in enumerate(zip(groups, expected_groups)):
+                    self.assertEqual(group, expected_group, f"Common loot crate group {idx} is not correct.")
 
     def test_legendary_loot_crate_groups_correct(self):
-        test_data: BrotatoLootCrateTestDataSet
-        for test_data in self.data_set_subtests(TEST_DATA_SETS):
-            legendary_crate_groups = self.world.legendary_loot_crate_groups
-            assert len(legendary_crate_groups) == test_data.expected_results.num_legendary_crate_regions
-            for index, group in enumerate(legendary_crate_groups):
-                assert group.index == index + 1
-                if isinstance(test_data.expected_results.legendary_crates_per_region, int):
-                    assert group.num_crates == test_data.expected_results.legendary_crates_per_region
-                else:
-                    assert group.num_crates == test_data.expected_results.legendary_crates_per_region[index]
-
-                assert group.wins_to_unlock == test_data.expected_results.wins_required_per_legendary_region[index]
+        for idx, test_data in enumerate(LOOT_CRATE_GROUP_DATA_SETS):
+            with self.data_set_subtest(test_data, idx=idx):
+                groups: list[BrotatoLootCrateGroup] = self.world.legendary_loot_crate_groups
+                expected_groups: list[BrotatoLootCrateGroup] = test_data.expected_legendary_groups
+                self.assertEqual(len(groups), len(expected_groups))
+                for idx, (group, expected_group) in enumerate(zip(groups, expected_groups)):
+                    self.assertEqual(group, expected_group, f"Legendary loot crate group {idx} is not correct.")

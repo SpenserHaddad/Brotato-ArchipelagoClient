@@ -1,46 +1,30 @@
-from collections.abc import Sequence
 from unittest import TestCase
 
 from ..loot_crates import build_loot_crate_groups
-from .data_sets.loot_crates import TEST_DATA_SETS
+from .data_sets.loot_crates import LOOT_CRATE_GROUP_DATA_SETS
 
 
 class TestLootCrateGroups(TestCase):
     def test_common_loot_crate_groups_correct(self):
-        for test_data in TEST_DATA_SETS:
+        for test_data in LOOT_CRATE_GROUP_DATA_SETS:
             with self.subTest(msg=test_data.description, test_data=test_data):
                 common_loot_crate_groups = build_loot_crate_groups(
                     test_data.options.num_common_crate_drops,
                     test_data.options.num_common_crate_drop_groups,
                     test_data.options.num_victories,
                 )
-                self.assertEqual(len(common_loot_crate_groups), test_data.expected_results.num_common_crate_regions)
-                expected_crates_per_region: Sequence[int]
-                if isinstance(test_data.expected_results.common_crates_per_region, int):
-                    expected_crates_per_region = [
-                        test_data.expected_results.common_crates_per_region
-                    ] * test_data.expected_results.num_common_crate_regions
-                else:
-                    expected_crates_per_region = test_data.expected_results.common_crates_per_region
-
-                for group, expected_num_crates, expected_wins_required in zip(
-                    common_loot_crate_groups,
-                    expected_crates_per_region,
-                    test_data.expected_results.wins_required_per_common_region,
+                self.assertEqual(
+                    len(common_loot_crate_groups),
+                    len(test_data.expected_common_groups),
+                    msg="Incorrect number of common loot crate groups",
+                )
+                for idx, (group, expected_group) in enumerate(
+                    zip(common_loot_crate_groups, test_data.expected_common_groups)
                 ):
-                    self.assertEqual(
-                        group.num_crates,
-                        expected_num_crates,
-                        msg=f"Group {group.index} has the wrong number of crates.",
-                    )
-                    self.assertEqual(
-                        group.wins_to_unlock,
-                        expected_wins_required,
-                        msg=f"Group {group.index} has the wrong number of wins needed to be in logic.",
-                    )
+                    self.assertEqual(group, expected_group, msg=f"Mismatch for group {idx}.")
 
     def test_legendary_loot_crate_groups_correct(self):
-        for test_data in TEST_DATA_SETS:
+        for test_data in LOOT_CRATE_GROUP_DATA_SETS:
             with self.subTest(msg=test_data.description, test_data=test_data):
                 legendary_loot_crate_groups = build_loot_crate_groups(
                     test_data.options.num_legendary_crate_drops,
@@ -48,28 +32,11 @@ class TestLootCrateGroups(TestCase):
                     test_data.options.num_victories,
                 )
                 self.assertEqual(
-                    len(legendary_loot_crate_groups), test_data.expected_results.num_legendary_crate_regions
+                    len(legendary_loot_crate_groups),
+                    len(test_data.expected_legendary_groups),
+                    msg="Incorrect number of legendary loot crate groups",
                 )
-                expected_crates_per_region: Sequence[int]
-                if isinstance(test_data.expected_results.legendary_crates_per_region, int):
-                    expected_crates_per_region = [
-                        test_data.expected_results.legendary_crates_per_region
-                    ] * test_data.expected_results.num_legendary_crate_regions
-                else:
-                    expected_crates_per_region = test_data.expected_results.legendary_crates_per_region
-
-                for group, expected_num_crates, expected_wins_required in zip(
-                    legendary_loot_crate_groups,
-                    expected_crates_per_region,
-                    test_data.expected_results.wins_required_per_legendary_region,
+                for idx, (group, expected_group) in enumerate(
+                    zip(legendary_loot_crate_groups, test_data.expected_legendary_groups)
                 ):
-                    self.assertEqual(
-                        group.num_crates,
-                        expected_num_crates,
-                        msg=f"Group {group.index} has the wrong number of crates.",
-                    )
-                    self.assertEqual(
-                        group.wins_to_unlock,
-                        expected_wins_required,
-                        msg=f"Group {group.index} has the wrong number of wins needed to be in logic.",
-                    )
+                    self.assertEqual(group, expected_group, msg=f"Mismatch for group {idx}.")

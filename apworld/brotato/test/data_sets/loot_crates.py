@@ -19,6 +19,7 @@ from ...constants import (
     MAX_NORMAL_CRATE_DROP_GROUPS,
     MAX_NORMAL_CRATE_DROPS,
 )
+from ...loot_crates import BrotatoLootCrateGroup
 from .base import BrotatoTestDataSet
 
 
@@ -35,6 +36,13 @@ class BrotatoLootCrateTestOptions:
     num_legendary_crate_drops: int
     num_legendary_crate_drop_groups: int
     num_victories: int = 30
+
+    @property
+    def options_dict(self) -> dict[str, Any]:
+        options = asdict(self)
+        # Set the number of characters to the number of wins required so the option is always what we expect.
+        options["num_characters"] = self.num_victories
+        return options
 
 
 @dataclass(frozen=True)
@@ -89,7 +97,8 @@ class BrotatoLootCrateTestExpectedResults:
 @dataclass(frozen=True)
 class BrotatoLootCrateTestDataSet(BrotatoTestDataSet):
     options: BrotatoLootCrateTestOptions
-    expected_results: BrotatoLootCrateTestExpectedResults
+    expected_common_groups: list[BrotatoLootCrateGroup]
+    expected_legendary_groups: list[BrotatoLootCrateGroup]
     description: str | None = None
 
     def test_name(self) -> str:
@@ -111,10 +120,10 @@ class BrotatoLootCrateTestDataSet(BrotatoTestDataSet):
 
     @property
     def options_dict(self) -> dict[str, Any]:
-        return asdict(self.options)
+        return self.options.options_dict
 
 
-TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
+LOOT_CRATE_GROUP_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
     BrotatoLootCrateTestDataSet(
         description="Easily divisible, common and legendary same (25 crates)",
         options=BrotatoLootCrateTestOptions(
@@ -123,14 +132,20 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=25,
             num_legendary_crate_drop_groups=5,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
-            num_common_crate_regions=5,
-            common_crates_per_region=5,
-            num_legendary_crate_regions=5,
-            legendary_crates_per_region=5,
-            wins_required_per_common_region=(0, 6, 12, 18, 24),
-            wins_required_per_legendary_region=(0, 6, 12, 18, 24),
-        ),
+        expected_common_groups=[
+            BrotatoLootCrateGroup(1, 5, 0),
+            BrotatoLootCrateGroup(2, 5, 6),
+            BrotatoLootCrateGroup(3, 5, 12),
+            BrotatoLootCrateGroup(4, 5, 18),
+            BrotatoLootCrateGroup(5, 5, 24),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 5, 0),
+            BrotatoLootCrateGroup(2, 5, 6),
+            BrotatoLootCrateGroup(3, 5, 12),
+            BrotatoLootCrateGroup(4, 5, 18),
+            BrotatoLootCrateGroup(5, 5, 24),
+        ],
     ),
     BrotatoLootCrateTestDataSet(
         description="Easily divisible, common and legendary same (30 crates)",
@@ -140,14 +155,22 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=30,
             num_legendary_crate_drop_groups=6,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
-            num_common_crate_regions=6,
-            common_crates_per_region=5,
-            num_legendary_crate_regions=6,
-            legendary_crates_per_region=5,
-            wins_required_per_common_region=(0, 5, 10, 15, 20, 25),
-            wins_required_per_legendary_region=(0, 5, 10, 15, 20, 25),
-        ),
+        expected_common_groups=[
+            BrotatoLootCrateGroup(1, 5, 0),
+            BrotatoLootCrateGroup(2, 5, 5),
+            BrotatoLootCrateGroup(3, 5, 10),
+            BrotatoLootCrateGroup(4, 5, 15),
+            BrotatoLootCrateGroup(5, 5, 20),
+            BrotatoLootCrateGroup(6, 5, 25),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 5, 0),
+            BrotatoLootCrateGroup(2, 5, 5),
+            BrotatoLootCrateGroup(3, 5, 10),
+            BrotatoLootCrateGroup(4, 5, 15),
+            BrotatoLootCrateGroup(5, 5, 20),
+            BrotatoLootCrateGroup(6, 5, 25),
+        ],
     ),
     BrotatoLootCrateTestDataSet(
         description="Easily divisible, common and legendary are different",
@@ -157,14 +180,18 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=30,
             num_legendary_crate_drop_groups=6,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
-            num_common_crate_regions=2,
-            common_crates_per_region=10,
-            num_legendary_crate_regions=6,
-            legendary_crates_per_region=5,
-            wins_required_per_common_region=(0, 15),
-            wins_required_per_legendary_region=(0, 5, 10, 15, 20, 25),
-        ),
+        expected_common_groups=[
+            BrotatoLootCrateGroup(1, 10, 0),
+            BrotatoLootCrateGroup(2, 10, 15),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 5, 0),
+            BrotatoLootCrateGroup(2, 5, 5),
+            BrotatoLootCrateGroup(3, 5, 10),
+            BrotatoLootCrateGroup(4, 5, 15),
+            BrotatoLootCrateGroup(5, 5, 20),
+            BrotatoLootCrateGroup(6, 5, 25),
+        ],
     ),
     BrotatoLootCrateTestDataSet(
         description="Unequal groups",
@@ -174,14 +201,16 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=16,
             num_legendary_crate_drop_groups=3,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
-            num_common_crate_regions=3,
-            common_crates_per_region=(6, 5, 5),
-            num_legendary_crate_regions=3,
-            legendary_crates_per_region=(6, 5, 5),
-            wins_required_per_common_region=(0, 10, 20),
-            wins_required_per_legendary_region=(0, 10, 20),
-        ),
+        expected_common_groups=[
+            BrotatoLootCrateGroup(1, 6, 0),
+            BrotatoLootCrateGroup(2, 5, 10),
+            BrotatoLootCrateGroup(3, 5, 20),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 6, 0),
+            BrotatoLootCrateGroup(2, 5, 10),
+            BrotatoLootCrateGroup(3, 5, 20),
+        ],
     ),
     BrotatoLootCrateTestDataSet(
         description="Unequal groups, common and legendary are different",
@@ -191,31 +220,31 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=25,
             num_legendary_crate_drop_groups=5,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
+        expected_common_groups=[
             # Five "3's" and ten "2's", because the drops don't evenly divide into the groups
-            num_common_crate_regions=15,
-            common_crates_per_region=tuple(([3] * 5) + ([2] * 10)),
-            num_legendary_crate_regions=5,
-            legendary_crates_per_region=5,
-            wins_required_per_common_region=(
-                0,
-                2,
-                4,
-                6,
-                8,
-                10,
-                12,
-                14,
-                16,
-                18,
-                20,
-                22,
-                24,
-                26,
-                28,
-            ),
-            wins_required_per_legendary_region=(0, 6, 12, 18, 24),
-        ),
+            BrotatoLootCrateGroup(1, 3, 0),
+            BrotatoLootCrateGroup(2, 3, 2),
+            BrotatoLootCrateGroup(3, 3, 4),
+            BrotatoLootCrateGroup(4, 3, 6),
+            BrotatoLootCrateGroup(5, 3, 8),
+            BrotatoLootCrateGroup(6, 2, 10),
+            BrotatoLootCrateGroup(7, 2, 12),
+            BrotatoLootCrateGroup(8, 2, 14),
+            BrotatoLootCrateGroup(9, 2, 16),
+            BrotatoLootCrateGroup(10, 2, 18),
+            BrotatoLootCrateGroup(11, 2, 20),
+            BrotatoLootCrateGroup(12, 2, 22),
+            BrotatoLootCrateGroup(13, 2, 24),
+            BrotatoLootCrateGroup(14, 2, 26),
+            BrotatoLootCrateGroup(15, 2, 28),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 5, 0),
+            BrotatoLootCrateGroup(2, 5, 6),
+            BrotatoLootCrateGroup(3, 5, 12),
+            BrotatoLootCrateGroup(4, 5, 18),
+            BrotatoLootCrateGroup(5, 5, 24),
+        ],
     ),
     BrotatoLootCrateTestDataSet(
         description="Max possible groups and crates, more groups than req. wins, no DLC",
@@ -225,16 +254,72 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=MAX_LEGENDARY_CRATE_DROPS,
             num_legendary_crate_drop_groups=MAX_LEGENDARY_CRATE_DROP_GROUPS,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
+        expected_common_groups=[
             # The number of groups will be set to 30 (default # of wins) when generated.
-            num_common_crate_regions=30,
-            common_crates_per_region=tuple(([2] * 20) + ([1] * 10)),
-            num_legendary_crate_regions=30,
-            legendary_crates_per_region=tuple(([2] * 20) + ([1] * 10)),
             # Every win will unlock a new crate drop group.
-            wins_required_per_common_region=tuple(range(30)),
-            wins_required_per_legendary_region=tuple(range(30)),
-        ),
+            BrotatoLootCrateGroup(1, 2, 0),
+            BrotatoLootCrateGroup(2, 2, 1),
+            BrotatoLootCrateGroup(3, 2, 2),
+            BrotatoLootCrateGroup(4, 2, 3),
+            BrotatoLootCrateGroup(5, 2, 4),
+            BrotatoLootCrateGroup(6, 2, 5),
+            BrotatoLootCrateGroup(7, 2, 6),
+            BrotatoLootCrateGroup(8, 2, 7),
+            BrotatoLootCrateGroup(9, 2, 8),
+            BrotatoLootCrateGroup(10, 2, 9),
+            BrotatoLootCrateGroup(11, 2, 10),
+            BrotatoLootCrateGroup(12, 2, 11),
+            BrotatoLootCrateGroup(13, 2, 12),
+            BrotatoLootCrateGroup(14, 2, 13),
+            BrotatoLootCrateGroup(15, 2, 14),
+            BrotatoLootCrateGroup(16, 2, 15),
+            BrotatoLootCrateGroup(17, 2, 16),
+            BrotatoLootCrateGroup(18, 2, 17),
+            BrotatoLootCrateGroup(19, 2, 18),
+            BrotatoLootCrateGroup(20, 2, 19),
+            BrotatoLootCrateGroup(21, 1, 20),
+            BrotatoLootCrateGroup(22, 1, 21),
+            BrotatoLootCrateGroup(23, 1, 22),
+            BrotatoLootCrateGroup(24, 1, 23),
+            BrotatoLootCrateGroup(25, 1, 24),
+            BrotatoLootCrateGroup(26, 1, 25),
+            BrotatoLootCrateGroup(27, 1, 26),
+            BrotatoLootCrateGroup(28, 1, 27),
+            BrotatoLootCrateGroup(29, 1, 28),
+            BrotatoLootCrateGroup(30, 1, 29),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 2, 0),
+            BrotatoLootCrateGroup(2, 2, 1),
+            BrotatoLootCrateGroup(3, 2, 2),
+            BrotatoLootCrateGroup(4, 2, 3),
+            BrotatoLootCrateGroup(5, 2, 4),
+            BrotatoLootCrateGroup(6, 2, 5),
+            BrotatoLootCrateGroup(7, 2, 6),
+            BrotatoLootCrateGroup(8, 2, 7),
+            BrotatoLootCrateGroup(9, 2, 8),
+            BrotatoLootCrateGroup(10, 2, 9),
+            BrotatoLootCrateGroup(11, 2, 10),
+            BrotatoLootCrateGroup(12, 2, 11),
+            BrotatoLootCrateGroup(13, 2, 12),
+            BrotatoLootCrateGroup(14, 2, 13),
+            BrotatoLootCrateGroup(15, 2, 14),
+            BrotatoLootCrateGroup(16, 2, 15),
+            BrotatoLootCrateGroup(17, 2, 16),
+            BrotatoLootCrateGroup(18, 2, 17),
+            BrotatoLootCrateGroup(19, 2, 18),
+            BrotatoLootCrateGroup(20, 2, 19),
+            BrotatoLootCrateGroup(21, 1, 20),
+            BrotatoLootCrateGroup(22, 1, 21),
+            BrotatoLootCrateGroup(23, 1, 22),
+            BrotatoLootCrateGroup(24, 1, 23),
+            BrotatoLootCrateGroup(25, 1, 24),
+            BrotatoLootCrateGroup(26, 1, 25),
+            BrotatoLootCrateGroup(27, 1, 26),
+            BrotatoLootCrateGroup(28, 1, 27),
+            BrotatoLootCrateGroup(29, 1, 28),
+            BrotatoLootCrateGroup(30, 1, 29),
+        ],
     ),
     BrotatoLootCrateTestDataSet(
         description="Max wins, one crate per character, one group per character, no DLC",
@@ -246,15 +331,106 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=BASE_GAME_CHARACTERS.num_characters,
             num_legendary_crate_drop_groups=BASE_GAME_CHARACTERS.num_characters,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
-            num_common_crate_regions=BASE_GAME_CHARACTERS.num_characters,
-            common_crates_per_region=tuple([1] * BASE_GAME_CHARACTERS.num_characters),
-            num_legendary_crate_regions=BASE_GAME_CHARACTERS.num_characters,
-            legendary_crates_per_region=tuple([1] * BASE_GAME_CHARACTERS.num_characters),
-            # Every win will unlock a new crate drop group.
-            wins_required_per_common_region=tuple(range(BASE_GAME_CHARACTERS.num_characters)),
-            wins_required_per_legendary_region=tuple(range(BASE_GAME_CHARACTERS.num_characters)),
-        ),
+        expected_common_groups=[
+            BrotatoLootCrateGroup(1, 1, 0),
+            BrotatoLootCrateGroup(2, 1, 1),
+            BrotatoLootCrateGroup(3, 1, 2),
+            BrotatoLootCrateGroup(4, 1, 3),
+            BrotatoLootCrateGroup(5, 1, 4),
+            BrotatoLootCrateGroup(6, 1, 5),
+            BrotatoLootCrateGroup(7, 1, 6),
+            BrotatoLootCrateGroup(8, 1, 7),
+            BrotatoLootCrateGroup(9, 1, 8),
+            BrotatoLootCrateGroup(10, 1, 9),
+            BrotatoLootCrateGroup(11, 1, 10),
+            BrotatoLootCrateGroup(12, 1, 11),
+            BrotatoLootCrateGroup(13, 1, 12),
+            BrotatoLootCrateGroup(14, 1, 13),
+            BrotatoLootCrateGroup(15, 1, 14),
+            BrotatoLootCrateGroup(16, 1, 15),
+            BrotatoLootCrateGroup(17, 1, 16),
+            BrotatoLootCrateGroup(18, 1, 17),
+            BrotatoLootCrateGroup(19, 1, 18),
+            BrotatoLootCrateGroup(20, 1, 19),
+            BrotatoLootCrateGroup(21, 1, 20),
+            BrotatoLootCrateGroup(22, 1, 21),
+            BrotatoLootCrateGroup(23, 1, 22),
+            BrotatoLootCrateGroup(24, 1, 23),
+            BrotatoLootCrateGroup(25, 1, 24),
+            BrotatoLootCrateGroup(26, 1, 25),
+            BrotatoLootCrateGroup(27, 1, 26),
+            BrotatoLootCrateGroup(28, 1, 27),
+            BrotatoLootCrateGroup(29, 1, 28),
+            BrotatoLootCrateGroup(30, 1, 29),
+            BrotatoLootCrateGroup(31, 1, 30),
+            BrotatoLootCrateGroup(32, 1, 31),
+            BrotatoLootCrateGroup(33, 1, 32),
+            BrotatoLootCrateGroup(34, 1, 33),
+            BrotatoLootCrateGroup(35, 1, 34),
+            BrotatoLootCrateGroup(36, 1, 35),
+            BrotatoLootCrateGroup(37, 1, 36),
+            BrotatoLootCrateGroup(38, 1, 37),
+            BrotatoLootCrateGroup(39, 1, 38),
+            BrotatoLootCrateGroup(40, 1, 39),
+            BrotatoLootCrateGroup(41, 1, 40),
+            BrotatoLootCrateGroup(42, 1, 41),
+            BrotatoLootCrateGroup(43, 1, 42),
+            BrotatoLootCrateGroup(44, 1, 43),
+            BrotatoLootCrateGroup(45, 1, 44),
+            BrotatoLootCrateGroup(46, 1, 45),
+            BrotatoLootCrateGroup(47, 1, 46),
+            BrotatoLootCrateGroup(48, 1, 47),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 1, 0),
+            BrotatoLootCrateGroup(2, 1, 1),
+            BrotatoLootCrateGroup(3, 1, 2),
+            BrotatoLootCrateGroup(4, 1, 3),
+            BrotatoLootCrateGroup(5, 1, 4),
+            BrotatoLootCrateGroup(6, 1, 5),
+            BrotatoLootCrateGroup(7, 1, 6),
+            BrotatoLootCrateGroup(8, 1, 7),
+            BrotatoLootCrateGroup(9, 1, 8),
+            BrotatoLootCrateGroup(10, 1, 9),
+            BrotatoLootCrateGroup(11, 1, 10),
+            BrotatoLootCrateGroup(12, 1, 11),
+            BrotatoLootCrateGroup(13, 1, 12),
+            BrotatoLootCrateGroup(14, 1, 13),
+            BrotatoLootCrateGroup(15, 1, 14),
+            BrotatoLootCrateGroup(16, 1, 15),
+            BrotatoLootCrateGroup(17, 1, 16),
+            BrotatoLootCrateGroup(18, 1, 17),
+            BrotatoLootCrateGroup(19, 1, 18),
+            BrotatoLootCrateGroup(20, 1, 19),
+            BrotatoLootCrateGroup(21, 1, 20),
+            BrotatoLootCrateGroup(22, 1, 21),
+            BrotatoLootCrateGroup(23, 1, 22),
+            BrotatoLootCrateGroup(24, 1, 23),
+            BrotatoLootCrateGroup(25, 1, 24),
+            BrotatoLootCrateGroup(26, 1, 25),
+            BrotatoLootCrateGroup(27, 1, 26),
+            BrotatoLootCrateGroup(28, 1, 27),
+            BrotatoLootCrateGroup(29, 1, 28),
+            BrotatoLootCrateGroup(30, 1, 29),
+            BrotatoLootCrateGroup(31, 1, 30),
+            BrotatoLootCrateGroup(32, 1, 31),
+            BrotatoLootCrateGroup(33, 1, 32),
+            BrotatoLootCrateGroup(34, 1, 33),
+            BrotatoLootCrateGroup(35, 1, 34),
+            BrotatoLootCrateGroup(36, 1, 35),
+            BrotatoLootCrateGroup(37, 1, 36),
+            BrotatoLootCrateGroup(38, 1, 37),
+            BrotatoLootCrateGroup(39, 1, 38),
+            BrotatoLootCrateGroup(40, 1, 39),
+            BrotatoLootCrateGroup(41, 1, 40),
+            BrotatoLootCrateGroup(42, 1, 41),
+            BrotatoLootCrateGroup(43, 1, 42),
+            BrotatoLootCrateGroup(44, 1, 43),
+            BrotatoLootCrateGroup(45, 1, 44),
+            BrotatoLootCrateGroup(46, 1, 45),
+            BrotatoLootCrateGroup(47, 1, 46),
+            BrotatoLootCrateGroup(48, 1, 47),
+        ],
     ),
     BrotatoLootCrateTestDataSet(
         description="Max number of crates, one group",
@@ -265,15 +441,13 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=MAX_LEGENDARY_CRATE_DROPS,
             num_legendary_crate_drop_groups=1,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
-            num_common_crate_regions=1,
-            common_crates_per_region=50,
-            num_legendary_crate_regions=1,
-            legendary_crates_per_region=50,
-            # All the crates should be in the first group which is unlocked by default.
-            wins_required_per_common_region=(0,),
-            wins_required_per_legendary_region=(0,),
-        ),
+        # All the crates should be in the first group which is unlocked by default.
+        expected_common_groups=[
+            BrotatoLootCrateGroup(1, 50, 0),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 50, 0),
+        ],
     ),
     BrotatoLootCrateTestDataSet(
         description="1 crate and 1 group",
@@ -283,14 +457,12 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=1,
             num_legendary_crate_drop_groups=1,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
-            num_common_crate_regions=1,
-            common_crates_per_region=1,
-            num_legendary_crate_regions=1,
-            legendary_crates_per_region=1,
-            wins_required_per_common_region=(0,),
-            wins_required_per_legendary_region=(0,),
-        ),
+        expected_common_groups=[
+            BrotatoLootCrateGroup(1, 1, 0),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 1, 0),
+        ],
     ),
     BrotatoLootCrateTestDataSet(
         description="2 crates, 1 group",
@@ -300,14 +472,12 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=2,
             num_legendary_crate_drop_groups=1,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
-            num_common_crate_regions=1,
-            common_crates_per_region=2,
-            num_legendary_crate_regions=1,
-            legendary_crates_per_region=2,
-            wins_required_per_common_region=(0,),
-            wins_required_per_legendary_region=(0,),
-        ),
+        expected_common_groups=[
+            BrotatoLootCrateGroup(1, 2, 0),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 2, 0),
+        ],
     ),
     BrotatoLootCrateTestDataSet(
         description="Max number of crates, 1 common group, 2 legendary groups",
@@ -317,13 +487,12 @@ TEST_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drops=MAX_LEGENDARY_CRATE_DROPS,
             num_legendary_crate_drop_groups=2,
         ),
-        expected_results=BrotatoLootCrateTestExpectedResults(
-            num_common_crate_regions=1,
-            common_crates_per_region=50,
-            num_legendary_crate_regions=2,
-            legendary_crates_per_region=25,
-            wins_required_per_common_region=(0,),
-            wins_required_per_legendary_region=(0, 15),
-        ),
+        expected_common_groups=[
+            BrotatoLootCrateGroup(1, 50, 0),
+        ],
+        expected_legendary_groups=[
+            BrotatoLootCrateGroup(1, 25, 0),
+            BrotatoLootCrateGroup(2, 25, 15),
+        ],
     ),
 ]

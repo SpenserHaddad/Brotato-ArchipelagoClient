@@ -8,7 +8,7 @@ from test.bases import TestBase
 from ..characters import get_available_and_starting_characters
 from .data_sets.characters import (
     CHARACTER_TEST_DATA_SETS,
-    NON_ERROR_CHARACTER_DATA_SETS,
+    NON_ERROR_CHARACTER_TEST_DATA_SETS,
 )
 
 
@@ -25,7 +25,7 @@ class TestBrotatoCharacterOptions(TestBase):
             with self.subTest(data_set=data_set):
                 error_checker: AbstractContextManager
                 if data_set.expected_exception is not None:
-                    error_checker = pytest.raises(data_set.expected_exception)
+                    error_checker = self.assertRaises(data_set.expected_exception)
                 else:
                     error_checker = nullcontext()
 
@@ -46,7 +46,7 @@ class TestBrotatoCharacterOptions(TestBase):
                     assert set(available_characters) <= data_set.valid_available_characters
 
     def test_get_available_and_starting_characters_data_sets_reproducible_results(self):
-        for data_set in NON_ERROR_CHARACTER_DATA_SETS:
+        for data_set in NON_ERROR_CHARACTER_TEST_DATA_SETS:
             with self.subTest(data_set=data_set):
                 available_characters, starting_characters = get_available_and_starting_characters(
                     data_set.include_base_game_characters,

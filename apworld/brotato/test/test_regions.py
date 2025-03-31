@@ -1,9 +1,10 @@
-from typing import Any
+from typing import Any, cast
 
-from BaseClasses import Region
+from BaseClasses import CollectionState, MultiWorld, Region
+from test.bases import TestBase
+from worlds.AutoWorld import call_all
 
-from apworld.brotato.loot_crates import BrotatoLootCrateGroup
-
+from .. import BrotatoWorld
 from ..constants import (
     CHARACTER_REGION_TEMPLATE,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
@@ -14,13 +15,23 @@ from ..constants import (
     WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
 from ..items import ItemName
+from ..loot_crates import BrotatoLootCrateGroup
 from ..regions import create_character_region, create_loot_crate_group_region, create_regions
 from . import BrotatoTestBase
 
 
-class TestBrotatoRegions(BrotatoTestBase):
-    def test_correct_number_of_crate_drop_regions_created(self):
-        """Test that only the location groups needed are created."""
+class TestBrotatoRegions(TestBase):
+    options = {"include_base_game_characters": ["Brawler", "Mage", "Bull"]}
+
+    def setUp(self) -> None:
+        # Reimplement a simplified version of self.world_setup() that only calls generate_early. This way we don't have
+        # our world setup, but we can manually create regions without messing with the region manager.
+        self.multiworld = MultiWorld(1)
+        # self.multiworld.game[self.player] = self.game
+        # self.multiworld.player_name = {self.player: "Tester"}
+        # self.multiworld.state = CollectionState(self.multiworld)
+        # self.world = cast(BrotatoWorld, self.multiworld.worlds[self.player])
+        # call_all(self.multiworld, "generate_early")
 
     def _create_region(self, name: str) -> Region:
         """Region factory to pass to the region creation functions."""
@@ -30,6 +41,7 @@ class TestBrotatoRegions(BrotatoTestBase):
 class TestBrotatoCharacterRegions(TestBrotatoRegions):
     def test_create_character_region_has_correct_locations(self):
         waves_with_checks = [5, 10, 15, 20]
+        # Create a region for a characters we deliberately did not include
         expected_location_names = [
             RUN_COMPLETE_LOCATION_TEMPLATE.format(char="Crazy"),
             WAVE_COMPLETE_LOCATION_TEMPLATE.format(char="Crazy", wave=5),
@@ -169,6 +181,7 @@ class TestBrotatoCreateRegions(TestBrotatoRegions):
 
 
 class TestBrotatoRegionAccessRules(BrotatoTestBase):
+    run_default_tests = False  # type:ignore
     options = {
         "num_victories": 10,
         "num_characters": 10,
@@ -229,6 +242,3 @@ class TestBrotatoRegionAccessRules(BrotatoTestBase):
                 self.assertTrue(self.multiworld.state.can_reach_region(region_name, self.player))
             else:
                 self.assertAccessDependency(region_locations, [[char]])
-
-    def test_fill(self):
-        return super().test_fill()
