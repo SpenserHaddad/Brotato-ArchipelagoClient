@@ -1,10 +1,8 @@
-from typing import Any, cast
+from typing import Any
 
-from BaseClasses import CollectionState, MultiWorld, Region
+from BaseClasses import MultiWorld, Region
 from test.bases import TestBase
-from worlds.AutoWorld import call_all
 
-from .. import BrotatoWorld
 from ..constants import (
     CHARACTER_REGION_TEMPLATE,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
@@ -21,17 +19,9 @@ from . import BrotatoTestBase
 
 
 class TestBrotatoRegions(TestBase):
-    options = {"include_base_game_characters": ["Brawler", "Mage", "Bull"]}
-
     def setUp(self) -> None:
-        # Reimplement a simplified version of self.world_setup() that only calls generate_early. This way we don't have
-        # our world setup, but we can manually create regions without messing with the region manager.
+        # Create a multiworld just to give the regions something to attach to.
         self.multiworld = MultiWorld(1)
-        # self.multiworld.game[self.player] = self.game
-        # self.multiworld.player_name = {self.player: "Tester"}
-        # self.multiworld.state = CollectionState(self.multiworld)
-        # self.world = cast(BrotatoWorld, self.multiworld.worlds[self.player])
-        # call_all(self.multiworld, "generate_early")
 
     def _create_region(self, name: str) -> Region:
         """Region factory to pass to the region creation functions."""

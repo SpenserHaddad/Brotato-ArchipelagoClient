@@ -21,6 +21,7 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
         # Create world with relevant options
         run_options = {
             "starting_characters": int(custom_starting_characters),
+            "num_characters": num_characters,
             "num_starting_characters": num_characters,
         }
         with self._run(run_options):

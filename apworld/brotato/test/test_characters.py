@@ -1,11 +1,11 @@
 import random
 from contextlib import AbstractContextManager, nullcontext
 
-import pytest
-
 from test.bases import TestBase
 
 from ..characters import get_available_and_starting_characters
+from ..constants import BASE_GAME_CHARACTERS
+from ..options import StartingCharacters
 from .data_sets.characters import (
     CHARACTER_TEST_DATA_SETS,
     NON_ERROR_CHARACTER_TEST_DATA_SETS,
@@ -42,8 +42,24 @@ class TestBrotatoCharacterOptions(TestBase):
 
                     # We don't know for certain which characters were selected, so we settle for checking that they're
                     # a subset of the expected collection
-                    assert set(starting_characters) <= data_set.valid_starting_characters
-                    assert set(available_characters) <= data_set.valid_available_characters
+                    self.assertTrue(set(starting_characters) <= data_set.valid_starting_characters)
+                    self.assertTrue(set(available_characters) <= data_set.valid_available_characters)
+
+    def test_starting_characters_greater_than_num_characters_is_clamped(self):
+        num_characters = 15
+        num_starting_characters = 20
+        available_characters, starting_characters = get_available_and_starting_characters(
+            set(BASE_GAME_CHARACTERS.characters),
+            False,
+            set(),
+            StartingCharacters(StartingCharacters.option_random_all),
+            num_starting_characters,
+            num_characters,
+            random.Random(0x4444),
+        )
+        # The number of starting characters shouldn't be higher than the total number of characters
+        self.assertEqual(len(available_characters), num_characters)
+        self.assertEqual(len(starting_characters), num_characters)
 
     def test_get_available_and_starting_characters_data_sets_reproducible_results(self):
         for data_set in NON_ERROR_CHARACTER_TEST_DATA_SETS:
