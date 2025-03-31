@@ -10,9 +10,7 @@ from . import options  # So we don't need to import every option class when defi
 from .characters import get_available_and_starting_characters
 from .constants import (
     MAX_SHOP_SLOTS,
-    NUM_WAVES,
     RUN_COMPLETE_LOCATION_TEMPLATE,
-    ItemRarity,
 )
 from .item_weights import create_items_from_weights
 from .items import BrotatoItem, ItemName, filler_items, item_name_groups, item_name_to_id, item_table
@@ -27,7 +25,7 @@ from .options import (
 from .regions import create_regions
 from .rules import create_has_run_wins_rule
 from .shop_slots import get_num_shop_slot_and_lock_button_items
-from .waves import get_waves_with_checks
+from .waves import get_wave_for_each_item, get_waves_with_checks
 
 logger = logging.getLogger("Brotato")
 
@@ -119,6 +117,12 @@ class BrotatoWorld(World):
     location_name_to_id: ClassVar[dict[str, int]] = location_name_to_id
     location_name_groups: ClassVar[dict[str, set[str]]] = location_name_groups
 
+    num_wins_needed: int
+    """The number of runs won needed to achieve the goal.
+
+    This is the minimum of the num_victories option value and the total number of characters available.
+    """
+
     num_shop_slot_items: int
     num_shop_lock_button_items: int
 
@@ -177,20 +181,18 @@ class BrotatoWorld(World):
         )
 
         # Clamp the number of wins needed to goal to the number of included characters, so the game isn't unwinnable.
-        # Note that we need to actually change the option value, not just clamp it, otherwise other parts of the world
-        # will miss it. This has caused bugs in the past.
-        self.options.num_victories.value = min(self.options.num_victories.value, len(self._include_characters))
+        self.num_wins_needed = min(self.options.num_victories.value, len(self._include_characters))
 
         # Thought: if num victories is clamped, do some of the groups become unreachable?
         self.common_loot_crate_groups = build_loot_crate_groups(
             self.options.num_common_crate_drops.value,
             self.options.num_common_crate_drop_groups.value,
-            self.options.num_victories.value,
+            self.num_wins_needed,
         )
         self.legendary_loot_crate_groups = build_loot_crate_groups(
             self.options.num_legendary_crate_drops.value,
             self.options.num_legendary_crate_drop_groups.value,
-            self.options.num_victories.value,
+            self.num_wins_needed,
         )
 
         self.num_shop_slot_items, self.num_shop_lock_button_items = get_num_shop_slot_and_lock_button_items(
@@ -235,9 +237,7 @@ class BrotatoWorld(World):
         )
 
     def set_rules(self) -> None:
-        self.multiworld.completion_condition[self.player] = create_has_run_wins_rule(
-            self.player, self.options.num_victories.value
-        )
+        self.multiworld.completion_condition[self.player] = create_has_run_wins_rule(self.player, self.num_wins_needed)
 
     def create_regions(self) -> None:
         def create_region(region_name: str) -> Region:
@@ -284,13 +284,13 @@ class BrotatoWorld(World):
 
     def fill_slot_data(self) -> dict[str, Any]:
         # Define outside dict for readability
-        spawn_normal_loot_crates = (
+        spawn_normal_loot_crates: bool = (
             self.options.spawn_normal_loot_crates.value == self.options.spawn_normal_loot_crates.option_true
         )
-        wave_per_game_item = self._get_wave_per_game_item(self.nonessential_item_counts)
+        wave_per_game_item: dict[int, list[int]] = get_wave_for_each_item(self.nonessential_item_counts)
         return {
             "waves_with_checks": self.waves_with_checks,
-            "num_wins_needed": self.options.num_victories.value,
+            "num_wins_needed": self.num_wins_needed,
             "gold_reward_mode": self.options.gold_reward_mode.value,
             "xp_reward_mode": self.options.xp_reward_mode.value,
             "enable_enemy_xp": self.options.enable_enemy_xp.value == self.options.enable_enemy_xp.option_true,
@@ -306,36 +306,3 @@ class BrotatoWorld(World):
             "wave_per_game_item": wave_per_game_item,
             "enable_abyssal_terrors_dlc": self.options.enable_abyssal_terrors_dlc.value,
         }
-
-    def _get_wave_per_game_item(self, item_counts: dict[ItemName, int]) -> dict[int, list[int]]:
-        """Determine the wave to use to generate each Brotato item received, by rarity.
-
-        Intended to be stored as slot data, which is why we use the (integer) enum values instead of the enums
-        themselves.
-
-        Brotato items are generated from a pool determined by the rarity (or tier) and the wave the item was
-        found/bought. We want to emulate this behavior with the items we create here. When we generate the items to
-        match the common loot crate drop locations, we also assign a wave to each item. When the client receives the
-        next item for a certain rarity, it will lookup the next entry in the list for the rarity and use that as the
-        wave when generating the values.
-
-        We attempt to equally distribute the items over the 20 waves in a normal run, with a bias towards lower numbers,
-        since it's already too easy to get overpowered in this.
-        """
-
-        item_names_to_rarity = {
-            ItemName.COMMON_ITEM: ItemRarity.COMMON,
-            ItemName.UNCOMMON_ITEM: ItemRarity.UNCOMMON,
-            ItemName.RARE_ITEM: ItemRarity.RARE,
-            ItemName.LEGENDARY_ITEM: ItemRarity.LEGENDARY,
-        }
-
-        def generate_waves_per_item(num_items: int) -> list[int]:
-            # Evenly distribute the items over 20 waves, then sort so items received are generated with steadily
-            # increasing waves (aka they got steadily stronger).
-            return sorted((i % NUM_WAVES) + 1 for i in range(num_items))
-
-        wave_per_item: dict[int, list[int]] = {}
-        for item_name, item_rarity in item_names_to_rarity.items():
-            wave_per_item[item_rarity.value] = generate_waves_per_item(item_counts[item_name])
-        return wave_per_item
