@@ -44,6 +44,7 @@ class TestBrotatoCharacterOptions(TestBase):
                     # a subset of the expected collection
                     self.assertTrue(set(starting_characters) <= data_set.valid_starting_characters)
                     self.assertTrue(set(available_characters) <= data_set.valid_available_characters)
+                    self.assertTrue(set(starting_characters) <= set(available_characters))
 
     def test_starting_characters_greater_than_num_characters_is_clamped(self):
         num_characters = 15
