@@ -31,7 +31,7 @@ class BrotatoCommonCrateLocation(Location):
 
 
 class BrotatoLegendaryCrateLocation(Location):
-    progress_type: LocationProgressType = LocationProgressType.EXCLUDED
+    progress_type: LocationProgressType = LocationProgressType.DEFAULT
 
 
 @dataclass(frozen=True)
