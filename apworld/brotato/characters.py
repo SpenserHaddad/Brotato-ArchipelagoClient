@@ -73,7 +73,7 @@ def get_available_and_starting_characters(
         )
         raise OptionError(f"No valid starting characters for given options: {options_str}")
 
-    num_starting_characters_to_select = min(num_starting_characters, len(valid_starting_characters))
+    num_starting_characters_to_select = min(num_starting_characters, len(valid_starting_characters), num_characters)
     starting_characters: list[str] = random.sample(valid_starting_characters, num_starting_characters_to_select)
 
     included_characters: list[str] = starting_characters.copy()
