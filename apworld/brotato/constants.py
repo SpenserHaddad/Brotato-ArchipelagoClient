@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
 from functools import cached_property
-from typing import Tuple
 
 BASE_ID = 0x7A70_0000
 
@@ -21,13 +20,13 @@ class ItemRarity(Enum):
 @dataclass(frozen=True)
 class CharacterGroup:
     name: str
-    characters: Tuple[str, ...]
+    characters: tuple[str, ...]
     """All characters in the group"""
-    default_characters: Tuple[str, ...]
+    default_characters: tuple[str, ...]
     """The characters available from the group in a fresh save of the game."""
 
     @cached_property
-    def unlockable_characters(self) -> Tuple[str, ...]:
+    def unlockable_characters(self) -> tuple[str, ...]:
         """The characters in the group which must be unlocked."""
         return tuple(set(self.characters) - set(self.default_characters))
 
@@ -152,7 +151,7 @@ MAX_LEGENDARY_CRATE_DROP_GROUPS = MAX_LEGENDARY_CRATE_DROPS
 # crates, which are publicly listed here: https://brotato.wiki.spellsandguns.com/Shop#Rarity_of_Shop_Items_and_Luck. We
 # use the values from the "Max Chance" column in the table in the linked sections as weights. It's not perfect, but it
 # "feels" right and seems close enough.
-DEFAULT_ITEM_WEIGHTS: Tuple[int, int, int, int] = (100, 60, 25, 8)
+DEFAULT_ITEM_WEIGHTS: tuple[int, int, int, int] = (100, 60, 25, 8)
 
 MAX_COMMON_UPGRADES = 50
 MAX_UNCOMMON_UPGRADES = 50
