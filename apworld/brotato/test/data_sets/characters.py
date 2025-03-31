@@ -34,6 +34,7 @@ class BrotatoCharacterOptionDataSet(BrotatoTestDataSet):
     # Metadata
     description: str = ""
 
+    @property
     def test_name(self) -> str:
         if self.description:
             return self.description

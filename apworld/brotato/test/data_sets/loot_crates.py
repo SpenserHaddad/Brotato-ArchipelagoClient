@@ -101,6 +101,7 @@ class BrotatoLootCrateTestDataSet(BrotatoTestDataSet):
     expected_legendary_groups: list[BrotatoLootCrateGroup]
     description: str | None = None
 
+    @property
     def test_name(self) -> str:
         options_str = ", ".join(
             [

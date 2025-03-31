@@ -14,7 +14,7 @@ class BrotatoTestBase(WorldTestBase):
 
     @contextmanager
     def data_set_subtest(self, data_set: BrotatoTestDataSet, **kwargs):
-        with self.subTest(msg=data_set.test_name(), **kwargs), self._run(data_set.options_dict):
+        with self.subTest(msg=data_set.test_name, **kwargs), self._run(data_set.options_dict):
             yield
 
     @contextmanager
