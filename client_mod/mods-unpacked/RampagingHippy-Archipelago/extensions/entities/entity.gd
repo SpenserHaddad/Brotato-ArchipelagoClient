@@ -9,16 +9,21 @@ func _ready():
 	_ap_client = mod_node.brotato_ap_client
 
 func die(args := DieArgs.new()) -> void:
-	var old_unit_always_drop_consumable = self.stats.always_drop_consumables
-	_ap_client.debug.notify_enemy_killed()
-	if _ap_client.debug.auto_spawn_loot_crate:
-		ModLoaderLog.debug("Debug spawning consumable", LOG_NAME)
-		# Tell the unit to drop a consumable
-		self.stats.always_drop_consumables = true
-		# Tell our item_service extension to force the consumable to be a
-		# loot crate
-		_ap_client.debug.auto_spawn_loot_crate = true
-		_ap_client.debug.auto_spawn_loot_crate_counter = 0
+	var old_unit_always_drop_consumable = self.stats.get("always_drop_consumables")
+	if old_unit_always_drop_consumable != null:
+		# An enemy died, handle debug crates 
+		_ap_client.debug.notify_enemy_killed()
+		if _ap_client.debug.auto_spawn_loot_crate:
+			ModLoaderLog.debug("Debug spawning consumable", LOG_NAME)
+			# Tell the unit to drop a consumable
+			self.stats.always_drop_consumables = true
+			# Tell our item_service extension to force the consumable to be a
+			# loot crate
+			_ap_client.debug.auto_spawn_loot_crate = true
+			_ap_client.debug.auto_spawn_loot_crate_counter = 0
 
-	.die(args)
-	self.stats.always_drop_consumables = old_unit_always_drop_consumable
+		.die(args)
+		self.stats.always_drop_consumables = old_unit_always_drop_consumable
+	else:
+		# Some other entity (i.e. structure) died, don't do anything special.
+		.die(args)
