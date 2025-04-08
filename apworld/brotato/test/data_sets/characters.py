@@ -34,6 +34,7 @@ class BrotatoCharacterOptionDataSet(BrotatoTestDataSet):
     # Metadata
     description: str = ""
 
+    @property
     def test_name(self) -> str:
         if self.description:
             return self.description
@@ -203,5 +204,5 @@ CHARACTER_TEST_DATA_SETS = [
     ),
 ]
 
-NON_ERROR_CASE_CHARACTER_TEST_DATA_SETS = [ds for ds in CHARACTER_TEST_DATA_SETS if ds.expected_exception is None]
-ERROR_CASE_CHARACTER_TEST_DATA_SETS = [ds for ds in CHARACTER_TEST_DATA_SETS if ds.expected_exception is not None]
+NON_ERROR_CHARACTER_TEST_DATA_SETS = [ds for ds in CHARACTER_TEST_DATA_SETS if ds.expected_exception is None]
+ERROR_CHARACTER_TEST_DATA_SETS = [ds for ds in CHARACTER_TEST_DATA_SETS if ds.expected_exception is not None]

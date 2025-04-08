@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from itertools import count
-from typing import Dict, List, Set
 
 from BaseClasses import Item, ItemClassification
 
@@ -116,9 +115,9 @@ class ItemName(Enum):
     CHARACTER_ROMANTIC = "Romantic"
 
 
-_char_items: List[ItemName] = [x for x in ItemName if x.name.startswith("CHARACTER_")]
+_char_items: list[ItemName] = [x for x in ItemName if x.name.startswith("CHARACTER_")]
 
-_items: List[BrotatoItemBase] = [
+_items: list[BrotatoItemBase] = [
     BrotatoItemBase(name=ItemName.COMMON_ITEM, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.UNCOMMON_ITEM, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.RARE_ITEM, classification=ItemClassification.useful),
@@ -145,13 +144,14 @@ _items: List[BrotatoItemBase] = [
     *[BrotatoItemBase(name=c, classification=ItemClassification.progression) for c in _char_items],
 ]
 
-item_table: Dict[int, BrotatoItemBase] = {item.code: item for item in _items}
-item_name_to_id: Dict[str, int] = {item.name.value: item.code for item in _items}
-filler_items: List[str] = [
+item_table: dict[int, BrotatoItemBase] = {item.code: item for item in _items}
+item_name_to_id: dict[str, int] = {item.name.value: item.code for item in _items}
+
+filler_items: list[str] = [
     item.name.value for item in item_table.values() if item.classification == ItemClassification.filler
 ]
 
-item_name_groups: Dict[str, Set[str]] = {
+item_name_groups: dict[str, set[str]] = {
     "Item Drops": {
         ItemName.COMMON_ITEM.value,
         ItemName.UNCOMMON_ITEM.value,

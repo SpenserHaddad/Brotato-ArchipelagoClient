@@ -1,187 +1,234 @@
-from typing import Tuple, Union
+from typing import Any
+
+from BaseClasses import MultiWorld, Region
+from test.bases import TestBase
 
 from ..constants import (
-    BASE_GAME_CHARACTERS,
+    CHARACTER_REGION_TEMPLATE,
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
     LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
-    MAX_LEGENDARY_CRATE_DROPS,
-    MAX_NORMAL_CRATE_DROPS,
     RUN_COMPLETE_LOCATION_TEMPLATE,
+    WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
 from ..items import ItemName
+from ..loot_crates import BrotatoLootCrateGroup
+from ..regions import create_character_region, create_loot_crate_group_region, create_regions
 from . import BrotatoTestBase
-from .data_sets.loot_crates import TEST_DATA_SETS
 
 
-class TestBrotatoRegions(BrotatoTestBase):
-    # For some reason, this option keeps getting overwritten so it is missing the last five base game characters. I
-    # suspect this has something to do with "test_num_victories_clamped_to_number_of_characters", which is the only case
-    # that alters this option in such a way, but I can't find a good workaround for it.
-    options = {"include_base_game_characters": BASE_GAME_CHARACTERS.characters}
-    run_default_tests = False  # TODO: Flaky results, need to track down why
+class TestBrotatoRegions(TestBase):
+    def setUp(self) -> None:
+        # Create a multiworld just to give the regions something to attach to.
+        self.multiworld = MultiWorld(1)
 
-    def test_correct_number_of_crate_drop_regions_created(self):
-        """Test that only the location groups needed are created.
+    def _create_region(self, name: str) -> Region:
+        """Region factory to pass to the region creation functions."""
+        return Region(name, self.multiworld.player_ids[0], self.multiworld)
 
-        It is possible to have one group for every loot crate, but if we have 25 crates and 5 groups, then there should
-        only be 5 regions for normal crates and legendary crates.
+
+class TestBrotatoCharacterRegions(TestBrotatoRegions):
+    def test_create_character_region_has_correct_locations(self):
+        waves_with_checks = [5, 10, 15, 20]
+        # Create a region for a characters we deliberately did not include
+        expected_location_names = [
+            RUN_COMPLETE_LOCATION_TEMPLATE.format(char="Crazy"),
+            WAVE_COMPLETE_LOCATION_TEMPLATE.format(char="Crazy", wave=5),
+            WAVE_COMPLETE_LOCATION_TEMPLATE.format(char="Crazy", wave=10),
+            WAVE_COMPLETE_LOCATION_TEMPLATE.format(char="Crazy", wave=15),
+            WAVE_COMPLETE_LOCATION_TEMPLATE.format(char="Crazy", wave=20),
+        ]
+        region = create_character_region(self._create_region, "Crazy", waves_with_checks)
+        region_location_names = [loc.name for loc in region.locations]
+
+        self.assertListEqual(region_location_names, expected_location_names)
+
+    def test_create_character_region_invalid_character_fails(self):
+        with self.assertRaises(Exception):
+            create_character_region(self._create_region, "Ironclad", [3, 6, 9, 12, 15, 18])
+
+    def test_create_character_region_invalid_waves_with_checks_fails(self):
+        """Check that we don't create a region with invalid wave complete locations.
+
+        Mostly a sanity check on creating the waves with checks, but this has historically been an error-prone part of
+        the code, so it's worth a bit of redundant testing.
         """
-        total_possible_normal_crate_groups = MAX_NORMAL_CRATE_DROPS
-        total_possible_legendary_crate_groups = MAX_LEGENDARY_CRATE_DROPS
-        for test_data in self.data_set_subtests(TEST_DATA_SETS):
-            player_regions = self.multiworld.regions.region_cache[self.player]
-            for common_region_idx in range(1, test_data.expected_results.num_common_crate_regions + 1):
-                expected_normal_crate_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
-                self.assertIn(
-                    expected_normal_crate_group,
-                    player_regions,
-                    msg=f"Did not find expected normal loot crate region {expected_normal_crate_group}.",
-                )
-            for legendary_region_idx in range(1, test_data.expected_results.num_legendary_crate_regions + 1):
-                expected_legendary_crate_group = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(
-                    num=legendary_region_idx
-                )
-                self.assertIn(
-                    expected_legendary_crate_group,
-                    player_regions,
-                    msg=f"Did not find expected legendary loot crate region {expected_legendary_crate_group}.",
-                )
-
-            for common_region_idx in range(
-                test_data.options.num_common_crate_drop_groups + 1,
-                total_possible_normal_crate_groups + 1,
+        invalid_waves_with_checks_value: list[Any] = [[1, 2, 3, -1], [0, 5, 10, 15, 20]]
+        for invalid_value in invalid_waves_with_checks_value:
+            with self.subTest(
+                f"Check that create_character_region fails when waves_with_checks={invalid_value}",
+                invalid_value=invalid_value,
             ):
-                expected_missing_group = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=common_region_idx)
-                self.assertNotIn(
-                    expected_missing_group,
-                    player_regions,
-                    msg=f"Normal loot crate region {expected_missing_group} should not have been created.",
-                )
+                with self.assertRaises(Exception):
+                    create_character_region(self._create_region, "Brawler", invalid_value)
 
-            for legendary_region_idx in range(
-                test_data.options.num_legendary_crate_drop_groups + 1,
-                total_possible_legendary_crate_groups,
-            ):
-                expected_missing_group = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=legendary_region_idx)
-                self.assertNotIn(
-                    expected_missing_group,
-                    player_regions,
-                    msg=f"Legendary loot crate region {expected_missing_group} should not have been created.",
-                )
 
-    def test_crate_drop_regions_have_correct_locations(self):
-        for test_data in self.data_set_subtests(TEST_DATA_SETS):
-            self._test_regions_have_correct_locations(
-                test_data.expected_results.common_crates_per_region,
-                test_data.expected_results.num_common_crate_regions,
-                CRATE_DROP_LOCATION_TEMPLATE,
-                CRATE_DROP_GROUP_REGION_TEMPLATE,
-            )
-            self._test_regions_have_correct_locations(
-                test_data.expected_results.legendary_crates_per_region,
-                test_data.expected_results.num_legendary_crate_regions,
-                LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
-                LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
-            )
+class TestBrotatoLootCrateRegions(TestBrotatoRegions):
+    def test_create_loot_crate_group_region_has_correct_locations(self):
+        group = BrotatoLootCrateGroup(1, 5, 0)
+        expected_locations = [
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=1),
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=2),
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=3),
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=4),
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=5),
+        ]
+        region = create_loot_crate_group_region(self._create_region, group, "common")
+        location_names = [location.name for location in region.locations]
+        self.assertListEqual(location_names, expected_locations)
 
-    def test_normal_crate_drop_region_have_correct_access_rules(self):
-        """Check that each of the normal loot crate drop regions is only unlocked after enough wins are achieved.
+    def test_create_loot_crate_group_region_custom_start_has_correct_locations(self):
+        previous_crates = 10
+        group = BrotatoLootCrateGroup(1, 7, 5)
+        expected_locations = [
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=11),
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=12),
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=13),
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=14),
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=15),
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=16),
+            CRATE_DROP_LOCATION_TEMPLATE.format(num=17),
+        ]
+        region = create_loot_crate_group_region(
+            self._create_region, group, "common", crate_count_start=previous_crates + 1
+        )
+        location_names = [location.name for location in region.locations]
+        self.assertListEqual(location_names, expected_locations)
 
-        This and the legendary loot crate region tests are separate since they both need to incrementally update the
-        state and check region access at each step. Splitting the tests, with a common private test method, means less
-        duplication and no need to try and clear state within a test.
-        """
-        # run_won_item_name = ItemName.RUN_COMPLETE.value
-        # run_won_item = self.world.create_item(run_won_item_name)
-        for test_data in self.data_set_subtests(TEST_DATA_SETS):
-            self._test_regions_have_correct_access_rules(
-                test_data.expected_results.wins_required_per_common_region,
-                test_data.expected_results.num_common_crate_regions,
-                CRATE_DROP_GROUP_REGION_TEMPLATE,
-            )
 
-    def test_legendary_crate_drop_region_have_correct_access_rules(self):
-        """Check that each of the legendary loot crate drop regions is only unlocked after enough wins are achieved.
+class TestBrotatoCreateRegions(TestBrotatoRegions):
+    parent_region: Region
+    regions: dict[str, Region]
 
-        This and the normal loot crate region tests are separate since they both need to incrementally update the
-        state and check region access at each step. Splitting the tests, with a common private test method, means less
-        duplication and no need to try and clear state within a test.
-        """
-        for test_data in self.data_set_subtests(TEST_DATA_SETS):
-            self._test_regions_have_correct_access_rules(
-                test_data.expected_results.wins_required_per_legendary_region,
-                test_data.expected_results.num_legendary_crate_regions,
-                LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
-            )
+    characters: list[str] = ["Brawler", "Crazy", "Mage", "Demon"]
+    common_loot_crate_groups: list[BrotatoLootCrateGroup] = [
+        BrotatoLootCrateGroup(1, 10, 0),
+        BrotatoLootCrateGroup(2, 10, 5),
+        BrotatoLootCrateGroup(3, 10, 10),
+        BrotatoLootCrateGroup(4, 5, 15),
+    ]
+    legendary_loot_crate_groups: list[BrotatoLootCrateGroup] = [
+        BrotatoLootCrateGroup(1, 5, 0),
+    ]
+    waves_with_checks: list[int] = [5, 10, 15, 20]
 
-    def _test_regions_have_correct_access_rules(
-        self, wins_per_region: Tuple[int, ...], num_regions: int, region_template: str
-    ):
-        """Shared test logic for the crate drop region access rules tests."""
+    def setUp(self) -> None:
+        super().setUp()
+        regions = create_regions(
+            self._create_region,
+            self.characters,
+            self.waves_with_checks,
+            self.common_loot_crate_groups,
+            self.legendary_loot_crate_groups,
+        )
+        self.regions = {region.name: region for region in regions}
 
-        run_won_item_name = ItemName.RUN_COMPLETE.value
-        run_won_item = self.world.create_item(run_won_item_name)
-        for region_idx, num_wins_to_reach in zip(range(1, num_regions + 1), wins_per_region):
-            region_name = region_template.format(num=region_idx)
-
-            # Add Run Won items by getting each character's Run Won location in order
-            num_wins = self.count(run_won_item_name)
-            character_index = 0
-            while num_wins < num_wins_to_reach:
-                # Make sure the region isn't reachable too early
-                self.assertFalse(
-                    self.can_reach_region(region_name),
-                    msg=(
-                        f'Region "{region_name}" should be unreachable without {num_wins_to_reach} wins, have '
-                        f"{num_wins}."
-                    ),
-                )
-
-                next_character_won = self.world._include_characters[character_index]
-                character_index += 1
-                try:
-                    next_win_location = self.world.get_location(
-                        RUN_COMPLETE_LOCATION_TEMPLATE.format(char=next_character_won)
-                    )
-                except KeyError:
-                    self.fail(f"Character {next_character_won} does not have a Run Won location.")
-                old_num_wins = self.multiworld.state.count(run_won_item_name, self.player)
-                # Set event=True so the state doesn't try to collect more wins and throw off our tests
-                self.multiworld.state.collect(run_won_item, prevent_sweep=True, location=next_win_location)
-                num_wins = self.multiworld.state.count(run_won_item_name, self.player)
-                # Sanity check that the state updated as we intend it to.
-                self.assertTrue(
-                    num_wins == old_num_wins + 1,
-                    msg="State added more than 1 'Run Won' item, this is a test implementation error.",
-                )
-
-            self.assertTrue(
-                self.can_reach_region(region_name),
-                msg=f"Could not reach region {region_name} with {num_wins_to_reach} wins.",
+    def test_common_loot_crate_group_regions_have_correct_locations(self):
+        expected_locations_per_region: list[list[str]] = [
+            [CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(1, 11)],
+            [CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(11, 21)],
+            [CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(21, 31)],
+            [CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(31, 36)],
+        ]
+        for region_idx, expected_locations in enumerate(expected_locations_per_region, start=1):
+            region_name: str = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=region_idx)
+            region: Region = self.regions[region_name]
+            region_locations: list[str] = [location.name for location in region.locations]
+            self.assertListEqual(
+                region_locations, expected_locations, f"Locations did not match for region '{region_name}'."
             )
 
-    def _test_regions_have_correct_locations(
-        self,
-        locations_per_region: Union[int, Tuple[int, ...]],
-        num_regions: int,
-        location_template: str,
-        region_template: str,
-    ):
-        player_regions = self.multiworld.regions.region_cache[self.player]
-        if isinstance(locations_per_region, int):
-            num_locations_per_region = tuple([locations_per_region] * num_regions)
-        else:
-            num_locations_per_region = locations_per_region
+    def test_legendary_loot_crate_group_regions_have_correct_locations(self):
+        expected_locations_per_region: list[list[str]] = [
+            [LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(1, 6)]
+        ]
+        for region_idx, expected_locations in enumerate(expected_locations_per_region, start=1):
+            region_name: str = LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=region_idx)
+            region: Region = self.regions[region_name]
+            region_locations: list[str] = [location.name for location in region.locations]
+            self.assertListEqual(
+                region_locations, expected_locations, f"Locations did not match for region '{region_name}'."
+            )
 
-        location_counter = 1
-        for region_idx in range(num_regions):
-            num_locations = num_locations_per_region[region_idx]
-            expected_location_names = [
-                location_template.format(num=i) for i in range(location_counter, location_counter + num_locations)
+    def test_character_regions_are_correct(self):
+        for char in self.characters:
+            expected_locations_for_char: list[str] = [
+                RUN_COMPLETE_LOCATION_TEMPLATE.format(char=char),
+                WAVE_COMPLETE_LOCATION_TEMPLATE.format(char=char, wave=5),
+                WAVE_COMPLETE_LOCATION_TEMPLATE.format(char=char, wave=10),
+                WAVE_COMPLETE_LOCATION_TEMPLATE.format(char=char, wave=15),
+                WAVE_COMPLETE_LOCATION_TEMPLATE.format(char=char, wave=20),
             ]
-            location_counter += num_locations
-            region = player_regions[region_template.format(num=region_idx + 1)]
-            actual_location_names = [loc.name for loc in region.locations]
-            self.assertListEqual(actual_location_names, expected_location_names)
+            char_region_name = CHARACTER_REGION_TEMPLATE.format(char=char)
+            char_region: Region = self.regions[char_region_name]
+            char_region_locations: list[str] = [location.name for location in char_region.locations]
+            self.assertListEqual(
+                char_region_locations,
+                expected_locations_for_char,
+                f"Locations did not match for region '{char_region_name}'",
+            )
+
+
+class TestBrotatoRegionAccessRules(BrotatoTestBase):
+    run_default_tests = False  # type:ignore
+    options = {
+        "num_victories": 10,
+        "num_characters": 10,
+        # Number of characters should match
+        "include_base_game_characters": [
+            "Brawler",
+            "Crazy",
+            "Mage",
+            "Mutant",
+            "Generalist",
+            "Engineer",
+            "Streamer",
+            "Cyborg",
+            "Jack",
+            "Demon",
+        ],
+        "waves_per_drop": 4,
+        "num_common_crate_drops": 25,
+        "num_common_crate_drop_groups": 5,
+        "num_legendary_crate_drops": 5,
+        "num_legendary_crate_drop_groups": 1,
+    }
+
+    def test_common_loot_crate_group_regions_have_correct_access_rules(self):
+        # 10 wins and 5 groups means 2 wins to unlock each group
+        wins_per_group = [0, 2, 4, 6, 8]
+        wins_collected = 0
+        victory_item = self.multiworld.create_item(ItemName.RUN_COMPLETE.value, self.player)
+        # For whatever reason, self.assertAccessDependency doesn't work, so we do the collect and sweep manually.
+        for group_idx, num_wins_needed in enumerate(wins_per_group, start=1):
+            region_name: str = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=group_idx)
+            region: Region = self.multiworld.regions.region_cache[self.player][region_name]
+            region_locations = [location.name for location in region.locations]
+            while wins_collected < num_wins_needed:
+                self.assertFalse(
+                    self.multiworld.state.can_reach_region(region_name, self.player),
+                    f"Should not be able to reach region {region_name} without {num_wins_needed} wins, have {wins_collected}.",  # noqa
+                )
+                for location in region_locations:
+                    self.assertFalse(self.multiworld.state.can_reach_location(location, self.player))
+                self.multiworld.state.collect(victory_item, prevent_sweep=True)
+                wins_collected += 1
+
+            self.assertTrue(self.multiworld.state.can_reach_region(region_name, self.player))
+            for location in region_locations:
+                self.assertTrue(self.multiworld.state.can_reach_location(location, self.player))
+
+    def test_character_regions_have_correct_access_rules(self):
+        characters = self.options["include_base_game_characters"]
+        for char in characters:
+            region_name = CHARACTER_REGION_TEMPLATE.format(char=char)
+            region = self.multiworld.regions.region_cache[self.player][region_name]
+            region_locations = [location.name for location in region.locations]
+            if self.multiworld.state.has(char, self.player):
+                # The multiworld needs to start with some characters, so this will get hit at least some of the time.
+                # We can't remove characters from state here because assertAccessDependency just creates a new state
+                # internally.
+                self.assertTrue(self.multiworld.state.can_reach_region(region_name, self.player))
+            else:
+                self.assertAccessDependency(region_locations, [[char]])

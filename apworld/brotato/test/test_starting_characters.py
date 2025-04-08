@@ -8,7 +8,9 @@ _character_items = item_name_groups["Characters"]
 
 
 class TestBrotatoStartingCharacters(BrotatoTestBase):
-    run_default_tests = False  # TODO: Flaky results, need to track down why
+    @property
+    def run_default_tests(self) -> bool:
+        return False  # TODO: Flaky results, need to track down why
 
     def _run_and_check(
         self,
@@ -17,28 +19,26 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
         expected_characters: Optional[Sequence[str]] = None,
     ):
         # Create world with relevant options
-        self.options = {
+        run_options = {
             "starting_characters": int(custom_starting_characters),
+            "num_characters": num_characters,
             "num_starting_characters": num_characters,
         }
-        self.world_setup()
+        with self._run(run_options):
+            # Get precollected items
+            player_precollected = self.multiworld.precollected_items[self.player]
+            precollected_characters = [p for p in player_precollected if p.name in _character_items]
 
-        # Get precollected items
-        player_precollected = self.multiworld.precollected_items[self.player]
-        precollected_characters = [p for p in player_precollected if p.name in _character_items]
+            # Check that the number of starting characters is correct
+            self.assertEqual(len(precollected_characters), num_characters)
 
-        # Check that the number of starting characters is correct
-        assert len(precollected_characters) == num_characters
-
-        # Check that we have exactly some characters. This works best for testing the default characters, it's flakier
-        # for others since we rely on the seed and random() calls to be consistent.
-        if expected_characters is not None:
-            assert len(expected_characters) == num_characters, (
-                "Test configuration error, num_characters does not match len(expected_characters)."
-            )
-            for ec in expected_characters:
-                expected_item = self.world.create_item(ec)
-                assert expected_item in precollected_characters
+            # Check that we have exactly some characters. This works best for testing the default characters, it's
+            # flakier for others since we rely on the seed and random() calls to be consistent.
+            if expected_characters is not None:
+                self.assertEqual(len(expected_characters), num_characters)
+                for ec in expected_characters:
+                    expected_item = self.world.create_item(ec)
+                    self.assertIn(expected_item, precollected_characters)
 
     def test_default_starting_characters(self):
         self._run_and_check(

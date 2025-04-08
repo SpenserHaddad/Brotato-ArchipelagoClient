@@ -1,5 +1,7 @@
 from dataclasses import dataclass
-from typing import List
+
+from .constants import ItemRarity
+from .items import ItemName
 
 
 @dataclass(frozen=True)
@@ -8,8 +10,16 @@ class BrotatoLootCrateGroup:
     num_crates: int
     wins_to_unlock: int
 
+    def __post_init__(self):
+        if self.index < 1:
+            raise ValueError("index must be 1 or greater.")
+        if self.num_crates < 1:
+            raise ValueError("num_crates must be 1 or greater.")
+        if self.wins_to_unlock < 0:
+            raise ValueError("num_crates must be 0 or greater.")
 
-def build_loot_crate_groups(num_crates: int, num_groups: int, num_victories: int) -> List[BrotatoLootCrateGroup]:
+
+def build_loot_crate_groups(num_crates: int, num_groups: int, num_victories: int) -> list[BrotatoLootCrateGroup]:
     # If the options specify more crate drop groups than number of required wins, clamp to the number of wins. This
     # makes the math simpler and ensures all items are accessible by go mode. Someone probably wants the option to have
     # items after completing their goal, but we're going to pretend they don't exist until they ask.
@@ -19,7 +29,7 @@ def build_loot_crate_groups(num_crates: int, num_groups: int, num_victories: int
     wins_to_unlock_group = 0
     num_wins_to_unlock_group = max(num_victories // num_groups_actual, 1)
     crates_per_group, extra_crates = divmod(num_crates, num_groups_actual)
-    loot_crate_groups: List[BrotatoLootCrateGroup] = []
+    loot_crate_groups: list[BrotatoLootCrateGroup] = []
 
     for group_count in range(1, num_groups_actual + 1):
         crates_in_group = min(crates_per_group, num_crates - crates_allocated)
@@ -34,14 +44,17 @@ def build_loot_crate_groups(num_crates: int, num_groups: int, num_victories: int
 
         crates_allocated += crates_in_group
 
-        loot_crate_groups.append(
-            BrotatoLootCrateGroup(
-                index=group_count,
-                num_crates=crates_in_group,
-                wins_to_unlock=wins_to_unlock_group,
+        # Check that there are actually crates to put in the group, otherwise don't make it. This can happen if the
+        # num_crates option is set to 0.
+        if crates_in_group > 0:
+            loot_crate_groups.append(
+                BrotatoLootCrateGroup(
+                    index=group_count,
+                    num_crates=crates_in_group,
+                    wins_to_unlock=wins_to_unlock_group,
+                )
             )
-        )
-        # Set this for the next group now. This is the easiest way to ensure group 1 requires 0 victories.
-        wins_to_unlock_group = min(wins_to_unlock_group + num_wins_to_unlock_group, num_victories)
+            # Set this for the next group now. This is the easiest way to ensure group 1 requires 0 victories.
+            wins_to_unlock_group = min(wins_to_unlock_group + num_wins_to_unlock_group, num_victories)
 
     return loot_crate_groups

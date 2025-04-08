@@ -26,6 +26,14 @@ class BrotatoLocation(Location):
     game = "Brotato"
 
 
+class BrotatoCommonCrateLocation(Location):
+    progress_type: LocationProgressType = LocationProgressType.DEFAULT
+
+
+class BrotatoLegendaryCrateLocation(Location):
+    progress_type: LocationProgressType = LocationProgressType.DEFAULT
+
+
 @dataclass(frozen=True)
 class BrotatoLocationBase:
     name: str

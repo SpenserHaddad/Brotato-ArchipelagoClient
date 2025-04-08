@@ -3,6 +3,7 @@ from typing import Any
 
 
 class BrotatoTestDataSet(ABC):
+    @property
     @abstractmethod
     def test_name(self) -> str:
         pass

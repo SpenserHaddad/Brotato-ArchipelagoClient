@@ -1,9 +1,12 @@
 from ..options import StartingShopLockButtonsMode
+from ..waves import get_wave_for_each_item
 from . import BrotatoTestBase
 from .data_sets.shop_slots import SHOP_SLOT_TEST_DATA_SETS
 
 
 class TestBrotatoSlotData(BrotatoTestBase):
+    run_default_tests = False  # type:ignore
+
     options = {
         # Only set options that are referenced by slot_data
         "num_victories": 10,
@@ -16,16 +19,19 @@ class TestBrotatoSlotData(BrotatoTestBase):
         "num_starting_shop_slots": 1,
         "shop_lock_buttons_mode": StartingShopLockButtonsMode.option_custom,
         "num_starting_lock_buttons": 2,
-        # Use custom item weights so we know that there are exactly 50 common items and 20 legendary items in the
-        # itempool when we check the item_waves.
-        "item_weight_mode": 2,
-        "num_common_crate_drops": 50,
-        "num_legendary_crate_drops": 20,
+        "num_common_crate_drops": 20,
+        "num_legendary_crate_drops": 0,
+        # Set the weights so only common items are made, to properly test item wave entry
         "common_item_weight": 1,
         "uncommon_item_weight": 0,
         "rare_item_weight": 0,
         "legendary_item_weight": 0,
-        "foo": "bar",
+        "common_upgrade_weight": 0,
+        "uncommon_upgrade_weight": 0,
+        "rare_upgrade_weight": 0,
+        "legendary_upgrade_weight": 0,
+        "gold_weight": 0,
+        "xp_weight": 0,
     }
 
     def test_slot_data_num_wins_needed(self):
@@ -37,24 +43,16 @@ class TestBrotatoSlotData(BrotatoTestBase):
         self.assertEqual(slot_data["num_starting_shop_slots"], 1)
 
     def test_slot_data_starting_shop_lock_buttons(self):
-        for test_case in self.data_set_subtests(SHOP_SLOT_TEST_DATA_SETS):
-            self._run(
-                {
-                    "num_starting_shop_slots": test_case.num_starting_shop_slots,
-                    "shop_lock_buttons_mode": test_case.lock_button_mode.value,
-                    "num_starting_lock_buttons": test_case.num_starting_lock_buttons,
-                }
-            )
-
-            slot_data = self.world.fill_slot_data()
-            self.assertEqual(
-                slot_data["num_starting_shop_lock_buttons"],
-                test_case.expected_num_starting_lock_buttons,
-            )
+        for test_case in SHOP_SLOT_TEST_DATA_SETS:
+            with self.data_set_subtest(test_case):
+                slot_data = self.world.fill_slot_data()
+                self.assertEqual(
+                    slot_data["num_starting_shop_lock_buttons"], test_case.expected_num_starting_lock_buttons
+                )
 
     def test_slot_data_num_common_crate_locations(self):
         slot_data = self.world.fill_slot_data()
-        self.assertEqual(slot_data["num_common_crate_locations"], 50)
+        self.assertEqual(slot_data["num_common_crate_locations"], 20)
 
     def test_slot_data_num_common_crate_drops_per_check(self):
         slot_data = self.world.fill_slot_data()
@@ -62,7 +60,7 @@ class TestBrotatoSlotData(BrotatoTestBase):
 
     def test_slot_data_num_legendary_crate_locations(self):
         slot_data = self.world.fill_slot_data()
-        self.assertEqual(slot_data["num_legendary_crate_locations"], 20)
+        self.assertEqual(slot_data["num_legendary_crate_locations"], 0)
 
     def test_slot_data_num_legendary_crate_drops_per_check(self):
         slot_data = self.world.fill_slot_data()
@@ -70,87 +68,6 @@ class TestBrotatoSlotData(BrotatoTestBase):
 
     def test_slot_data_wave_per_game_item(self):
         slot_data = self.world.fill_slot_data()
-        # 3 common items per wave for wave 1-10, then 2 items per wave for waves 11-20.
-        expected_common_wave_per_item = [
-            1,
-            1,
-            1,
-            2,
-            2,
-            2,
-            3,
-            3,
-            3,
-            4,
-            4,
-            4,
-            5,
-            5,
-            5,
-            6,
-            6,
-            6,
-            7,
-            7,
-            7,
-            8,
-            8,
-            8,
-            9,
-            9,
-            9,
-            10,
-            10,
-            10,
-            11,
-            11,
-            12,
-            12,
-            13,
-            13,
-            14,
-            14,
-            15,
-            15,
-            16,
-            16,
-            17,
-            17,
-            18,
-            18,
-            19,
-            19,
-            20,
-            20,
-        ]
-        self.assertEqual(
-            slot_data["wave_per_game_item"],
-            {
-                0: expected_common_wave_per_item,
-                1: [],
-                2: [],
-                # There are 20 legendary crate drop locations, so one wave per location.
-                3: [
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16,
-                    17,
-                    18,
-                    19,
-                    20,
-                ],
-            },
-        )
+        # Testing get_wave_for_each_item is done elsewhere, we just want to see that the slot data matches.
+        expected_wave_per_item = get_wave_for_each_item(self.world.nonessential_item_counts)
+        self.assertEqual(slot_data["wave_per_game_item"], expected_wave_per_item)
