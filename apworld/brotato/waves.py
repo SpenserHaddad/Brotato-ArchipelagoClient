@@ -1,3 +1,5 @@
+from math import ceil
+
 from .constants import NUM_WAVES, ItemRarity
 from .items import ItemName
 from .options import WavesPerCheck
@@ -25,8 +27,8 @@ def get_wave_for_each_item(item_counts: dict[ItemName, int]) -> dict[int, list[i
     received. When the client receives the next item for a certain rarity, it will lookup the next entry in the list for
     the rarity and use that as the wave when generating the values.
 
-    We attempt to equally distribute the items over the 20 waves in a normal run, with a bias towards lower numbers,
-    since it's already too easy to get overpowered.
+    We attempt to equally distribute the items over the 20 waves in a normal run, with a bias towards higher numbers,
+    for fun.
     """
     item_names_to_rarity: dict[ItemName, ItemRarity] = {
         ItemName.COMMON_ITEM: ItemRarity.COMMON,
@@ -36,9 +38,20 @@ def get_wave_for_each_item(item_counts: dict[ItemName, int]) -> dict[int, list[i
     }
 
     def generate_waves_per_item(num_items: int) -> list[int]:
-        # Evenly distribute the items over 20 waves, then sort so items received are generated with steadily
-        # increasing waves (aka they got steadily stronger).
-        return sorted((i % 20) + 1 for i in range(num_items))
+        """Evenly distribute the items over 20 waves, then sort so items received are generated with steadily
+        increasing waves (aka they got steadily stronger).
+        """
+        values: list[int] = []
+        if num_items > 0:
+            # Simple linspace implementation, except we start distributing from the top so there's always at least one
+            # wave 20 item.
+            step = (NUM_WAVES) / num_items
+            wave_value = 20
+            while len(values) < num_items:
+                values.append(ceil(wave_value))
+                wave_value -= step
+                wave_value = max(wave_value, 1)
+        return sorted(values)
 
     # Use a default of 0 in case no items of a tier were created for whatever reason.
     return {
