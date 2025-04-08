@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - World generation should now be generally more reliable, with less fill errors.
+- The method used to calculate the wave value used to generate each Brotato item given
+  has been updated to properly distribute the values over waves 1-20. Before, it would
+  bias towards lower values, and possibly not give any of higher waves if there were not
+  enough items.
 
 ### Added
 
