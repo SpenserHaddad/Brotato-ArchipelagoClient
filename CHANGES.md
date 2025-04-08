@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2025-04-07
+
 ### Fixed
 - World generation should now be generally more reliable, with less fill errors.
 - The method used to calculate the wave value used to generate each Brotato item given
@@ -433,8 +435,9 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.2...HEAD
-[0.7.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.1...v0.7.2
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.1...v0.8.0
+[0.7.2]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.5.4...v0.6.0
