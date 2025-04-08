@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   has been updated to properly distribute the values over waves 1-20. Before, it would
   bias towards lower values, and possibly not give any of higher waves if there were not
   enough items.
+- Fix possible error when cleaning up structures at the end of a run.
 
 ### Added
 
