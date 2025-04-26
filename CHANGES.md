@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Common AP pickups now heal for 3 HP, and legendary pickups now heal for 100 HP, just
+  like vanilla common and legendary loot crates.
+
 ## [0.8.0] - 2025-04-07
 
 ### Fixed
