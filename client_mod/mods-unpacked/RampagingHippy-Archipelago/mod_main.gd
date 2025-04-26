@@ -18,6 +18,8 @@ func _init():
 	var dir = ModLoaderMod.get_unpacked_dir() + MOD_NAME + "/"
 	var ext_dir = dir + "extensions/"
 
+	ModLoaderLog.info("Setting up extensions", LOG_NAME)
+
 	# Add extensions
 	var extension_files = [
 		"main.gd", # Update consumable drop logic to spawn AP items
@@ -44,24 +46,43 @@ func _init():
 	for ef in extension_files:
 		ModLoaderMod.install_script_extension(ext_dir + ef)
 
+	ModLoaderLog.info("Setup extensions", LOG_NAME)
+
 	# Add translations
 	ModLoaderMod.add_translation(dir + "translations/modname.en.translation")
+	ModLoaderLog.info("Added translations", LOG_NAME)
 
 func _ready() -> void:
 	# TODO: Proper translations
 	# ModLoaderLog.info(str("Translation Demo: ", tr("MODNAME_READY_TEXT")), LOG_NAME)
 	# ModLoaderLog.success("Loaded", LOG_NAME)
 	# TODO: Config migrations, add version number and check for matching values.
+	ModLoaderLog.info("Getting config", LOG_NAME)
+
 	var config = ModLoaderConfig.get_config(MOD_NAME, "ap_config")
 	if config == null:
+		ModLoaderLog.info("Config null", LOG_NAME)
+
 		var default_config = ModLoaderConfig.get_default_config(MOD_NAME)
+		ModLoaderLog.info("Got default config", LOG_NAME)
+		
 		ModLoaderConfig.create_config(MOD_NAME, "ap_config", default_config.data)
+		ModLoaderLog.info("Created default config", LOG_NAME)
+
 		config = ModLoaderConfig.get_config(MOD_NAME, "ap_config")
+		ModLoaderLog.info("Got config again", LOG_NAME)
+
+
+	ModLoaderLog.info("Got config", LOG_NAME)
 
 	ap_websocket_connection = ApWebSocketConnection.new()
+	ModLoaderLog.info("Created webscoket, adding...", LOG_NAME)
 	self.add_child(ap_websocket_connection)
 
+	ModLoaderLog.info("Creating client", LOG_NAME)
+
 	brotato_ap_client = BrotatoApClient.new(ap_websocket_connection, config)
+	ModLoaderLog.info("Adding client...", LOG_NAME)
 	self.add_child(brotato_ap_client)
 
 	ModLoaderLog.success("Archipelago mod v%s initialized" % MOD_VERSION, LOG_NAME)
