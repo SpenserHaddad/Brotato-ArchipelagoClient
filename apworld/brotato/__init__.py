@@ -6,23 +6,14 @@ from BaseClasses import Item, MultiWorld, Region, Tutorial
 from Options import OptionGroup
 from worlds.AutoWorld import WebWorld, World
 
-from . import (
-    options,  # So we don't need to import every option class when defining option groups
-)
+from . import options  # So we don't need to import every option class when defining option groups
 from .characters import get_available_and_starting_characters
 from .constants import (
     MAX_SHOP_SLOTS,
     RUN_COMPLETE_LOCATION_TEMPLATE,
 )
 from .item_weights import create_items_from_weights
-from .items import (
-    BrotatoItem,
-    ItemName,
-    filler_items,
-    item_name_groups,
-    item_name_to_id,
-    item_table,
-)
+from .items import BrotatoItem, ItemName, filler_items, item_name_groups, item_name_to_id, item_table
 from .locations import location_name_groups, location_name_to_id
 from .loot_crates import (
     BrotatoLootCrateGroup,
@@ -69,11 +60,7 @@ class BrotatoWeb(WebWorld):
         ),
         OptionGroup(
             "Shop Slots",
-            [
-                options.StartingShopSlots,
-                options.StartingShopLockButtonsMode,
-                options.NumberStartingShopLockButtons,
-            ],
+            [options.StartingShopSlots, options.StartingShopLockButtonsMode, options.NumberStartingShopLockButtons],
         ),
         OptionGroup(
             "Item Weights",
@@ -183,22 +170,18 @@ class BrotatoWorld(World):
         # Determine needed values from the options
         self.waves_with_checks = get_waves_with_checks(self.options.waves_per_drop)
 
-        self._include_characters, self._starting_characters = (
-            get_available_and_starting_characters(
-                self.options.include_base_game_characters.value,
-                bool(self.options.enable_abyssal_terrors_dlc.value),
-                self.options.include_abyssal_terrors_characters.value,
-                self.options.starting_characters,
-                self.options.num_starting_characters.value,
-                self.options.num_characters.value,
-                self.random,
-            )
+        self._include_characters, self._starting_characters = get_available_and_starting_characters(
+            self.options.include_base_game_characters.value,
+            bool(self.options.enable_abyssal_terrors_dlc.value),
+            self.options.include_abyssal_terrors_characters.value,
+            self.options.starting_characters,
+            self.options.num_starting_characters.value,
+            self.options.num_characters.value,
+            self.random,
         )
 
         # Clamp the number of wins needed to goal to the number of included characters, so the game isn't unwinnable.
-        self.num_wins_needed = min(
-            self.options.num_victories.value, len(self._include_characters)
-        )
+        self.num_wins_needed = min(self.options.num_victories.value, len(self._include_characters))
 
         # Thought: if num victories is clamped, do some of the groups become unreachable?
         self.common_loot_crate_groups = build_loot_crate_groups(
@@ -212,20 +195,17 @@ class BrotatoWorld(World):
             self.num_wins_needed,
         )
 
-        self.num_shop_slot_items, self.num_shop_lock_button_items = (
-            get_num_shop_slot_and_lock_button_items(
-                self.options.num_starting_shop_slots,
-                self.options.shop_lock_buttons_mode,
-                self.options.num_starting_lock_buttons,
-            )
+        self.num_shop_slot_items, self.num_shop_lock_button_items = get_num_shop_slot_and_lock_button_items(
+            self.options.num_starting_shop_slots,
+            self.options.shop_lock_buttons_mode,
+            self.options.num_starting_lock_buttons,
         )
 
         # The number of locations available, not including the "Run Won" locations, which always have "Run Won" items.
         num_locations = sum(
             [
                 len(self._include_characters),  # Run Won Locations
-                len(self._include_characters)
-                * len(self.waves_with_checks),  # Wave Complete Locations
+                len(self._include_characters) * len(self.waves_with_checks),  # Wave Complete Locations
                 self.options.num_common_crate_drops.value,
                 self.options.num_legendary_crate_drops.value,
             ]
@@ -234,8 +214,7 @@ class BrotatoWorld(World):
         num_essential_items = sum(
             [
                 len(self._include_characters),  # Run Won Items
-                len(self._include_characters)
-                - len(self._starting_characters),  # The character items
+                len(self._include_characters) - len(self._starting_characters),  # The character items
                 self.num_shop_slot_items,
                 self.num_shop_lock_button_items,
             ]
@@ -258,9 +237,7 @@ class BrotatoWorld(World):
         )
 
     def set_rules(self) -> None:
-        self.multiworld.completion_condition[self.player] = create_has_run_wins_rule(
-            self.player, self.num_wins_needed
-        )
+        self.multiworld.completion_condition[self.player] = create_has_run_wins_rule(self.player, self.num_wins_needed)
 
     def create_regions(self) -> None:
         def create_region(region_name: str) -> Region:
@@ -290,14 +267,8 @@ class BrotatoWorld(World):
         for item_name, item_count in self.nonessential_item_counts.items():
             item_pool += [self.create_item(item_name) for _ in range(item_count)]
 
-        item_pool += [
-            self.create_item(ItemName.SHOP_SLOT)
-            for _ in range(self.num_shop_slot_items)
-        ]
-        item_pool += [
-            self.create_item(ItemName.SHOP_LOCK_BUTTON)
-            for _ in range(self.num_shop_lock_button_items)
-        ]
+        item_pool += [self.create_item(ItemName.SHOP_SLOT) for _ in range(self.num_shop_slot_items)]
+        item_pool += [self.create_item(ItemName.SHOP_LOCK_BUTTON) for _ in range(self.num_shop_lock_button_items)]
 
         self.multiworld.itempool += item_pool
 
@@ -306,9 +277,7 @@ class BrotatoWorld(World):
         for character in self._include_characters:
             item: BrotatoItem = self.create_item(ItemName.RUN_COMPLETE)
             run_won_location = RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)
-            self.multiworld.get_location(
-                run_won_location, self.player
-            ).place_locked_item(item)
+            self.multiworld.get_location(run_won_location, self.player).place_locked_item(item)
 
     def get_filler_item_name(self) -> str:
         return self.random.choice(self._filler_items)
@@ -316,79 +285,24 @@ class BrotatoWorld(World):
     def fill_slot_data(self) -> dict[str, Any]:
         # Define outside dict for readability
         spawn_normal_loot_crates: bool = (
-            self.options.spawn_normal_loot_crates.value
-            == self.options.spawn_normal_loot_crates.option_true
+            self.options.spawn_normal_loot_crates.value == self.options.spawn_normal_loot_crates.option_true
         )
-        wave_per_game_item: dict[int, list[int]] = get_wave_for_each_item(
-            self.nonessential_item_counts
-        )
+        wave_per_game_item: dict[int, list[int]] = get_wave_for_each_item(self.nonessential_item_counts)
         return {
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": self.num_wins_needed,
             "gold_reward_mode": self.options.gold_reward_mode.value,
             "xp_reward_mode": self.options.xp_reward_mode.value,
-            "enable_enemy_xp": self.options.enable_enemy_xp.value
-            == self.options.enable_enemy_xp.option_true,
+            "enable_enemy_xp": self.options.enable_enemy_xp.value == self.options.enable_enemy_xp.option_true,
             "num_starting_shop_slots": self.options.num_starting_shop_slots.value,
-            "num_starting_shop_lock_buttons": (
-                MAX_SHOP_SLOTS - self.num_shop_lock_button_items
-            ),
+            "num_starting_shop_lock_buttons": (MAX_SHOP_SLOTS - self.num_shop_lock_button_items),
             "spawn_normal_loot_crates": spawn_normal_loot_crates,
             "num_common_crate_locations": self.options.num_common_crate_drops.value,
             "num_common_crate_drops_per_check": self.options.num_common_crate_drops_per_check.value,
-            "common_crate_drop_groups": [
-                asdict(g) for g in self.common_loot_crate_groups
-            ],
+            "common_crate_drop_groups": [asdict(g) for g in self.common_loot_crate_groups],
             "num_legendary_crate_locations": self.options.num_legendary_crate_drops.value,
             "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check.value,
-            "legendary_crate_drop_groups": [
-                asdict(g) for g in self.legendary_loot_crate_groups
-            ],
+            "legendary_crate_drop_groups": [asdict(g) for g in self.legendary_loot_crate_groups],
             "wave_per_game_item": wave_per_game_item,
             "enable_abyssal_terrors_dlc": self.options.enable_abyssal_terrors_dlc.value,
         }
-
-    def generate_output(self, output_directory: str):
-        xp_items: list[Item] = [
-            item
-            for item in self.multiworld.get_items()
-            if item.player == self.player and item.name in self.item_name_groups["XP"]
-        ]
-        gold_items: list[Item] = [
-            item
-            for item in self.multiworld.get_items()
-            if item.player == self.player and item.name in self.item_name_groups["Gold"]
-        ]
-        import json
-        import os
-        import re
-
-        xp_pattern = re.compile(r"XP \((\d+)\)")
-        gold_pattern = re.compile(r"Gold \((\d+)\)")
-        total_xp = sum(int(xp_pattern.match(item.name).group(1)) for item in xp_items)
-        total_gold = sum(
-            int(gold_pattern.match(item.name).group(1)) for item in gold_items
-        )
-        total_locations = len(self.multiworld.get_locations(self.player))
-
-        file_name = self.multiworld.get_out_file_name_base(self.player)
-        file_path = os.path.join(output_directory, f"{file_name}.json")
-        with open(file_path, "w") as f:
-            json.dump(
-                {
-                    "xp_items": len(xp_items),
-                    "xp_weight": self.options.xp_weight.value,
-                    "xp": total_xp,
-                    "gold_items": len(gold_items),
-                    "gold": total_gold,
-                    "gold_weight": self.options.gold_weight.value,
-                    "locations": total_locations,
-                    "waves_per_check": self.options.waves_per_drop.value,
-                    "characters": self.options.num_characters.value,
-                    "wins": self.options.num_victories.value,
-                    "c_crates": self.options.num_common_crate_drops.value,
-                    "l_crates": self.options.num_legendary_crate_drops.value,
-                },
-                f,
-                indent=4,
-            )
