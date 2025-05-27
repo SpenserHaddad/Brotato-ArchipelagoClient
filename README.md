@@ -103,3 +103,35 @@ progress in the AP game. This includes:
 
 This won't affect your normal progress. Once you disconnect from the AP server, your
 original progress will be reapplied.
+
+# Development Setup
+
+This repo as-is is not enough to actually load the apworld or client mod, or run the
+unit tests. To create a working development environment, you will need some additional
+software:
+
+* Git
+* An Archipelago-compatible version of Python (e.g. 3.10 or 3.11).
+* An installation of Brotato from either Steam or Epic Games (NOT the Xbox version). 
+* Clone the [Archipelago repository](https://github.com/ArchipelagoMW/Archipelago/).
+* Download the latest version of [GDRETools.](https://github.com/GDRETools/gdsdecomp)
+* Download the latest version of [GodotSteam
+  3.6.](https://github.com/GodotSteam/GodotSteam).
+   * You may need to search through the releases for the latest 3.6-compatible release.
+
+Once you have all of this, the scripts in the [tools/](./tools/) directory can help you
+get setup:
+
+* Run [tools/extract_brotato.py](./tools/extract_brotato.py) to unpack the Brotato
+  source into an editable form.
+  * THIS IS PROPRIETARY CODE, DO NOT DISTRIBUTE OR CHECK INTO THIS REPOSITORY.
+* Run [tools/create_dev_symlinks](./tools/create_dev_symlinks.py) to link the code in
+  this repo into the Archipelago and Brotato work areas.
+
+From here, you should have a checkout of Archipelago with the Brotato apworld usable, so
+you can run the unit tests or generate worlds, and a development version of Brotato with
+the client mod installed for easier development and debugging. You can open the Brotato
+project with GodotSteam 3.6 to build and run the game.
+
+For additional reading, see [darkly77's Modding Guide on
+Steam.](https://steamcommunity.com/sharedfiles/filedetails/?id=2931079751)
