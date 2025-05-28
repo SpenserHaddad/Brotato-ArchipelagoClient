@@ -26,6 +26,7 @@ func _init():
 		"entities/entity.gd", # Track when units are killed to drop consumables in debug mode
 		"singletons/run_data.gd", # Override XP rewards
 		"singletons/item_service.gd", # Drop AP consumables
+		"singletons/progress_data.gd", # Save AP runs for each character
 		"ui/menus/pages/main_menu.gd", # Add AP connect
 		# Detect when game is quit when the "Return to main menu" confirmation button is pressed
 		"ui/menus/pages/menu_confirm.gd",
