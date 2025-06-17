@@ -39,7 +39,7 @@ func _add_character(character_name: String):
 func _on_character_received(character: String):
 	_unlocked_characters.append(character)
 
-func _get_unlocked_elements(player_index: int)->Array:
+func _get_unlocked_elements(player_index: int) -> Array:
 	# Override to replace the unlocked characters with those received by AP
 	ModLoaderLog.debug("Getting unlocked characters", LOG_NAME)
 	_ensure_ap_client()
@@ -49,9 +49,7 @@ func _get_unlocked_elements(player_index: int)->Array:
 		return _unlocked_characters
 	else:
 		ModLoaderLog.debug("Returning default characters", LOG_NAME)
-		return ._get_unlocked_elements(player_index)
-
-
+		return._get_unlocked_elements(player_index)
 
 func _add_ap_progress_ui():
 	if _ap_client.connected_to_multiworld():
@@ -59,7 +57,7 @@ func _add_ap_progress_ui():
 			self,
 			"ApProgress",
 			_description_container.get_path(),
-			ApMultiWorldProgress.resource_path
+			 ApMultiWorldProgress.resource_path
 		)
 		_progress_panel = _description_container.find_node("ApProgress", false)
 		_progress_panel.set_client(_ap_client)

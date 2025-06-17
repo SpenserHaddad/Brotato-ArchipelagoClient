@@ -13,12 +13,12 @@ const LOG_NAME = "RampagingHippy-Archipelago/progress/waves"
 var waves_with_checks: PoolIntArray
 
 func _init(ap_client, game_state).(ap_client, game_state):
-	var _status = _game_state.connect("wave_finished", self, "_on_wave_finished")
+	pass
 
 func on_connected_to_multiworld():
 	waves_with_checks = PoolIntArray(_ap_client.slot_data["waves_with_checks"])
 
-func _on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool, _is_run_won: bool):
+func on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool, _is_run_won: bool):
 	ModLoaderLog.info("Wave %d completed: characters=%s, is_run_lost=%s, is_run_won=%s" %
 		[wave_number, ", ".join(character_ids), is_run_lost, _is_run_won], LOG_NAME)
 	if not is_run_lost and waves_with_checks.has(wave_number):

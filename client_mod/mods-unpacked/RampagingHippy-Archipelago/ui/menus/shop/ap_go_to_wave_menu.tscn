@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/shop/ap_go_to_wave_menu.gd" type="Script" id=1]
+[ext_resource path="res://ui/menus/global/my_menu_button.gd" type="Script" id=2]
+
+[node name="ApGoToWaveMenu" type="HBoxContainer"]
+script = ExtResource( 1 )
+
+[node name="MyMenuButton" type="Button" parent="."]
+margin_right = 88.0
+margin_bottom = 20.0
+text = "Go To Wave"
+script = ExtResource( 2 )
+
+[node name="WaveOptionButton" type="OptionButton" parent="."]
+unique_name_in_owner = true
+margin_left = 92.0
+margin_right = 121.0
+margin_bottom = 20.0

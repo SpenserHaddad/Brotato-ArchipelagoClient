@@ -1,6 +1,7 @@
 extends "res://ui/menus/pages/main_menu.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/main_menu"
+const ApConnectButton = preload("res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/archipelago_connect_button.tscn")
 
 onready var _archipelago_button
 onready var _ap_websocket_connection
@@ -32,7 +33,7 @@ func init():
 		bottom_neighbor.focus_neighbour_top = _archipelago_button.get_path()
 
 	if (
-			_ap_client.connected_to_multiworld() and 
+			_ap_client.connected_to_multiworld() and
 			ProgressData.saved_run_state.has_run_state and
 			_ap_client.config.data["has_saved_run"]
 		):
@@ -58,7 +59,7 @@ func _add_ap_button():
 		self,
 		"ArchipelagoButton",
 		parent_node.get_path(),
-		"res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/archipelago_connect_button.tscn"
+		ApConnectButton.resource_path
 	)
 	_archipelago_button = parent_node.get_node("ArchipelagoButton")
 	parent_node.move_child(_archipelago_button, 0)
