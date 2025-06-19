@@ -8,5 +8,6 @@ margin_right = 12.0
 margin_bottom = 20.0
 text = "Connect"
 icon = ExtResource( 2 )
+flat = false
 icon_align = 2
 script = ExtResource( 1 )

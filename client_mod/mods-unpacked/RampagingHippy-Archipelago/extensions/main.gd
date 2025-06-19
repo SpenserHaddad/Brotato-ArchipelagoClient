@@ -149,10 +149,10 @@ func on_consumable_picked_up(consumable: Node, player_index: int) -> void:
 			RunData.add_tracked_value(player_index, "item_bag", item_box_gold_effect)
 	.on_consumable_picked_up(consumable, player_index)
 
-func clean_up_room(is_last_wave: bool = false, is_run_lost: bool = false, is_run_won: bool = false) -> void:
-	_ap_client.game_state.notify_wave_finished(RunData.current_wave, is_run_lost, is_run_won)
+func clean_up_room() -> void:
+	_ap_client.game_state.notify_wave_finished(RunData.current_wave, _is_run_lost, _is_run_won)
 	# Exactly one of these will be set when the run is completed. Can't trust
 	# is_last_wave since it might be false on wave 20 if endless mode is selected.
-	if is_run_won or is_run_lost:
-		_ap_client.game_state.notify_run_finished(is_run_won)
-	.clean_up_room(is_last_wave, is_run_lost, is_run_won)
+	if _is_run_won or _is_run_lost:
+		_ap_client.game_state.notify_run_finished(_is_run_won)
+	.clean_up_room()
