@@ -54,7 +54,6 @@ def main():
         gdre_dir = Path(args.gdre_dir).resolve()
         os.environ["PATH"] = str(gdre_dir) + os.pathsep + os.environ["PATH"]
 
-    breakpoint()
     _ensure_gdre_tools()
 
     if output_dir.is_dir():
