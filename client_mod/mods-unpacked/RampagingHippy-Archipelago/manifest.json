@@ -1,7 +1,7 @@
 {
 	"name": "Archipelago",
 	"namespace": "RampagingHippy",
-	"version_number": "0.8.1",
+	"version_number": "0.8.2",
 	"description": "Archipelago MultiWorld Client",
 	"website_url": "https://github.com/SpenserHaddad/BrotatoArchipelago",
 	"dependencies": [],
@@ -27,10 +27,18 @@
 						"title": "Archipelago Server",
 						"type": "string",
 						"anyOf": [
-							{"format": "hostname"},
-							{"format": "idn-hostname"},
-							{"format": "ipv4"},
-							{"format": "ipv6"}
+							{
+								"format": "hostname"
+							},
+							{
+								"format": "idn-hostname"
+							},
+							{
+								"format": "ipv4"
+							},
+							{
+								"format": "ipv6"
+							}
 						],
 						"minLength": 1,
 						"default": "archipelago.gg"
