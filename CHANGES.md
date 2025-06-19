@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix inability to finish wave due to internal changes in Brotato 1.1.11.0 update.
+- Fix Archipelago button in main menu having transparent background.
+
 ## [0.8.1] - 2025-04-26
 
 ### Added
