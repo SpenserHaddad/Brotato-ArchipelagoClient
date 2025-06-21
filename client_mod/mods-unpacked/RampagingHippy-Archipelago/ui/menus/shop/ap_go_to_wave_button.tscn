@@ -4,7 +4,7 @@
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80.png" type="Texture" id=2]
 
 [node name="ap_go_to_wave_button" type="Button"]
-text = "Go To Wave"
+text = "Skip To Wave"
 icon = ExtResource( 2 )
 expand_icon = true
 script = ExtResource( 1 )
