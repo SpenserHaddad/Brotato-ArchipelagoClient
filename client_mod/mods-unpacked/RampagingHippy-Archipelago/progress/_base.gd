@@ -39,6 +39,7 @@ func _init(ap_client, game_state):
 	var _status = _ap_client.connect("connection_state_changed", self, "_on_client_connection_state_changed")
 	_status = _ap_client.connect("item_received", self, "on_item_received")
 	_status = _ap_client.connect("room_updated", self, "on_room_updated")
+	_status = _ap_client.connect("data_storage_updated", self, "on_data_storage_updated")
 	_status = _game_state.connect("run_started", self, "on_run_started")
 	_status = _game_state.connect("wave_finished", self, "on_wave_finished")
 
@@ -58,6 +59,9 @@ func on_run_started(_character_ids: Array):
 	pass
 
 func on_wave_finished(_wave_number: int, _character_ids: Array, _is_run_lost: bool, _is_run_won: bool):
+	pass
+
+func on_data_storage_updated(_key: String, _new_value, _original_valeu = null):
 	pass
 
 func _on_client_connection_state_changed(state: int, _error: int = 0):
