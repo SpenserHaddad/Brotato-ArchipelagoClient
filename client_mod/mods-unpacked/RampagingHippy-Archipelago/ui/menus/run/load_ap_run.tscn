@@ -46,11 +46,15 @@ custom_constants/margin_bottom = 32
 margin_left = 32.0
 margin_top = 32.0
 margin_right = 1888.0
-margin_bottom = 1696.0
+margin_bottom = 1626.0
 custom_constants/separation = 25
 alignment = 1
 
-[node name="MyMenuButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+margin_right = 1856.0
+margin_bottom = 65.0
+
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 margin_right = 267.0
 margin_bottom = 65.0
 grow_vertical = 0
@@ -59,28 +63,30 @@ size_flags_vertical = 0
 text = "MENU_BACK"
 script = ExtResource( 4 )
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
-margin_top = 90.0
-margin_right = 1856.0
-margin_bottom = 135.0
+anchor_right = 0.6
+margin_left = 271.0
+margin_top = 10.0
+margin_right = 664.0
+margin_bottom = 55.0
 custom_fonts/font = ExtResource( 5 )
 text = "Resume saved run?"
 align = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 self_modulate = Color( 1, 1, 1, 0.784314 )
-margin_left = 366.0
-margin_top = 160.0
-margin_right = 1490.0
-margin_bottom = 1574.0
+margin_left = 48.0
+margin_top = 90.0
+margin_right = 1808.0
+margin_bottom = 1504.0
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
 margin_left = 5.0
 margin_top = 5.0
-margin_right = 1119.0
+margin_right = 1755.0
 margin_bottom = 1409.0
 alignment = 1
 
@@ -89,11 +95,11 @@ unique_name_in_owner = true
 margin_top = 0.0
 margin_right = 400.0
 margin_bottom = 1404.0
-focus_neighbour_top = NodePath("../../../HBoxContainer3/RestartButton")
+focus_neighbour_top = NodePath("../../../HBoxContainer3/ResumeButton")
 
 [node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer"]
 margin_left = 404.0
-margin_right = 1114.0
+margin_right = 1750.0
 margin_bottom = 1404.0
 custom_constants/margin_right = 32
 custom_constants/margin_top = 32
@@ -103,13 +109,24 @@ custom_constants/margin_bottom = 32
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2"]
 margin_left = 32.0
 margin_top = 32.0
-margin_right = 678.0
+margin_right = 1314.0
 margin_bottom = 1372.0
 custom_constants/separation = 50
 
+[node name="GoldContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer" instance=ExtResource( 6 )]
+unique_name_in_owner = true
+visible = false
+anchor_left = 0.0
+anchor_right = 0.0
+margin_left = 0.0
+margin_top = 0.0
+margin_right = 1282.0
+margin_bottom = 64.0
+alignment = 0
+
 [node name="WeaponsContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer" instance=ExtResource( 11 )]
 unique_name_in_owner = true
-margin_right = 646.0
+margin_right = 1282.0
 margin_bottom = 175.0
 focus_neighbour_top = NodePath("../../../../../HBoxContainer3/NewRunButton")
 set_neighbour_top = true
@@ -118,7 +135,6 @@ reserve_row_count = 1
 
 [node name="ItemsContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer" instance=ExtResource( 11 )]
 unique_name_in_owner = true
-visible = false
 margin_top = 225.0
 margin_right = 1282.0
 margin_bottom = 718.0
@@ -130,38 +146,28 @@ set_neighbour_right = true
 reserve_column_count = 12
 reserve_row_count = 4
 
-[node name="GoldContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer" instance=ExtResource( 6 )]
-unique_name_in_owner = true
-anchor_left = 0.0
-anchor_right = 0.0
-margin_left = 0.0
-margin_top = 225.0
-margin_right = 646.0
-margin_bottom = 289.0
-alignment = 0
-
 [node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-margin_top = 1599.0
+margin_top = 1529.0
 margin_right = 1856.0
-margin_bottom = 1664.0
+margin_bottom = 1594.0
 size_flags_vertical = 2
 custom_constants/separation = 25
 alignment = 1
 
-[node name="RestartButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer3"]
+[node name="ResumeButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
-margin_left = 256.0
-margin_right = 591.0
+margin_left = 578.0
+margin_right = 895.0
 margin_bottom = 65.0
 rect_min_size = Vector2( 300, 0 )
 focus_neighbour_left = NodePath("../ExitButton")
-text = "MENU_RESTART"
+text = "MENU_RESUME"
 script = ExtResource( 4 )
 
 [node name="NewRunButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
-margin_left = 616.0
-margin_right = 974.0
+margin_left = 920.0
+margin_right = 1278.0
 margin_bottom = 65.0
 rect_min_size = Vector2( 300, 0 )
 text = "MENU_NEW_RUN"
@@ -169,11 +175,12 @@ script = ExtResource( 4 )
 
 [node name="ExitButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
+visible = false
 margin_left = 999.0
 margin_right = 1599.0
 margin_bottom = 65.0
 rect_min_size = Vector2( 600, 0 )
-focus_neighbour_right = NodePath("../RestartButton")
+focus_neighbour_right = NodePath("../ResumeButton")
 text = "MENU_RETURN_MAIN"
 script = ExtResource( 4 )
 
@@ -192,6 +199,6 @@ margin_right = 50.0
 margin_bottom = 50.0
 
 [connection signal="element_pressed" from="PopupManager" to="." method="_on_PopupManager_element_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer3/RestartButton" to="." method="_on_RestartButton_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer3/ResumeButton" to="." method="_on_ResumeButton_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer3/NewRunButton" to="." method="_on_NewRunButton_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer3/ExitButton" to="." method="_on_ExitButton_pressed"]
