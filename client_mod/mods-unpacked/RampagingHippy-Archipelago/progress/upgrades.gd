@@ -10,6 +10,8 @@
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApUpgradesProgress
 
+const SAVE_DATA_KEY = "progress_items"
+
 signal upgrade_received(upgrade_tier)
 
 # The number of upgrades processed in the current run. This is set at the start of each
@@ -62,3 +64,8 @@ func on_run_started(character_ids: Array):
 			Tier.LEGENDARY: 0
 			}
 		)
+
+func add_run_progress(progress: Dictionary):
+	progress[SAVE_DATA_KEY] = {
+		"processed_upgrades_by_player_by_tier": processed_upgrades_by_player_by_tier.duplicate()
+	}

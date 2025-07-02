@@ -43,6 +43,13 @@ func _init(ap_client, game_state):
 	_status = _game_state.connect("run_started", self, "on_run_started")
 	_status = _game_state.connect("wave_finished", self, "on_wave_finished")
 
+func add_run_progress(_progress: Dictionary):
+	## Add any run-specific state to the input dictionary.
+	##
+	## Intended to be used to build up AP-related data when saving a run. Caller is
+	## expected to mutate the input dictionary.
+	pass
+
 func on_item_received(_item_name: String, _item):
 	pass
 

@@ -22,6 +22,8 @@
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApItemsProgress
 
+const SAVE_DATA_KEY = "progress_items"
+
 signal item_received(item_tier)
 
 var received_items_by_tier: Dictionary = {
@@ -50,11 +52,10 @@ func process_ap_item(item_tier: int, player_index: int) -> int:
 	## The returned value won't necessarily match the current wave. The "<rarity> Item"
 	## items in the multiworld are meant to be evenly distributed over 20 waves, which
 	## is what this function handles.
-	
 	# Clamp the index access in case the player added more items with the admin console
 	# or something.
 	var wave_for_next_item = min(
-		processed_items_by_player_by_tier[player_index][item_tier], 
+		processed_items_by_player_by_tier[player_index][item_tier],
 		wave_per_game_item[item_tier].size()
 	)
 	processed_items_by_player_by_tier[player_index][item_tier] += 1
@@ -102,3 +103,8 @@ func on_run_started(character_ids: Array):
 				Tier.LEGENDARY: 0
 			}
 		)
+
+func add_run_progress(progress: Dictionary):
+	progress[SAVE_DATA_KEY] = {
+		"processed_items_by_player_by_tier": processed_items_by_player_by_tier
+	}
