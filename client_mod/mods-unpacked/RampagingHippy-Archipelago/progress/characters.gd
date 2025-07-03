@@ -88,7 +88,6 @@ func on_wave_finished(wave_number: int, character_ids: Array, _is_run_lost: bool
 		true
 	)
 
-
 func _on_session_data_storage_updated(key: String, new_value, _original_value = null):
 	if key == _character_run_progress_slot_data_key:
 		for character in character_info:
