@@ -40,6 +40,9 @@ var waves_progress
 var wins_progress
 var saved_runs_progress
 
+# Holder for all the trackers together so we can perform operations over all of them easily.
+var _progress_trackers: Array
+
 signal on_connection_refused(reasons)
 
 func _init(websocket_client, config).(websocket_client, config):
@@ -60,7 +63,34 @@ func _init(websocket_client, config).(websocket_client, config):
 	saved_runs_progress = ApSavedRunsProgress.new(self, game_state)
 	debug = GodotApClientDebugSettings.new()
 
+	_progress_trackers = [
+		character_progress
+		shop_slots_progress
+		shop_lock_buttons_progress
+		enemy_xp_progress
+		gold_progress
+		xp_progress
+		items_progress
+		upgrades_progress
+		common_loot_crate_progress
+		legendary_loot_crate_progress
+		waves_progress
+		wins_progress
+		saved_runs_progress
+	]
+
 	ModLoaderLog.debug("Brotato AP adapter initialized", _LOG_NAME)
+
+func get_run_specific_progress_data() -> Dictionary:
+	## Gather all run-specific data from the progress trackers into a single dictionary.
+	##
+	## This is meant to complement Brotato's built-in save data, so we can properly load
+	## the save and restore any progress data that's specific to that run.
+	data = {}
+	for progress in _progress_trackers:
+		run_data = progress.get_run_progress()
+		data.merge(run_data)
+	return data
 
 func connected_to_multiworld() -> bool:
 	# Convenience method to check if connected to AP, so other scenes don't need to 
