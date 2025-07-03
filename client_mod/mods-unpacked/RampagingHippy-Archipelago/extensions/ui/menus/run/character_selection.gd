@@ -3,7 +3,7 @@ extends "res://ui/menus/run/character_selection.gd"
 const LOG_NAME = "RampagingHippy-Archipelago/character_selection"
 const BrotatoApConstants = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/constants.gd")
 const ApMultiWorldProgress = preload("res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.tscn")
-const _ap_load_saved_run_scene = "/home/spenser/Projects/AP/BrotatoUnpacked/mods-unpacked/RampagingHippy-Archipelago/ui/menus/run/ap_load_saved_run.tscn"
+const _ap_load_saved_run_scene = "res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/run/load_ap_run.tscn"
 
 var _ap_client
 var _constants
@@ -22,7 +22,7 @@ func _on_selections_completed():
 	_ensure_ap_client()
 	if _ap_client.connected_to_multiworld() and RunData.get_player_count() == 1:
 		var character = _player_characters[0].my_id
-		var saved_run: Dictionary = _ap_client.saved_runs_progress.get_saved_run(character)
+		var saved_run: Dictionary = _ap_client.get_saved_run(character)
 		if saved_run:
 			ModLoaderLog.debug("Found AP saved run for character %s" % character, LOG_NAME)
 			# Set the selected character so the next scene can get them easily.
