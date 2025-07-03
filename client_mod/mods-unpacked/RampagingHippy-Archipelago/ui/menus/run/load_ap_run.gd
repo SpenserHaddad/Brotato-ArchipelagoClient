@@ -46,7 +46,7 @@ func _ready():
 	_popup_manager.connect_inventory_container(_items_container)
 	
 	_popup_manager.add_stat_popup(_stat_popup, 0)
-	#_popup_manager.connect_stats_container(_stats_container)
+	_popup_manager.connect_stats_container(_stats_container)
 
 	var weapons = RunData.players_data[0].weapons
 	var items = RunData.players_data[0].items
@@ -66,5 +66,5 @@ func _on_NewRunButton_pressed():
 func _on_ResumeButton_pressed():
 	RunData.resume_from_state(_saved_run)
 	RunData.resumed_from_state_in_shop = true
-	var scene:= "res://ui/menus/shop/shop.tscn"
+	var scene := "res://ui/menus/shop/shop.tscn"
 	var _error = get_tree().change_scene(scene)

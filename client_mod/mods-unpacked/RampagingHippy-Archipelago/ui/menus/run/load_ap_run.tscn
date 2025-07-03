@@ -65,11 +65,11 @@ script = ExtResource( 4 )
 
 [node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
-anchor_right = 0.6
 margin_left = 271.0
 margin_top = 10.0
-margin_right = 664.0
+margin_right = 1700.0
 margin_bottom = 55.0
+size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 5 )
 text = "Resume saved run?"
 align = 1
