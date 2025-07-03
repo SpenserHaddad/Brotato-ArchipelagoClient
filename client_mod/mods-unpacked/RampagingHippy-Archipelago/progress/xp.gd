@@ -88,10 +88,8 @@ func on_run_started(_character_ids: Array):
 		xp_given = 0
 	give_player_unreceived_xp()
 
-func add_run_progress(progress: Dictionary):
-	progress[SAVE_DATA_KEY] = {
-		"xp_given": xp_given
-	}
+func get_run_progress() -> Dictionary:
+	return {SAVE_DATA_KEY: {"xp_given": xp_given}}
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value = null):
 	if key == _received_xp_data_storage_key:

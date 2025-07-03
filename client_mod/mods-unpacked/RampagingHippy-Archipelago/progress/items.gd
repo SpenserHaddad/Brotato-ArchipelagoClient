@@ -104,7 +104,9 @@ func on_run_started(character_ids: Array):
 			}
 		)
 
-func add_run_progress(progress: Dictionary):
-	progress[SAVE_DATA_KEY] = {
-		"processed_items_by_player_by_tier": processed_items_by_player_by_tier
+func get_run_progress() -> Dictionary:
+	return {
+		SAVE_DATA_KEY: {
+			"processed_items_by_player_by_tier": processed_items_by_player_by_tier.duplicate()
+		}
 	}
