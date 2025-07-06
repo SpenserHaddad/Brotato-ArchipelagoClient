@@ -199,6 +199,7 @@ margin_right = 50.0
 margin_bottom = 50.0
 
 [connection signal="element_pressed" from="PopupManager" to="." method="_on_PopupManager_element_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_BackButton_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer3/ResumeButton" to="." method="_on_ResumeButton_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer3/NewRunButton" to="." method="_on_NewRunButton_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer3/ExitButton" to="." method="_on_ExitButton_pressed"]
