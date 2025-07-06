@@ -14,6 +14,7 @@ onready var _ap_client
 
 var _saved_run
 
+
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_ap_client = mod_node.brotato_ap_client
@@ -60,7 +61,17 @@ func _ready():
 
 
 func _on_NewRunButton_pressed():
-	pass # Replace with function body.
+	var player_characters = []
+	for player_index in RunData.get_player_count():
+		player_characters.push_back(RunData.get_player_character(player_index))
+	RunData.revert_all_selections()
+	for player_index in RunData.get_player_count():
+		RunData.add_character(player_characters[player_index], player_index)
+
+	if RunData.some_player_has_weapon_slots():
+		get_tree().change_scene(MenuData.weapon_selection_scene)
+	else:
+		get_tree().change_scene(MenuData.difficulty_selection_scene)
 
 
 func _on_ResumeButton_pressed():
@@ -68,3 +79,10 @@ func _on_ResumeButton_pressed():
 	RunData.resumed_from_state_in_shop = true
 	var scene := "res://ui/menus/shop/shop.tscn"
 	var _error = get_tree().change_scene(scene)
+
+
+func _on_BackButton_pressed():
+	for player_index in RunData.get_player_count():
+		Utils.last_elt_selected[player_index] = RunData.get_player_character(player_index)
+	RunData.revert_all_selections()
+	get_tree().change_scene(MenuData.character_selection_scene)
