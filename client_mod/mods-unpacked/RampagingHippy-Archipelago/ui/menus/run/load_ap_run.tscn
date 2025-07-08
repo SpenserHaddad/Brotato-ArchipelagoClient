@@ -58,6 +58,7 @@ margin_bottom = 65.0
 margin_right = 267.0
 margin_bottom = 65.0
 grow_vertical = 0
+focus_neighbour_top = NodePath("../../HBoxContainer3/ResumeButton")
 size_flags_horizontal = 0
 size_flags_vertical = 0
 text = "MENU_BACK"
@@ -113,25 +114,41 @@ margin_right = 1314.0
 margin_bottom = 1372.0
 custom_constants/separation = 50
 
-[node name="GoldContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer" instance=ExtResource( 6 )]
-unique_name_in_owner = true
-visible = false
-anchor_left = 0.0
-anchor_right = 0.0
-margin_left = 0.0
-margin_top = 0.0
-margin_right = 1282.0
-margin_bottom = 64.0
-alignment = 0
-
-[node name="WeaponsContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer" instance=ExtResource( 11 )]
-unique_name_in_owner = true
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer"]
 margin_right = 1282.0
 margin_bottom = 175.0
-focus_neighbour_top = NodePath("../../../../../HBoxContainer3/NewRunButton")
+size_flags_horizontal = 9
+theme = ExtResource( 2 )
+
+[node name="WeaponsContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer/HBoxContainer" instance=ExtResource( 11 )]
+unique_name_in_owner = true
+margin_right = 646.0
+margin_bottom = 175.0
+focus_neighbour_top = NodePath("../../../../../../HBoxContainer/BackButton")
 set_neighbour_top = true
 reserve_column_count = 6
 reserve_row_count = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer/HBoxContainer"]
+margin_left = 650.0
+margin_right = 791.0
+margin_bottom = 175.0
+
+[node name="WaveLabel" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+margin_right = 141.0
+margin_bottom = 45.0
+text = "Wave 1"
+
+[node name="GoldContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource( 6 )]
+unique_name_in_owner = true
+anchor_left = 0.0
+anchor_right = 0.0
+margin_left = 0.0
+margin_top = 49.0
+margin_right = 141.0
+margin_bottom = 113.0
+alignment = 0
 
 [node name="ItemsContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer" instance=ExtResource( 11 )]
 unique_name_in_owner = true
@@ -139,7 +156,8 @@ margin_top = 225.0
 margin_right = 1282.0
 margin_bottom = 718.0
 focus_neighbour_left = NodePath("../../../StatsContainer")
-focus_neighbour_bottom = NodePath("../../../../../HBoxContainer3/NewRunButton")
+focus_neighbour_top = NodePath("../HBoxContainer/WeaponsContainer")
+focus_neighbour_bottom = NodePath("../../../../../HBoxContainer3/ResumeButton")
 size_flags_vertical = 5
 set_neighbour_bottom = true
 set_neighbour_right = true
@@ -160,7 +178,7 @@ margin_left = 578.0
 margin_right = 895.0
 margin_bottom = 65.0
 rect_min_size = Vector2( 300, 0 )
-focus_neighbour_left = NodePath("../ExitButton")
+focus_neighbour_bottom = NodePath("../../HBoxContainer/BackButton")
 text = "MENU_RESUME"
 script = ExtResource( 4 )
 
@@ -170,18 +188,8 @@ margin_left = 920.0
 margin_right = 1278.0
 margin_bottom = 65.0
 rect_min_size = Vector2( 300, 0 )
+focus_neighbour_bottom = NodePath("../../HBoxContainer/BackButton")
 text = "MENU_NEW_RUN"
-script = ExtResource( 4 )
-
-[node name="ExitButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer3"]
-unique_name_in_owner = true
-visible = false
-margin_left = 999.0
-margin_right = 1599.0
-margin_bottom = 65.0
-rect_min_size = Vector2( 600, 0 )
-focus_neighbour_right = NodePath("../ResumeButton")
-text = "MENU_RETURN_MAIN"
 script = ExtResource( 4 )
 
 [node name="ItemPopup" parent="." instance=ExtResource( 13 )]
@@ -202,4 +210,3 @@ margin_bottom = 50.0
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/BackButton" to="." method="_on_BackButton_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer3/ResumeButton" to="." method="_on_ResumeButton_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer3/NewRunButton" to="." method="_on_NewRunButton_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer3/ExitButton" to="." method="_on_ExitButton_pressed"]
