@@ -12,8 +12,8 @@ onready var _popup_manager: PopupManager = $PopupManager
 
 onready var _ap_client
 
-var _saved_run
-
+var _saved_game_state
+var _saved_ap_state
 
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
@@ -25,8 +25,9 @@ func _ready():
 	var saved_run_raw = _ap_client.saved_runs_progress.get_saved_run(player_character.my_id)
 	
 	var loader_v2 = ProgressDataLoaderV2.new("")
-	_saved_run = loader_v2.deserialize_run_state(saved_run_raw)
-	var player_data = _saved_run["players_data"][0]
+	_saved_game_state = loader_v2.deserialize_run_state(saved_run_raw["game_state"])
+	_saved_ap_state = saved_run_raw["ap_state"]
+	var player_data = _saved_game_state["players_data"][0]
 	
 	RunData.players_data[0].current_level = player_data.current_level
 	for item in player_data.items:
@@ -57,13 +58,16 @@ func _ready():
 	_gold_container.update_value(player_data.gold)
 
 
-	_background.texture = ZoneService.get_zone_data(_saved_run.current_zone).ui_background
+	_background.texture = ZoneService.get_zone_data(_saved_game_state.current_zone).ui_background
 
 
 func _on_NewRunButton_pressed():
+	# Clear our changes for the load preview so we can resume the normal new game flow.
 	var player_characters = []
 	for player_index in RunData.get_player_count():
 		player_characters.push_back(RunData.get_player_character(player_index))
+	
+	
 	RunData.revert_all_selections()
 	for player_index in RunData.get_player_count():
 		RunData.add_character(player_characters[player_index], player_index)
@@ -75,9 +79,11 @@ func _on_NewRunButton_pressed():
 
 
 func _on_ResumeButton_pressed():
-	RunData.resume_from_state(_saved_run)
+	ProgressData.saved_run_state = _saved_game_state
+	RunData.resume_from_state(_saved_game_state)
 	RunData.resumed_from_state_in_shop = true
-	var scene := "res://ui/menus/shop/shop.tscn"
+	_ap_client.load_run_specific_progress_data(_saved_ap_state)
+	var scene = "res://ui/menus/shop/shop.tscn"
 	var _error = get_tree().change_scene(scene)
 
 
