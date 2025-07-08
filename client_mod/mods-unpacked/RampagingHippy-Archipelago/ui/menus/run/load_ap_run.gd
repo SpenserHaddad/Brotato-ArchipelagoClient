@@ -5,6 +5,7 @@ onready var _weapons_container = $"%WeaponsContainer"
 onready var _items_container = $"%ItemsContainer"
 onready var _stats_container = $"%StatsContainer"
 onready var _gold_container = $"%GoldContainer"
+onready var _wave_label = $"%WaveLabel"
 onready var _background = $"%Background"
 onready var _stat_popup = $StatPopup
 onready var _item_popup = $ItemPopup
@@ -56,10 +57,13 @@ func _ready():
 	_weapons_container.set_data("WEAPONS", Category.WEAPON, weapons)
 	_items_container.set_data("ITEMS", Category.ITEM, items, true, true)
 	_gold_container.update_value(player_data.gold)
-
-
+	_wave_label.text = "Wave %d" % _saved_game_state["current_wave"]
 	_background.texture = ZoneService.get_zone_data(_saved_game_state.current_zone).ui_background
 
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		get_tree().change_scene(MenuData.character_selection_scene)
+		return
 
 func _on_NewRunButton_pressed():
 	# Clear our changes for the load preview so we can resume the normal new game flow.
