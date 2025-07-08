@@ -31,11 +31,12 @@ func on_connected_to_multiworld():
 func get_saved_run(character: String) -> Dictionary:
 	return _saved_runs.get(character, {})
 
-func save_character_run(character: String, save_data: Dictionary):
-	_saved_runs[character] = save_data
-	_ap_client.set_value(_saved_runs_data_storage_key, "update", {character: save_data})
+func save_character_run(character: String, game_state: Dictionary, ap_state: Dictionary):
+	var combined_save_data = {"game_state": game_state, "ap_state": ap_state}
+	_saved_runs[character] = combined_save_data
+	_ap_client.set_value(_saved_runs_data_storage_key, "update", {character: combined_save_data})
 
 func on_data_storage_updated(key: String, new_value, _original_value = null):
 	if key == _saved_runs_data_storage_key:
-		ModLoaderLog.info("Received updated saved runs from %s:  %s" % [key, new_value], LOG_NAME)
+		ModLoaderLog.info("Received updated saved runs from %s", LOG_NAME)
 		_saved_runs = new_value

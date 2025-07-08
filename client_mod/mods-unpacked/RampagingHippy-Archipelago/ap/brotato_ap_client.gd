@@ -81,16 +81,21 @@ func _init(websocket_client, config).(websocket_client, config):
 
 	ModLoaderLog.debug("Brotato AP adapter initialized", _LOG_NAME)
 
-func get_run_specific_progress_data() -> Dictionary:
+
+func export_run_specific_progress_data() -> Dictionary:
 	## Gather all run-specific data from the progress trackers into a single dictionary.
 	##
 	## This is meant to complement Brotato's built-in save data, so we can properly load
 	## the save and restore any progress data that's specific to that run.
 	var data = {}
 	for progress in _progress_trackers:
-		var run_data = progress.get_run_progress()
+		var run_data = progress.export_run_specific_progress_data()
 		data.merge(run_data)
 	return data
+
+func load_run_specific_progress_data(data: Dictionary):
+	for progress in _progress_trackers:
+		progress.load_run_specific_progress_data(data)
 
 func connected_to_multiworld() -> bool:
 	# Convenience method to check if connected to AP, so other scenes don't need to 
