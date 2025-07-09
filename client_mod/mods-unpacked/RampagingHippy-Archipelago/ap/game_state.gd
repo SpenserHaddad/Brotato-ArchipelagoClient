@@ -42,10 +42,10 @@ func notify_run_started(character_ids: Array):
 	active_characters = character_ids
 	var character_names = ", ".join(active_characters)
 	if is_in_ap_run():
-		ModLoaderLog.info("AP run started with characters; %s" % character_names , LOG_NAME)
+		ModLoaderLog.info("AP run started with characters; %s" % character_names, LOG_NAME)
 		emit_signal("run_started", active_characters)
 	else:
-		ModLoaderLog.info("Non-AP run started with characters; %s" % character_names , LOG_NAME)
+		ModLoaderLog.info("Non-AP run started with characters; %s" % character_names, LOG_NAME)
 
 func notify_run_finished(won_run: bool):
 	## Called by the game extensions when a run is finished, whether won or lost.
