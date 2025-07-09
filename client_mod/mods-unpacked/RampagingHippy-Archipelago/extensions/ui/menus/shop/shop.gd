@@ -4,6 +4,8 @@ const LOG_NAME = "RampagingHippy-Archipelago/ui/menus/shop/shop"
 const ApGoToWaveMenu = preload("res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/shop/ap_go_to_wave_menu.tscn")
 
 onready var _ap_client
+onready var _ap_go_to_wave_menu
+onready var _original_current_wave: int
 
 
 func _ready():
@@ -11,6 +13,8 @@ func _ready():
 	_ap_client = mod_node.brotato_ap_client
 	if _ap_client.connected_to_multiworld():
 		_add_ap_go_to_wave_button()
+	_ap_go_to_wave_menu.connect("skip_wave_requested", self, "_on_skip_wave_requested")
+	_original_current_wave = RunData.current_wave
 
 func _add_ap_go_to_wave_button():
 	var parent_node: Container = $Content/MarginContainer/HBoxContainer/VBoxContainer2
@@ -18,3 +22,20 @@ func _add_ap_go_to_wave_button():
 	ModLoaderMod.append_node_in_scene(
 		self, "ApGoToWave", parent_node.get_path(), ApGoToWaveMenu.resource_path
 	)
+	_ap_go_to_wave_menu = parent_node.get_node("ApGoToWave")
+	_ap_go_to_wave_menu.focus_neighbour_top = _go_button.get_path()
+	_go_button.focus_neighbour_bottom = _ap_go_to_wave_menu.get_path()
+
+func _on_GoButton_pressed(player_index: int):
+	if _ap_go_to_wave_menu.skip_to_wave > 0:
+		ModLoaderLog.debug("Skipping to wave %d" % _ap_go_to_wave_menu.skip_to_wave, LOG_NAME)
+		# The normal "Go to next wave" routine increments the current wave by 1.
+		# We don't have any better control over the next wave than setting the
+		# value to one less than our desired wave and letting the game handle the
+		# rest. It's a bit of a hack.
+		RunData.current_wave = _ap_go_to_wave_menu.skip_to_wave - 1
+	else:
+		RunData.current_wave = _original_current_wave
+
+	# Trigger the normal go to next wave flow. Only player 1 has a skip to wave button.
+	._on_GoButton_pressed(player_index)
