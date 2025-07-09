@@ -20,12 +20,13 @@ func init_char_select_inventory(ap_client):
 	
 func set_elements(elements: Array, reverse_order: bool = false, replace: bool = true, prioritize_gameplay_elements: bool = false) -> void:
 	.set_elements(elements, reverse_order, replace, prioritize_gameplay_elements)
-	var ap_character_info = _ap_client.character_progress.character_info
-	var children = get_children()
-	for child in children:
-		if child.item != null:
-			var character_id = _constants.CHARACTER_ID_TO_NAME.get(child.item.my_id)
-			if character_id != null:
-				var won_run = ap_character_info[character_id].won_run
-	#			ModLoaderLog.debug("element.my_id=%s, icon=%s, is_locked=%s, won_run=%s" % [element.my_id, element.icon.load_path, element.is_locked, won_run], LOG_NAME)
-				child.set_character_info(won_run)
+	if _ap_client.connected_to_multiworld():
+		var ap_character_info = _ap_client.character_progress.character_info
+		var children = get_children()
+		for child in children:
+			if child.item != null:
+				var character_id = _constants.CHARACTER_ID_TO_NAME.get(child.item.my_id)
+				if character_id != null:
+					var won_run = ap_character_info[character_id].won_run
+		#			ModLoaderLog.debug("element.my_id=%s, icon=%s, is_locked=%s, won_run=%s" % [element.my_id, element.icon.load_path, element.is_locked, won_run], LOG_NAME)
+					child.set_character_info(won_run)
