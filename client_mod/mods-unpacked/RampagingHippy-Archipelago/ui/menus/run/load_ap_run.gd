@@ -7,6 +7,7 @@ onready var _stats_container = $"%StatsContainer"
 onready var _gold_container = $"%GoldContainer"
 onready var _wave_label = $"%WaveLabel"
 onready var _background = $"%Background"
+onready var _resume_button = $"%ResumeButton"
 onready var _stat_popup = $StatPopup
 onready var _item_popup = $ItemPopup
 onready var _popup_manager: PopupManager = $PopupManager
@@ -15,6 +16,8 @@ onready var _ap_client
 
 var _saved_game_state
 var _saved_ap_state
+
+var _saved_game_characters: Array = []
 
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
@@ -59,6 +62,8 @@ func _ready():
 	_gold_container.update_value(player_data.gold)
 	_wave_label.text = "Wave %d" % _saved_game_state["current_wave"]
 	_background.texture = ZoneService.get_zone_data(_saved_game_state.current_zone).ui_background
+	
+	_resume_button.grab_focus()
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
@@ -70,8 +75,7 @@ func _on_NewRunButton_pressed():
 	var player_characters = []
 	for player_index in RunData.get_player_count():
 		player_characters.push_back(RunData.get_player_character(player_index))
-	
-	
+
 	RunData.revert_all_selections()
 	for player_index in RunData.get_player_count():
 		RunData.add_character(player_characters[player_index], player_index)
@@ -83,6 +87,11 @@ func _on_NewRunButton_pressed():
 
 
 func _on_ResumeButton_pressed():
+	var characters = []
+	for player_idx in RunData.get_player_count():
+		characters.push_back(RunData.get_player_character(player_idx).my_id)
+	_ap_client.game_state.notify_run_started(characters)
+	
 	ProgressData.saved_run_state = _saved_game_state
 	RunData.resume_from_state(_saved_game_state)
 	RunData.resumed_from_state_in_shop = true
