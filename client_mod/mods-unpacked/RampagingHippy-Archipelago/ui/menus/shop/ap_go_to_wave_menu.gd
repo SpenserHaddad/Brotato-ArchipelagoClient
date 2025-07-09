@@ -2,7 +2,8 @@ extends HBoxContainer
 
 const BrotatoApConstants = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/constants.gd")
 
-onready var WaveOptionButton = $WaveOptionButton
+onready var _skip_to_wave_button = $SkipToWaveButton
+onready var _wave_select_button = $WaveSelectButton
 
 onready var _ap_client
 
@@ -19,14 +20,20 @@ func _ready():
 		var player_character_id = RunData.get_player_character(i).my_id
 		var player_character = constants.CHARACTER_ID_TO_NAME[player_character_id]
 		var max_wave_completed_by_char = ap_character_info[player_character].max_wave_completed
-		if max_wave_completed_by_char < min_wave_completed_by_all_chars:
+		if max_wave_completed_by_char < min_wave_completed_by_all_chars or min_wave_completed_by_all_chars == 0:
 			min_wave_completed_by_all_chars = max_wave_completed_by_char
 
 	for w in range(1, RunData.nb_of_waves + 1):
 		var can_select_wave = w <= min_wave_completed_by_all_chars
-		WaveOptionButton.add_item(String(w))
-		WaveOptionButton.set_item_disabled(w - 1, not can_select_wave)
+		_wave_select_button.add_item(String(w))
+		_wave_select_button.set_item_disabled(w - 1, not can_select_wave)
 		
 
 	if min_wave_completed_by_all_chars > 0:
-		WaveOptionButton.select(String(min_wave_completed_by_all_chars))
+		_wave_select_button.select(min_wave_completed_by_all_chars)
+		
+	# Disable the control if there's no future waves to skip to
+	if min_wave_completed_by_all_chars <= (RunData.current_wave + 1):
+		_wave_select_button.disabled = true
+		_skip_to_wave_button.disabled = true
+		
