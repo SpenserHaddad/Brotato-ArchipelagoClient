@@ -4,15 +4,17 @@ const BrotatoApConstants = preload("res://mods-unpacked/RampagingHippy-Archipela
 
 onready var _skip_to_wave_button = $SkipToWaveButton
 onready var _wave_select_button = $WaveSelectButton
-
 onready var _ap_client
+onready var _normal_next_wave
+
+var skip_to_wave = -1
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_ap_client = mod_node.brotato_ap_client
 	var constants = BrotatoApConstants.new()
-	
+		
 	var min_wave_completed_by_all_chars: int = 0
 	var ap_character_info = _ap_client.character_progress.character_info
 	
@@ -24,16 +26,20 @@ func _ready():
 			min_wave_completed_by_all_chars = max_wave_completed_by_char
 
 	for w in range(1, RunData.nb_of_waves + 1):
-		var can_select_wave = w <= min_wave_completed_by_all_chars
+		var can_select_wave = w <= min_wave_completed_by_all_chars and w > RunData.current_wave
 		_wave_select_button.add_item(String(w))
 		_wave_select_button.set_item_disabled(w - 1, not can_select_wave)
 		
-
 	if min_wave_completed_by_all_chars > 0:
-		_wave_select_button.select(min_wave_completed_by_all_chars)
+		_wave_select_button.select(min_wave_completed_by_all_chars - 1)
+	
+	_normal_next_wave = RunData.current_wave + 1
 		
 	# Disable the control if there's no future waves to skip to
-	if min_wave_completed_by_all_chars <= (RunData.current_wave + 1):
+	if min_wave_completed_by_all_chars <= _normal_next_wave:
 		_wave_select_button.disabled = true
 		_skip_to_wave_button.disabled = true
-		
+
+func _on_SkipToWaveButton_toggled(button_pressed):
+	if button_pressed:
+		skip_to_wave = _wave_select_button.selected + 1
