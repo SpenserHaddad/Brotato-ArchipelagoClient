@@ -96,3 +96,5 @@ func _on_ContinueButton_pressed() -> void:
 				return
 			RunData.add_character(player_character, player_idx)
 		get_tree().change_scene(_ap_load_saved_run_scene)
+	else:
+		._on_ContinueButton_pressed()
