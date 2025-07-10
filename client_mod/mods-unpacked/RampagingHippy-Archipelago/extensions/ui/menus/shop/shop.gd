@@ -14,7 +14,7 @@ func _ready():
 	if _ap_client.connected_to_multiworld():
 		_add_ap_go_to_wave_button()
 		_ap_go_to_wave_menu.connect("skip_to_wave_toggled", self, "_on_skip_to_wave_toggled")
-		_original_current_wave = RunData.current_wave
+	_original_current_wave = RunData.current_wave
 
 func _add_ap_go_to_wave_button():
 	var parent_node: Container = $Content/MarginContainer/HBoxContainer/VBoxContainer2
@@ -38,7 +38,7 @@ func _on_skip_to_wave_toggled(enabled: bool):
 	go_button.text = tr(go_text) + " (" + Text.text("WAVE", [str(new_next_wave)]) + ")"
 
 func _on_GoButton_pressed(player_index: int):
-	if _ap_go_to_wave_menu.skip_to_wave > 0:
+	if _ap_client.connected_to_multiworld() and _ap_go_to_wave_menu.skip_to_wave > 0:
 		ModLoaderLog.debug("Skipping to wave %d" % _ap_go_to_wave_menu.skip_to_wave, LOG_NAME)
 		# The normal "Go to next wave" routine increments the current wave by 1.
 		# We don't have any better control over the next wave than setting the
