@@ -67,8 +67,7 @@ func _ready():
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
-		get_tree().change_scene(MenuData.character_selection_scene)
-		return
+		_go_back()
 
 func _on_NewRunButton_pressed():
 	# Clear our changes for the load preview so we can resume the normal new game flow.
@@ -99,9 +98,11 @@ func _on_ResumeButton_pressed():
 	var scene = "res://ui/menus/shop/shop.tscn"
 	var _error = get_tree().change_scene(scene)
 
-
-func _on_BackButton_pressed():
+func _go_back():
 	for player_index in RunData.get_player_count():
 		Utils.last_elt_selected[player_index] = RunData.get_player_character(player_index)
 	RunData.revert_all_selections()
 	get_tree().change_scene(MenuData.character_selection_scene)
+
+func _on_BackButton_pressed():
+	_go_back()
