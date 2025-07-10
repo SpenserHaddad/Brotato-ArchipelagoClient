@@ -28,6 +28,9 @@ func init():
 		_archipelago_button.focus_neighbour_top = quit_button.get_path()
 		_archipelago_button.focus_neighbour_bottom = bottom_neighbor.get_path()
 		bottom_neighbor.focus_neighbour_top = _archipelago_button.get_path()
+		# For some reason, the neighbors don't update unless focus on the AP button first.
+		# Force the focus to the AP button to make nav work, which also is nice for letting the
+		# user connect to a server first if desired.
 		_archipelago_button.grab_focus()
 
 	if _ap_client.connected_to_multiworld():
@@ -61,6 +64,7 @@ func _add_ap_button():
 	_archipelago_button = parent_node.get_node("ArchipelagoButton")
 	parent_node.move_child(_archipelago_button, 0)
 	_archipelago_button.connect("pressed", self, "_on_MainMenu_ap_connect_button_pressed")
+	_archipelago_button.set_focus_mode(FOCUS_ALL)
 
 func _set_ap_button_icon(ws_state: int):
 	var icon: Texture
