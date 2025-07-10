@@ -38,8 +38,10 @@ func _init():
 		# Show character win status in inventory elements
 		"ui/menus/shop/inventory.gd",
 		# Show "Go To Wave" Button (single player and coop, respectively)
+		"ui/menus/shop/base_shop.gd",
 		"ui/menus/shop/shop.gd",
-		"ui/menus/shop/coop_shop_player_container.gd",
+		"ui/menus/shop/coop_shop.gd",
+		# "ui/menus/shop/coop_shop_player_container.gd",
 		# Enable/Disable shop item lock buttons
 		"ui/menus/shop/shop_items_container.gd",
 		"ui/menus/shop/shop_item.gd",

@@ -1,4 +1,4 @@
-## Extension for the single-player Shop
+## Extension for the coop Shop
 ##
 ## THIS FILE IS INTENTIONALLY EMPTY, DO NOT REMOVE.
 ## For whatever reason, if we don't define this extension, then various Parser Errors
@@ -10,4 +10,4 @@
 ## the extensions work as normal, which is weird but not much we can do about it.
 ##
 ## See the comment in the base_shop extension for further details.
-extends "res://ui/menus/shop/shop.gd"
+extends "res://ui/menus/shop/coop_shop.gd"
