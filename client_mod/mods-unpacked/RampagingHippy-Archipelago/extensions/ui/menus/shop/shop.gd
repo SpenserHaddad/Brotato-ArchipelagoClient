@@ -13,8 +13,8 @@ func _ready():
 	_ap_client = mod_node.brotato_ap_client
 	if _ap_client.connected_to_multiworld():
 		_add_ap_go_to_wave_button()
-	_ap_go_to_wave_menu.connect("skip_wave_requested", self, "_on_skip_wave_requested")
-	_original_current_wave = RunData.current_wave
+		_ap_go_to_wave_menu.connect("skip_to_wave_toggled", self, "_on_skip_to_wave_toggled")
+		_original_current_wave = RunData.current_wave
 
 func _add_ap_go_to_wave_button():
 	var parent_node: Container = $Content/MarginContainer/HBoxContainer/VBoxContainer2
@@ -22,9 +22,20 @@ func _add_ap_go_to_wave_button():
 	ModLoaderMod.append_node_in_scene(
 		self, "ApGoToWave", parent_node.get_path(), ApGoToWaveMenu.resource_path
 	)
+	var go_button = _get_go_button(0)
 	_ap_go_to_wave_menu = parent_node.get_node("ApGoToWave")
-	_ap_go_to_wave_menu.focus_neighbour_top = _go_button.get_path()
-	_go_button.focus_neighbour_bottom = _ap_go_to_wave_menu.get_path()
+	_ap_go_to_wave_menu.focus_neighbour_top = go_button.get_path()
+	go_button.set_focus_neighbour(MARGIN_BOTTOM, NodePath("../ApGoToWave/SkipToWaveButton"))
+
+func _on_skip_to_wave_toggled(enabled: bool):
+	var new_next_wave: int
+	if enabled:
+		new_next_wave = _ap_go_to_wave_menu.skip_to_wave
+	else:
+		new_next_wave = RunData.current_wave + 1
+			
+	var go_button = _get_go_button(0)
+	go_button.text = tr(go_text) + " (" + Text.text("WAVE", [str(new_next_wave)]) + ")"
 
 func _on_GoButton_pressed(player_index: int):
 	if _ap_go_to_wave_menu.skip_to_wave > 0:

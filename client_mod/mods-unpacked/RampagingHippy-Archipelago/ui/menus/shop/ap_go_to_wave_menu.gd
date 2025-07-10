@@ -2,6 +2,8 @@ extends HBoxContainer
 
 const BrotatoApConstants = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/constants.gd")
 
+signal skip_to_wave_toggled(enabled)
+
 onready var _skip_to_wave_button = $SkipToWaveButton
 onready var _wave_select_button = $WaveSelectButton
 onready var _ap_client
@@ -43,3 +45,13 @@ func _ready():
 func _on_SkipToWaveButton_toggled(button_pressed):
 	if button_pressed:
 		skip_to_wave = _wave_select_button.selected + 1
+	else:
+		skip_to_wave = -1
+	emit_signal("skip_to_wave_toggled", button_pressed)
+
+
+func _on_WaveSelectButton_item_selected(index):
+	var skip_enabled = _skip_to_wave_button.pressed
+	if skip_enabled:
+		skip_to_wave = index + 1
+	emit_signal("skip_to_wave_toggled", skip_enabled)
