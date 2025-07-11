@@ -272,12 +272,15 @@ class BrotatoWorld(World):
 
         self.multiworld.itempool += item_pool
 
-    def pre_fill(self) -> None:
-        # Place "Run Won" items at the Run Win event locations
+        # Place "Run Won" items at the Run Won locations. Do this before fill happens so
+        # plandos can't place items here.
         for character in self._include_characters:
             item: BrotatoItem = self.create_item(ItemName.RUN_COMPLETE)
             run_won_location = RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)
             self.multiworld.get_location(run_won_location, self.player).place_locked_item(item)
+
+    def pre_fill(self) -> None:
+        pass
 
     def get_filler_item_name(self) -> str:
         return self.random.choice(self._filler_items)
