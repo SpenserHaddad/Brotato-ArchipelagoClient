@@ -13,6 +13,7 @@ extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApXpProgress
 
 const LOG_NAME = "RampagingHippy-Archipelago/progress/xp"
+const SAVE_DATA_KEY = "progress_xp"
 
 signal xp_received
 
@@ -85,6 +86,13 @@ func on_run_started(_character_ids: Array):
 	if xp_reward_mode == constants.XpRewardMode.ALL_EVERY_TIME:
 		# Reset the received XP so we give the player all gold items again.
 		xp_given = 0
+	give_player_unreceived_xp()
+
+func export_run_specific_progress_data() -> Dictionary:
+	return {SAVE_DATA_KEY: {"xp_given": xp_given}}
+
+func load_run_specific_progress_data(data: Dictionary):
+	xp_given = data[SAVE_DATA_KEY]["xp_given"]
 	give_player_unreceived_xp()
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value = null):

@@ -46,3 +46,21 @@ randomizer settings.
 - Bonus XP, which is granted to your current run or the next run you play after
   receiving the item.
 - Bonus gold, which follows the same rules as bonus XP.
+
+## What other changes are there?
+
+The mod for this apworld adds a few quality of life changes to make replaying the same
+characters over and over less tedious:
+
+- In-progress runs, one for each character, are saved to the Archipelago server and can
+  be resumed only when connected to the server.
+  - Note that co-op runs are NOT saved currently.
+- Runs are also saved when you lose, and can be resumed from the shop before the wave
+  where you lost.
+- The "Resume" button in the main menu takes you to the last played run for that slot.
+- When replaying a character, there is an option in the shop to skip to any later wave
+  you reached with that character in a previous run. This lets you avoid having to play
+  waves that you can effortlessly beat when you get enough items from the multiworld.
+  - In co-op runs, you can skip to the highest wave completed by all characters.
+- Normal game saving is disabled when connected to a multiworld, to avoid overwriting
+  vanilla runs.

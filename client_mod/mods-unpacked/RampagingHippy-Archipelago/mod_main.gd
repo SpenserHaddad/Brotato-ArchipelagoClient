@@ -26,16 +26,22 @@ func _init():
 		"entities/entity.gd", # Track when units are killed to drop consumables in debug mode
 		"singletons/run_data.gd", # Override XP rewards
 		"singletons/item_service.gd", # Drop AP consumables
+		"singletons/progress_data.gd", # Save AP runs for each character
 		"ui/menus/pages/main_menu.gd", # Add AP connect
 		# Detect when game is quit when the "Return to main menu" confirmation button is pressed
 		"ui/menus/pages/menu_confirm.gd",
 		# Detect when game is restart when the "Restart" confirmation button is pressed
 		"ui/menus/pages/menu_restart.gd",
-		"ui/menus/title_screen/title_screen_menus.gd", # Swtich to connect menu when connect button is pressed
+		"ui/menus/title_screen/title_screen_menus.gd", # Switch to connect menu when connect button is pressed
 		# Unlock only characters received in MultiWorld, show MultiWorld progress
 		"ui/menus/run/character_selection.gd",
 		# Show character win status in inventory elements
 		"ui/menus/shop/inventory.gd",
+		# Show "Go To Wave" Button (single player and coop)
+		"ui/menus/shop/base_shop.gd",
+		# Fix weird issue where the shops won't load (see comments in files for details)
+		"ui/menus/shop/shop.gd",
+		"ui/menus/shop/coop_shop.gd",
 		# Enable/Disable shop item lock buttons
 		"ui/menus/shop/shop_items_container.gd",
 		"ui/menus/shop/shop_item.gd",

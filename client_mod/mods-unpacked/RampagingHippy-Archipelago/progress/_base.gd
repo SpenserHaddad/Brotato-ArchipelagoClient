@@ -16,10 +16,10 @@
 extends Object
 class_name ApProgressBase
 
-const BrotatoApConstants = preload ("../ap/constants.gd")
-const GodotApClient = preload ("res://mods-unpacked/RampagingHippy-Archipelago/ap/godot_ap_client.gd")
+const BrotatoApConstants = preload("../ap/constants.gd")
+const GodotApClient = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/godot_ap_client.gd")
 
-var _ap_client
+var _ap_client: GodotApClient
 ## A BrotatoApClient instance which sub-classes can use to send/receive updates from the
 ## multiworld.
 
@@ -39,7 +39,20 @@ func _init(ap_client, game_state):
 	var _status = _ap_client.connect("connection_state_changed", self, "_on_client_connection_state_changed")
 	_status = _ap_client.connect("item_received", self, "on_item_received")
 	_status = _ap_client.connect("room_updated", self, "on_room_updated")
+	_status = _ap_client.connect("data_storage_updated", self, "on_data_storage_updated")
 	_status = _game_state.connect("run_started", self, "on_run_started")
+	_status = _game_state.connect("wave_finished", self, "on_wave_finished")
+
+func export_run_specific_progress_data() -> Dictionary:
+	## Get any run-specific state to the input dictionary.
+	##
+	## Intended to be used to build up AP-related data when saving a run. The output
+	## dictionary will be merged with those from other trackers, so make sure to use
+	## unique key names.
+	return {}
+
+func load_run_specific_progress_data(_data: Dictionary):
+	pass
 
 func on_item_received(_item_name: String, _item):
 	pass
@@ -56,7 +69,13 @@ func on_disconnected_from_multiworld():
 func on_run_started(_character_ids: Array):
 	pass
 
-func _on_client_connection_state_changed(state: int, _error: int=0):
+func on_wave_finished(_wave_number: int, _character_ids: Array, _is_run_lost: bool, _is_run_won: bool):
+	pass
+
+func on_data_storage_updated(_key: String, _new_value, _original_valeu = null):
+	pass
+
+func _on_client_connection_state_changed(state: int, _error: int = 0):
 	if state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD:
 		on_connected_to_multiworld()
 	elif state == GodotApClient.ConnectState.DISCONNECTED:

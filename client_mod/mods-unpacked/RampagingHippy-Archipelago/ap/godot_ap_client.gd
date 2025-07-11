@@ -109,7 +109,7 @@ func _ready():
 func _connected_or_connection_refused_received(message: Dictionary):
 	emit_signal("_received_connect_response", message)
 
-func connect_to_multiworld(get_data_pacakge: bool=true) -> int:
+func connect_to_multiworld(get_data_package: bool=true) -> int:
 	## Connect to the multiworld using the host/port/player/password provided.
 	##
 	## NOTE: The game, server, and player fields for the class MUST be set before
@@ -165,7 +165,7 @@ func connect_to_multiworld(get_data_pacakge: bool=true) -> int:
 		room_info = yield (websocket_client, "on_room_info")
 
 		# 3. Client may send a GetDataPackage packet.
-		if get_data_pacakge:
+		if get_data_package:
 			websocket_client.get_data_package([game])
 			# 4. Server sends a DataPackage packet in return. (If the client sent GetDataPackage.)
 			var data_package_message = yield (websocket_client, "on_data_package")

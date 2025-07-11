@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added support for saving in-progress runs.
+  - Whenever the base game would save, the current run is also saved to the multiworld
+    server.
+  - A separate save is kept for every character.
+  - **Co-op saving is currently not supported.**
+  - When selecting a character with a saved run, the mod will ask if you want to resume
+    from the last saved run or start a new run.
+  - When connected to a multiworld, the "Resume" button on the main menu will take you
+    to the last run played for that slot.
+  - Saved runs are not deleted when you lose them, so you can retry a run with more AP
+    items.
+- Added the ability to skip to a particular wave.
+  - The mod now tracks how the latest wave reached with each character.
+  - There is now a button in the shop below the "Go" button that allows you to choose
+    which wave to go to next.
+  - You can only skip to waves that you have reached with that character previously.
+  - The intent is to skip tedious "dead levels" when you have enough items to
+    effortlessly beat earlier waves.
+  - In co-op, you can skip up to the highest wave completed by all characters.
+
+
+### Changed
+- The game does not save any data itself (including progress, challenges, and runs)
+  while connected to an AP server.
+
 ## [0.8.2] - 2025-06-19
 
 ### Fixed

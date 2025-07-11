@@ -4,7 +4,7 @@ const LOG_NAME = "RampagingHippy-Archipelago/item_service"
 const ITEM_BOX_ID = "consumable_item_box"
 const LEGENDARY_ITEM_BOX_ID = "consumable_legendary_item_box"
 
-var _ap_normal_consuamble = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.tres")
+var _ap_normal_consumable = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_pickup/ap_pickup.tres")
 var _ap_legendary_consumable = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/consumables/ap_legendary_pickup/ap_legendary_pickup.tres")
 
 
@@ -46,7 +46,7 @@ func get_consumable_for_tier(tier: int = Tier.COMMON) -> ConsumableData:
 	# Replace with corrsponding AP item if possible
 	if _ap_client.common_loot_crate_progress.can_spawn_consumable and consumable.my_id == ITEM_BOX_ID:
 		_ap_client.common_loot_crate_progress.notify_crate_spawned()
-		return _ap_normal_consuamble.duplicate()
+		return _ap_normal_consumable.duplicate()
 	elif _ap_client.legendary_loot_crate_progress.can_spawn_consumable and consumable.my_id == LEGENDARY_ITEM_BOX_ID:
 		_ap_client.legendary_loot_crate_progress.notify_crate_spawned()
 		return _ap_legendary_consumable.duplicate()

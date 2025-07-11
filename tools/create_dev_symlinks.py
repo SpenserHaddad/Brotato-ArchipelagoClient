@@ -48,7 +48,7 @@ def main() -> None:
     repo_root = Path(__file__).parent.parent.absolute()
 
     if args.archipelago_dir:
-        ap_dir = Path(args.archipelago_dir).resolve()
+        ap_dir = Path(args.archipelago_dir).absolute().resolve()
         apworld_src = repo_root / "apworld" / "brotato"
         apworld_dst = ap_dir / "worlds" / "brotato"
 
@@ -60,7 +60,7 @@ def main() -> None:
         _make_symlink(apworld_src, apworld_dst)
 
     if args.brotato_dir:
-        brotato_dir = Path(args.brotato_dir).resolve()
+        brotato_dir = Path(args.brotato_dir).absolute().resolve()
         brotato_mods_dir = brotato_dir / "mods-unpacked"
         brotato_mods_dir.mkdir(exist_ok=True)
         client_mod_src: Path = repo_root / "client_mod" / "mods-unpacked" / "RampagingHippy-Archipelago"

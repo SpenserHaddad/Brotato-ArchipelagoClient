@@ -13,6 +13,7 @@ extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApGoldProgress
 
 const LOG_NAME = "RampagingHippy-Archipelago/progress/gold"
+const SAVE_DATA_KEY = "progress_gold"
 
 signal gold_received
 
@@ -86,6 +87,13 @@ func on_run_started(_character_ids: Array):
 	if gold_reward_mode == constants.GoldRewardMode.ALL_EVERY_TIME:
 		# Reset the received gold so we give the player all gold items again.
 		gold_given = 0
+	give_player_unreceived_gold()
+
+func export_run_specific_progress_data() -> Dictionary:
+	return {SAVE_DATA_KEY: {"gold_given": gold_given}}
+
+func load_run_specific_progress_data(data: Dictionary):
+	gold_given = data[SAVE_DATA_KEY]["gold_given"]
 	give_player_unreceived_gold()
 
 func _on_session_data_storage_updated(key: String, new_value, _original_value = null):

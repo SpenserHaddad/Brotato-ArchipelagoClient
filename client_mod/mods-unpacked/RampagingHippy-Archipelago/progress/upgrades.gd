@@ -10,6 +10,8 @@
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApUpgradesProgress
 
+const SAVE_DATA_KEY = "progress_upgrades"
+
 signal upgrade_received(upgrade_tier)
 
 # The number of upgrades processed in the current run. This is set at the start of each
@@ -62,3 +64,25 @@ func on_run_started(character_ids: Array):
 			Tier.LEGENDARY: 0
 			}
 		)
+
+func export_run_specific_progress_data() -> Dictionary:
+	return {
+		SAVE_DATA_KEY: {
+			"processed_upgrades_by_player_by_tier": processed_upgrades_by_player_by_tier.duplicate()
+		}
+	}
+	
+
+func load_run_specific_progress_data(data: Dictionary):
+	processed_upgrades_by_player_by_tier = []
+	var saved_processed_upgrades = data[SAVE_DATA_KEY]["processed_upgrades_by_player_by_tier"]
+	# If the data was loaded from JSON, the keys will be strings instead of ints
+	var is_string_key: bool = not saved_processed_upgrades[0].has(Tier.COMMON)
+	var tier_keys = [Tier.COMMON, Tier.UNCOMMON, Tier.RARE, Tier.LEGENDARY]
+	for entry in saved_processed_upgrades:
+		var player_processed_upgrades = {}
+		for tk in tier_keys:
+			var entry_key = str(tk) if is_string_key else tk
+			var tier_value = entry[entry_key]
+			player_processed_upgrades[tk] = tier_value
+		processed_upgrades_by_player_by_tier.push_back(player_processed_upgrades)
