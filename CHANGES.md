@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed plando being able to place items in the "Run Won" locations.
+
 ### Added
 
 - Added support for saving in-progress runs.
