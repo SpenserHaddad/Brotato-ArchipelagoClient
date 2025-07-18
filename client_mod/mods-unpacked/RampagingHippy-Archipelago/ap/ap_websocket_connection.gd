@@ -89,7 +89,7 @@ func connect_to_server(server: String) -> bool:
 		ws_success = yield (self, "_stop_waiting_to_connect")
 		_waiting_to_connect_to_server = null
 		if ws_success:
-			_url = wss_url
+			_url = ws_url
 	else:
 		_url = wss_url
 
