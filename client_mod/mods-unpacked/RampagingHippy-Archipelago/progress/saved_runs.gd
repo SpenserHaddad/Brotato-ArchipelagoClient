@@ -49,8 +49,8 @@ func save_character_run(character: String, game_state: Dictionary, ap_state: Dic
 
 func on_data_storage_updated(key: String, new_value, _original_value = null):
 	if key == _saved_runs_data_storage_key:
-		ModLoaderLog.info("Received updated saved runs", LOG_NAME)
+		ModLoaderLog.info("Received updated saved runs from DS key: %s" % _saved_runs_data_storage_key, LOG_NAME)
 		_saved_runs = new_value
 	elif key == _last_played_char_data_storage_key:
-		ModLoaderLog.info("Received updated last played character: %s" % new_value, LOG_NAME)
+		ModLoaderLog.info("Received updated last played character, %s, from DS key: %s" % [new_value, _last_played_char_data_storage_key], LOG_NAME)
 		_last_played_char = new_value
