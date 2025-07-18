@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2025-07-17
+
 ### Fixed
 
 - Fix game disconnecting from the MultiServer if there is a saved run bigger than the
@@ -21,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   up connecting to archipelago.gg.
 - Update client version to 0.6.2 when connecting.
 
-## [0.9.0]
+## [0.9.0] - 2025-07-11
 
 ### Fixed
 
@@ -498,7 +500,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.9.0...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.8.2...v0.9.0
 [0.8.2]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.8.0...v0.8.1
