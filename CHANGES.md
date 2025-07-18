@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix game disconnecting from the MultiServer if there is a saved run bigger than the
   mod's inbound buffer.
+- Fix game error if a player has more Brotato Items than were selected in the options.
+  - This should only occur if someone uses the server console to give a player extra
+    items.
 
 ### Changed
 

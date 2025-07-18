@@ -62,7 +62,14 @@ func process_ap_item(item_tier: int, player_index: int) -> int:
 
 	# Lookup the wave to use to determine the item 
 	# The slot_data JSONifies the wave_per_game_item
-	var wave = wave_per_game_item[item_tier][wave_for_next_item]
+	var waves_for_item_tier = wave_per_game_item[item_tier]
+	var wave
+	if wave_for_next_item >= waves_for_item_tier.size():
+		# Maybe the player (probably me) cheat console'd in a bunch of items,
+		# just clamp to the last value
+		wave = waves_for_item_tier[-1]
+	else:
+		wave = waves_for_item_tier[wave_for_next_item]
 	return wave
 
 func on_item_received(item_name: String, _item):
