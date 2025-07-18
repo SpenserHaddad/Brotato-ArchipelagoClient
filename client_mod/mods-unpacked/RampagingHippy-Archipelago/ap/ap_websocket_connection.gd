@@ -111,14 +111,14 @@ func disconnect_from_server():
 	# The "connection_closed" signal handler will take care of cleanup
 	_client.disconnect_from_host()
 
-func send_connect(game: String, user: String, password: String="", slot_data: bool=true):
+func send_connect(game: String, user: String, password: String = "", slot_data: bool = true):
 	_send_command({
 		"cmd": "Connect",
 		"game": game,
 		"name": user,
 		"password": password,
 		"uuid": "Godot %s: %s" % [game, user], # TODO: What do we need here? We can't generate an actual UUID in 3.5
-		"version": {"major": 0, "minor": 5, "build": 0, "class": "Version"},
+		"version": {"major": 0, "minor": 6, "build": 2, "class": "Version"},
 		"items_handling": 0b111, # TODO: argument
 		"tags": [],
 		"slot_data": slot_data
@@ -207,7 +207,7 @@ func set_notify(keys: Array):
 	})
 
 # WebSocketClient callbacks
-func _on_connection_established(_proto=""):
+func _on_connection_established(_proto = ""):
 	# We succeeded, stop waiting and tell the caller.
 	ModLoaderLog.info("Successfully connected.", LOG_NAME)
 	emit_signal("_stop_waiting_to_connect", true)
@@ -217,7 +217,7 @@ func _on_connection_error():
 	ModLoaderLog.info("Connection error.", LOG_NAME)
 	emit_signal("_stop_waiting_to_connect", false)
 
-func _on_connection_closed(was_clean=false):
+func _on_connection_closed(was_clean = false):
 	ModLoaderLog.info("AP connection closed, clean: %s." % was_clean, LOG_NAME)
 	_set_connection_state(State.STATE_CLOSED)
 	_peer = null
@@ -233,16 +233,23 @@ func _on_data_received():
 	if received_data.result == null:
 		ModLoaderLog.error("Failed to parse JSON for %s" % received_data_str, LOG_NAME)
 		return
+#	ModLoaderLog.debug("Received payload with size %d" % received_data_str.length(), LOG_NAME)
 	for command in received_data.result:
 		_handle_command(command)
 
 # Internal plumbing
 func _send_command(args: Dictionary):
+#	if args['cmd'] == 'Set':
+#		ModLoaderLog.debug("Sending %s command for %s" % [args['cmd'], args['key']], LOG_NAME)
+#	else:
+#		ModLoaderLog.debug("Sending %s command" % args['cmd'], LOG_NAME)
 	var command_str = JSON.print([args])
 	if _peer != null:
 		var result = _peer.put_packet(command_str.to_ascii())
 		if result != 0:
-			ModLoaderLog.warning("Failed to send command, put_packet response is %d" % result, LOG_NAME)
+			var gpe = _peer.get_packet_error()
+			var client_state = _client.get_connection_status()
+			ModLoaderLog.warning("Failed to send command, put_packet response is %d, gpe is %d, client_status is %s" % [result, gpe, client_state], LOG_NAME)
 	else:
 		ModLoaderLog.warning("Peer is null!", LOG_NAME)
 
@@ -261,12 +268,22 @@ func _init_client():
 	_result = self._client.connect("connection_established", self, "_on_connection_established")
 	_result = self._client.connect("connection_error", self, "_on_connection_error")
 	
-	# Increase max buffer size to accommodate AP's larger payloads. The defaults are:
-	#   - Max in/out buffer = 64 KB
-	#   - Max in/out packets = 1024 
-	# We increase the in buffer to 256 KB because some messages we receive are too large
-	# for 64. The other defaults are fine though.
-	_result = _client.set_buffers(256, 1024, 64, 1024)
+	# Increase max buffer size to accommodate AP's larger payloads. The args 
+	# and their defaults are:
+	#	- input_buffer_size_kb = 64 KB
+	#	- input_max_packets = 1024
+	#	- output_buffer_size_kb = 64 KB
+	#	- output_max_packets = 1024 
+	# We increase the input buffer to 10 MB because some messages we receive
+	# are too large	for 64K. It's huge, but it being too small has caused some
+	# nasty bugs in the past. The other defaults have been fine though.
+	# NOTE: Godot will silently drop packets that do not fit in the buffer! This
+	# can cause the WebSocket connection to time out because the messaging is
+	# not complete. If the game mysteriously drops the connection a few seconds
+	# after connecting, the buffer likely needs to be larger.
+	_result = _client.set_buffers(1024 * 10, 1024, 1024 * 10, 1024)
+	if _result:
+		ModLoaderLog.warning("Failed to set buffer sizes with error %d" % _result, LOG_NAME)
 
 	self._peer = null
 
@@ -285,7 +302,7 @@ func _set_connection_state(state):
 	emit_signal("connection_state_changed", connection_state)
 
 func _handle_command(command: Dictionary):
-	ModLoaderLog.info("Received %s command" % command["cmd"] , LOG_NAME)	
+	ModLoaderLog.info("Received %s command" % command["cmd"], LOG_NAME)
 	match command["cmd"]:
 		"RoomInfo":
 			emit_signal("on_room_info", command)
