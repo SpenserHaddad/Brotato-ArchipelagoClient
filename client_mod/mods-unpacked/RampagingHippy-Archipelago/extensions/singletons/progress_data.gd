@@ -27,7 +27,7 @@ func save_run_state(
 			free_rerolls,
 			item_steals
 		)
-		var loader_v2 = ProgressDataLoaderV2.new(SAVE_DIR) # Dummy value
+		var loader_v2 = ProgressDataLoaderV2.new("user://ap_save.json") # Dummy value
 		_set_loader_properties(loader_v2, run_state)
 		var saved_run_serialized = loader_v2.serialize_run_state(run_state)
 		var ap_run_state = _ap_client.export_run_specific_progress_data()
