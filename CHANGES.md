@@ -17,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The game will now attempt to connect with WSS first instead of WS, which should speed
   up connecting to archipelago.gg.
 - Update client version to 0.6.2 when connecting.
-- Set 'AP' tag when connecting.
 
 ## [0.9.0]
 
