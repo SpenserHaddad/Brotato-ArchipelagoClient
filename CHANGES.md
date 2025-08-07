@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Further increased WebSocket buffer size to account for very large saved runs.
+
+### Changed
+- Saved runs are now compressed using [Zstandard](https://facebook.github.io/zstd/)
+  before being sent to the Archipelago data storage to reduce data size.
+  - Uncompressed runs are still supported, and are automatically compressed when 
+    re-saved.
+
 ## [0.9.1] - 2025-07-17
 
 ### Fixed
