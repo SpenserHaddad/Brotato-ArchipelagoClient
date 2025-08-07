@@ -6,14 +6,23 @@ from BaseClasses import Item, MultiWorld, Region, Tutorial
 from Options import OptionGroup
 from worlds.AutoWorld import WebWorld, World
 
-from . import options  # So we don't need to import every option class when defining option groups
+from . import (
+    options,  # So we don't need to import every option class when defining option groups
+)
 from .characters import get_available_and_starting_characters
 from .constants import (
     MAX_SHOP_SLOTS,
     RUN_COMPLETE_LOCATION_TEMPLATE,
 )
 from .item_weights import create_items_from_weights
-from .items import BrotatoItem, ItemName, filler_items, item_name_groups, item_name_to_id, item_table
+from .items import (
+    BrotatoItem,
+    ItemName,
+    filler_items,
+    item_name_groups,
+    item_name_to_id,
+    item_table,
+)
 from .locations import location_name_groups, location_name_to_id
 from .loot_crates import (
     BrotatoLootCrateGroup,
@@ -292,6 +301,7 @@ class BrotatoWorld(World):
         )
         wave_per_game_item: dict[int, list[int]] = get_wave_for_each_item(self.nonessential_item_counts)
         return {
+            "characters": self._include_characters,
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": self.num_wins_needed,
             "gold_reward_mode": self.options.gold_reward_mode.value,

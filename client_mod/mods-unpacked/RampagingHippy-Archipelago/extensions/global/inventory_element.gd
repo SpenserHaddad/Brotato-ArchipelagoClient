@@ -2,7 +2,7 @@ extends "res://items/global/inventory_element.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/ap_char_inventory_element"
 
-func set_character_info(won_run: bool):
+func set_character_info(included_in_multiserver: bool, won_run: bool):
 	## Intended to be called when this represents a character select icon, adds
 	## the "won run" icon (aka an AP icon because I'm creative) and sets it
 	## visible if the player won a run with that character.

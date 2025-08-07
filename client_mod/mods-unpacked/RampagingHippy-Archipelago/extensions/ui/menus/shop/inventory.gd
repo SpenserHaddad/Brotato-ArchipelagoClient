@@ -27,6 +27,7 @@ func set_elements(elements: Array, reverse_order: bool = false, replace: bool = 
 			if child.item != null:
 				var character_id = _constants.CHARACTER_ID_TO_NAME.get(child.item.my_id)
 				if character_id != null:
+					var character_included_in_ap = ap_character_info[character_id].included
 					var won_run = ap_character_info[character_id].won_run
 		#			ModLoaderLog.debug("element.my_id=%s, icon=%s, is_locked=%s, won_run=%s" % [element.my_id, element.icon.load_path, element.is_locked, won_run], LOG_NAME)
-					child.set_character_info(won_run)
+					child.set_character_info(character_included_in_ap, won_run)

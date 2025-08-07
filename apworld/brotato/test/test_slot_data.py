@@ -10,7 +10,22 @@ class TestBrotatoSlotData(BrotatoTestBase):
     options = {
         # Only set options that are referenced by slot_data
         "num_victories": 10,
-        "starting_characters": 0,
+        # Include 10 characters so we know exactly what the "characters" field will have.
+        "num_characters": 10,
+        "include_base_game_characters": [
+            "Well Rounded",
+            "Brawler",
+            "Crazy",
+            "Ranger",
+            "Mage",
+            "Chunky",
+            "Old",
+            "Lucky",
+            "Mutant",
+            "Generalist",
+        ],
+        "include_abyssal_terrors_characters": [],
+        "starting_characters": 1,
         "waves_per_drop": 2,
         "num_common_crate_drops_per_check": 2,
         "num_common_crate_drop_groups": 5,
@@ -71,3 +86,19 @@ class TestBrotatoSlotData(BrotatoTestBase):
         # Testing get_wave_for_each_item is done elsewhere, we just want to see that the slot data matches.
         expected_wave_per_item = get_wave_for_each_item(self.world.nonessential_item_counts)
         self.assertEqual(slot_data["wave_per_game_item"], expected_wave_per_item)
+
+    def test_slot_data_characters(self):
+        slot_data = self.world.fill_slot_data()
+        expected_characters: list[str] = [
+            "Well Rounded",
+            "Brawler",
+            "Crazy",
+            "Ranger",
+            "Mage",
+            "Chunky",
+            "Old",
+            "Lucky",
+            "Mutant",
+            "Generalist",
+        ]
+        self.assertCountEqual(slot_data["characters"], expected_characters)
