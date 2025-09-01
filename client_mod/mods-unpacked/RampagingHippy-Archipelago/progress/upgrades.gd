@@ -52,18 +52,20 @@ func on_connected_to_multiworld():
 		Tier.LEGENDARY: 0
 	}
 
-func on_run_started(character_ids: Array):
-	# Reset the number of upgrades processed
-	processed_upgrades_by_player_by_tier = []
-	for _char_id in character_ids:
-		processed_upgrades_by_player_by_tier.push_back(
-			{
-			Tier.COMMON: 0,
-			Tier.UNCOMMON: 0,
-			Tier.RARE: 0,
-			Tier.LEGENDARY: 0
-			}
-		)
+func on_run_started(character_ids: Array, is_new_run: bool):
+	# Reset the number of upgrades processed. Assume this is correct if loading/retrying
+	# a run.
+	if is_new_run:
+		processed_upgrades_by_player_by_tier = []
+		for _char_id in character_ids:
+			processed_upgrades_by_player_by_tier.push_back(
+				{
+				Tier.COMMON: 0,
+				Tier.UNCOMMON: 0,
+				Tier.RARE: 0,
+				Tier.LEGENDARY: 0
+				}
+			)
 
 func export_run_specific_progress_data() -> Dictionary:
 	return {

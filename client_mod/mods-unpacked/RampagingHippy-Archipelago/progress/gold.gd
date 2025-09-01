@@ -83,10 +83,13 @@ func on_connected_to_multiworld():
 		true
 	)
 
-func on_run_started(_character_ids: Array):
-	if gold_reward_mode == constants.GoldRewardMode.ALL_EVERY_TIME:
+func on_run_started(_character_ids: Array, is_new_run: bool):
+	if gold_reward_mode == constants.GoldRewardMode.ALL_EVERY_TIME and is_new_run:
 		# Reset the received gold so we give the player all gold items again.
+		# Do only when a run is started so we don't give them gold twice.
 		gold_given = 0
+	# Always give unreceived gold, even on retry, in case some came in while they were
+	# on the menu (maybe they went AFK?)
 	give_player_unreceived_gold()
 
 func export_run_specific_progress_data() -> Dictionary:

@@ -89,12 +89,12 @@ func _on_ResumeButton_pressed():
 	var characters = []
 	for player_idx in RunData.get_player_count():
 		characters.push_back(RunData.get_player_character(player_idx).my_id)
-	_ap_client.game_state.notify_run_started(characters)
 	
 	ProgressData.saved_run_state = _saved_game_state
 	RunData.resume_from_state(_saved_game_state)
 	RunData.resumed_from_state_in_shop = true
 	_ap_client.load_run_specific_progress_data(_saved_ap_state)
+	_ap_client.game_state.notify_run_started(characters, false)
 	var scene = "res://ui/menus/shop/shop.tscn"
 	var _error = get_tree().change_scene(scene)
 

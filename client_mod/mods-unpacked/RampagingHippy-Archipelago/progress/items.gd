@@ -97,19 +97,21 @@ func on_connected_to_multiworld():
 		Tier.LEGENDARY: 0
 	}
 
-func on_run_started(character_ids: Array):
+func on_run_started(character_ids: Array, is_new_run: bool):
 	# Reset the number of items processed
 	# TODO: Per-player items
-	processed_items_by_player_by_tier = []
-	for _character_id in character_ids:
-		processed_items_by_player_by_tier.push_back(
-			{
-				Tier.COMMON: 0,
-				Tier.UNCOMMON: 0,
-				Tier.RARE: 0,
-				Tier.LEGENDARY: 0
-			}
-		)
+	if is_new_run:
+		# Assume the state is correct if we're retrying a wave
+		processed_items_by_player_by_tier = []
+		for _character_id in character_ids:
+			processed_items_by_player_by_tier.push_back(
+				{
+					Tier.COMMON: 0,
+					Tier.UNCOMMON: 0,
+					Tier.RARE: 0,
+					Tier.LEGENDARY: 0
+				}
+			)
 
 func export_run_specific_progress_data() -> Dictionary:
 	var data = {
@@ -123,7 +125,7 @@ func load_run_specific_progress_data(data: Dictionary):
 	processed_items_by_player_by_tier = []
 	var saved_processed_items = data[SAVE_DATA_KEY]["processed_items_by_player_by_tier"]
 	# If the data was loaded from JSON, the keys will be strings instead of ints
-	var is_string_key:bool  = not saved_processed_items[0].has(Tier.COMMON)
+	var is_string_key: bool = not saved_processed_items[0].has(Tier.COMMON)
 	var tier_keys = [Tier.COMMON, Tier.UNCOMMON, Tier.RARE, Tier.LEGENDARY]
 	for entry in saved_processed_items:
 		var player_processed_items = {}
