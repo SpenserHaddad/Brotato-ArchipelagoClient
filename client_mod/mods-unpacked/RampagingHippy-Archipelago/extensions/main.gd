@@ -24,7 +24,7 @@ func _ready() -> void:
 	_ap_client = mod_node.brotato_ap_client
 	
 	if _ap_client.connected_to_multiworld():
-		if RunData.current_wave == DebugService.starting_wave:
+		if RunData.current_wave == DebugService.starting_wave or not _ap_client.game_state.in_run:
 			# Run started, notify the AP game state tracker.
 			# Wait a very short time before sending the notify_run_started event to
 			# ensure the rest of the game is initialized. As of the 1.1.8.0 patch,
@@ -35,7 +35,8 @@ func _ready() -> void:
 			var active_characters = []
 			for player in RunData.players_data:
 				active_characters.append(player.current_character.my_id)
-			_ap_client.game_state.notify_run_started(active_characters)
+			var is_new_run = RunData.retries == 0
+			_ap_client.game_state.notify_run_started(active_characters, is_new_run)
 			
 		# Give player any unprocessed items and upgrades from the multiworld
 		for item_tier in _ap_client.items_progress.received_items_by_tier:
