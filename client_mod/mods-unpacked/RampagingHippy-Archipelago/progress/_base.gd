@@ -66,7 +66,7 @@ func on_connected_to_multiworld():
 func on_disconnected_from_multiworld():
 	pass
 
-func on_run_started(_character_ids: Array):
+func on_run_started(_character_ids: Array, _is_new_run: bool):
 	pass
 
 func on_wave_finished(_wave_number: int, _character_ids: Array, _is_run_lost: bool, _is_run_won: bool):

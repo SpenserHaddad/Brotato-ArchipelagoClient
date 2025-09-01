@@ -168,7 +168,8 @@ func _update_can_spawn_consumable():
 	var possible_checks = floor((check_progress + _num_crates_spawned) / crates_per_check)
 	can_spawn_consumable = num_locations_checked + possible_checks < num_unlocked_locations
 	ModLoaderLog.info(
-		"Updating can_spawn_consumable: check_progress=%d, crates_spawned=%d, crates_per_check=%d, num_locations_checked=%d, num_unlocked_locations=%d, can_spawn_consumable=%s" % [
+		"Updating %s can_spawn_consumable: check_progress=%d, crates_spawned=%d, crates_per_check=%d, num_locations_checked=%d, num_unlocked_locations=%d, can_spawn_consumable=%s" % [
+			crate_type,
 			check_progress,
 			_num_crates_spawned,
 			crates_per_check,
@@ -247,7 +248,8 @@ func on_connected_to_multiworld():
 		true
 	)
 
-func on_run_started(_character_ids: Array):
+func on_run_started(_character_ids: Array, _is_new_run: bool):
+	# Always reset the crates spawned to 0, just in case.
 	_num_crates_spawned = 0
 	_update_can_spawn_consumable()
 

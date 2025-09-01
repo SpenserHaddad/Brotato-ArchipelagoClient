@@ -82,10 +82,13 @@ func on_connected_to_multiworld():
 		true
 	)
 
-func on_run_started(_character_ids: Array):
-	if xp_reward_mode == constants.XpRewardMode.ALL_EVERY_TIME:
+func on_run_started(_character_ids: Array, is_new_run: bool):
+	if xp_reward_mode == constants.XpRewardMode.ALL_EVERY_TIME and is_new_run:
 		# Reset the received XP so we give the player all gold items again.
+		# Only do once when starting a run so we don't give a player gold twice.
 		xp_given = 0
+	# Always give unreceived XP, even on retry, in case some came in while they were
+	# on the menu (maybe they went AFK?)
 	give_player_unreceived_xp()
 
 func export_run_specific_progress_data() -> Dictionary:

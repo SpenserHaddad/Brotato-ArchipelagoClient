@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed checks no longer being sent in a run if a failed wave is retried.
+- Fixed error when resuming a saved run from the main menu.
+
 ## [0.10.0] - 2025-08-06
 
 ### Fixed
