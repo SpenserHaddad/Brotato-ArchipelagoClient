@@ -10,7 +10,7 @@ const LOG_NAME = "RampagingHippy-Archipelago/game_state"
 var GodotApClient = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/godot_ap_client.gd")
 
 ## Signal that a new run has started with the given character.
-signal run_started(character_ids)
+signal run_started(character_ids, is_new_run)
 
 ## Signal that the current run has finished with the given character
 ##
@@ -34,16 +34,20 @@ func is_in_ap_run() -> bool:
 	## Returns true iff we're actively in a run and connected to an AP server.
 	return in_run and _ap_client.connect_state == GodotApClient.ConnectState.CONNECTED_TO_MULTIWORLD
 
-func notify_run_started(character_ids: Array):
+func notify_run_started(character_ids: Array, is_new_run: bool):
 	## Called by the game extensions when a new run is started.
 	##
-	## Emits the `run_started` signal to notify progress trackers.
+	## Emits the `run_started` signal to notify progress trackers. Passes along
+	## the `is_new_run` flag, which indicates whether the run was started
+	## completely new, or is starting from either a previously saved run, or
+	## retrying a failed wave. Progress trackers will behave accordingly and
+	## only initialize state that should be done at the start of the run if set.
 	in_run = true
 	active_characters = character_ids
 	var character_names = ", ".join(active_characters)
 	if is_in_ap_run():
 		ModLoaderLog.info("AP run started with characters; %s" % character_names, LOG_NAME)
-		emit_signal("run_started", active_characters)
+		emit_signal("run_started", active_characters, is_new_run)
 	else:
 		ModLoaderLog.info("Non-AP run started with characters; %s" % character_names, LOG_NAME)
 
