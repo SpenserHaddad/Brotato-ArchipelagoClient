@@ -60,7 +60,7 @@ func get_saved_run(character: String) -> Dictionary:
 	if saved_run_raw.has("data_b64"):
 		# Using new compressed format, convert and decompress
 		ModLoaderLog.info("Found compressed saved run for %s" % character, LOG_NAME)
-		var saved_run_bytes: PoolByteArray = Marshalls.base64_to_raw (saved_run_raw["data_b64"])
+		var saved_run_bytes: PoolByteArray = Marshalls.base64_to_raw(saved_run_raw["data_b64"])
 		var compression_mode = saved_run_raw["compression"]
 		var decompressed_size = saved_run_raw["decompressed_size"]
 		var saved_run_decompressed = saved_run_bytes.decompress(decompressed_size, compression_mode)
@@ -86,7 +86,7 @@ func get_last_played_char():
 	return _last_played_char
 
 func get_last_saved_run():
-	return _saved_runs.get(_last_played_char, {})
+	return get_saved_run(_last_played_char)
 
 func save_character_run(character: String, game_state: Dictionary, ap_state: Dictionary):
 	var combined_save_data = {"game_state": game_state, "ap_state": ap_state}
@@ -97,7 +97,7 @@ func save_character_run(character: String, game_state: Dictionary, ap_state: Dic
 	var save_data_b64 = Marshalls.raw_to_base64(save_data_compressed)
 	var save_info = {
 		"compression": File.COMPRESSION_ZSTD,
-		"data_b64": save_data_b64, 
+		"data_b64": save_data_b64,
 		"decompressed_size": decompressed_data_size
 	}
 
