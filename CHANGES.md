@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.1] - 2025-09-01
+
 ### Fixed
 
 - Fixed checks no longer being sent in a run if a failed wave is retried.
@@ -519,7 +521,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.10.0...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.10.1...HEAD
+[0.10.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.8.2...v0.9.0
