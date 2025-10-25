@@ -10,7 +10,7 @@ class_name GodotApClient
 # Hard-code mod name to avoid cyclical dependency
 var LOG_NAME = "RampagingHippy-Archipelago/GodotApClient"
 
-const _AP_TYPES = preload ("./ap_types.gd")
+const _AP_TYPES = preload("./ap_types.gd")
 enum ConnectState {
 	DISCONNECTED = 0
 	CONNECTING = 1
@@ -109,7 +109,7 @@ func _ready():
 func _connected_or_connection_refused_received(message: Dictionary):
 	emit_signal("_received_connect_response", message)
 
-func connect_to_multiworld(get_data_package: bool=true) -> int:
+func connect_to_multiworld(get_data_package: bool = true) -> int:
 	## Connect to the multiworld using the host/port/player/password provided.
 	##
 	## NOTE: The game, server, and player fields for the class MUST be set before
@@ -228,7 +228,19 @@ func connect_to_multiworld(get_data_package: bool=true) -> int:
 	#    connection.
 
 	_set_connection_state(ConnectState.CONNECTED_TO_MULTIWORLD)
-	
+
+	ModLoaderLog.info(
+		(
+			"Connected to Archipelago\n" + \
+			"\tServer: %s, Player: %s, Game: %s, Slot: %d, Team: %d\n" % [self.server, self.player, self.game, self.slot, self.team] + \
+			"\tChecked locations: %d, Missing locations: %d\n" % [self.checked_locations.size(), self.missing_locations.size()] + \
+			"\tHint points: %d\n" % self.hint_points + \
+			"\tSlot info: %s\n" % self.slot_info + \
+			"\tSlot data:\n\t\t%s" % JSON.print(self.slot_data, "\t\t")
+		),
+		LOG_NAME
+	)
+
 	# Mod-specific: Save the connection parameters in the configuration file so
 	# the user doesn't need to enter them twice.
 	config.data["ap_server"] = server
@@ -244,7 +256,7 @@ func disconnect_from_multiworld():
 	self.websocket_client.disconnect_from_server()
 	_set_connection_state(ConnectState.DISCONNECTED)
 
-func _set_connection_state(state: int, error: int=0):
+func _set_connection_state(state: int, error: int = 0):
 	ModLoaderLog.debug("Setting connection state to %s." % ConnectState.keys()[state], LOG_NAME)
 	self.connect_state = state
 	emit_signal("connection_state_changed", self.connect_state, error)
@@ -270,7 +282,7 @@ func set_notify(keys: Array):
 	## Send a `SetNotify` packet to the server with the provided keys.
 	websocket_client.set_notify(keys)
 
-func set_value(key: String, operations, values, default=null, want_reply: bool=false):
+func set_value(key: String, operations, values, default = null, want_reply: bool = false):
 	## Send a `Set` packet to the server to update the server's data storage.
 	##
 	## Note that the name does not match the sent packet, because `set` is a predefined
@@ -282,7 +294,7 @@ func set_value(key: String, operations, values, default=null, want_reply: bool=f
 		operations = [operations]
 		values = [values]
 	for i in range(operations.size()):
-		var operation_obj = {"operation": operations[i],"value": values[i]}
+		var operation_obj = {"operation": operations[i], "value": values[i]}
 		ap_ops.append(operation_obj)
 	websocket_client.set_value(key, default, want_reply, ap_ops)
 
