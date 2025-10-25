@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- When connecting to an Archipelago server, various information is now logged to help
+  with debugging.
+  - The information is logged to the Brotato mod log file at
+    `%APPDATA%/Brotato/logs/modloader.log`.
+
 ## [0.10.1] - 2025-09-01
 
 ### Fixed

@@ -191,7 +191,7 @@ func set_value(key: String, default, want_reply: bool, operations: Array):
 	var op_names = []
 	for op in operations:
 		op_names.append(op["operation"])
-	var ops = ", ".join(op_names)
+	var _ops = ", ".join(op_names)
 	_send_command({
 		"cmd": "Set",
 		"key": key,
