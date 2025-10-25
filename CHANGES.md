@@ -25,8 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The `brotato.apworld` file is now created using the "Build APWorlds Launcher
-  Component" as will be required by Archipelago 0.7.0.
+- The `brotato.apworld` file is now created using the ["Build APWorlds Launcher
+  Component"](https://github.com/ArchipelagoMW/Archipelago/blob/main/docs/apworld%20specification.md#build-apworlds-launcher-component)
+  as will be required by Archipelago 0.7.0.
     - The apworld has no functional changes from the previous release, and still is
       compatible with Archipelago 0.6.3.
 
