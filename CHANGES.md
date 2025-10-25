@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- The character selection menu now only shows characters which are included in the
+  player's slot.
+- Locked characters now use their character portrait instead of the "padlock" icon to
+  make it easier to see which characters are available.
+  - The portraits are still faded to indicate they are not selectable yet.
+- The locked panel now displays the text "Missing AP item for <character name>" instead
+  of the base game requirement to unlock the character.
+
 ## [0.10.1] - 2025-09-01
 
 ### Fixed
