@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2025-10-25
+
 ### Added
 
 - The character selection menu now only shows characters which are included in the
@@ -546,7 +548,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.10.1...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.10.1...v0.11.0
 [0.10.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.9.0...v0.9.1
