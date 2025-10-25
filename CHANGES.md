@@ -20,6 +20,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with debugging.
   - The information is logged to the Brotato mod log file at
     `%APPDATA%/Brotato/logs/modloader.log`.
+- Add the `archipelago.json` manifest file format as will be required by Archipelago
+  0.7.0.
+
+### Changed
+
+- The `brotato.apworld` file is now created using the "Build APWorlds Launcher
+  Component" as will be required by Archipelago 0.7.0.
+    - The apworld has no functional changes from the previous release, and still is
+      compatible with Archipelago 0.6.3.
+
 
 ## [0.10.1] - 2025-09-01
 
