@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - The portraits are still faded to indicate they are not selectable yet.
 - The locked panel now displays the text "Missing AP item for <character name>" instead
   of the base game requirement to unlock the character.
+- When connecting to an Archipelago server, various information is now logged to help
+  with debugging.
+  - The information is logged to the Brotato mod log file at
+    `%APPDATA%/Brotato/logs/modloader.log`.
 
 ## [0.10.1] - 2025-09-01
 

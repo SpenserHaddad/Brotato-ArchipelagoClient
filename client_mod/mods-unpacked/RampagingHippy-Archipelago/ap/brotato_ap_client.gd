@@ -40,7 +40,7 @@ var waves_progress
 var wins_progress
 var saved_runs_progress
 
-# Holder for all the trackers together so we can perform operations over all of them easily.
+# Holder for all the trackers together so we can perform bulk operations.
 var _progress_trackers: Array
 
 signal on_connection_refused(reasons)
