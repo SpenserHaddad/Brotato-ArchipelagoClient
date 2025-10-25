@@ -5,7 +5,10 @@
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApCharacterProgress
 
+const LOG_NAME = "RampagingHippy-Archipelago/progress/characters"
+
 class CharacterProgress:
+	var enabled: bool # Indicates if character is included in the slot's world.
 	var unlocked: bool = false
 	var max_wave_completed: int = 0
 	var won_run: bool = false
@@ -17,6 +20,29 @@ var _character_run_progress_slot_data_key: String
 	
 func _init(ap_client, game_state).(ap_client, game_state):
 	character_info = {}
+
+func get_enabled_characters() -> Array:
+	# Convenience method to get all enabled characters, as an array of character IDs.
+	#
+	# Enabled characters are characters that are included in the slot's items 
+	# and locations, regardless of whether the player has them in logic or not.
+	var available_characters = []
+	for character in character_info:
+		if character_info[character].enabled:
+			available_characters.append(constants.CHARACTER_NAME_TO_ID[character])
+	return available_characters
+
+func get_unlocked_characters() -> Array:
+	# Convenience method to get all unlocked characters, as an array of character IDs.
+	#
+	# Unlocked characters are characters the player has received the corresponding item
+	# for, and can play as while connected to the Multiworld. Unlocked characters are a
+	# subset of enabled characters.
+	var unlocked_characters = []
+	for character in character_info:
+		if character_info[character].unlocked:
+			unlocked_characters.append(constants.CHARACTER_NAME_TO_ID[character])
+	return unlocked_characters
 
 func on_item_received(item_name: String, _item):
 	if constants.CHARACTER_NAME_TO_ID.has(item_name):
@@ -38,19 +64,28 @@ func on_connected_to_multiworld():
 	var _default_char_run_progress: Dictionary = {}
 	character_info.clear()
 
+	var characters_in_game = []
+
 	for character in constants.CHARACTER_NAME_TO_ID:
 		# We'll determine if characters are unlocked when the item is received, 
 		# just check if they won or not here. (TODO: simul-play?)
 		var character_won_loc_name = constants.RUN_COMPLETE_LOCATION_TEMPLATE.format({"char": character})
 		var character_won_loc_id = _ap_client.data_package.location_name_to_id[character_won_loc_name]
 		var character_won = character_won_loc_id in _ap_client.checked_locations
+		var character_enabled = (character_won_loc_id in _ap_client.checked_locations) or (character_won_loc_id in _ap_client.missing_locations)
+
+		if character_enabled:
+			characters_in_game.append(character)
+
 		character_info[character] = CharacterProgress.new()
+		character_info[character].enabled = character_enabled
 		character_info[character].won_run = character_won
 		character_info[character].won_run_location_id = character_won_loc_id
 		# Clear unlocked flag. We'll unlock characters with on_item_received
 		character_info[character].unlocked = false
 		_default_char_run_progress[character] = {"max_wave_completed": 0}
 
+	ModLoaderLog.info("Enabled characters: %s" % ", ".join(characters_in_game), LOG_NAME)
 	_character_run_progress_slot_data_key = "%s_character_run_progress" % _ap_client.player
 	_ap_client.set_value(
 		_character_run_progress_slot_data_key,
