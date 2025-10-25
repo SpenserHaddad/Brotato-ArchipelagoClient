@@ -35,7 +35,9 @@ func _init():
 		"ui/menus/title_screen/title_screen_menus.gd", # Switch to connect menu when connect button is pressed
 		# Unlock only characters received in MultiWorld, show MultiWorld progress
 		"ui/menus/run/character_selection.gd",
-		# Show character win status in inventory elements
+		# Change locked panel to show character name and missing AP item text
+		"ui/menus/run/locked_panel.gd",
+		# Show character win status in inventory elements and replace lock icon with character portrait
 		"ui/menus/shop/inventory.gd",
 		# Show "Go To Wave" Button (single player and coop)
 		"ui/menus/shop/base_shop.gd",
@@ -82,7 +84,7 @@ func _ready() -> void:
 	ModLoaderLog.info("Got config", LOG_NAME)
 
 	ap_websocket_connection = ApWebSocketConnection.new()
-	ModLoaderLog.info("Created webscoket, adding...", LOG_NAME)
+	ModLoaderLog.info("Created websocket, adding...", LOG_NAME)
 	self.add_child(ap_websocket_connection)
 
 	ModLoaderLog.info("Creating client", LOG_NAME)

@@ -43,13 +43,10 @@ func _ensure_ap_client():
 	_ap_client = mod_node.brotato_ap_client
 	_constants = BrotatoApConstants.new()
 	if _ap_client.connected_to_multiworld():
-		var character_info = _ap_client.character_progress.character_info
-		for character in character_info:
-			if character_info[character].unlocked:
-				_add_character(character)
+		for character in _ap_client.character_progress.get_unlocked_characters():
+			_add_character(character)
 
-func _add_character(character_name: String):
-	var character_id = _constants.CHARACTER_NAME_TO_ID[character_name]
+func _add_character(character_id: String):
 	_unlocked_characters.append(character_id)
 
 func _on_character_received(character: String):
@@ -66,6 +63,21 @@ func _get_unlocked_elements(player_index: int) -> Array:
 	else:
 		ModLoaderLog.debug("Returning default characters", LOG_NAME)
 		return._get_unlocked_elements(player_index)
+
+func _get_all_possible_elements(player_index: int) -> Array:
+	var base_game_characters =._get_all_possible_elements(player_index)
+	_ensure_ap_client()
+	if _ap_client.connected_to_multiworld():
+		var possible_characters = []
+		var enabled_characters = _ap_client.character_progress.get_enabled_characters()
+		# Copy entries from the base game's list so we get the difficulty info.
+		for b in base_game_characters:
+			if b.my_id in enabled_characters:
+				possible_characters.append(b)
+		return possible_characters
+	else:
+		return base_game_characters
+
 
 func _add_ap_progress_ui():
 	if _ap_client.connected_to_multiworld():

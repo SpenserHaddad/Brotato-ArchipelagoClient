@@ -1,6 +1,6 @@
 extends "res://ui/menus/run/character_selection_inventory.gd"
 
-const LOG_NAME = "RampagingHippy-Archipelago/inventory_character_selection"
+const LOG_NAME = "RampagingHippy-Archipelago/extensions/ui/menus/shop/inventory_character_selection"
 const BrotatoApConstants = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/constants.gd")
 
 var _ap_client
@@ -30,3 +30,16 @@ func set_elements(elements: Array, reverse_order: bool = false, replace: bool = 
 					var won_run = ap_character_info[character_id].won_run
 		#			ModLoaderLog.debug("element.my_id=%s, icon=%s, is_locked=%s, won_run=%s" % [element.my_id, element.icon.load_path, element.is_locked, won_run], LOG_NAME)
 					child.set_character_info(won_run)
+
+func add_special_element(p_icon: Texture, p_is_random: bool = false, p_alpha: float = 1, p_item: Resource = null) -> void:
+	var p_item_id = null
+	var locked = null
+	if p_item != null:
+		p_item_id = p_item.my_id
+		locked = p_item.is_locked
+		var connected_to_multiworld = _ap_client != null and _ap_client.connected_to_multiworld()
+		if p_item_id.begins_with("character_") and locked and connected_to_multiworld:
+			# Replace default locked icon with the character's image so it's easier to
+			# tell what characters are in the multiworld, just not available yet.
+			p_icon = p_item.icon
+	.add_special_element(p_icon, p_is_random, p_alpha, p_item)
