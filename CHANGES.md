@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Updated game internals to support Brotato 1.1.13.0 (the "New Dawn" update)
+
 ## [0.11.0] - 2025-10-25
 
 ### Added

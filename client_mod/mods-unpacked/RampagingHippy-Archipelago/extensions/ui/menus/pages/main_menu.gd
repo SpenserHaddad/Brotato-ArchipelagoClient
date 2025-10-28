@@ -13,8 +13,6 @@ var _ap_icon_disconnected = preload("res://mods-unpacked/RampagingHippy-Archipel
 signal ap_connect_button_pressed
 
 func init():
-	.init()
-	
 	if _archipelago_button != null:
 		# Make AP button reachable with controller. The base class also sets the neighbors for some
 		# of these buttons in its _init(), so we have to set the neighbor her for it to be applied.
@@ -26,20 +24,9 @@ func init():
 
 		quit_button.focus_neighbour_bottom = quit_button.get_path_to(_archipelago_button)
 		_archipelago_button.focus_neighbour_top = quit_button.get_path()
-		_archipelago_button.focus_neighbour_bottom = bottom_neighbor.get_path()
-		bottom_neighbor.focus_neighbour_top = _archipelago_button.get_path()
-		# For some reason, the neighbors don't update unless focus on the AP button first.
-		# Force the focus to the AP button to make nav work, which also is nice for letting the
-		# user connect to a server first if desired.
-		_archipelago_button.grab_focus()
-
-	if _ap_client.connected_to_multiworld():
-		var have_saved_ap_run = _ap_client.saved_runs_progress.get_last_played_char() != ""
-		if not have_saved_ap_run:
-			continue_button.hide()
-		else:
-			continue_button.show()
-			continue_button.disabled = false
+		
+		# This will trigger in the base class' init(), which is called after this one's.
+		continue_button.connect("visibility_changed", self, "_on_ContinueButton_visibility_changed")
 
 
 func _ready():
@@ -102,3 +89,22 @@ func _on_ContinueButton_pressed() -> void:
 		get_tree().change_scene(_ap_load_saved_run_scene)
 	else:
 		._on_ContinueButton_pressed()
+
+func _on_ContinueButton_visibility_changed() -> void:
+	# Make sure the "Resume" button is visible is correct.
+	# If not connected to AP, use the base game's behavior. Otherwise, the button should only appear
+	# when there's a saved AP run. We can't just call this in init(), because the base class also
+	# sets the visibility of the Resume button in its init(), which is called after ours.
+	var ap_button_bottom_neighbor = continue_button
+	if continue_button.visible and _ap_client.connected_to_multiworld():
+		var have_saved_ap_run = _ap_client.saved_runs_progress.get_last_played_char() != ""
+		if not have_saved_ap_run:
+			continue_button.hide()
+			ap_button_bottom_neighbor = start_button
+	
+	_archipelago_button.focus_neighbour_bottom = ap_button_bottom_neighbor.get_path()
+	ap_button_bottom_neighbor.focus_neighbour_top = _archipelago_button.get_path()
+	# For some reason, the neighbors don't update unless focus on the AP button first.
+	# Force the focus to the AP button to make nav work, which also is nice for letting the
+	# user connect to a server first if desired.
+	_archipelago_button.grab_focus()

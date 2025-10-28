@@ -27,11 +27,22 @@ func _ready():
 	if player_character == null:
 		return
 	var saved_run_raw = _ap_client.saved_runs_progress.get_saved_run(player_character.my_id)
-	
-	var loader_v2 = ProgressDataLoaderV2.new("")
-	_saved_game_state = loader_v2.deserialize_run_state(saved_run_raw["game_state"])
-	_saved_ap_state = saved_run_raw["ap_state"]
-	var player_data = _saved_game_state["players_data"][0]
+	var player_data
+	if not "loader_version" in saved_run_raw:
+		# Oldest loader version AP used, which is V2
+		var loader_v2 = ProgressDataLoaderV2.new("")
+		_saved_game_state = loader_v2.deserialize_run_state(saved_run_raw["game_state"])
+		# Add all new player effects from the newest version of the game
+		var default_player_effects = PlayerRunData.init_effects()
+		_saved_game_state["players_data"][0].effects.merge(default_player_effects, false)
+		_saved_ap_state = saved_run_raw["ap_state"]
+		player_data = _saved_game_state["players_data"][0]
+	else:
+		# Loader version 3 (for now)
+		var loader_v3 = ProgressDataLoaderV3.new("", ProgressData.current_profile_id)
+		_saved_game_state = loader_v3.deserialize_run_state(saved_run_raw["game_state"])
+		_saved_ap_state = saved_run_raw["ap_state"]
+		player_data = _saved_game_state["players_data"][0]
 	
 	RunData.players_data[0].current_level = player_data.current_level
 	for item in player_data.items:

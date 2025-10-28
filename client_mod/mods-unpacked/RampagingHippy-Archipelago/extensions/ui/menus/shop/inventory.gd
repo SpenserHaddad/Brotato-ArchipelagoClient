@@ -18,8 +18,8 @@ func init_char_select_inventory(ap_client):
 	_ap_client = ap_client
 	_constants = BrotatoApConstants.new()
 	
-func set_elements(elements: Array, reverse_order: bool = false, replace: bool = true, prioritize_gameplay_elements: bool = false) -> void:
-	.set_elements(elements, reverse_order, replace, prioritize_gameplay_elements)
+func set_elements(elements: Array, reverse_order: bool = false, replace: bool = true, prioritize_gameplay_elements: bool = false, animated_entrance: bool = false) -> void:
+	.set_elements(elements, reverse_order, replace, prioritize_gameplay_elements, animated_entrance)
 	if _ap_client.connected_to_multiworld():
 		var ap_character_info = _ap_client.character_progress.character_info
 		var children = get_children()
@@ -31,7 +31,7 @@ func set_elements(elements: Array, reverse_order: bool = false, replace: bool = 
 		#			ModLoaderLog.debug("element.my_id=%s, icon=%s, is_locked=%s, won_run=%s" % [element.my_id, element.icon.load_path, element.is_locked, won_run], LOG_NAME)
 					child.set_character_info(won_run)
 
-func add_special_element(p_icon: Texture, p_is_random: bool = false, p_alpha: float = 1, p_item: Resource = null) -> void:
+func add_special_element(p_icon: Texture, p_is_random: bool = false, p_alpha: float = 1, p_item: Resource = null, sort_inventory: = true, animated_entrance = false) -> void:
 	var p_item_id = null
 	var locked = null
 	if p_item != null:
@@ -42,4 +42,4 @@ func add_special_element(p_icon: Texture, p_is_random: bool = false, p_alpha: fl
 			# Replace default locked icon with the character's image so it's easier to
 			# tell what characters are in the multiworld, just not available yet.
 			p_icon = p_item.icon
-	.add_special_element(p_icon, p_is_random, p_alpha, p_item)
+	.add_special_element(p_icon, p_is_random, p_alpha, p_item, sort_inventory, animated_entrance)

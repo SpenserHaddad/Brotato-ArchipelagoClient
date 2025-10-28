@@ -88,15 +88,16 @@ func get_last_played_char():
 func get_last_saved_run():
 	return get_saved_run(_last_played_char)
 
-func save_character_run(character: String, game_state: Dictionary, ap_state: Dictionary):
-	var combined_save_data = {"game_state": game_state, "ap_state": ap_state}
+func save_character_run(character: String, game_state: Dictionary, ap_state: Dictionary, loader_version: int):
+	var combined_save_data = {"game_state": game_state, "ap_state": ap_state, "loader_version": loader_version}
 	var combined_save_data_bytes = JSON.print(combined_save_data).to_utf8()
 
+	var compression_format = File.COMPRESSION_ZSTD
 	var decompressed_data_size = combined_save_data_bytes.size()
-	var save_data_compressed = combined_save_data_bytes.compress(File.COMPRESSION_ZSTD)
+	var save_data_compressed = combined_save_data_bytes.compress(compression_format)
 	var save_data_b64 = Marshalls.raw_to_base64(save_data_compressed)
 	var save_info = {
-		"compression": File.COMPRESSION_ZSTD,
+		"compression": compression_format,
 		"data_b64": save_data_b64,
 		"decompressed_size": decompressed_data_size
 	}

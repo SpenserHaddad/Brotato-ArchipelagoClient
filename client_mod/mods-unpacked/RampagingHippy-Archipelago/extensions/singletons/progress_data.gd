@@ -27,13 +27,13 @@ func save_run_state(
 			free_rerolls,
 			item_steals
 		)
-		var loader_v2 = ProgressDataLoaderV2.new("user://ap_save.json") # Dummy value
-		_set_loader_properties(loader_v2, run_state)
-		var saved_run_serialized = loader_v2.serialize_run_state(run_state)
+		var loader_v3 = ProgressDataLoaderV3.new("user://ap_save.json") # Dummy value
+		_set_loader_properties(loader_v3, run_state)
+		var saved_run_serialized = loader_v3.serialize_run_state(run_state)
 		var ap_run_state = _ap_client.export_run_specific_progress_data()
 		var character = RunData.get_player_character(0).my_id
 		_ap_client.saved_runs_progress.save_character_run(
-			character, saved_run_serialized, ap_run_state
+			character, saved_run_serialized, ap_run_state, loader_v3.version
 		)
 	else:
 		.save_run_state(
@@ -48,5 +48,5 @@ func save_run_state(
 
 func save() -> void:
 	# Disable saving when connected to Multiworld
-	if not _ap_client.connected_to_multiworld():
+	if not (_ap_client != null and _ap_client.connected_to_multiworld()):
 		.save()
