@@ -23,7 +23,8 @@ func _init():
 	# Add extensions
 	var extension_files = [
 		"main.gd", # Update consumable drop logic to spawn AP items
-		"entities/entity.gd", # Track when units are killed to drop consumables in debug mode
+		"entities/units/enemies/enemy.gd", # Track when enemies are killed to drop consumables in debug mode
+		"entities/units/player/player.gd", # Handle DeathLink
 		"singletons/run_data.gd", # Override XP rewards
 		"singletons/item_service.gd", # Drop AP consumables
 		"singletons/progress_data.gd", # Save AP runs for each character
@@ -47,6 +48,9 @@ func _init():
 		# Enable/Disable shop item lock buttons
 		"ui/menus/shop/shop_items_container.gd",
 		"ui/menus/shop/shop_item.gd",
+		# Show custom run lost messages
+		"ui/menus/ingame/wave_cleared_label.gd",
+		"ui/menus/run/base_end_run.gd",
 		# Show character win status on character select screen
 		"global/inventory_element.gd",
 	]
