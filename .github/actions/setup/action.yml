@@ -1,4 +1,5 @@
 name: Common Setup
+description: Common CI/CD setup steps
 
 runs:
   using: "composite"
@@ -20,11 +21,13 @@ runs:
         ref: "main"
 
     - name: Symlink Brotato apworld to Archipelago code
+      shell: bash
       run: |
         ls -l
         python ./tools/create_dev_symlinks.py -a ./Archipelago/
         ls -l ./Archipelago/worlds
 
     - name: Setup Archipelago dependencies
+      shell: bash
       working-directory: ./Archipelago
       run: python ModuleUpdate.py --yes
