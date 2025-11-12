@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check
+        run: |
+          pwd
+          ls -l
+          ls /home/runner/work/Brotato-ArchipelagoClient/
       - name: Setup test dependencies
         run: pip install ruff -r ./Archipelago/ci-requirements.txt
 
