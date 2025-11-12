@@ -180,5 +180,5 @@ item_name_groups: dict[str, set[str]] = {
         ItemName.XP_100.value,
         ItemName.XP_150.value,
     },
-    "Characters": set(c.value for c in _char_items),
+    "Characters": {c.value for c in _char_items},
 }

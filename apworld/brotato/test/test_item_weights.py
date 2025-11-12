@@ -1,4 +1,5 @@
 from random import Random
+from typing import ClassVar
 from unittest import TestCase
 
 from Options import OptionError, Range
@@ -16,15 +17,15 @@ class TestBrotatoItemWeights(TestCase):
     patching self.world.random, which makes the test tautological.
     """
 
-    option_to_expected_items: dict[type[Range], ItemName | list[ItemName]] = {
-        options.CommonItemWeight: ItemName.COMMON_ITEM,
-        options.UncommonItemWeight: ItemName.UNCOMMON_ITEM,
-        options.RareItemWeight: ItemName.RARE_ITEM,
-        options.LegendaryItemWeight: ItemName.LEGENDARY_ITEM,
-        options.CommonUpgradeWeight: ItemName.COMMON_UPGRADE,
-        options.UncommonUpgradeWeight: ItemName.UNCOMMON_UPGRADE,
-        options.RareUpgradeWeight: ItemName.RARE_UPGRADE,
-        options.LegendaryUpgradeWeight: ItemName.LEGENDARY_UPGRADE,
+    option_to_expected_items: ClassVar[dict[type[Range], list[ItemName]]] = {
+        options.CommonItemWeight: [ItemName.COMMON_ITEM],
+        options.UncommonItemWeight: [ItemName.UNCOMMON_ITEM],
+        options.RareItemWeight: [ItemName.RARE_ITEM],
+        options.LegendaryItemWeight: [ItemName.LEGENDARY_ITEM],
+        options.CommonUpgradeWeight: [ItemName.COMMON_UPGRADE],
+        options.UncommonUpgradeWeight: [ItemName.UNCOMMON_UPGRADE],
+        options.RareUpgradeWeight: [ItemName.RARE_UPGRADE],
+        options.LegendaryUpgradeWeight: [ItemName.LEGENDARY_UPGRADE],
         options.GoldWeight: [ItemName(name) for name in item_name_groups["Gold"]],
         options.XpWeight: [ItemName(name) for name in item_name_groups["XP"]],
     }
@@ -39,8 +40,6 @@ class TestBrotatoItemWeights(TestCase):
                 # good enough without doing weird typing stuff.
                 item_names = create_items_from_weights(num_items, Random(0x12345), *weights)  # type: ignore
                 total_items = sum(item_names.values())
-                if not isinstance(expected_items, list):
-                    expected_items = [expected_items]
                 self.assertEqual(total_items, num_items)
                 for item_name in item_names:
                     self.assertIn(item_name, expected_items)
@@ -108,7 +107,5 @@ class TestBrotatoItemWeights(TestCase):
         total_items = sum(item_names.values())
         self.assertEqual(total_items, 200)
         for expected_items in self.option_to_expected_items.values():
-            if isinstance(expected_items, ItemName):
-                expected_items = [expected_items]
             for item in expected_items:
                 self.assertIn(item, item_names, f"No items created for {item}.")

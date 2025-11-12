@@ -54,7 +54,7 @@ def _create_weights_for_item_group(weight: int, group: list[ItemName]) -> dict[I
     base_weight, base_extra = divmod(weight, len(group))
 
     base_extra = math.ceil(base_extra)
-    item_weights: dict[ItemName, int] = {item: base_weight for item in group}
+    item_weights: dict[ItemName, int] = dict.fromkeys(group, base_weight)
     for _, item in zip(range(base_extra), itertools.cycle(item_weights)):
         item_weights[item] += 1
     return item_weights

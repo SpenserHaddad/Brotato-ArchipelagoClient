@@ -1,18 +1,17 @@
 import random
 from contextlib import AbstractContextManager, nullcontext
 
-from test.bases import TestBase
-
 from ..characters import get_available_and_starting_characters
 from ..constants import BASE_GAME_CHARACTERS
 from ..options import StartingCharacters
+from . import BrotatoTestBase
 from .data_sets.characters import (
     CHARACTER_TEST_DATA_SETS,
     NON_ERROR_CHARACTER_TEST_DATA_SETS,
 )
 
 
-class TestBrotatoCharacterOptions(TestBase):
+class TestBrotatoCharacterOptions(BrotatoTestBase):
     """Tests to ensure that we correctly determine the included and starting characters from options.
 
     This differs from `test_include_characters` and `test_starting_characters` in that it focuses on checking that the

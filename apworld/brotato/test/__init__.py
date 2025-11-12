@@ -30,5 +30,5 @@ class BrotatoTestBase(WorldTestBase):
             self.setUp()
             yield
         finally:
-            self.tearDown
+            self.tearDown()
             self.options = original_options

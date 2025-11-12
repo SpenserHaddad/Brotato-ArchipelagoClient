@@ -1,8 +1,5 @@
 from dataclasses import dataclass
 
-from .constants import ItemRarity
-from .items import ItemName
-
 
 @dataclass(frozen=True)
 class BrotatoLootCrateGroup:

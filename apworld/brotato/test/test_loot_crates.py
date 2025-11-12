@@ -19,7 +19,7 @@ class TestLootCrateGroups(TestCase):
                     msg="Incorrect number of common loot crate groups",
                 )
                 for idx, (group, expected_group) in enumerate(
-                    zip(common_loot_crate_groups, test_data.expected_common_groups)
+                    zip(common_loot_crate_groups, test_data.expected_common_groups, strict=True)
                 ):
                     self.assertEqual(group, expected_group, msg=f"Mismatch for group {idx}.")
 
@@ -37,6 +37,6 @@ class TestLootCrateGroups(TestCase):
                     msg="Incorrect number of legendary loot crate groups",
                 )
                 for idx, (group, expected_group) in enumerate(
-                    zip(legendary_loot_crate_groups, test_data.expected_legendary_groups)
+                    zip(legendary_loot_crate_groups, test_data.expected_legendary_groups, strict=True)
                 ):
                     self.assertEqual(group, expected_group, msg=f"Mismatch for group {idx}.")
