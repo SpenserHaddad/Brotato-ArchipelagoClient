@@ -13,12 +13,14 @@ jobs:
 
       - name: Checkout own code
         uses: actions/checkout@v5
+        with:
+          path: ./Brotato-ArchipelagoClient
 
       - name: Checkout Archipelago
         uses: actions/checkout@v5
         with:
-          repository: "ArchipelagoMW/Archipelago"
-          path: "./Archipelago"
+          repository: ArchipelagoMW/Archipelago
+          path: ./Archipelago
           ref: "main"
 
       - name: Symlink Brotato apworld to Archipelago code
