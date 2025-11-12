@@ -46,6 +46,9 @@ jobs:
       - name: Common Setup
         uses: ./.github/actions/setup
 
+      - name: Install pytest + deps
+        run: pip install -r ./Archipelago/ci-requirements.txt
+
       - name: Run Archipelago tests
         working-directory: ./Archipelago
         run: pytest worlds/brotato
