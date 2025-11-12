@@ -32,3 +32,9 @@ jobs:
       - name: Setup Archipelago dependencies
         working-directory: ./Archipelago
         run: python ModuleUpdate.py --yes
+
+      - name: Check
+        run: |
+          pwd
+          ls -l
+          ls /home/runner/work/Brotato-ArchipelagoClient/
