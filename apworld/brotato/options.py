@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import Choice, OptionSet, PerGameCommonOptions, Range, Toggle
+from Options import Choice, DeathLinkMixin, OptionSet, PerGameCommonOptions, Range, Toggle
 
 from .constants import (
     ABYSSAL_TERRORS_CHARACTERS,
@@ -477,7 +477,7 @@ class IncludeAbyssalTerrorsCharacters(OptionSet):
 
 
 @dataclass
-class BrotatoOptions(PerGameCommonOptions):
+class BrotatoOptions(PerGameCommonOptions, DeathLinkMixin):
     num_victories: NumberRequiredWins
     num_characters: NumberCharacters
     num_starting_characters: NumberStartingCharacters

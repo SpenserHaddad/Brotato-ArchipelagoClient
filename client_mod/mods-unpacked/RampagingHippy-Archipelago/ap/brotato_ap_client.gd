@@ -20,6 +20,7 @@ var ApLootCrateProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/p
 var ApWavesProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/waves.gd")
 var ApWinsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/wins.gd")
 var ApSavedRunsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/saved_runs.gd")
+var ApDeathLinkProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/deathlink.gd")
 var GodotApClientDebugSettings = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/debug.gd")
 
 var game_state
@@ -39,6 +40,7 @@ var legendary_loot_crate_progress
 var waves_progress
 var wins_progress
 var saved_runs_progress
+var deathlink_progress
 
 # Holder for all the trackers together so we can perform bulk operations.
 var _progress_trackers: Array
@@ -61,6 +63,7 @@ func _init(websocket_client, config).(websocket_client, config):
 	waves_progress = ApWavesProgress.new(self, game_state)
 	wins_progress = ApWinsProgress.new(self, game_state)
 	saved_runs_progress = ApSavedRunsProgress.new(self, game_state)
+	deathlink_progress = ApDeathLinkProgress.new(self, game_state)
 	debug = GodotApClientDebugSettings.new()
 
 	_progress_trackers = [
@@ -77,6 +80,7 @@ func _init(websocket_client, config).(websocket_client, config):
 		waves_progress,
 		wins_progress,
 		saved_runs_progress,
+		deathlink_progress
 	]
 
 	ModLoaderLog.debug("Brotato AP adapter initialized", _LOG_NAME)

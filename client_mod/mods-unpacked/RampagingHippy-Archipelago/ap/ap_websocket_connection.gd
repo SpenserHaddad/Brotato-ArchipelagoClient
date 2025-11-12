@@ -124,6 +124,14 @@ func send_connect(game: String, user: String, password: String = "", slot_data: 
 		"slot_data": slot_data
 	})
 
+func send_connect_update(items_handling: int = -1, tags = null):
+	var args = {"cmd": "ConnectUpdate"}
+	if items_handling >= 0:
+		args["items_handling"] = items_handling
+	if tags != null:
+		args["tags"] = tags
+	_send_command(args)
+
 func send_sync():
 	_send_command({"cmd": "Sync"})
 
@@ -167,15 +175,16 @@ func get_data_package(games: Array):
 		"games": games,
 	})
 
-func bounce(games: Array, slots: Array, tags: Array, data: Dictionary):
-	# TODO: args
-	_send_command({
-		"cmd": "Bounce",
-		"games": games,
-		"slots": slots,
-		"tags": tags,
-		"data": data,
-	})
+func send_bounce(data: Dictionary, games: Array = [], slots: Array = [], tags: Array = []):
+	var args = {"cmd": "Bounce", "data": data}
+	if games.size() > 0:
+		args["games"] = games
+	if slots.size() > 0:
+		args["slots"] = slots
+	if tags.size() > 0:
+		args["tags"] = tags
+
+	_send_command(args)
 
 # TODO: Extra custom arguments
 func get_value(keys: Array):
