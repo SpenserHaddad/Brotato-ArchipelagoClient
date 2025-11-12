@@ -15,8 +15,13 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout own code
+        uses: actions/checkout@v5
+        with:
+          path: ./Brotato-ArchipelagoClient
+
       - name: Setup
-        uses: ./.github/actions/setup.yml
+        uses: ./Brotato-ArchipelagoClient/.github/actions/setup.yml
       - name: Create .apworld and template yaml
         working-directory: ./Archipelago
         run: |
