@@ -3,29 +3,48 @@ name: CI
 on: push
 
 jobs:
-  ci:
+  ruff-format:
+    name: Ruff Format
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout own code
+      - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Check
-        run: |
-          pwd
-          ls -la
-
-      - name: Setup
+      - name: Common Setup
         uses: ./.github/actions/setup
 
-      - name: Setup test dependencies
-        run: pip install ruff -r ./Archipelago/ci-requirements.txt
+      - name: Install Ruff
+        run: pip install ruff
 
       - name: Run ruff format
-        run: ruff format --diff apworld/brotato tools/
+        run: ruff --config ./Archipelago/ruff.toml format --diff apworld/brotato tools/
 
-      - name: Run ruff lint
-        run: ruff check --diff apworld/brotato tools/
+  ruff-check:
+    name: Ruff Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Common Setup
+        uses: ./.github/actions/setup
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run ruff check
+        run: ruff --config ./Archipelago/ruff.toml check --diff ./worlds/brotato
+
+  pytest:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Common Setup
+        uses: ./.github/actions/setup
 
       - name: Run Archipelago tests
         working-directory: ./Archipelago
