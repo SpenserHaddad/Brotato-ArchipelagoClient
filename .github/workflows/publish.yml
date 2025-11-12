@@ -9,16 +9,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup:
-    uses: ./.github/workflows/setup.yml
-
   build:
-    needs: setup
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
+      - name: Setup
+        uses: ./.github/actions/setup.yml
       - name: Create .apworld and template yaml
         working-directory: ./Archipelago
         run: |
