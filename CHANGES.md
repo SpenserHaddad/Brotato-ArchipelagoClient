@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added DeathLink support to the apworld and client mod.
+  - Must be enabled via the new option in the YAML.
+  - Once DeathLink is enabled, it cannot be turned off. A future update will add the
+    ability to toggle DeathLink within the game itself.
+
+### Fixed
+
+- Several internal fixes to account for changes in consumable metadata and other
+  miscellaneous changes.
+
 ## [0.11.1] - 2025-10-27
 
 ### Fixed

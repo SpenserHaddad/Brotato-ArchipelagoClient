@@ -26,7 +26,8 @@ func init():
 		_archipelago_button.focus_neighbour_top = quit_button.get_path()
 		
 		# This will trigger in the base class' init(), which is called after this one's.
-		continue_button.connect("visibility_changed", self, "_on_ContinueButton_visibility_changed")
+		# Use the "AP" prefix so we don't clash with a similar signal handler in the base class.
+		continue_button.connect("visibility_changed", self, "_ap_on_ContinueButton_visibility_changed")
 
 
 func _ready():
@@ -90,7 +91,7 @@ func _on_ContinueButton_pressed() -> void:
 	else:
 		._on_ContinueButton_pressed()
 
-func _on_ContinueButton_visibility_changed() -> void:
+func _ap_on_ContinueButton_visibility_changed() -> void:
 	# Make sure the "Resume" button is visible is correct.
 	# If not connected to AP, use the base game's behavior. Otherwise, the button should only appear
 	# when there's a saved AP run. We can't just call this in init(), because the base class also

@@ -6,6 +6,10 @@ const LOG_NAME = "RampagingHippy-Archipelago/progress/deathlink"
 signal deathlink_triggered(source, cause)
 
 var deathlink_enabled: bool = false
+
+# The source and cause fields from the last DeathLink that caused a run to be
+# lost. If multiple DeathLinks happen to come in close together, this will be
+# the info from the first one received.
 var deathlink_source: String = ""
 var deathlink_cause: String = ""
 
@@ -53,17 +57,22 @@ func on_connected_to_multiworld():
 
 func _on_bounced_received(bounced_data: Dictionary):
 	if deathlink_enabled and bounced_data.tags.has("DeathLink"):
-		deathlink_source = bounced_data.data["source"]
-		deathlink_cause = bounced_data.data.get("cause", "")
+		var packet_source = bounced_data.data["source"]
+		var packet_cause = bounced_data.data.get("cause", "")
 		
 		# Check handling_deathlink so we are still killed by others playing in
 		# the same slot (AP-level co-op)
-		if deathlink_source == _ap_client.player and handling_deathlink:
+		if packet_source == _ap_client.player and handling_deathlink:
 			ModLoaderLog.info("Received our own DeathLink, ignoring", LOG_NAME)
 			handling_deathlink = false
-		else:
+		# Make sure we don't try to handle multiple DeathLinks at once, since it
+		# causes problems
+		elif not handling_deathlink and not lost_to_deathlink:
 			ModLoaderLog.info("DeathLink received from %s, cause: %s" % [deathlink_source, deathlink_cause], LOG_NAME)
 			handling_deathlink = true
 			lost_to_deathlink = true
+			deathlink_source = packet_source
+			deathlink_cause = packet_cause
 			emit_signal("deathlink_triggered", deathlink_source, deathlink_cause)
 			handling_deathlink = false
+			ModLoaderLog.info("Done handling DeathLink", LOG_NAME)

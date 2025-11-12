@@ -9,6 +9,7 @@
 script = ExtResource( 1 )
 my_id = "ap_legendary_pickup"
 unlocked_by_default = true
+can_be_looted = false
 icon = ExtResource( 2 )
 name = "Archipelago Legendary Pickup"
 tier = 0
@@ -16,6 +17,7 @@ value = 0
 effects = [ ExtResource( 3 ) ]
 tracking_text = ""
 is_lockable = true
+unlock_codex_descr_after_get_it = 0
 is_cursed = false
 curse_factor = 0.0
 max_nb = -1

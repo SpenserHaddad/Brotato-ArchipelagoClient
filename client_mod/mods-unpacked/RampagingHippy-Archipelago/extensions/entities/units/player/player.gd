@@ -11,10 +11,4 @@ func _ready():
 	var _status = _ap_client.deathlink_progress.connect("deathlink_triggered", self, "_on_deathlink_triggered")
 
 func _on_deathlink_triggered(source: String, cause: String):
-	var die_args = Entity.DieArgs.new()
-	die_args.killing_blow_dmg_value = 999
-	die(die_args)
-
-func die(args := Entity.DieArgs.new()) -> void:
-	ModLoaderLog.info("Player is dying, dead=%s" % dead, LOG_NAME)
-	.die(args)
+	die()

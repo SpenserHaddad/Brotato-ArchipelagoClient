@@ -8,6 +8,7 @@
 script = ExtResource( 2 )
 my_id = "ap_gift_item_uncommon"
 unlocked_by_default = true
+can_be_looted = false
 icon = ExtResource( 1 )
 name = "Archipelago Gift Item (Uncommon)"
 tier = 1
@@ -15,6 +16,7 @@ value = 0
 effects = [  ]
 tracking_text = ""
 is_lockable = true
+unlock_codex_descr_after_get_it = 0
 is_cursed = false
 curse_factor = 0.0
 max_nb = -1
