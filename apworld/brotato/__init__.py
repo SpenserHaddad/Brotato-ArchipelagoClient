@@ -32,7 +32,7 @@ logger = logging.getLogger("Brotato")
 
 class BrotatoWeb(WebWorld):
     # TODO: Add actual tutorial!
-    tutorials = [
+    tutorials: list[Tutorial] = [  # noqa: RUF012
         Tutorial(
             "Multiworld Setup Guide",
             "A guide to setting up the Brotato randomizer connected to an Archipelago Multiworld",
@@ -45,7 +45,7 @@ class BrotatoWeb(WebWorld):
     theme = "dirt"
     rich_text_options_doc = True
 
-    option_groups = [
+    option_groups: ClassVar[list[OptionGroup]] = [
         OptionGroup(
             "Loot Crates",
             [
@@ -292,6 +292,7 @@ class BrotatoWorld(World):
         )
         wave_per_game_item: dict[int, list[int]] = get_wave_for_each_item(self.nonessential_item_counts)
         return {
+            "deathlink": self.options.death_link.value,
             "waves_with_checks": self.waves_with_checks,
             "num_wins_needed": self.num_wins_needed,
             "gold_reward_mode": self.options.gold_reward_mode.value,
