@@ -20,16 +20,18 @@ jobs:
 
     steps:
       - name: Create .apworld and template yaml
-        working-directory: ../Archipelago
+        working-directory: ./Archipelago
         run: |
           python ./Launcher.py "Build APWorlds" -- "Brotato"
+          cp build/apworlds/brotato.apworld ../
+          cp build/apworlds/Brotato.yaml ../
 
       - name: Zip client mod
-        working-directory: ./client_mod
+        working-directory: ./Brotato-ArchipelagoClient/client_mod
         run: zip -r ../RampagingHippy-Archipelago.zip * .import/*
 
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "../build/apworlds/brotato.apworld,../build/apworlds/Brotato.yaml,RampagingHippy-Archipelago.zip"
+          artifacts: "brotato.apworld,Brotato.yaml,RampagingHippy-Archipelago.zip"
           skipIfReleaseExists: true

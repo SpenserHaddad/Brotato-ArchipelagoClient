@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Setup test dependencies
-        run: pip install ruff -r ../Archipelago/ci-requirements.txt
+        run: pip install ruff -r ./Archipelago/ci-requirements.txt
 
       - name: Run ruff format
         run: ruff format --diff apworld/brotato tools/
@@ -20,5 +20,5 @@ jobs:
         run: ruff check --diff apworld/brotato tools/
 
       - name: Run Archipelago tests
-        working-directory: ../Archipelago
+        working-directory: ./Archipelago
         run: pytest worlds/brotato

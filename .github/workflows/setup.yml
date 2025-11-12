@@ -18,15 +18,15 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: "ArchipelagoMW/Archipelago"
-          path: "../Archipelago"
+          path: "./Archipelago"
           ref: "main"
 
       - name: Symlink Brotato apworld to Archipelago code
         run: |
           ls -l
-          python Brotato-ArchipelagoClient/tools/create_dev_symlinks.py -a Archipelago/
-          ls -l Archipelago/worlds
+          python ./Brotato-ArchipelagoClient/tools/create_dev_symlinks.py -a ./Archipelago/
+          ls -l ./Archipelago/worlds
 
       - name: Setup Archipelago dependencies
-        working-directory: ../Archipelago
+        working-directory: ./Archipelago
         run: python ModuleUpdate.py --yes
