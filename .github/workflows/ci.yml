@@ -34,7 +34,7 @@ jobs:
         run: pip install ruff
 
       - name: Run ruff check
-        run: ruff --config ./Archipelago/ruff.toml check --diff ./worlds/brotato
+        run: ruff --config ./Archipelago/ruff.toml check --diff apworld/brotato
 
   pytest:
     name: Unit tests
