@@ -90,6 +90,8 @@ signal item_received(item_name, item)
 signal data_storage_updated(key, new_value, original_value)
 ## Emitted when a `RoomUpdate` packet is received. Contains the new room information.
 signal room_updated(updated_room_info)
+## Emitted when a `Bounced` packet is received. Contains the packet's data.
+signal bounced_received(bounced_data)
 
 func _init(websocket_client_, config_):
 	websocket_client = websocket_client_
@@ -105,6 +107,7 @@ func _ready():
 	_status = websocket_client.connect("on_set_reply", self, "_on_set_reply")
 	_status = websocket_client.connect("on_retrieved", self, "_on_retrieved")
 	_status = websocket_client.connect("on_room_update", self, "_on_room_update")
+	_status = websocket_client.connect("on_bounced", self, "_on_bounced_received")
 
 func _connected_or_connection_refused_received(message: Dictionary):
 	emit_signal("_received_connect_response", message)
@@ -298,6 +301,26 @@ func set_value(key: String, operations, values, default = null, want_reply: bool
 		ap_ops.append(operation_obj)
 	websocket_client.set_value(key, default, want_reply, ap_ops)
 
+func enable_deathlink():
+	# Convenience method to set the "DeathLink" tag for the slot
+	var updated_tags: Array = self.room_info.tags.duplicate()
+	if not updated_tags.has("DeathLink"):
+		updated_tags.append("DeathLink")
+	websocket_client.send_connect_update(-1, updated_tags)
+
+func send_deathlink(source: String = "", cause: String = ""):
+	# Convenience method for sending a DeathLink bounce packet
+	var deathlink_args = {
+		"time": Time.get_unix_time_from_system(),
+	}
+	if source == "":
+		deathlink_args["source"] = player
+	else:
+		deathlink_args["source"] = source
+	if cause:
+		deathlink_args["cause"] = cause
+	websocket_client.send_bounce(deathlink_args, [], [], ["DeathLink"])
+
 func _on_received_items(command):
 	# TODO: update missing and checked locations?
 	var items = command["items"]
@@ -333,4 +356,10 @@ func _on_set_reply(command):
 		command["key"],
 		command["value"],
 		command["original_value"]
+	)
+
+func _on_bounced_received(bounced_data: Dictionary):
+	emit_signal(
+		"bounced_received",
+		bounced_data
 	)
