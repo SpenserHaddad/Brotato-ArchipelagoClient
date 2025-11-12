@@ -15,7 +15,7 @@ func _init():
 func notify_enemy_killed():
 	if enable_auto_spawn_loot_crate:
 		auto_spawn_loot_crate_counter += 1
-		if auto_spawn_loot_crate_counter > auto_spawn_loot_crate_on_count:
+		if auto_spawn_loot_crate_counter >= auto_spawn_loot_crate_on_count:
 			auto_spawn_loot_crate = true
 
 func notify_debug_crate_spawned():
