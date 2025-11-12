@@ -10,13 +10,14 @@ jobs:
       - name: Checkout own code
         uses: actions/checkout@v5
 
-      - name: Setup
-        uses: ./.github/actions/setup.yml
       - name: Check
         run: |
           pwd
           ls -l
-          ls /home/runner/work/Brotato-ArchipelagoClient/
+          ls ./Brotato-ArchipelagoClient/
+      - name: Setup
+        uses: ./.github/actions/setup.yml
+
       - name: Setup test dependencies
         run: pip install ruff -r ./Archipelago/ci-requirements.txt
 
