@@ -1,0 +1,25 @@
+name: CI
+
+on: push
+
+jobs:
+  setup:
+    uses: ./.github/workflows/setup.yml
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup test dependencies
+        run: pip install ruff -r Archipelago/ci-requirements.txt
+
+      - name: Run ruff format
+        working-directory: ./Brotato-ArchipelagoClient
+        run: ruff format --diff apworld/brotato tools/
+
+      - name: Run ruff lint
+        working-directory: ./Brotato-ArchipelagoClient
+        run: ruff check --diff apworld/brotato tools/
+
+      - name: Run Archipelago tests
+        working-directory: ./Archipelago
+        run: pytest worlds/brotato
