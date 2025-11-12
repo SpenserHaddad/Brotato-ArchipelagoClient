@@ -13,8 +13,8 @@ jobs:
       - name: Check
         run: |
           pwd
-          ls -l
-          ls ./Brotato-ArchipelagoClient/
+          ls -la
+
       - name: Setup
         uses: ./.github/actions/setup.yml
 
