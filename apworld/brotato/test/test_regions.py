@@ -45,7 +45,7 @@ class TestBrotatoCharacterRegions(TestBrotatoRegions):
         self.assertListEqual(region_location_names, expected_location_names)
 
     def test_create_character_region_invalid_character_fails(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(KeyError):
             create_character_region(self._create_region, "Ironclad", [3, 6, 9, 12, 15, 18])
 
     def test_create_character_region_invalid_waves_with_checks_fails(self):
