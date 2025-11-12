@@ -9,11 +9,9 @@ jobs:
     steps:
       - name: Checkout own code
         uses: actions/checkout@v5
-        with:
-          path: ./Brotato-ArchipelagoClient
 
       - name: Setup
-        uses: ./Brotato-ArchipelagoClient/.github/actions/setup.yml
+        uses: ./.github/actions/setup.yml
       - name: Check
         run: |
           pwd
