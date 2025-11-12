@@ -6,6 +6,7 @@ jobs:
   setup:
     uses: ./.github/workflows/setup.yml
   ci:
+    needs: setup
     runs-on: ubuntu-latest
 
     steps:
