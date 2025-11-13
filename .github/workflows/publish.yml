@@ -31,7 +31,8 @@ jobs:
           echo ######################## ls ######################
           ls
           echo ######################## ls build ######################
-          ls build/
+          ls build/apworlds
+
           cp build/apworlds/brotato.apworld ../
           cp build/apworlds/Brotato.yaml ../
 
