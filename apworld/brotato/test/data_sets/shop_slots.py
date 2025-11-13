@@ -30,8 +30,7 @@ class ShopSlotsTestCase(BrotatoTestDataSet):
             "num_starting_lock_buttons": self.num_starting_lock_buttons,
             "expected_num_starting_lock_buttons": self.expected_num_starting_lock_buttons,
         }
-        value_str = ", ".join(f"{k}={v}" for k, v in props.items())
-        return value_str
+        return ", ".join(f"{k}={v}" for k, v in props.items())
 
     @property
     def options_dict(self) -> dict[str, Any]:

@@ -1,5 +1,3 @@
-import random
-
 from BaseClasses import PlandoOptions, Region
 from Options import OptionError
 

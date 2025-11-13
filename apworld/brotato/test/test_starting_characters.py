@@ -1,4 +1,4 @@
-from typing import Optional, Sequence
+from collections.abc import Sequence
 
 from ..constants import BASE_GAME_CHARACTERS
 from ..items import item_name_groups
@@ -16,7 +16,7 @@ class TestBrotatoStartingCharacters(BrotatoTestBase):
         self,
         num_characters: int,
         custom_starting_characters: bool = True,
-        expected_characters: Optional[Sequence[str]] = None,
+        expected_characters: Sequence[str] | None = None,
     ):
         # Create world with relevant options
         run_options = {

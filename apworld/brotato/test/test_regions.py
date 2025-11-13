@@ -1,7 +1,7 @@
-from typing import Any
+from typing import Any, ClassVar
 
 from BaseClasses import MultiWorld, Region
-from test.bases import TestBase
+from test.bases import WorldTestBase
 
 from ..constants import (
     CHARACTER_REGION_TEMPLATE,
@@ -18,7 +18,7 @@ from ..regions import create_character_region, create_loot_crate_group_region, c
 from . import BrotatoTestBase
 
 
-class TestBrotatoRegions(TestBase):
+class TestBrotatoRegions(WorldTestBase):
     def setUp(self) -> None:
         # Create a multiworld just to give the regions something to attach to.
         self.multiworld = MultiWorld(1)
@@ -45,7 +45,7 @@ class TestBrotatoCharacterRegions(TestBrotatoRegions):
         self.assertListEqual(region_location_names, expected_location_names)
 
     def test_create_character_region_invalid_character_fails(self):
-        with self.assertRaises(Exception):
+        with self.assertRaises(KeyError):
             create_character_region(self._create_region, "Ironclad", [3, 6, 9, 12, 15, 18])
 
     def test_create_character_region_invalid_waves_with_checks_fails(self):
@@ -60,7 +60,7 @@ class TestBrotatoCharacterRegions(TestBrotatoRegions):
                 f"Check that create_character_region fails when waves_with_checks={invalid_value}",
                 invalid_value=invalid_value,
             ):
-                with self.assertRaises(Exception):
+                with self.assertRaises(ValueError):
                     create_character_region(self._create_region, "Brawler", invalid_value)
 
 
@@ -101,17 +101,15 @@ class TestBrotatoCreateRegions(TestBrotatoRegions):
     parent_region: Region
     regions: dict[str, Region]
 
-    characters: list[str] = ["Brawler", "Crazy", "Mage", "Demon"]
-    common_loot_crate_groups: list[BrotatoLootCrateGroup] = [
+    characters: list[str] = ("Brawler", "Crazy", "Mage", "Demon")
+    common_loot_crate_groups: ClassVar[list[BrotatoLootCrateGroup]] = [
         BrotatoLootCrateGroup(1, 10, 0),
         BrotatoLootCrateGroup(2, 10, 5),
         BrotatoLootCrateGroup(3, 10, 10),
         BrotatoLootCrateGroup(4, 5, 15),
     ]
-    legendary_loot_crate_groups: list[BrotatoLootCrateGroup] = [
-        BrotatoLootCrateGroup(1, 5, 0),
-    ]
-    waves_with_checks: list[int] = [5, 10, 15, 20]
+    legendary_loot_crate_groups: list[BrotatoLootCrateGroup] = (BrotatoLootCrateGroup(1, 5, 0),)
+    waves_with_checks: list[int] = (5, 10, 15, 20)
 
     def setUp(self) -> None:
         super().setUp()
@@ -172,7 +170,7 @@ class TestBrotatoCreateRegions(TestBrotatoRegions):
 
 class TestBrotatoRegionAccessRules(BrotatoTestBase):
     run_default_tests = False  # type:ignore
-    options = {
+    options: ClassVar[dict[str, Any]] = {
         "num_victories": 10,
         "num_characters": 10,
         # Number of characters should match

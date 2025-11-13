@@ -18,19 +18,19 @@ class TestBrotatoWorld(BrotatoTestBase):
                 self.test_all_state_can_reach_everything()
 
     def test_common_loot_crate_groups_correct(self):
-        for idx, test_data in enumerate(LOOT_CRATE_GROUP_DATA_SETS):
-            with self.data_set_subtest(test_data, idx=idx):
+        for test_idx, test_data in enumerate(LOOT_CRATE_GROUP_DATA_SETS):
+            with self.data_set_subtest(test_data, idx=test_idx):
                 groups: list[BrotatoLootCrateGroup] = self.world.common_loot_crate_groups
                 expected_groups: list[BrotatoLootCrateGroup] = test_data.expected_common_groups
                 self.assertEqual(len(groups), len(expected_groups))
-                for idx, (group, expected_group) in enumerate(zip(groups, expected_groups)):
-                    self.assertEqual(group, expected_group, f"Common loot crate group {idx} is not correct.")
+                for group_idx, (group, expected_group) in enumerate(zip(groups, expected_groups, strict=True)):
+                    self.assertEqual(group, expected_group, f"Common loot crate group {group_idx} is not correct.")
 
     def test_legendary_loot_crate_groups_correct(self):
-        for idx, test_data in enumerate(LOOT_CRATE_GROUP_DATA_SETS):
-            with self.data_set_subtest(test_data, idx=idx):
+        for test_idx, test_data in enumerate(LOOT_CRATE_GROUP_DATA_SETS):
+            with self.data_set_subtest(test_data, idx=test_idx):
                 groups: list[BrotatoLootCrateGroup] = self.world.legendary_loot_crate_groups
                 expected_groups: list[BrotatoLootCrateGroup] = test_data.expected_legendary_groups
                 self.assertEqual(len(groups), len(expected_groups))
-                for idx, (group, expected_group) in enumerate(zip(groups, expected_groups)):
-                    self.assertEqual(group, expected_group, f"Legendary loot crate group {idx} is not correct.")
+                for group_idx, (group, expected_group) in enumerate(zip(groups, expected_groups, strict=True)):
+                    self.assertEqual(group, expected_group, f"Legendary loot crate group {group_idx} is not correct.")

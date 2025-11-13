@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-    - '*'
+      - "*"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -11,19 +11,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
       contents: write
-      
-    steps:
-      - name: Install dependencies
-        run: sudo apt-get install -y zip
 
-      - name: Checkout
-        uses: actions/checkout@v3
+    steps:
+      - name: Checkout own code
+        uses: actions/checkout@v5
+
+      - name: Common Setup
+        uses: ./.github/actions/setup
+
+      - name: Build Tools
+        run: sudo apt-get install build-essential
 
       - name: Create .apworld
-        working-directory: ./apworld
-        run: zip -r ../brotato.apworld brotato -x "brotato/__pycache__/*" -x  "brotato/test/*"
+        working-directory: ./Archipelago
+        run: |
+          python ./Launcher.py "Build APWorlds" -- "Brotato"
+          cp build/apworlds/brotato.apworld ../
+
+      - name: Create template yaml
+        working-directory: ./Archipelago
+        run: |
+          python ./Launcher.py "Generate Template Options" -- --skip_open_folder
+          cp Players/Templates/Brotato.yaml ../
 
       - name: Zip client mod
         working-directory: ./client_mod
@@ -32,5 +43,5 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "brotato.apworld,RampagingHippy-Archipelago.zip"
+          artifacts: "brotato.apworld,Brotato.yaml,RampagingHippy-Archipelago.zip"
           skipIfReleaseExists: true

@@ -1,0 +1,33 @@
+name: Common Setup
+description: Common CI/CD setup steps
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+
+    # - name: Checkout own code
+    #   uses: actions/checkout@v5
+    #   with:
+    #     path: ./Brotato-ArchipelagoClient
+
+    - name: Checkout Archipelago
+      uses: actions/checkout@v5
+      with:
+        repository: ArchipelagoMW/Archipelago
+        path: ./Archipelago
+        ref: "main"
+
+    - name: Symlink Brotato apworld to Archipelago code
+      shell: bash
+      run: |
+        ls -l
+        python ./tools/create_dev_symlinks.py -a ./Archipelago/
+        ls -l ./Archipelago/worlds
+
+    - name: Setup Archipelago dependencies
+      shell: bash
+      working-directory: ./Archipelago
+      run: python ModuleUpdate.py --yes

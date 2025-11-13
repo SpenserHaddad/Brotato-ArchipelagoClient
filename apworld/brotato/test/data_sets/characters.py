@@ -38,8 +38,7 @@ class BrotatoCharacterOptionDataSet(BrotatoTestDataSet):
     def test_name(self) -> str:
         if self.description:
             return self.description
-        else:
-            return str(self)
+        return str(self)
 
     @property
     def options_dict(self) -> dict[str, Any]:
