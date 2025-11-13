@@ -30,6 +30,7 @@ def get_wave_for_each_item(item_counts: dict[ItemName, int]) -> dict[int, list[i
     We attempt to equally distribute the items over the 20 waves in a normal run, with a bias towards higher numbers,
     for fun.
     """
+    x =  10
     item_names_to_rarity: dict[ItemName, ItemRarity] = {
         ItemName.COMMON_ITEM: ItemRarity.COMMON,
         ItemName.UNCOMMON_ITEM: ItemRarity.UNCOMMON,
