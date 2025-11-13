@@ -22,7 +22,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build Tools
-        uses: apt install build-essential
+        run: apt install build-essential
 
       - name: Create .apworld and template yaml
         working-directory: ./Archipelago
