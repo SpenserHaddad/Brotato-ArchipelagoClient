@@ -18,8 +18,8 @@ jobs:
       - name: Checkout own code
         uses: actions/checkout@v5
 
-      - name: Setup
-        uses: ./Brotato-ArchipelagoClient/.github/actions/setup.yml
+      - name: Common Setup
+        uses: ./.github/actions/setup
 
       - name: Create .apworld and template yaml
         working-directory: ./Archipelago
