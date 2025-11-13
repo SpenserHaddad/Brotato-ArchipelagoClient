@@ -21,10 +21,15 @@ jobs:
       - name: Common Setup
         uses: ./.github/actions/setup
 
+      - name: Build Tools
+        uses: apt install build-essential
+
       - name: Create .apworld and template yaml
         working-directory: ./Archipelago
         run: |
           python ./Launcher.py "Build APWorlds" -- "Brotato"
+          ls
+          ls build/
           cp build/apworlds/brotato.apworld ../
           cp build/apworlds/Brotato.yaml ../
 
