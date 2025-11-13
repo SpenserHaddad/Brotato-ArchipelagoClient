@@ -28,7 +28,9 @@ jobs:
         working-directory: ./Archipelago
         run: |
           python ./Launcher.py "Build APWorlds" -- "Brotato"
+          echo ######################## ls ######################
           ls
+          echo ######################## ls build ######################
           ls build/
           cp build/apworlds/brotato.apworld ../
           cp build/apworlds/Brotato.yaml ../
