@@ -20,6 +20,7 @@ jobs:
 
       - name: Setup
         uses: ./Brotato-ArchipelagoClient/.github/actions/setup.yml
+
       - name: Create .apworld and template yaml
         working-directory: ./Archipelago
         run: |
