@@ -37,7 +37,7 @@ jobs:
           cp Players/Templates/Brotato.yaml ../
 
       - name: Zip client mod
-        working-directory: ./Brotato-ArchipelagoClient/client_mod
+        working-directory: ./client_mod
         run: zip -r ../RampagingHippy-Archipelago.zip * .import/*
 
       - name: Create release
