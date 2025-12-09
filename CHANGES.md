@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed the game disconnecting when receiving non-DeathLink Bounce commands (which 
+  appeared as the game disconnecting after a short time).
+- Fixed DeathLink adding the room's tags to the player slot.
+
 ## [0.12.0] - 2025-11-12
 
 ### Added
