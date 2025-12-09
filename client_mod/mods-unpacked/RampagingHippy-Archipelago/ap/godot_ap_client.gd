@@ -75,6 +75,7 @@ var checked_locations: Array
 var slot_data: Dictionary
 var slot_info: Dictionary
 var hint_points: int
+var player_tags: Array = []
 
 var room_info: Dictionary
 var data_package: ApDataPackage
@@ -190,9 +191,9 @@ func connect_to_multiworld(get_data_package: bool = true) -> int:
 		"_connected_or_connection_refused_received"
 	)
 	if room_info.password:
-		websocket_client.send_connect(game, player, password)
+		websocket_client.send_connect(game, player, password, true, self.player_tags)
 	else:
-		websocket_client.send_connect(game, player)
+		websocket_client.send_connect(game, player, "", true, self.player_tags)
 	var connect_response = yield (self, "_received_connect_response")
 
 	if connect_response["cmd"] == "ConnectionRefused":
@@ -258,6 +259,7 @@ func disconnect_from_multiworld():
 	_set_connection_state(ConnectState.DISCONNECTING)
 	self.websocket_client.disconnect_from_server()
 	_set_connection_state(ConnectState.DISCONNECTED)
+	self.player_tags = []
 
 func _set_connection_state(state: int, error: int = 0):
 	ModLoaderLog.debug("Setting connection state to %s." % ConnectState.keys()[state], LOG_NAME)
@@ -301,12 +303,16 @@ func set_value(key: String, operations, values, default = null, want_reply: bool
 		ap_ops.append(operation_obj)
 	websocket_client.set_value(key, default, want_reply, ap_ops)
 
+func add_player_tag(tag: String):
+	# Add a tag to the player slot and send a ConnectUpdate if connected.
+	if not self.player_tags.has(tag):
+		self.player_tags.append(tag)
+	if self.connect_state == ConnectState.CONNECTED_TO_MULTIWORLD:
+		websocket_client.send_connect_update(-1, self.player_tags)
+
 func enable_deathlink():
 	# Convenience method to set the "DeathLink" tag for the slot
-	var updated_tags: Array = self.room_info.tags.duplicate()
-	if not updated_tags.has("DeathLink"):
-		updated_tags.append("DeathLink")
-	websocket_client.send_connect_update(-1, updated_tags)
+	add_player_tag("DeathLink")
 
 func send_deathlink(source: String = "", cause: String = ""):
 	# Convenience method for sending a DeathLink bounce packet

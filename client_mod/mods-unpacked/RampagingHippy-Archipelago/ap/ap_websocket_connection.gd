@@ -111,7 +111,7 @@ func disconnect_from_server():
 	# The "connection_closed" signal handler will take care of cleanup
 	_client.disconnect_from_host()
 
-func send_connect(game: String, user: String, password: String = "", slot_data: bool = true):
+func send_connect(game: String, user: String, password: String = "", slot_data: bool = true, tags: Array = []):
 	_send_command({
 		"cmd": "Connect",
 		"game": game,
@@ -120,7 +120,7 @@ func send_connect(game: String, user: String, password: String = "", slot_data: 
 		"uuid": "Godot %s: %s" % [game, user], # TODO: What do we need here? We can't generate an actual UUID in 3.5
 		"version": {"major": 0, "minor": 6, "build": 2, "class": "Version"},
 		"items_handling": 0b111, # TODO: argument
-		"tags": [],
+		"tags": tags,
 		"slot_data": slot_data
 	})
 
