@@ -224,7 +224,6 @@ func connect_to_multiworld(get_data_package: bool = true) -> int:
 	self.slot_data = connect_response["slot_data"]
 	self.slot_info = connect_response["slot_info"]
 	self.hint_points = connect_response["hint_points"]
-	self.player_tags = []
 
 	# The last two steps are handled by signal handlers and other classes.
 	# 7. Server may send ReceivedItems to the client, in the case that the client is
@@ -260,6 +259,7 @@ func disconnect_from_multiworld():
 	_set_connection_state(ConnectState.DISCONNECTING)
 	self.websocket_client.disconnect_from_server()
 	_set_connection_state(ConnectState.DISCONNECTED)
+	self.player_tags = []
 
 func _set_connection_state(state: int, error: int = 0):
 	ModLoaderLog.debug("Setting connection state to %s." % ConnectState.keys()[state], LOG_NAME)
