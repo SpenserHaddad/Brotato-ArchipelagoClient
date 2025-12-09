@@ -36,11 +36,16 @@ jobs:
           python ./Launcher.py "Generate Template Options" -- --skip_open_folder
           cp Players/Templates/Brotato.yaml ../
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.9.16"
+
       # We do this since we build off source, so the reported AP version is not actually released yet
       - name: Remove AP version from YAML
         run: |
-          pip install .
-          python ./tools/remove_ap_version_from_template.py ./Brotato.yaml
+          uv sync --locked
+          uv run python ./tools/remove_ap_version_from_template.py ./Brotato.yaml
 
       - name: Zip client mod
         working-directory: ./client_mod
