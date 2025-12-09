@@ -56,7 +56,7 @@ func on_connected_to_multiworld():
 		_ap_client.enable_deathlink()
 
 func _on_bounced_received(bounced_data: Dictionary):
-	if deathlink_enabled and bounced_data.tags.has("DeathLink"):
+	if deathlink_enabled and bounced_data.get("tags", {}).has("DeathLink"):
 		var packet_source = bounced_data.data["source"]
 		var packet_cause = bounced_data.data.get("cause", "")
 		
