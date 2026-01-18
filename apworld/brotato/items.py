@@ -35,6 +35,7 @@ class ItemName(Enum):
     UNCOMMON_UPGRADE = "Uncommon Upgrade"
     RARE_UPGRADE = "Rare Upgrade"
     LEGENDARY_UPGRADE = "Legendary Upgrade"
+    WEAPON_SLOT = "Progressive Weapon Slot"
     SHOP_SLOT = "Progressive Shop Slot"
     SHOP_LOCK_BUTTON = "Progressive Shop Lock Button"
     XP_5 = "XP (5)"
@@ -126,6 +127,7 @@ _items: list[BrotatoItemBase] = [
     BrotatoItemBase(name=ItemName.UNCOMMON_UPGRADE, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.RARE_UPGRADE, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.LEGENDARY_UPGRADE, classification=ItemClassification.useful),
+    BrotatoItemBase(name=ItemName.WEAPON_SLOT, classification=ItemClassification.progression),
     BrotatoItemBase(name=ItemName.SHOP_SLOT, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.SHOP_LOCK_BUTTON, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.XP_5, classification=ItemClassification.filler),
@@ -164,7 +166,7 @@ item_name_groups: dict[str, set[str]] = {
         ItemName.RARE_UPGRADE.value,
         ItemName.LEGENDARY_UPGRADE.value,
     },
-    "Shop": {ItemName.SHOP_SLOT.value, ItemName.SHOP_LOCK_BUTTON.value},
+    "Progression": {ItemName.WEAPON_SLOT.value, ItemName.SHOP_SLOT.value, ItemName.SHOP_LOCK_BUTTON.value},
     "Gold": {
         ItemName.GOLD_10.value,
         ItemName.GOLD_25.value,

@@ -10,6 +10,8 @@ from .constants import (
     MAX_NORMAL_CRATE_DROP_GROUPS,
     MAX_NORMAL_CRATE_DROPS,
     MAX_SHOP_SLOTS,
+    MAX_WEAPON_SLOTS,
+    MIN_WEAPON_SLOTS,
     NUM_WAVES,
     TOTAL_NUM_CHARACTERS,
 )
@@ -406,6 +408,20 @@ class XpWeight(Range):
     display_name = "XP Weight"
 
 
+class StartingWeaponSlots(Range):
+    """How many weapon slots characters start with. Missing slots are added as items.
+
+    Does not affect One Armed. Baby scales proportionally to the number of slots
+    received.
+    """
+
+    range_start = MIN_WEAPON_SLOTS
+    range_end = MAX_WEAPON_SLOTS
+
+    default = MAX_WEAPON_SLOTS
+    display_name = "Starting Weapon Slots"
+
+
 class StartingShopSlots(Range):
     """How many slot the shop begins with. Missing slots are added as items."""
 
@@ -504,6 +520,7 @@ class BrotatoOptions(PerGameCommonOptions, DeathLinkMixin):
     legendary_upgrade_weight: LegendaryUpgradeWeight
     gold_weight: GoldWeight
     xp_weight: XpWeight
+    num_starting_weapon_slots: StartingWeaponSlots
     num_starting_shop_slots: StartingShopSlots
     shop_lock_buttons_mode: StartingShopLockButtonsMode
     num_starting_lock_buttons: NumberStartingShopLockButtons

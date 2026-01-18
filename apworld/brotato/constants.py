@@ -158,6 +158,8 @@ MAX_UNCOMMON_UPGRADES = 50
 MAX_RARE_UPGRADES = 50
 MAX_LEGENDARY_UPGRADES = 50
 
+MIN_WEAPON_SLOTS = 1  # Making the player start with 0 weapons makes the game unplayable
+MAX_WEAPON_SLOTS = 6  # Brotato default for most characters
 MAX_SHOP_SLOTS = 4  # Brotato default, can't easily increase beyond this.
 
 # Location name string templates
