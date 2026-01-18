@@ -4,12 +4,15 @@ from ..options import StartingShopLockButtonsMode
 from ..waves import get_wave_for_each_item
 from . import BrotatoTestBase
 from .data_sets.shop_slots import SHOP_SLOT_TEST_DATA_SETS
+from .data_sets.weapon_slots import WEAPON_SLOT_TEST_DATA_SETS
 
 
 class TestBrotatoSlotData(BrotatoTestBase):
-    run_default_tests = False  # type:ignore
+    @property
+    def run_default_tests(self) -> bool:
+        return False
 
-    options: ClassVar[dict[str, Any]] = {
+    options: ClassVar[dict[str, Any]] = {  # pyright: ignore[reportExplicitAny, reportIncompatibleVariableOverride]
         # Only set options that are referenced by slot_data
         "num_victories": 10,
         "starting_characters": 0,
@@ -73,3 +76,9 @@ class TestBrotatoSlotData(BrotatoTestBase):
         # Testing get_wave_for_each_item is done elsewhere, we just want to see that the slot data matches.
         expected_wave_per_item = get_wave_for_each_item(self.world.nonessential_item_counts)
         self.assertEqual(slot_data["wave_per_game_item"], expected_wave_per_item)
+
+    def test_slot_data_starting_weapon_slots(self):
+        for test_case in WEAPON_SLOT_TEST_DATA_SETS:
+            with self.data_set_subtest(test_case):
+                slot_data = self.world.fill_slot_data()
+                self.assertEqual(slot_data["num_starting_weapon_slots"], test_case.expected_num_weapon_slot_items)
