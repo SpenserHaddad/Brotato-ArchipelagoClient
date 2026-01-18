@@ -3,7 +3,7 @@ from dataclasses import asdict
 from typing import ClassVar, TypedDict
 
 from BaseClasses import Item, MultiWorld, Region, Tutorial
-from Options import OptionGroup
+from Options import OptionGroup, PerGameCommonOptions
 from worlds.AutoWorld import WebWorld, World
 
 from . import options  # So we don't need to import every option class when defining option groups
@@ -28,6 +28,8 @@ from .waves import get_wave_for_each_item, get_waves_with_checks
 
 logger = logging.getLogger("Brotato")
 
+# pyright: reportUninitializedInstanceVariable=false
+
 
 class BrotatoSlotData(TypedDict):
     deathlink: int
@@ -46,7 +48,7 @@ class BrotatoSlotData(TypedDict):
     num_legendary_crate_locations: int
     num_legendary_crate_drops_per_check: int
     legendary_crate_drop_groups: list[dict[str, int]]
-    wave_per_game_item: list[int]
+    wave_per_game_item: dict[int, list[int]]
     enable_abyssal_terrors_dlc: int
 
 
@@ -116,11 +118,11 @@ class BrotatoWorld(World):
     and items to create unique builds and survive until help arrives.
     """
 
-    options_dataclass = BrotatoOptions
-    options: BrotatoOptions
+    options_dataclass: ClassVar[type[PerGameCommonOptions]] = BrotatoOptions
+    options: BrotatoOptions  # pyright: ignore[reportIncompatibleVariableOverride]
     game: ClassVar[str] = "Brotato"
-    web = BrotatoWeb()
-    data_version = 0
+    web: ClassVar[WebWorld] = BrotatoWeb()
+    data_version: ClassVar[int] = 0
     required_client_version: tuple[int, int, int] = (0, 5, 0)
 
     item_name_to_id: ClassVar[dict[str, int]] = item_name_to_id
@@ -329,6 +331,7 @@ class BrotatoWorld(World):
             gold_reward_mode=self.options.gold_reward_mode.value,
             xp_reward_mode=self.options.xp_reward_mode.value,
             enable_enemy_xp=self.options.enable_enemy_xp.value == self.options.enable_enemy_xp.option_true,
+            num_starting_weapon_slots=self.options.num_starting_weapon_slots.value,
             num_starting_shop_slots=self.options.num_starting_shop_slots.value,
             num_starting_shop_lock_buttons=(MAX_SHOP_SLOTS - self.num_shop_lock_button_items),
             spawn_normal_loot_crates=spawn_normal_loot_crates,
