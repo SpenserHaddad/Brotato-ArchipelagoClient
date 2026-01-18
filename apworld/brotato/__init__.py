@@ -1,6 +1,6 @@
 import logging
 from dataclasses import asdict
-from typing import Any, ClassVar
+from typing import ClassVar, TypedDict
 
 from BaseClasses import Item, MultiWorld, Region, Tutorial
 from Options import OptionGroup
@@ -10,6 +10,7 @@ from . import options  # So we don't need to import every option class when defi
 from .characters import get_available_and_starting_characters
 from .constants import (
     MAX_SHOP_SLOTS,
+    MAX_WEAPON_SLOTS,
     RUN_COMPLETE_LOCATION_TEMPLATE,
 )
 from .item_weights import create_items_from_weights
@@ -19,15 +20,34 @@ from .loot_crates import (
     BrotatoLootCrateGroup,
     build_loot_crate_groups,
 )
-from .options import (
-    BrotatoOptions,
-)
+from .options import BrotatoOptions
 from .regions import create_regions
 from .rules import create_has_run_wins_rule
 from .shop_slots import get_num_shop_slot_and_lock_button_items
 from .waves import get_wave_for_each_item, get_waves_with_checks
 
 logger = logging.getLogger("Brotato")
+
+
+class BrotatoSlotData(TypedDict):
+    deathlink: int
+    waves_with_checks: list[int]
+    num_wins_needed: int
+    gold_reward_mode: int
+    xp_reward_mode: int
+    enable_enemy_xp: bool
+    num_starting_weapon_slots: int
+    num_starting_shop_slots: int
+    num_starting_shop_lock_buttons: int
+    spawn_normal_loot_crates: bool
+    num_common_crate_locations: int
+    num_common_crate_drops_per_check: int
+    common_crate_drop_groups: list[dict[str, int]]
+    num_legendary_crate_locations: int
+    num_legendary_crate_drops_per_check: int
+    legendary_crate_drop_groups: list[dict[str, int]]
+    wave_per_game_item: list[int]
+    enable_abyssal_terrors_dlc: int
 
 
 class BrotatoWeb(WebWorld):
@@ -42,8 +62,8 @@ class BrotatoWeb(WebWorld):
             ["RampagingHippy"],
         )
     ]
-    theme = "dirt"
-    rich_text_options_doc = True
+    theme: str = "dirt"
+    rich_text_options_doc: bool = True
 
     option_groups: ClassVar[list[OptionGroup]] = [
         OptionGroup(
@@ -59,8 +79,13 @@ class BrotatoWeb(WebWorld):
             ],
         ),
         OptionGroup(
-            "Shop Slots",
-            [options.StartingShopSlots, options.StartingShopLockButtonsMode, options.NumberStartingShopLockButtons],
+            "Progressive Abilities",
+            [
+                options.StartingWeaponSlots,
+                options.StartingShopSlots,
+                options.StartingShopLockButtonsMode,
+                options.NumberStartingShopLockButtons,
+            ],
         ),
         OptionGroup(
             "Item Weights",
@@ -92,7 +117,7 @@ class BrotatoWorld(World):
     """
 
     options_dataclass = BrotatoOptions
-    options: BrotatoOptions  # type: ignore
+    options: BrotatoOptions
     game: ClassVar[str] = "Brotato"
     web = BrotatoWeb()
     data_version = 0
@@ -122,6 +147,8 @@ class BrotatoWorld(World):
 
     This is the minimum of the num_victories option value and the total number of characters available.
     """
+
+    num_weapon_slot_items: int
 
     num_shop_slot_items: int
     num_shop_lock_button_items: int
@@ -195,6 +222,8 @@ class BrotatoWorld(World):
             self.num_wins_needed,
         )
 
+        self.num_weapon_slot_items = MAX_WEAPON_SLOTS - self.options.num_starting_weapon_slots
+
         self.num_shop_slot_items, self.num_shop_lock_button_items = get_num_shop_slot_and_lock_button_items(
             self.options.num_starting_shop_slots,
             self.options.shop_lock_buttons_mode,
@@ -215,6 +244,7 @@ class BrotatoWorld(World):
             [
                 len(self._include_characters),  # Run Won Items
                 len(self._include_characters) - len(self._starting_characters),  # The character items
+                self.num_weapon_slot_items,
                 self.num_shop_slot_items,
                 self.num_shop_lock_button_items,
             ]
@@ -267,6 +297,7 @@ class BrotatoWorld(World):
         for item_name, item_count in self.nonessential_item_counts.items():
             item_pool += [self.create_item(item_name) for _ in range(item_count)]
 
+        item_pool += [self.create_item(ItemName.WEAPON_SLOT) for _ in range(self.num_weapon_slot_items)]
         item_pool += [self.create_item(ItemName.SHOP_SLOT) for _ in range(self.num_shop_slot_items)]
         item_pool += [self.create_item(ItemName.SHOP_LOCK_BUTTON) for _ in range(self.num_shop_lock_button_items)]
 
@@ -285,28 +316,28 @@ class BrotatoWorld(World):
     def get_filler_item_name(self) -> str:
         return self.random.choice(self._filler_items)
 
-    def fill_slot_data(self) -> dict[str, Any]:
+    def fill_slot_data(self) -> BrotatoSlotData:
         # Define outside dict for readability
         spawn_normal_loot_crates: bool = (
             self.options.spawn_normal_loot_crates.value == self.options.spawn_normal_loot_crates.option_true
         )
         wave_per_game_item: dict[int, list[int]] = get_wave_for_each_item(self.nonessential_item_counts)
-        return {
-            "deathlink": self.options.death_link.value,
-            "waves_with_checks": self.waves_with_checks,
-            "num_wins_needed": self.num_wins_needed,
-            "gold_reward_mode": self.options.gold_reward_mode.value,
-            "xp_reward_mode": self.options.xp_reward_mode.value,
-            "enable_enemy_xp": self.options.enable_enemy_xp.value == self.options.enable_enemy_xp.option_true,
-            "num_starting_shop_slots": self.options.num_starting_shop_slots.value,
-            "num_starting_shop_lock_buttons": (MAX_SHOP_SLOTS - self.num_shop_lock_button_items),
-            "spawn_normal_loot_crates": spawn_normal_loot_crates,
-            "num_common_crate_locations": self.options.num_common_crate_drops.value,
-            "num_common_crate_drops_per_check": self.options.num_common_crate_drops_per_check.value,
-            "common_crate_drop_groups": [asdict(g) for g in self.common_loot_crate_groups],
-            "num_legendary_crate_locations": self.options.num_legendary_crate_drops.value,
-            "num_legendary_crate_drops_per_check": self.options.num_legendary_crate_drops_per_check.value,
-            "legendary_crate_drop_groups": [asdict(g) for g in self.legendary_loot_crate_groups],
-            "wave_per_game_item": wave_per_game_item,
-            "enable_abyssal_terrors_dlc": self.options.enable_abyssal_terrors_dlc.value,
-        }
+        return BrotatoSlotData(
+            deathlink=self.options.death_link.value,
+            waves_with_checks=self.waves_with_checks,
+            num_wins_needed=self.num_wins_needed,
+            gold_reward_mode=self.options.gold_reward_mode.value,
+            xp_reward_mode=self.options.xp_reward_mode.value,
+            enable_enemy_xp=self.options.enable_enemy_xp.value == self.options.enable_enemy_xp.option_true,
+            num_starting_shop_slots=self.options.num_starting_shop_slots.value,
+            num_starting_shop_lock_buttons=(MAX_SHOP_SLOTS - self.num_shop_lock_button_items),
+            spawn_normal_loot_crates=spawn_normal_loot_crates,
+            num_common_crate_locations=self.options.num_common_crate_drops.value,
+            num_common_crate_drops_per_check=self.options.num_common_crate_drops_per_check.value,
+            common_crate_drop_groups=[asdict(g) for g in self.common_loot_crate_groups],
+            num_legendary_crate_locations=self.options.num_legendary_crate_drops.value,
+            num_legendary_crate_drops_per_check=self.options.num_legendary_crate_drops_per_check.value,
+            legendary_crate_drop_groups=[asdict(g) for g in self.legendary_loot_crate_groups],
+            wave_per_game_item=wave_per_game_item,
+            enable_abyssal_terrors_dlc=self.options.enable_abyssal_terrors_dlc.value,
+        )
