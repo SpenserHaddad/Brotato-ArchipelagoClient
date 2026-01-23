@@ -5,23 +5,34 @@ from random import Random
 
 from Options import OptionError
 
-from . import options
 from .items import ItemName, item_name_groups
+from .options import (
+    CommonItemWeight,
+    CommonUpgradeWeight,
+    GoldWeight,
+    LegendaryItemWeight,
+    LegendaryUpgradeWeight,
+    RareItemWeight,
+    RareUpgradeWeight,
+    UncommonItemWeight,
+    UncommonUpgradeWeight,
+    XpWeight,
+)
 
 
 def create_items_from_weights(
     num_items: int,
     random: Random,
-    common_item_weight: options.CommonItemWeight,
-    uncommon_item_weight: options.UncommonItemWeight,
-    rare_item_weight: options.RareItemWeight,
-    legendary_item_weight: options.LegendaryItemWeight,
-    common_upgrade_weight: options.CommonUpgradeWeight,
-    uncommon_upgrade_weight: options.UncommonUpgradeWeight,
-    rare_upgrade_weight: options.RareUpgradeWeight,
-    legendary_upgrade_weight: options.LegendaryUpgradeWeight,
-    gold_weight: options.GoldWeight,
-    xp_weight: options.XpWeight,
+    common_item_weight: CommonItemWeight,
+    uncommon_item_weight: UncommonItemWeight,
+    rare_item_weight: RareItemWeight,
+    legendary_item_weight: LegendaryItemWeight,
+    common_upgrade_weight: CommonUpgradeWeight,
+    uncommon_upgrade_weight: UncommonUpgradeWeight,
+    rare_upgrade_weight: RareUpgradeWeight,
+    legendary_upgrade_weight: LegendaryUpgradeWeight,
+    gold_weight: GoldWeight,
+    xp_weight: XpWeight,
 ) -> dict[ItemName, int]:
     gold_items = [ItemName(g) for g in sorted(item_name_groups["Gold"])]
     xp_items = [ItemName(x) for x in sorted(item_name_groups["XP"])]
