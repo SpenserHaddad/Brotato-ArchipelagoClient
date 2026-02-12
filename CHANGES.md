@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Updated client mod to use new keys/ID-based reference system used by the game starting
+  with the Paws & Claws update.
+
+### Added
+
+- Added new base game character, Beast Master, introduced in Paws & Claws update.
+
+
 ## [0.12.1] - 2025-12-08
 
 ### Fixed
