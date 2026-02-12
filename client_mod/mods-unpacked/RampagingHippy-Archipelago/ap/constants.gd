@@ -49,6 +49,7 @@ const CHARACTER_NAME_TO_ID = {
 	"Vagabond": "character_vagabond",
 	"Technomage": "character_technomage",
 	"Vampire": "character_vampire",
+	"Beast Master": "character_beast_master",
 	"Sailor": "character_sailor",
 	"Curious": "character_curious",
 	"Builder": "character_builder",

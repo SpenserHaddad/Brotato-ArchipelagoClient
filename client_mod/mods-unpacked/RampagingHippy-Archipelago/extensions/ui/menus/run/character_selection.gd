@@ -58,8 +58,12 @@ func _get_unlocked_elements(player_index: int) -> Array:
 	_ensure_ap_client()
 	if _ap_client.connected_to_multiworld():
 		var character_str = ", ".join(_unlocked_characters)
+		var unlocked_character_ids = []
+		for character in ItemService.characters:
+			if _unlocked_characters.has(character.my_id):
+				unlocked_character_ids.push_back(character.my_id_hash)
 		ModLoaderLog.debug("Unlocking characters %s" % character_str, LOG_NAME)
-		return _unlocked_characters
+		return unlocked_character_ids
 	else:
 		ModLoaderLog.debug("Returning default characters", LOG_NAME)
 		return._get_unlocked_elements(player_index)
