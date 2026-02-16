@@ -9,7 +9,7 @@ func manage_lock_button_visibility() -> void:
 	# don't override this.
 	if not ap_lock_button_enabled and not _lock_button.disabled:
 		_lock_button.disable()
-		_lock_button.text = "Need item"
+		_lock_button.text = tr("RHAP_MENU_SHOP_LOCK_BUTTON_NEED_ITEM")
 	else:
 		# Trust that the game has set the lock button properly, just set the text back
 		# in case we changed it before and received an lock button item from AP.
@@ -23,6 +23,6 @@ func change_lock_status(button_pressed: bool) -> void:
 		.change_lock_status(button_pressed)
 	else:
 		var old_text = _lock_button.text
-		_lock_button.text = "NOPE"
+		_lock_button.text = tr("RHAP_MENU_SHOP_LOCK_DENIED")
 		yield(get_tree().create_timer(0.5), "timeout")
 		_lock_button.text = old_text

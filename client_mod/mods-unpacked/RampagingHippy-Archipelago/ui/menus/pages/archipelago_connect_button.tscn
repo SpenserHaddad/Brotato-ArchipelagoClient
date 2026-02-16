@@ -6,7 +6,7 @@
 [node name="ConnectButton" type="MenuButton"]
 margin_right = 12.0
 margin_bottom = 20.0
-text = "Connect"
+text = "RHAP_MENU_CONNECT_CONNECT"
 icon = ExtResource( 2 )
 flat = false
 icon_align = 2

@@ -15,4 +15,5 @@ func set_element(element: ItemParentData, type: int) -> void:
 	.set_element(element, type)
 
 	if type == RewardType.CHARACTER and _ap_client.connected_to_multiworld():
-		_description.text = "Missing AP item for %s" % _constants.CHARACTER_ID_TO_NAME.get(element.my_id)
+		var character_name = _constants.CHARACTER_ID_TO_NAME.get(element.my_id)
+		_description.text = tr("RHAP_CHARACTER_SELECT_MISSING_CHARACTER_AP_ITEM").format({character=character_name})

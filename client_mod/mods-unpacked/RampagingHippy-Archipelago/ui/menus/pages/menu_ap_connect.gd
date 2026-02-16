@@ -49,19 +49,19 @@ func _on_connection_state_changed(new_state: int, error: int = 0):
 	match new_state:
 		BrotatoApClient.ConnectState.DISCONNECTED:
 			# Disconnected
-			_connect_status_label.text = "Disconnected"
+			_connect_status_label.text = tr("RHAP_MENU_CONNECT_DISCONNECTED")
 		BrotatoApClient.ConnectState.CONNECTING:
 			# Connecting
-			_connect_status_label.text = "Connecting"
+			_connect_status_label.text = tr("RHAP_MENU_CONNECT_CONNECTING")
 		BrotatoApClient.ConnectState.DISCONNECTING:
 			# Disconnecting
-			_connect_status_label.text = "Disconnecting"
+			_connect_status_label.text = tr("RHAP_MENU_CONNECT_DISCONNECTING")
 		BrotatoApClient.ConnectState.CONNECTED_TO_SERVER:
 			# Connected to server
-			_connect_status_label.text = "Connected to server"
+			_connect_status_label.text = tr("RHAP_MENU_CONNECT_CONNECTED_TO_SERVER")
 		BrotatoApClient.ConnectState.CONNECTED_TO_MULTIWORLD:
 			# Connected to multiworld
-			_connect_status_label.text = "Connected to multiworld"
+			_connect_status_label.text = tr("RHAP_MENU_CONNECT_CONNECTED_TO_MULTIWORLD")
 
 	# Allow connecting if disconnected or connected to the server but not the multiworld
 	_update_connect_button_disabled()
@@ -104,27 +104,27 @@ func _set_error(error_reason: int):
 	var error_text: String
 	match error_reason:
 		BrotatoApClient.ConnectResult.SERVER_CONNECT_FAILURE:
-			error_text = "Failed to connect to the server"
+			error_text = tr("RHAP_CONNECT_ERROR_SERVER_CONNECT_FAILURE")
 		BrotatoApClient.ConnectResult.PLAYER_NOT_SET:
-			error_text = "Need to set player name before connecting"
+			error_text = tr("RHAP_CONNECT_ERROR_PLAYER_NOT_SET")
 		BrotatoApClient.ConnectResult.GAME_NOT_SET:
-			error_text = "Client needs to set game name before connecting"
+			error_text = tr("RHAP_CONNECT_ERROR_GAME_NOT_SET")
 		BrotatoApClient.ConnectResult.INVALID_SERVER:
-			error_text = "Invalid server name"
+			error_text = tr("RHAP_CONNECT_ERROR_INVALID_SERVER")
 		BrotatoApClient.ConnectResult.AP_INVALID_SLOT:
-			error_text = "AP: Invalid player name"
+			error_text = tr("RHAP_CONNECT_ERROR_AP_INVALID_SLOT")
 		BrotatoApClient.ConnectResult.AP_INVALID_GAME:
-			error_text = "AP: Invalid game"
+			error_text = tr("RHAP_CONNECT_ERROR_AP_INVALID_GAME")
 		BrotatoApClient.ConnectResult.AP_INCOMPATIBLE_VERSION:
-			error_text = "AP: Incompatible versions"
+			error_text = tr("RHAP_CONNECT_ERROR_AP_INCOMPATIBLE_VERSION")
 		BrotatoApClient.ConnectResult.AP_INVALID_PASSWORD:
-			error_text = "AP: Invalid or missing password"
+			error_text = tr("RHAP_CONNECT_ERROR_AP_INVALID_PASSWORD")
 		BrotatoApClient.ConnectResult.AP_INVALID_ITEMS_HANDLING:
-			error_text = "AP: Invalid items handling"
+			error_text = tr("RHAP_CONNECT_ERROR_AP_INVALID_ITEMS_HANDLING")
 		BrotatoApClient.ConnectResult.AP_CONNECTION_REFUSED_UNKNOWN_REASON:
-			error_text = "AP: Failed to connect (unknown error)"
+			error_text = tr("RHAP_CONNECT_ERROR_AP_CONNECTION_REFUSED_UNKNOWN_REASON")
 		_:
-			error_text = "Unknown error"
+			error_text = tr("RHAP_CONNECT_ERROR_UNKNOWN_ERROR")
 
 	_connect_error_label.visible = true
 	_connect_error_label.text = error_text
@@ -158,10 +158,10 @@ func _on_ShowPasswordButton_pressed():
 	# Toggle if password edit text is secret
 	if _password_edit.secret:
 		_password_edit.secret = false
-		_show_password_button.text = "Hide"
+		_show_password_button.text = tr("RHAP_MENU_CONNECT_CONNECT_HIDE_PASSWORD")
 	else:
 		_password_edit.secret = true
-		_show_password_button.text = "Show"
+		_show_password_button.text = tr("RHAP_MENU_CONNECT_CONNECT_SHOW_PASSWORD")
 		
 func _on_PlayerEdit_text_changed(_new_text: String):
 	_update_connect_button_disabled()

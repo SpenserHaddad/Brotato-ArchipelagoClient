@@ -71,7 +71,7 @@ func _ready():
 	_weapons_container.set_data("WEAPONS", Category.WEAPON, weapons)
 	_items_container.set_data("ITEMS", Category.ITEM, items, true, true)
 	_gold_container.update_value(player_data.gold)
-	_wave_label.text = "Wave %d" % _saved_game_state["current_wave"]
+	_wave_label.text = Text.text("WAVE", [str(_saved_game_state["current_wave"])]).to_upper()
 	_background.texture = ZoneService.get_zone_data(_saved_game_state.current_zone).ui_background
 	
 	_resume_button.grab_focus()

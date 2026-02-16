@@ -13,19 +13,18 @@ theme = ExtResource( 1 )
 script = ExtResource( 2 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-margin_right = 768.0
+margin_right = 1208.0
 margin_bottom = 1080.0
 custom_constants/separation = 50
 alignment = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
 margin_top = 143.0
-margin_right = 768.0
+margin_right = 1208.0
 margin_bottom = 366.0
 
 [node name="GridContainer" type="GridContainer" parent="VBoxContainer/CenterContainer"]
-margin_left = 15.0
-margin_right = 753.0
+margin_right = 1208.0
 margin_bottom = 223.0
 custom_constants/vseparation = 25
 custom_constants/hseparation = 25
@@ -33,13 +32,13 @@ columns = 2
 
 [node name="HostLabel" type="Label" parent="VBoxContainer/CenterContainer/GridContainer"]
 margin_top = 4.0
-margin_right = 213.0
+margin_right = 683.0
 margin_bottom = 49.0
-text = "Host:"
+text = "RHAP_MENU_CONNECT_HOST"
 
 [node name="HostEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer"]
-margin_left = 238.0
-margin_right = 738.0
+margin_left = 708.0
+margin_right = 1208.0
 margin_bottom = 54.0
 rect_min_size = Vector2( 500, 0 )
 focus_neighbour_top = NodePath("../../../BackButton")
@@ -53,14 +52,14 @@ caret_blink_speed = 0.5
 
 [node name="PlayerLabel" type="Label" parent="VBoxContainer/CenterContainer/GridContainer"]
 margin_top = 83.0
-margin_right = 213.0
+margin_right = 683.0
 margin_bottom = 128.0
-text = "Player:"
+text = "RHAP_MENU_CONNECT_PLAYER"
 
 [node name="PlayerEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer"]
-margin_left = 238.0
+margin_left = 708.0
 margin_top = 79.0
-margin_right = 738.0
+margin_right = 1208.0
 margin_bottom = 133.0
 focus_next = NodePath("../HBoxContainer/PasswordEdit")
 focus_previous = NodePath("../HostEdit")
@@ -71,14 +70,14 @@ caret_blink_speed = 0.5
 
 [node name="PasswordLabel" type="Label" parent="VBoxContainer/CenterContainer/GridContainer"]
 margin_top = 168.0
-margin_right = 213.0
+margin_right = 683.0
 margin_bottom = 213.0
-text = "Password:"
+text = "RHAP_MENU_CONNECT_PASSWORD"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/CenterContainer/GridContainer"]
-margin_left = 238.0
+margin_left = 708.0
 margin_top = 158.0
-margin_right = 738.0
+margin_right = 1208.0
 margin_bottom = 223.0
 
 [node name="PasswordEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer/HBoxContainer"]
@@ -105,23 +104,23 @@ text = "Show"
 [node name="ConnectButton" type="Button" parent="VBoxContainer"]
 unique_name_in_owner = true
 margin_top = 416.0
-margin_right = 768.0
+margin_right = 1208.0
 margin_bottom = 481.0
 focus_next = NodePath("../DisconnectButton")
 focus_previous = NodePath("../CenterContainer/GridContainer/HBoxContainer/PasswordEdit")
-text = "Connect"
+text = "RHAP_MENU_CONNECT_CONNECT"
 
 [node name="DisconnectButton" type="Button" parent="VBoxContainer"]
 margin_top = 531.0
-margin_right = 768.0
+margin_right = 1208.0
 margin_bottom = 596.0
 focus_next = NodePath("../BackButton")
 focus_previous = NodePath("../ConnectButton")
-text = "Disconnect"
+text = "RHAP_MENU_CONNECT_DISCONNECT"
 
 [node name="BackButton" type="Button" parent="VBoxContainer"]
 margin_top = 646.0
-margin_right = 768.0
+margin_right = 1208.0
 margin_bottom = 711.0
 focus_neighbour_bottom = NodePath("../CenterContainer/GridContainer/HostEdit")
 focus_previous = NodePath("../DisconnectButton")
@@ -130,7 +129,7 @@ script = ExtResource( 3 )
 
 [node name="ConnectStatusLabel" type="Label" parent="VBoxContainer"]
 margin_top = 761.0
-margin_right = 768.0
+margin_right = 1208.0
 margin_bottom = 806.0
 text = "Connection Status"
 align = 1
@@ -146,7 +145,7 @@ align = 1
 
 [node name="StatusTexture" type="TextureRect" parent="VBoxContainer"]
 margin_top = 856.0
-margin_right = 768.0
+margin_right = 1208.0
 margin_bottom = 936.0
 rect_pivot_offset = Vector2( 384, 40 )
 texture = ExtResource( 4 )
