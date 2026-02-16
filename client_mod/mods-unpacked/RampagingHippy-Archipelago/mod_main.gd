@@ -3,7 +3,7 @@ extends Node
 
 # Brotato Archipelago Multiworld Randomizer Client
 const MOD_NAME = "RampagingHippy-Archipelago"
-const MOD_VERSION = "0.13.0"
+const MOD_VERSION = "0.14.0"
 const LOG_NAME = MOD_NAME + "/mod_main"
 
 const ApWebSocketConnection = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_websocket_connection.gd")
