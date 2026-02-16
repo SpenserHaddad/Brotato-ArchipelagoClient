@@ -72,14 +72,14 @@ margin_right = 1856.0
 margin_bottom = 55.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 5 )
-text = "Resume saved run?"
+text = "RHAP_MENU_LOAD_SAVED_RUN_TITLE"
 align = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 self_modulate = Color( 1, 1, 1, 0.784314 )
-margin_left = 48.0
+margin_left = 419.0
 margin_top = 90.0
-margin_right = 1808.0
+margin_right = 1436.0
 margin_bottom = 1504.0
 size_flags_horizontal = 4
 size_flags_vertical = 0
@@ -87,7 +87,7 @@ size_flags_vertical = 0
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
 margin_left = 5.0
 margin_top = 5.0
-margin_right = 1755.0
+margin_right = 1012.0
 margin_bottom = 1409.0
 alignment = 1
 
@@ -100,7 +100,7 @@ focus_neighbour_top = NodePath("../../../HBoxContainer3/ResumeButton")
 
 [node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer"]
 margin_left = 404.0
-margin_right = 1750.0
+margin_right = 1007.0
 margin_bottom = 1404.0
 custom_constants/margin_right = 32
 custom_constants/margin_top = 32
@@ -110,29 +110,29 @@ custom_constants/margin_bottom = 32
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2"]
 margin_left = 32.0
 margin_top = 32.0
-margin_right = 1314.0
+margin_right = 571.0
 margin_bottom = 1372.0
 custom_constants/separation = 50
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer"]
-margin_right = 1282.0
-margin_bottom = 175.0
+margin_right = 539.0
+margin_bottom = 287.0
 size_flags_horizontal = 9
 theme = ExtResource( 2 )
 
 [node name="WeaponsContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer/HBoxContainer" instance=ExtResource( 11 )]
 unique_name_in_owner = true
-margin_right = 646.0
-margin_bottom = 175.0
+margin_right = 394.0
+margin_bottom = 287.0
 focus_neighbour_top = NodePath("../../../../../../HBoxContainer/BackButton")
 set_neighbour_top = true
 reserve_column_count = 6
 reserve_row_count = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer/HBoxContainer"]
-margin_left = 650.0
-margin_right = 791.0
-margin_bottom = 175.0
+margin_left = 398.0
+margin_right = 539.0
+margin_bottom = 287.0
 
 [node name="WaveLabel" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -152,9 +152,9 @@ alignment = 0
 
 [node name="ItemsContainer" parent="MarginContainer/VBoxContainer/PanelContainer/HBoxContainer/MarginContainer2/VBoxContainer" instance=ExtResource( 11 )]
 unique_name_in_owner = true
-margin_top = 225.0
-margin_right = 1282.0
-margin_bottom = 718.0
+margin_top = 337.0
+margin_right = 539.0
+margin_bottom = 624.0
 focus_neighbour_left = NodePath("../../../StatsContainer")
 focus_neighbour_top = NodePath("../HBoxContainer/WeaponsContainer")
 focus_neighbour_bottom = NodePath("../../../../../HBoxContainer3/ResumeButton")
