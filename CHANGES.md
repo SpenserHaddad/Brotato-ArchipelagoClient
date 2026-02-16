@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- UI elements now use [Godot
+  translations](https://docs.godotengine.org/en/3.6/tutorials/assets_pipeline/importing_translations.html#doc-importing-translations)
+  for their text, enabling internationalization and conforming to modding best
+  practices.
+
+### Fixed
+
+- Fix mod failing to load at game startup due to missing translation file.
+
 ## [0.13.0] - 2026-02-11
 
 ### Fixed
