@@ -1,6 +1,6 @@
 [project]
 name = "Brotato-ArchipelagoClient"
-version = "0.12.1"
+version = "0.14.0"
 dependencies = ["ruamel-yaml>=0.18.16"]
 requires-python = ">=3.12"
 
@@ -41,3 +41,6 @@ ignore = [
     "PLE1141", # Gives false positives when the dict keys are tuples, but does not mention this in the suggested fix.
     "UP015",   # Explicit is better than implicit, so we'd prefer to keep "r" in open() calls.
 ]
+
+[dependency-groups]
+dev = ["ruff>=0.15.0", "ty>=0.0.16"]

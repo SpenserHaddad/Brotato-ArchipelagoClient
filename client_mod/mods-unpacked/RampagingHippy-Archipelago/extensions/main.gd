@@ -144,10 +144,10 @@ func on_consumable_picked_up(consumable: Node, player_index: int) -> void:
 	if is_ap_consumable:
 		# Pretend we're a crate and add gold if the player has Bag, copy/pasted from the
 		# base function.
-		var item_box_gold_effect = RunData.get_player_effect("item_box_gold", player_index)
+		var item_box_gold_effect = RunData.get_player_effect(Keys.item_box_gold_hash, player_index)
 		if item_box_gold_effect != 0:
 			RunData.add_gold(item_box_gold_effect, player_index)
-			RunData.add_tracked_value(player_index, "item_bag", item_box_gold_effect)
+			RunData.add_tracked_value(player_index, Keys.item_bag_hash, item_box_gold_effect)
 	.on_consumable_picked_up(consumable, player_index)
 
 func clean_up_room() -> void:

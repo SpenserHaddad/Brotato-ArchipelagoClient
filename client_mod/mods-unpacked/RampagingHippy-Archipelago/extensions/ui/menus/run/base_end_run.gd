@@ -9,7 +9,9 @@ func _ready():
 	_ap_client = mod_node.brotato_ap_client
 	
 	if _ap_client.deathlink_progress.lost_to_deathlink:
-		var new_title_text = "Lost due to DeathLink from %s" % _ap_client.deathlink_progress.deathlink_source
-		if _ap_client.deathlink_progress.deathlink_cause:
-			new_title_text += ": %s" % _ap_client.deathlink_progress.deathlink_cause
-		_title.text = new_title_text
+		var deathlink_source = _ap_client.deathlink_progress.deathlink_source
+		var deathlink_cause = _ap_client.deathlink_progress.deathlink_cause
+		if deathlink_cause:
+			_title.text = tr("RHAP_END_RUN_LOST_TO_DEATHLINK_WITH_CAUSE").format({source=deathlink_source, cause=deathlink_cause})
+		else:
+			_title.text = tr("RHAP_END_RUN_LOST_TO_DEATHLINK_NO_CAUSE").format({source=deathlink_source})

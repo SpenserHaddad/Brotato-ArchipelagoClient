@@ -3,7 +3,7 @@ extends Node
 
 # Brotato Archipelago Multiworld Randomizer Client
 const MOD_NAME = "RampagingHippy-Archipelago"
-const MOD_VERSION = "0.12.1"
+const MOD_VERSION = "0.14.0"
 const LOG_NAME = MOD_NAME + "/mod_main"
 
 const ApWebSocketConnection = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_websocket_connection.gd")
@@ -15,8 +15,8 @@ export onready var brotato_ap_client
 func _init():
 	ModLoaderLog.info("Init", LOG_NAME)
 
-	var dir = ModLoaderMod.get_unpacked_dir() + MOD_NAME + "/"
-	var ext_dir = dir + "extensions/"
+	var dir = ModLoaderMod.get_unpacked_dir().plus_file(MOD_NAME)
+	var ext_dir = dir.plus_file("extensions")
 
 	ModLoaderLog.info("Setting up extensions", LOG_NAME)
 
@@ -56,13 +56,13 @@ func _init():
 	]
 	
 	for ef in extension_files:
-		ModLoaderMod.install_script_extension(ext_dir + ef)
+		ModLoaderMod.install_script_extension(ext_dir.plus_file(ef))
 
-	ModLoaderLog.info("Setup extensions", LOG_NAME)
+	ModLoaderLog.success("Setup extensions", LOG_NAME)
 
 	# Add translations
-	ModLoaderMod.add_translation(dir + "translations/modname.en.translation")
-	ModLoaderLog.info("Added translations", LOG_NAME)
+	ModLoaderMod.add_translation(dir.plus_file("translations").plus_file("RampagingHippy-Archipelago.en.translation"))
+	ModLoaderLog.info("Added translations: %s" % tr("RHAP_READY_TEXT"), LOG_NAME)
 
 func _ready() -> void:
 	# TODO: Proper translations
