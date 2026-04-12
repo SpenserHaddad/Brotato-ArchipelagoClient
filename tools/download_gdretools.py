@@ -49,7 +49,7 @@ def main():
     force: bool = args.force
     version_file = outdir / "gdre_version.json"
 
-    if not force and version_file.read_text():
+    if not force and version_file.is_file():
         # Check if the requested version is already downloaded
         version_info = json.loads(version_file.read_text())
         downloaded_version = version_info["version"]
