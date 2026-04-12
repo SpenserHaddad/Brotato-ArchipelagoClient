@@ -1,9 +1,12 @@
 set dotenv-load
 export PYTHONPATH := env('AP_DIR')
+# Just to make it more obvious that this is a needed envvar
+export AP_DIR := env('AP_DIR')
 export BROTATO_DIR := env('BROTATO_DIR')
 export APWORLD := 'brotato'
 export GDRETOOLS_VERSION := "v2.4.0"
-export GDRETOOLS_DIR := ".tools/gdre_tools"
+export TOOLS_DIR := "tools"
+export LOCAL_TOOLS_DIR := ".local_tools"
 
 ap_dir:
     echo ${AP_DIR}
@@ -27,14 +30,15 @@ types:
 apworld:
     zip -r ${APWORLD}.apworld apworld/${APWORLD}/ -x "**__pycache__/*" -x "apworld/${APWORLD}/test/*"
 
-symlink_to_ap:
-    ln -sf $(realpath apworld/${APWORLD}/) ${AP_DIR}/worlds/${APWORLD}
+create_symlinks:
+    uv run python ${TOOLS_DIR}/create_dev_symlinks.py -a ${AP_DIR} -b ${BROTATO_DIR}
+    # ln -sf $(realpath apworld/${APWORLD}/) ${AP_DIR}/worlds/${APWORLD}
 
 apworld_dir:
     ls ${APWORLD}
 
-download_gdsdecomp:
-    uv run tools/download_gdsdecomp.py ${GDRETOOLS_VERSION} -o ${GDRETOOLS_DIR}
+download_gdretools:
+    uv run tools/download_gdsdecomp.py ${GDRETOOLS_VERSION} -o ${LOCAL_TOOLS_DIR}/gdre_tools
 
 # extract_brotato:
 #     {{ if ! path_exists("${GDRETOOLS_DIR}") { just download_gdsdecomp } }}
