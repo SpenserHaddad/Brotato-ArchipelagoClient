@@ -14,10 +14,6 @@ export GDRETOOLS_DIR := ".local_tools/gdre_tools" # TODO: Have this use LOCAL_TO
 export GODOT_STEAM_TAG := "v3.29"
 export GODOT_STEAM_DIR := ".local_tools/godot_steam"
 
-gddir:
-    echo ${GDRETOOLS_DIR}
-ap_dir:
-    echo ${AP_DIR}
 
 install_ap_deps:
     uv run python ${AP_DIR}/ModuleUpdate.py --yes --append ${AP_DIR}/WebHostLib/requirements.txt
@@ -41,10 +37,6 @@ apworld:
 create_symlinks:
     uv run python ${TOOLS_DIR}/create_dev_symlinks.py -a ${AP_DIR} -b ${BROTATO_UNPACKED_DIR}
     # ln -sf $(realpath apworld/${APWORLD}/) ${AP_DIR}/worlds/${APWORLD}
-
-apworld_dir:
-    ls ${APWORLD}
-
 download_gdretools:
     uv run tools/download_gdretools.py ${GDRETOOLS_VERSION} -o ${GDRETOOLS_DIR}
 
