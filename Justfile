@@ -11,7 +11,8 @@ export GDRETOOLS_VERSION := "v2.4.0"
 export TOOLS_DIR := "tools"
 export LOCAL_TOOLS_DIR := ".local_tools"
 export GDRETOOLS_DIR := ".local_tools/gdre_tools" # TODO: Have this use LOCAL_TOOLS_DIR?
-
+export GODOT_STEAM_TAG := "v3.29"
+export GODOT_STEAM_DIR := ".local_tools/godot_steam"
 
 gddir:
     echo ${GDRETOOLS_DIR}
@@ -46,6 +47,9 @@ apworld_dir:
 
 download_gdretools:
     uv run tools/download_gdretools.py ${GDRETOOLS_VERSION} -o ${GDRETOOLS_DIR}
+
+download_godot:
+    uv run tools/download_godot.py ${GODOT_STEAM_TAG} -o ${GODOT_STEAM_DIR}
 
 extract_brotato: download_gdretools
     uv run tools/extract_brotato.py ${BROTATO_PACKED_DIR} ${BROTATO_UNPACKED_DIR} -g ${GDRETOOLS_DIR}
