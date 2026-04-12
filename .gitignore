@@ -1,5 +1,5 @@
-# Tools fiels
-.tools/
+# Local tools, aka binaries downloaded as part of dev workflows
+.local_tools/
 
 # Godot 4+ specific ignores
 .godot/
