@@ -25,11 +25,15 @@ Then, either double click the file (on Windows), or copy into
 
 ## Client Mod
 
-Brotato can be played using either the version on
-[Steam](https://store.steampowered.com/app/1942280/Brotato/) or the version on [Epic
-Games Store](https://store.epicgames.com/en-US/p/brotato-ed4097). The Xbox/Game Pass
-version can NOT be used as it does not ship with `ModLoader`, which is necessary for the
-mod to work.
+Archipelago Brotato is compatible with Brotato released on the following platforms:
+
+* [Steam](https://store.steampowered.com/app/1942280/Brotato/)
+* [Epic Games Store](https://store.epicgames.com/en-US/p/brotato-ed4097)
+* [GOG](https://www.gog.com/en/game/brotato)
+ 
+The [Xbox/Game Pass
+version](https://www.xbox.com/en-US/games/store/brotato/9P9VNSQK1W3K) can NOT be used as
+it does not ship with `ModLoader`, which is necessary for the mod to work.
 
 ### Steam (Workshop Install)
 
@@ -110,13 +114,35 @@ This repo as-is is not enough to actually load the apworld or client mod, or run
 unit tests. To create a working development environment, you will need some additional
 software:
 
+## Bare Minimum
+
 * Git
-* An Archipelago-compatible version of Python (e.g. 3.10 or 3.11).
-* An installation of Brotato from either Steam or Epic Games (NOT the Xbox version). 
+* An Archipelago-compatible version of Python.
+* [uv](https://docs.astral.sh/uv/), used by this project to run its helper scripts.
+   * Archipelago itself still uses pip.
+* An installation of Brotato from either Steam, GoG, or Epic Games (NOT the Xbox
+  version). 
+
+## Using the Justfile
+
+The [Justfile](./Justfile) as the root of this project has a few recipes for helping
+you get setup quickly. To use this:
+
+* Install [just](https://just.systems/man/en/)
+* Setup the software listed in [Bare Minimum](#bare-minimum).
+* Create a `.env` file at the root of this project with the following:
+   * `AP_DIR`: The path the to Archipelago repo.
+   * `BROTATO_PACKED_DIR`: The path to your installed version of Brotato.
+   * `BROTATO_UNPACKED_DIR`: The path to where you would like to extract Brotato to.
+* Run `just dev_setup` to setup Archipelago, unpack Brotato into a development build and
+  symlink the apworld and client mod into the respective projects.
+
+## Manual steps.
+
 * Clone the [Archipelago repository](https://github.com/ArchipelagoMW/Archipelago/).
 * Download the latest version of [GDRETools.](https://github.com/GDRETools/gdsdecomp)
 * Download the latest version of [GodotSteam
-  3.6.](https://github.com/GodotSteam/GodotSteam).
+  3.6.](https://codeberg.org/godotsteam/godotsteam).
    * You may need to search through the releases for the latest 3.6-compatible release.
 
 Once you have all of this, the scripts in the [tools/](./tools/) directory can help you

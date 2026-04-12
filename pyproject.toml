@@ -42,5 +42,8 @@ ignore = [
     "UP015",   # Explicit is better than implicit, so we'd prefer to keep "r" in open() calls.
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"tools/**.py" = ["T201"]
+
 [dependency-groups]
 dev = ["ruff>=0.15.0", "ty>=0.0.16"]

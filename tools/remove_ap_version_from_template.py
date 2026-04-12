@@ -17,7 +17,7 @@ def remove_ap_version_from_template(template_file: Path):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print(f"Usage: python {sys.argv[0]} <template_file>")  # noqa: T201
+        print(f"Usage: python {sys.argv[0]} <template_file>")
         sys.exit(1)
 
     template_file = Path(sys.argv[1])

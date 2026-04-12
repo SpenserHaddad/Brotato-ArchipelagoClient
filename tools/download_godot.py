@@ -1,0 +1,151 @@
+"""Download the requsted version of GodotSteam to use for Brotato development.
+
+GodotSteam is a fork of Godot that includes various hooks for the Steam API. This was
+originally the only version of Godot that worked for Brotato, since it was originally
+released on Steam only. The main version of Godot should work for Brotato now too, but
+for simplicity and consistency I still prefer to use the Steam version, especially since
+that's what most people use.
+
+The version should be a release tag on
+https://codeberg.org/godotsteam/godotsteam/releases/. Brotato uses a Godot 3.6 tag,
+so don't try settings this to latest ;).
+
+You also need to provide the full version
+
+This script first checks if the requested version is downloaded, and does nothing if so,
+unless the "-f/--force" flag is set. We write a custom file, "godot_version.json", to the
+output directory with the version requested, which is queried to make this check.
+"""
+
+import argparse
+import json
+import os
+import shutil
+import stat
+import sys
+import tempfile
+import urllib
+import urllib.request
+import zipfile
+from pathlib import Path
+
+_GODOT_STEAM_RELEASE_QUERY_URL = "https://codeberg.org/api/v1/repos/godotsteam/godotsteam/releases/tags/{version}"
+_GODOT_DOWNLOAD_URL = "https://codeberg.org/godotsteam/godotsteam/releases/download/{version}/{platform}-{build}.zip"
+
+parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument("godotsteam_version", default=None, help="The tag of GodotSteam to download.")
+parser.add_argument(
+    "-o",
+    "--outdir",
+    type=Path,
+    default=Path.cwd(),
+    help="The directory to save Godot into. Defaults to the current directory.",
+)
+parser.add_argument(
+    "-f", "--force", action="store_true", help="Download and save even if the requested version is already downloaded."
+)
+
+
+def get_platform_prefix() -> str:
+    match sys.platform:
+        case "linux":
+            return "linux64"
+        case "win32":
+            return "win64"
+        case "darwin":
+            return "macos"
+        case _:
+            raise RuntimeError(f"Unknown platform {sys.platform}")
+
+
+def download_godot_steam(version: str, outdir: Path) -> str:
+    build_name, download_url = find_build_from_version(version)
+    with tempfile.TemporaryDirectory() as td:
+        td_path = Path(td)
+        download_file = td_path / build_name
+        print(f"Downloading {download_url} to {download_file}.")
+        urllib.request.urlretrieve(download_url, download_file)
+        if outdir.is_dir():
+            print(f"Found existing dir {outdir}, removing.")
+            shutil.rmtree(outdir)
+
+        print(f"Extracting GodotSteam to {outdir}.")
+        with zipfile.ZipFile(download_file, "r") as zf:
+            zf.extractall(outdir)
+
+    print(f"Saved {version} to {outdir}.")
+
+
+def find_build_from_version(version: str) -> tuple[str, str]:
+    print(f"Getting release information for GodotSteam {version}.")
+    get_release_url = _GODOT_STEAM_RELEASE_QUERY_URL.format(version=version)
+    request = urllib.request.Request(get_release_url, headers={"accept": "application/json"})
+    response = urllib.request.urlopen(request)
+    release_info = json.loads(response.read())
+
+    platform = get_platform_prefix()
+    assets = release_info["assets"]
+    assets_for_platform = [a for a in assets if a["name"].startswith(platform)]
+    if len(assets_for_platform) == 0:
+        raise RuntimeError(f"Could not find a build for platform {platform} for GodotSteam version {version}.")
+    if len(assets_for_platform) > 1:
+        raise RuntimeError(
+            f"Found multiple builds for platform {platform} for GodotSteam version {version}, "
+            "cannot determine correct one."
+        )
+
+    asset_for_platform = assets_for_platform[0]
+    download_url = asset_for_platform["browser_download_url"]
+    name = asset_for_platform["name"]
+    return name, download_url
+
+
+def find_editor_file(godotsteam_dir: Path) -> Path | None:
+    try:
+        return next(iter(godotsteam_dir.glob("godotsteam.*.editor.*")))
+    except StopIteration:
+        return None
+
+
+def main():
+    args = parser.parse_args()
+    version: str = args.godotsteam_version
+    outdir: Path = args.outdir
+    force: bool = args.force
+    version_file = outdir / "godotsteam_version.json"
+    if not force and version_file.is_file():
+        # Check if the requested version is already downloaded
+        version_info = json.loads(version_file.read_text())
+        downloaded_version = version_info["version"]
+        downloaded_required = downloaded_version != version
+        if not downloaded_required:
+            print(f"Requested version {version} is already downloaded to this location, not downloading again.")
+
+    if downloaded_required:
+        downloaded_build = download_godot_steam(version, outdir)
+        # Save the downloaded version to a local JSON file for easy querying.
+        version_info = {
+            "_note": f"THIS WAS AUTOGENERATED BY {Path(__file__).name}, IT IS NOT PART OF THE GodotSteam RELEASE.",
+            "version": version,
+            "build": downloaded_build,
+        }
+        print(f"Saving version info to {version_file}.")
+        version_file.write_text(json.dumps(version_info, indent=4))
+
+    # Make the exe actually executable
+    editor_exe_file = find_editor_file(outdir)
+    if editor_exe_file:
+        print(f"Your editor program is {editor_exe_file.absolute()}.")
+
+        if sys.platform == "linux":
+            print(f"Setting editor {editor_exe_file} as executable.")
+            st = os.stat(editor_exe_file)
+            os.chmod(editor_exe_file, st.st_mode | stat.S_IEXEC)
+    else:
+        print("Could not find editor exe in release.")
+
+    print("Done.")
+
+
+if __name__ == "__main__":
+    main()
