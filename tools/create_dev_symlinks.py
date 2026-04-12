@@ -54,7 +54,8 @@ def main() -> None:
 
         if not ap_dir.is_dir():
             raise FileNotFoundError(
-                f"Could not find apworld in local repo at {apworld_src}. This means something is very wrong with your repo."
+                f"Could not find apworld in local repo at {apworld_src}. "
+                "This means something is very wrong with your repo."
             )
 
         _make_symlink(apworld_src, apworld_dst)
@@ -68,7 +69,8 @@ def main() -> None:
 
         if not client_mod_src.is_dir():
             raise FileNotFoundError(
-                f"Could not find client mod in local repo at {client_mod_src}. This means something is very wrong with your repo."
+                f"Could not find client mod in local repo at {client_mod_src}. "
+                "This means something is very wrong with your repo."
             )
 
         _make_symlink(client_mod_src, client_mod_dst)
