@@ -36,7 +36,7 @@ func _on_connection_state_changed(new_state: int, error: int = 0):
 			_update_settings()
 		BrotatoApClient.ConnectState.DISCONNECTED:
 			for child in _settings_container.get_children():
-				child.set_value("N/A")
+				child.set_value("RHAP_PROGRESS_PLACEHOLDER")
 
 func _update_settings():
 	var slot_data = _ap_client.slot_data

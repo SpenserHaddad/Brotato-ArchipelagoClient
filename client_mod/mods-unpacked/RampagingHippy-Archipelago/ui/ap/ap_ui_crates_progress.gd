@@ -28,3 +28,9 @@ func update_progress(crates_progress, num_wins: int):
 		_wins_to_next_group.set_value(str(wins_needed))
 	else:
 		_wins_to_next_group.set_value(tr("RHAP_PROGRESS_CRATES_ALL_GROUPS_AVAILABLE"))
+
+func clear_progress():
+	_locations_checked.set_value("RHAP_PROGRESS_PLACEHOLDER")
+	_locations_available.set_value("RHAP_PROGRESS_PLACEHOLDER")
+	_locations_total.set_value("RHAP_PROGRESS_PLACEHOLDER")
+	_wins_to_next_group.set_value("RHAP_PROGRESS_PLACEHOLDER")
