@@ -63,6 +63,7 @@ RHAP_PROGRESS_CRATES_COUNT,{crate_type} Crates: {checked} / {available} / {total
 RHAP_PROGRESS_CRATES_WINS_TO_NEXT_GROUP,{wins_needed} {wins} needed to unlock next {num_crates} {crate_type} crates
 RHAP_PROGRESS_CRATES_ALL_AVAILABLE,All {crate_type} crates are available!
 RHAP_MENU_LOAD_SAVED_RUN_TITLE,Resume saved run?
+RHAP_PROGRESS_WINS_NEEDED_TOOLTIP,Number of wins needed to goal
 RHAP_MENU_GO_TO_WAVE_SKIP_TO_WAVE,Skip To Wave
 RHAP_WAVE_CLEARED_LABEL_DEATHLINK_RECEIVED,DeathLink Received
 RHAP_END_RUN_LOST_TO_DEATHLINK_NO_CAUSE,Lost due to DeathLink from {source}
