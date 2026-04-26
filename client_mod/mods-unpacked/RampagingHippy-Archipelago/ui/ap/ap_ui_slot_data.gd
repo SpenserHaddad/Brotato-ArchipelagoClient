@@ -17,8 +17,10 @@ onready var _starting_shop_lock_buttons_setting = $MarginContainer/SettingsConta
 onready var _spawn_loot_crates_setting = $MarginContainer/SettingsContainer/SpawnLootCratesSetting
 onready var _num_common_loot_crates_setting = $MarginContainer/SettingsContainer/NumCommonLootCratesSetting
 onready var _num_common_loot_crate_drops_per_check_setting = $MarginContainer/SettingsContainer/NumCommonLootCrateDropsPerCheckSetting
+onready var _num_common_loot_crate_groups_setting = $MarginContainer/SettingsContainer/NumCommonLootCrateGroups
 onready var _num_legendary_loot_crates_setting = $MarginContainer/SettingsContainer/NumLegendaryLootCratesSetting
 onready var _num_legendary_loot_crate_drops_per_check_setting = $MarginContainer/SettingsContainer/NumLegendaryLootCrateDropsPerCheckSetting
+onready var _num_legendary_loot_crate_groups_setting = $MarginContainer/SettingsContainer/NumLegendaryLootCrateGroups
 onready var _abyssal_terrors_dlc_setting = $MarginContainer/SettingsContainer/AbyssalTerrorsDlcEnabledSetting
 
 func _ready():
@@ -65,8 +67,10 @@ func _update_settings():
 	_spawn_loot_crates_setting.set_value(_enabled_setting_to_str(slot_data["spawn_normal_loot_crates"]))
 	_num_common_loot_crates_setting.set_value(str(slot_data["num_common_crate_locations"]))
 	_num_common_loot_crate_drops_per_check_setting.set_value(str(slot_data["num_common_crate_drops_per_check"]))
+	_num_common_loot_crate_groups_setting.set_value(str(len(slot_data["common_crate_drop_groups"])))
 	_num_legendary_loot_crates_setting.set_value(str(slot_data["num_legendary_crate_locations"]))
 	_num_legendary_loot_crate_drops_per_check_setting.set_value(str(slot_data["num_legendary_crate_drops_per_check"]))
+	_num_legendary_loot_crate_groups_setting.set_value(str(len(slot_data["legendary_crate_drop_groups"])))
 	_abyssal_terrors_dlc_setting.set_value(_enabled_setting_to_str(slot_data["enable_abyssal_terrors_dlc"]))
 
 func _enabled_setting_to_str(value) -> String:
