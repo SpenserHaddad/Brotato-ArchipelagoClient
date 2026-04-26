@@ -16,7 +16,9 @@ var _ui_crate_progress
 
 func _ready():
 	_ensure_ap_client()
-	_add_ap_progress_ui()
+	# Currently disabled because it causes the UI to be wider than the viewport,
+	# leading to weird issues mousing over characters.
+	# _add_ap_progress_ui()
 
 func _on_selections_completed():
 	_ensure_ap_client()
