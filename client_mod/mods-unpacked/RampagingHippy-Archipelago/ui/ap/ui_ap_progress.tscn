@@ -1,13 +1,10 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80.png" type="Texture" id=1]
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.gd" type="Script" id=2]
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/ap_settings_container.tscn" type="PackedScene" id=3]
-[ext_resource path="res://resources/fonts/actual/base/font_smallest_text.tres" type="DynamicFont" id=4]
 [ext_resource path="res://resources/fonts/actual/base/font_22.tres" type="DynamicFont" id=5]
 [ext_resource path="res://resources/themes/base_theme.tres" type="Theme" id=6]
-
-[sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="Node2D" type="PanelContainer"]
 margin_right = 500.0
@@ -88,84 +85,3 @@ margin_top = 234.0
 margin_right = 490.0
 margin_bottom = 268.0
 title = "RHAP_PROGRESS_LEGENDARY_CRATES_NEXT_GROUP_LABEL"
-
-[node name="RunsWon" type="Label" parent="MarginContainer/VBoxContainer"]
-visible = false
-margin_top = 273.0
-margin_right = 300.0
-margin_bottom = 298.0
-rect_min_size = Vector2( 300, 0 )
-size_flags_horizontal = 0
-size_flags_vertical = 1
-custom_fonts/font = ExtResource( 4 )
-text = "Runs Won: 0 / 10"
-valign = 1
-
-[node name="ShopSlots" type="Label" parent="MarginContainer/VBoxContainer"]
-visible = false
-margin_top = 273.0
-margin_right = 300.0
-margin_bottom = 298.0
-rect_min_size = Vector2( 300, 0 )
-hint_tooltip = "Number of shop slots unlocked"
-mouse_filter = 1
-size_flags_horizontal = 0
-size_flags_vertical = 1
-custom_fonts/font = ExtResource( 4 )
-text = "Shop Slots: 0 / 4"
-valign = 1
-
-[node name="CommonCrateProgress" type="Label" parent="MarginContainer/VBoxContainer"]
-visible = false
-margin_top = 273.0
-margin_right = 300.0
-margin_bottom = 298.0
-rect_min_size = Vector2( 300, 0 )
-hint_tooltip = "Found / Available / Total"
-mouse_filter = 1
-size_flags_horizontal = 0
-size_flags_vertical = 1
-custom_fonts/font = ExtResource( 4 )
-text = "Loot Crates: 0 / 0 / 0"
-valign = 1
-
-[node name="CommonCrateWinsNeeded" type="Label" parent="MarginContainer/VBoxContainer"]
-visible = false
-margin_top = 273.0
-margin_right = 381.0
-margin_bottom = 298.0
-rect_min_size = Vector2( 300, 0 )
-mouse_filter = 1
-size_flags_horizontal = 0
-size_flags_vertical = 1
-custom_fonts/font = ExtResource( 4 )
-text = "5 more wins to unlock next 5 crates"
-valign = 1
-
-[node name="LegendaryCrateProgress" type="Label" parent="MarginContainer/VBoxContainer"]
-visible = false
-margin_top = 273.0
-margin_right = 300.0
-margin_bottom = 298.0
-rect_min_size = Vector2( 300, 0 )
-hint_tooltip = "Found / Available / Total"
-mouse_filter = 1
-size_flags_horizontal = 0
-size_flags_vertical = 1
-custom_fonts/font = ExtResource( 4 )
-text = "Loot Crates: 0 / 0 / 0"
-valign = 1
-
-[node name="LegendaryCrateWinsNeeded" type="Label" parent="MarginContainer/VBoxContainer"]
-visible = false
-margin_top = 273.0
-margin_right = 381.0
-margin_bottom = 298.0
-rect_min_size = Vector2( 300, 0 )
-mouse_filter = 1
-size_flags_horizontal = 0
-size_flags_vertical = 1
-custom_fonts/font = ExtResource( 4 )
-custom_styles/normal = SubResource( 1 )
-text = "5 more wins to unlock next 5 crates"
-valign = 1
