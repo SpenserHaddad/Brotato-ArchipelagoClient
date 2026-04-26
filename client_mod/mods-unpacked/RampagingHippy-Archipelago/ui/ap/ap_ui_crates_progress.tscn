@@ -16,6 +16,7 @@ margin_left = 2.0
 margin_top = 2.0
 margin_right = 191.0
 margin_bottom = 184.0
+size_flags_horizontal = 3
 
 [node name="Title" type="Button" parent="VBoxContainer"]
 margin_right = 189.0
@@ -28,146 +29,50 @@ flat = true
 clip_text = true
 align = 0
 
-[node name="LocationsCheckedContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 margin_top = 34.0
 margin_right = 189.0
-margin_bottom = 68.0
+margin_bottom = 182.0
+size_flags_horizontal = 3
 
-[node name="Control" type="Control" parent="VBoxContainer/LocationsCheckedContainer"]
+[node name="EmptySpace" type="Control" parent="VBoxContainer/HBoxContainer"]
 margin_right = 32.0
-margin_bottom = 34.0
+margin_bottom = 148.0
 rect_min_size = Vector2( 32, 0 )
 
-[node name="LocationsChecked" parent="VBoxContainer/LocationsCheckedContainer" instance=ExtResource( 4 )]
-unique_name_in_owner = true
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 margin_left = 36.0
 margin_right = 189.0
+margin_bottom = 148.0
+size_flags_horizontal = 3
+
+[node name="LocationsChecked" parent="VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource( 4 )]
+unique_name_in_owner = true
+margin_right = 153.0
 margin_bottom = 34.0
 size_flags_horizontal = 3
 title = "Checked"
 
-[node name="LocationsAvailableContainer" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 72.0
-margin_right = 189.0
-margin_bottom = 106.0
-
-[node name="Control" type="Control" parent="VBoxContainer/LocationsAvailableContainer"]
-margin_right = 32.0
-margin_bottom = 34.0
-rect_min_size = Vector2( 32, 0 )
-
-[node name="Name" type="Button" parent="VBoxContainer/LocationsAvailableContainer"]
-visible = false
-margin_left = 36.0
-margin_right = 42.0
-margin_bottom = 34.0
-mouse_filter = 1
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-text = "Available"
-flat = true
-clip_text = true
-align = 0
-
-[node name="Value" type="Label" parent="VBoxContainer/LocationsAvailableContainer"]
-visible = false
-margin_left = 36.0
-margin_top = 5.0
-margin_right = 48.0
-margin_bottom = 29.0
-custom_fonts/font = ExtResource( 1 )
-text = "0"
-align = 2
-valign = 1
-
-[node name="LocationsAvailable" parent="VBoxContainer/LocationsAvailableContainer" instance=ExtResource( 4 )]
+[node name="LocationsAvailable" parent="VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource( 4 )]
 unique_name_in_owner = true
-margin_left = 36.0
-margin_right = 189.0
-margin_bottom = 34.0
+margin_top = 38.0
+margin_right = 153.0
+margin_bottom = 72.0
 size_flags_horizontal = 3
 title = "Available"
 
-[node name="LocationsTotalContainer" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 110.0
-margin_right = 189.0
-margin_bottom = 144.0
-
-[node name="Control" type="Control" parent="VBoxContainer/LocationsTotalContainer"]
-margin_right = 32.0
-margin_bottom = 34.0
-rect_min_size = Vector2( 32, 0 )
-
-[node name="Name" type="Button" parent="VBoxContainer/LocationsTotalContainer"]
-visible = false
-margin_left = 36.0
-margin_right = 42.0
-margin_bottom = 34.0
-mouse_filter = 1
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-text = "Total"
-flat = true
-clip_text = true
-align = 0
-
-[node name="Value" type="Label" parent="VBoxContainer/LocationsTotalContainer"]
-visible = false
-margin_left = 36.0
-margin_top = 5.0
-margin_right = 48.0
-margin_bottom = 29.0
-custom_fonts/font = ExtResource( 1 )
-text = "0"
-align = 2
-valign = 1
-
-[node name="LocationsTotal" parent="VBoxContainer/LocationsTotalContainer" instance=ExtResource( 4 )]
+[node name="LocationsTotal" parent="VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource( 4 )]
 unique_name_in_owner = true
-margin_left = 36.0
-margin_right = 189.0
-margin_bottom = 34.0
+margin_top = 76.0
+margin_right = 153.0
+margin_bottom = 110.0
 size_flags_horizontal = 3
 title = "Total"
 
-[node name="WinsToNextGroupContainer" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 148.0
-margin_right = 189.0
-margin_bottom = 182.0
-
-[node name="Control" type="Control" parent="VBoxContainer/WinsToNextGroupContainer"]
-margin_right = 32.0
-margin_bottom = 34.0
-rect_min_size = Vector2( 32, 0 )
-
-[node name="Name" type="Button" parent="VBoxContainer/WinsToNextGroupContainer"]
-visible = false
-margin_left = 36.0
-margin_right = 42.0
-margin_bottom = 34.0
-mouse_filter = 1
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-text = "Wins To Unlock Next Group"
-flat = true
-clip_text = true
-align = 0
-
-[node name="Value" type="Label" parent="VBoxContainer/WinsToNextGroupContainer"]
-visible = false
-margin_left = 36.0
-margin_top = 5.0
-margin_right = 48.0
-margin_bottom = 29.0
-custom_fonts/font = ExtResource( 1 )
-text = "0"
-align = 2
-valign = 1
-
-[node name="WinsToNextGroup" parent="VBoxContainer/WinsToNextGroupContainer" instance=ExtResource( 4 )]
+[node name="WinsToNextGroup" parent="VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource( 4 )]
 unique_name_in_owner = true
-margin_left = 36.0
-margin_right = 189.0
-margin_bottom = 34.0
+margin_top = 114.0
+margin_right = 153.0
+margin_bottom = 148.0
 size_flags_horizontal = 3
 title = "Wins To Unlock Next Group"
