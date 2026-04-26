@@ -18,10 +18,10 @@ func _ready():
 		_label.add_color_override("font_color", Color.white)
 		_value.add_color_override("font_color", Color.white)
 		
-	init_label_focus()
 	_label.text = title
 	
 	if tooltip:
+		# TODO: Currently not working
 		_container.hint_tooltip = tooltip
 
 func set_value(value: String):
@@ -33,9 +33,6 @@ func enable_focus() -> void :
 func disable_focus() -> void :
 	focus_mode = FOCUS_NONE
 
-func init_label_focus() -> void :
-	_label.focus_mode = FOCUS_NONE
-	_label.mouse_filter = MOUSE_FILTER_PASS
 
 func _on_container_focus_entered():
 	_on_focused_or_hovered("focused", self)
@@ -61,15 +58,31 @@ func _on_Label_focus_exited():
 	_on_unfocused_or_unhovered("unfocused", _label)
 
 
+func _on_Value_focus_entered():
+	_on_focused_or_hovered("focused", _value)
+
+
+func _on_Value_focus_exited():
+	_on_unfocused_or_unhovered("unfocused", _value)
+
+
+func _on_Value_mouse_entered():
+	_on_focused_or_hovered("hovered", _label)
+
+
+func _on_Value_mouse_exited():
+	_on_unfocused_or_unhovered("unhovered", _label)
+
+
 func _on_focused_or_hovered(signal_name: String, target: Control):
-	_apply_focus_theme(0)
+	_apply_focus_theme()
 
 
 func _on_unfocused_or_unhovered(signal_name: String, target: Control):
 	remove_stylebox_override("panel")
 
 
-func _apply_focus_theme(player_index: int) -> void :
+func _apply_focus_theme() -> void :
 	var stylebox_override: = get_stylebox("panel").duplicate()
 	stylebox_override.border_color = _label.get_color("font_color")
 	add_stylebox_override("panel", stylebox_override)
