@@ -9,98 +9,99 @@ script = ExtResource( 2 )
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 66.0
+margin_right = 160.0
 margin_bottom = 548.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="SettingsContainer" type="VBoxContainer" parent="MarginContainer"]
 unique_name_in_owner = true
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 541.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 5
 
 [node name="WinsSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 34.0
 title = "RHAP_MENU_SLOT_DATA_WINS_NEEDED"
 
 [node name="DeathlinkSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 39.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 73.0
 title = "RHAP_MENU_SLOT_DATA_DEATHLINK"
 
 [node name="WavesWithChecksSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 78.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 112.0
 title = "RHAP_MENU_SLOT_DATA_WAVES_WITH_CHECKS"
 
 [node name="GoldRewardModeSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 117.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 151.0
 title = "RHAP_MENU_SLOT_DATA_GOLD_REWARD_MODE"
 
 [node name="XpRewardModeSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 156.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 190.0
 title = "RHAP_MENU_SLOT_DATA_XP_REWARD_MODE"
 
 [node name="EnemyXpSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 195.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 229.0
 title = "RHAP_MENU_SLOT_DATA_ENEMY_XP"
 
 [node name="StartingShopSlotsSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 234.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 268.0
 title = "RHAP_MENU_SLOT_DATA_STARTING_SHOP_SLOTS"
 
 [node name="StartingShopLockButtonsSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 273.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 307.0
 title = "RHAP_MENU_SLOT_DATA_STARTING_SHOP_LOCK_BUTTONS"
 
 [node name="SpawnLootCratesSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 312.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 346.0
 title = "RHAP_MENU_SLOT_DATA_SPAWN_LOOT_CRATES"
 
 [node name="NumCommonLootCratesSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 351.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 385.0
 title = "RHAP_MENU_SLOT_DATA_NUM_COMMON_LOOT_CRATES"
 
 [node name="NumCommonLootCrateDropsPerCheckSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 390.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 424.0
 title = "RHAP_MENU_SLOT_DATA_NUM_COMMON_LOOT_CRATE_DROPS_PER_CHECK"
 
 [node name="NumLegendaryLootCratesSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 429.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 463.0
 title = "RHAP_MENU_SLOT_DATA_NUM_LEGENDARY_LOOT_CRATES"
+tooltip = "RHAP_PROGRESS_WINS_NEEDED_TOOLTIP"
 
 [node name="NumLegendaryLootCrateDropsPerCheckSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 468.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 502.0
 title = "RHAP_MENU_SLOT_DATA_NUM_LEGENDARY_LOOT_CRATE_DROPS_PER_CHECK"
 
 [node name="AbyssalTerrorsDlcEnabledSetting" parent="MarginContainer/SettingsContainer" instance=ExtResource( 1 )]
 margin_top = 507.0
-margin_right = 59.0
+margin_right = 153.0
 margin_bottom = 541.0
 title = "RHAP_MENU_SLOT_DATA_ABYSSAL_TERRORS_DLC_ENABLED"
