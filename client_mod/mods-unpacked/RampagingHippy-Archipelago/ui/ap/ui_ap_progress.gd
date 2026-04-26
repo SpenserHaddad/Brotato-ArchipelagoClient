@@ -11,6 +11,8 @@ onready var _common_crate_wins_needed_label = $MarginContainer/VBoxContainer/Com
 onready var _legendary_crate_progress_label = $MarginContainer/VBoxContainer/LegendaryCrateProgress
 onready var _legendary_crate_wins_needed_label = $MarginContainer/VBoxContainer/LegendaryCrateWinsNeeded
 
+onready var _runs_won_new = $MarginContainer/VBoxContainer/RunsWonNew
+
 var _ap_client
 
 func _ready():
@@ -18,7 +20,13 @@ func _ready():
 
 func set_client(ap_client):
 	_ap_client = ap_client
+	_ap_client.connect("connection_state_changed", self, "_on_connection_state_changed")
+
 	update_all_ui()
+
+func _on_connection_state_changed(new_state: int, error: int = 0):
+	if new_state == BrotatoApClient.ConnectState.CONNECTED_TO_MULTIWORLD:
+		update_all_ui()
 
 func update_all_ui():
 	update_runs_won_ui()
@@ -27,7 +35,10 @@ func update_all_ui():
 	
 func update_runs_won_ui():
 	var wins_progress = _ap_client.wins_progress
+	var num_wins = wins_progress.num_wins
+	var wins_for_goal = wins_progress.wins_for_goal
 	_runs_won_label.text = tr("RHAP_PROGRESS_RUNS_WON").format({amount=wins_progress.num_wins, total=wins_progress.wins_for_goal})
+	_runs_won_new.set_value("%d / %d" % [wins_progress.num_wins, wins_progress.wins_for_goal])
 	
 func update_shop_slots_ui():
 	_shop_slots_label.text = tr("RHAP_PROGRESS_SHOP_SLOTS").format({amount=_ap_client.shop_slots_progress.num_unlocked_shop_slots})

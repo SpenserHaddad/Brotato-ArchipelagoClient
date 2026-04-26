@@ -158,10 +158,10 @@ func _on_ShowPasswordButton_pressed():
 	# Toggle if password edit text is secret
 	if _password_edit.secret:
 		_password_edit.secret = false
-		_show_password_button.text = tr("RHAP_MENU_CONNECT_CONNECT_HIDE_PASSWORD")
+		_show_password_button.text = tr("RHAP_MENU_CONNECT_HIDE_PASSWORD")
 	else:
 		_password_edit.secret = true
-		_show_password_button.text = tr("RHAP_MENU_CONNECT_CONNECT_SHOW_PASSWORD")
+		_show_password_button.text = tr("RHAP_MENU_CONNECT_SHOW_PASSWORD")
 		
 func _on_PlayerEdit_text_changed(_new_text: String):
 	_update_connect_button_disabled()
