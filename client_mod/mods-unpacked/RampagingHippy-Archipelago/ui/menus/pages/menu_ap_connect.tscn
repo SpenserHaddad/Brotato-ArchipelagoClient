@@ -12,21 +12,21 @@ theme = ExtResource( 1 )
 script = ExtResource( 2 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-margin_left = 2.0
-margin_top = 248.0
-margin_right = 1917.0
-margin_bottom = 831.0
+margin_left = 354.0
+margin_top = 153.0
+margin_right = 1566.0
+margin_bottom = 926.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 custom_constants/separation = 50
 alignment = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
-margin_right = 1915.0
+margin_right = 1212.0
 margin_bottom = 223.0
 
 [node name="GridContainer" type="GridContainer" parent="VBoxContainer/CenterContainer"]
-margin_right = 1915.0
+margin_right = 1212.0
 margin_bottom = 223.0
 custom_constants/vseparation = 25
 custom_constants/hseparation = 25
@@ -40,7 +40,7 @@ text = "RHAP_MENU_CONNECT_HOST"
 
 [node name="HostEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer"]
 margin_left = 708.0
-margin_right = 1915.0
+margin_right = 1212.0
 margin_bottom = 54.0
 focus_neighbour_top = NodePath("../../../BackButton")
 focus_next = NodePath("../PlayerEdit")
@@ -60,7 +60,7 @@ text = "RHAP_MENU_CONNECT_PLAYER"
 [node name="PlayerEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer"]
 margin_left = 708.0
 margin_top = 79.0
-margin_right = 1915.0
+margin_right = 1212.0
 margin_bottom = 133.0
 focus_next = NodePath("../HBoxContainer/PasswordEdit")
 focus_previous = NodePath("../HostEdit")
@@ -78,7 +78,7 @@ text = "RHAP_MENU_CONNECT_PASSWORD"
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/CenterContainer/GridContainer"]
 margin_left = 708.0
 margin_top = 158.0
-margin_right = 1915.0
+margin_right = 1212.0
 margin_bottom = 223.0
 
 [node name="PasswordEdit" type="LineEdit" parent="VBoxContainer/CenterContainer/GridContainer/HBoxContainer"]
@@ -97,16 +97,17 @@ caret_blink_speed = 0.5
 
 [node name="ShowPasswordButton" type="Button" parent="VBoxContainer/CenterContainer/GridContainer/HBoxContainer"]
 margin_left = 354.0
-margin_right = 1207.0
+margin_right = 504.0
 margin_bottom = 65.0
+rect_min_size = Vector2( 150, 0 )
 focus_neighbour_left = NodePath("../PasswordEdit")
 focus_neighbour_bottom = NodePath("../../../../ConnectButton")
-text = "RHAP_MENU_CONNECT_SHOW_PASSWORD"
+text = "???"
 
 [node name="ConnectButton" type="Button" parent="VBoxContainer"]
 unique_name_in_owner = true
 margin_top = 273.0
-margin_right = 1915.0
+margin_right = 1212.0
 margin_bottom = 338.0
 focus_next = NodePath("../DisconnectButton")
 focus_previous = NodePath("../CenterContainer/GridContainer/HBoxContainer/PasswordEdit")
@@ -114,7 +115,7 @@ text = "RHAP_MENU_CONNECT_CONNECT"
 
 [node name="DisconnectButton" type="Button" parent="VBoxContainer"]
 margin_top = 388.0
-margin_right = 1915.0
+margin_right = 1212.0
 margin_bottom = 453.0
 focus_next = NodePath("../BackButton")
 focus_previous = NodePath("../ConnectButton")
@@ -130,35 +131,29 @@ focus_previous = NodePath("../DisconnectButton")
 text = "MENU_BACK"
 script = ExtResource( 3 )
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="ConnectStatusLabel" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
 margin_top = 503.0
-margin_right = 1915.0
-margin_bottom = 583.0
+margin_right = 1212.0
+margin_bottom = 548.0
 size_flags_horizontal = 3
-custom_constants/separation = 25
-alignment = 1
-
-[node name="ConnectStatusLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
-margin_left = 717.0
-margin_top = 17.0
-margin_right = 1092.0
-margin_bottom = 62.0
 text = "Connection Status"
 align = 1
 
-[node name="StatusTexture" type="TextureRect" parent="VBoxContainer/HBoxContainer"]
-margin_left = 1117.0
-margin_right = 1197.0
-margin_bottom = 80.0
+[node name="StatusTexture" type="TextureRect" parent="VBoxContainer"]
+unique_name_in_owner = true
+margin_top = 598.0
+margin_right = 1212.0
+margin_bottom = 678.0
 rect_pivot_offset = Vector2( 384, 40 )
+size_flags_horizontal = 9
 texture = ExtResource( 4 )
 stretch_mode = 4
 
 [node name="ConnectionErrorLabel" type="Label" parent="VBoxContainer"]
-visible = false
-margin_top = 811.0
-margin_right = 768.0
-margin_bottom = 856.0
+margin_top = 728.0
+margin_right = 1212.0
+margin_bottom = 773.0
 custom_colors/font_color = Color( 0.756863, 0, 0, 1 )
 text = "Connection Error"
 align = 1

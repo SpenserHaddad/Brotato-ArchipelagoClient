@@ -10,13 +10,13 @@ var _ap_icon_error = preload("res://mods-unpacked/RampagingHippy-Archipelago/ima
 
 onready var _connect_button: Button = $"VBoxContainer/ConnectButton"
 onready var _disconnect_button: Button = $"VBoxContainer/DisconnectButton"
-onready var _connect_status_label: Label = $"VBoxContainer/ConnectStatusLabel"
+onready var _connect_status_label: Label = $"%ConnectStatusLabel"
 onready var _connect_error_label: Label = $"VBoxContainer/ConnectionErrorLabel"
 onready var _host_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/HostEdit"
 onready var _player_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/PlayerEdit"
 onready var _password_edit: LineEdit = $"VBoxContainer/CenterContainer/GridContainer/HBoxContainer/PasswordEdit"
 onready var _show_password_button = $"VBoxContainer/CenterContainer/GridContainer/HBoxContainer/ShowPasswordButton"
-onready var _status_texture: TextureRect = $"VBoxContainer/StatusTexture"
+onready var _status_texture: TextureRect = $"%StatusTexture"
 
 onready var _ap_client
 
@@ -26,6 +26,7 @@ var _animate_status_texture: bool = false
 
 func init():
 	_host_edit.grab_focus()
+
 
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
@@ -39,6 +40,10 @@ func _ready():
 	_password_edit.text = _ap_client.password
 
 	_on_connection_state_changed(_ap_client.connect_state)
+	
+	# Change show password button text to actual value instead of the placeholder.
+	# The tr format string is just so long we use a placeholder to see the UI properly in dev. 
+	_set_password_secret(_password_edit.secret)
 
 #func _input(_event):
 #	if get_tree().current_scene.name == self.name && Input.is_key_pressed(KEY_ENTER):
@@ -155,13 +160,15 @@ func _on_DisconnectButton_pressed():
 	_ap_client.disconnect_from_multiworld()
 
 func _on_ShowPasswordButton_pressed():
+	_set_password_secret(not _password_edit.secret)
+	
+func _set_password_secret(new_value: bool):
 	# Toggle if password edit text is secret
+	_password_edit.secret = new_value
 	if _password_edit.secret:
-		_password_edit.secret = false
-		_show_password_button.text = tr("RHAP_MENU_CONNECT_HIDE_PASSWORD")
-	else:
-		_password_edit.secret = true
 		_show_password_button.text = tr("RHAP_MENU_CONNECT_SHOW_PASSWORD")
+	else:
+		_show_password_button.text = tr("RHAP_MENU_CONNECT_HIDE_PASSWORD")
 		
 func _on_PlayerEdit_text_changed(_new_text: String):
 	_update_connect_button_disabled()
