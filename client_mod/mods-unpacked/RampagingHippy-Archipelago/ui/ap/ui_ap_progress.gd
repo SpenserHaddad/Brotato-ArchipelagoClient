@@ -10,6 +10,8 @@ onready var _common_crates_progress = $MarginContainer/VBoxContainer/CommonCrate
 onready var _common_crates_next_group = $MarginContainer/VBoxContainer/CommonCratesNextGroup
 onready var _legendary_crates_progress = $MarginContainer/VBoxContainer/LegendaryCratesProgress
 onready var _legendary_crates_next_group = $MarginContainer/VBoxContainer/LegendaryCratesNextGroup
+onready var _common_crates_progress_new = $MarginContainer/VBoxContainer/CommonCrate
+onready var _legendary_crates_progress_new = $MarginContainer/VBoxContainer/ap_ui_crates_progress2
 
 var _ap_client
 
@@ -42,16 +44,18 @@ func update_shop_slots_ui():
 	_shop_lock_buttons.set_value(str(_ap_client.shop_lock_buttons_progress.num_unlocked_shop_lock_buttons))
 	
 func update_all_crate_progress_ui():
-	_update_crate_progress_ui(
-		_common_crates_progress,
-		_common_crates_next_group,
-		_ap_client.common_loot_crate_progress
-	)
-	_update_crate_progress_ui(
-		_legendary_crates_progress,
-		_legendary_crates_next_group,
-		_ap_client.legendary_loot_crate_progress
-	)
+	_common_crates_progress_new.update_progress(_ap_client.common_loot_crate_progress, _ap_client.wins_progress.num_wins)
+	_legendary_crates_progress_new.update_progress(_ap_client.legendary_loot_crate_progress, _ap_client.wins_progress.num_wins)
+#	_update_crate_progress_ui(
+#		_common_crates_progress,
+#		_common_crates_next_group,
+#		_ap_client.common_loot_crate_progress
+#	)
+#	_update_crate_progress_ui(
+#		_legendary_crates_progress,
+#		_legendary_crates_next_group,
+#		_ap_client.legendary_loot_crate_progress
+#	)
 	
 func _update_crate_progress_ui(progress_control, groups_control, crate_progress):
 	var crate_type = tr("RHAP_%s_CRATE_LABEL" % crate_progress.crate_type.to_upper())

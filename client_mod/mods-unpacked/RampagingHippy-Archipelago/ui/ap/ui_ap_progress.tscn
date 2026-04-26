@@ -1,28 +1,29 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80.png" type="Texture" id=1]
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ui_ap_progress.gd" type="Script" id=2]
 [ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/ap_settings_container.tscn" type="PackedScene" id=3]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/ui/ap/ap_ui_crates_progress.tscn" type="PackedScene" id=4]
 [ext_resource path="res://resources/fonts/actual/base/font_22.tres" type="DynamicFont" id=5]
 [ext_resource path="res://resources/themes/base_theme.tres" type="Theme" id=6]
 
 [node name="Node2D" type="PanelContainer"]
-margin_right = 500.0
-margin_bottom = 200.0
+margin_right = 400.0
+margin_bottom = 443.0
 theme = ExtResource( 6 )
 script = ExtResource( 2 )
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_left = 5.0
 margin_top = 5.0
-margin_right = 495.0
-margin_bottom = 273.0
+margin_right = 395.0
+margin_bottom = 438.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
-margin_right = 490.0
-margin_bottom = 268.0
+margin_right = 390.0
+margin_bottom = 433.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 5
@@ -45,43 +46,61 @@ __meta__ = {
 }
 
 [node name="RunsWonNew" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
-margin_right = 490.0
+margin_right = 390.0
 margin_bottom = 34.0
 title = "RHAP_PROGRESS_RUNS_WON_LABEL"
 
 [node name="ShopSlotsNew" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
 margin_top = 39.0
-margin_right = 490.0
+margin_right = 390.0
 margin_bottom = 73.0
 rect_pivot_offset = Vector2( -414, 29 )
 title = "RHAP_PROGRESS_SHOP_SLOTS_LABEL"
 
 [node name="ShopLockButtons" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
 margin_top = 78.0
-margin_right = 490.0
+margin_right = 390.0
 margin_bottom = 112.0
 title = "RHAP_PROGRESS_SHOP_LOCK_BUTTONS_LABEL"
 
 [node name="CommonCratesProgress" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
+visible = false
 margin_top = 117.0
 margin_right = 490.0
 margin_bottom = 151.0
 title = "RHAP_PROGRESS_COMMON_CRATES_LABEL"
 
 [node name="CommonCratesNextGroup" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
+visible = false
 margin_top = 156.0
 margin_right = 490.0
 margin_bottom = 190.0
 title = "RHAP_PROGRESS_COMMON_CRATES_NEXT_GROUP_LABEL"
 
 [node name="LegendaryCratesProgress" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
+visible = false
 margin_top = 195.0
 margin_right = 490.0
 margin_bottom = 229.0
 title = "RHAP_PROGRESS_LEGENDARY_CRATES_LABEL"
 
+[node name="CommonCrate" parent="MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
+self_modulate = Color( 0, 0, 0, 1 )
+margin_top = 117.0
+margin_right = 390.0
+margin_bottom = 253.0
+title = "RHAP_PROGRESS_COMMON_CRATES_TITLE"
+
+[node name="ap_ui_crates_progress2" parent="MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
+self_modulate = Color( 0, 0, 0, 1 )
+margin_top = 258.0
+margin_right = 390.0
+margin_bottom = 394.0
+title = "RHAP_PROGRESS_LEGENDARY_CRATES_TITLE"
+
 [node name="LegendaryCratesNextGroup" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
-margin_top = 234.0
-margin_right = 490.0
-margin_bottom = 268.0
+visible = false
+margin_top = 399.0
+margin_right = 390.0
+margin_bottom = 433.0
 title = "RHAP_PROGRESS_LEGENDARY_CRATES_NEXT_GROUP_LABEL"
