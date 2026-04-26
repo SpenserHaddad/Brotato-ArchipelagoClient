@@ -2,9 +2,11 @@ class_name ApSettingsContainer
 extends PanelContainer
 
 export (String) var title
+export (String) var tooltip
 
-onready var _label = $HBoxContainer / Label
-onready var _value = $HBoxContainer / Value
+onready var _container: HBoxContainer = $HBoxContainer
+onready var _label: Button = $HBoxContainer / Label
+onready var _value: Label = $HBoxContainer / Value
 
 var color_override: Color = Color.black
 
@@ -18,6 +20,9 @@ func _ready():
 		
 	init_label_focus()
 	_label.text = title
+	
+	if tooltip:
+		_container.hint_tooltip = tooltip
 
 func set_value(value: String):
 	_value.text = value
@@ -32,11 +37,11 @@ func init_label_focus() -> void :
 	_label.focus_mode = FOCUS_NONE
 	_label.mouse_filter = MOUSE_FILTER_PASS
 
-func _on_StatContainer_focus_entered():
+func _on_container_focus_entered():
 	_on_focused_or_hovered("focused", self)
 
 
-func _on_StatContainer_focus_exited():
+func _on_container_focus_exited():
 	_on_unfocused_or_unhovered("unfocused", self)
 
 
