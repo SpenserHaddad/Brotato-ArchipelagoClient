@@ -50,20 +50,11 @@ RHAP_PROGRESS_TITLE,Progress
 RHAP_PROGRESS_RUNS_WON_LABEL,Runs Won
 RHAP_PROGRESS_SHOP_SLOTS_LABEL,Shop Slots Unlocked
 RHAP_PROGRESS_SHOP_LOCK_BUTTONS_LABEL,Shop Lock Buttons Unlocked
-RHAP_PROGRESS_COMMON_CRATES_LABEL,Common Crates (Checked / Available / Total)
-RHAP_PROGRESS_COMMON_CRATES_NEXT_GROUP_LABEL,Next Common Crate Group
-RHAP_PROGRESS_LEGENDARY_CRATES_LABEL,Legendary Crate Locations (Checked / Available / Total)
-RHAP_PROGRESS_LEGENDARY_CRATES_NEXT_GROUP_LABEL,Next Legendary Crate Group
-RHAP_PROGRESS_RUNS_WON,Runs Won: {amount} / {total}
-RHAP_PROGRESS_SHOP_SLOTS,Shop Slots: {amount} (?)
 RHAP_PROGRESS_WINS_SINGULAR,win
 RHAP_PROGRESS_WINS_PLURAL,win
 RHAP_PROGRESS_COMMON_CRATES_TITLE,Common Loot Crate Locations
 RHAP_PROGRESS_LEGENDARY_CRATES_TITLE,Legendary Loot Crate Locations
 RHAP_PROGRESS_CRATES_ALL_GROUPS_AVAILABLE,All Crates Available!
-RHAP_PROGRESS_CRATES_COUNT,{crate_type} Crates: {checked} / {available} / {total} (?) 
-RHAP_PROGRESS_CRATES_WINS_TO_NEXT_GROUP,{wins_needed} {wins} needed to unlock next {num_crates} {crate_type} crates
-RHAP_PROGRESS_CRATES_ALL_AVAILABLE,All {crate_type} crates are available!
 RHAP_MENU_LOAD_SAVED_RUN_TITLE,Resume saved run?
 RHAP_PROGRESS_WINS_NEEDED_TOOLTIP,Number of wins needed to goal
 RHAP_MENU_GO_TO_WAVE_SKIP_TO_WAVE,Skip To Wave
