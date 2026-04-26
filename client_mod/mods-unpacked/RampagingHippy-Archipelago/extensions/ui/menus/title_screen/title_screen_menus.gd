@@ -4,11 +4,11 @@ const LOG_NAME = "RampagingHippy-Archipelago/title_screen_menus"
 var _custom_menu_ap_connect
 
 func _ready():
-	_custom_menu_ap_connect = load("res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/menu_ap_connect.tscn").instance()
+	_custom_menu_ap_connect = load("res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/pages/menu_ap.tscn").instance()
 	add_child(_custom_menu_ap_connect)
 	_custom_menu_ap_connect.visible = false
-	_custom_menu_ap_connect.connect("back_button_pressed", self, "_on_MenuAp_back_button_pressed")
-	var _foo = _main_menu.connect("ap_connect_button_pressed", self, "_on_MainMenu_ap_connect_button_pressed")
+	_custom_menu_ap_connect.connect("back_button_pressed", self , "_on_MenuAp_back_button_pressed")
+	var _foo = _main_menu.connect("ap_connect_button_pressed", self , "_on_MainMenu_ap_connect_button_pressed")
 
 func _on_MainMenu_ap_connect_button_pressed() -> void:
 	switch(_main_menu, _custom_menu_ap_connect)
