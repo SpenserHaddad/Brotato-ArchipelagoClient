@@ -43,9 +43,13 @@ func _update_settings():
 	_deathlink_setting.set_value(_enabled_setting_to_str(slot_data["deathlink"]))
 	
 	var waves_with_checks: Array = slot_data["waves_with_checks"]
-	var waves_with_checks_str= PoolStringArray(waves_with_checks)
-	var waves_with_checks_value = waves_with_checks_str.join(", ")
-	_waves_with_checks_setting.set_value(waves_with_checks_value)
+	if len(waves_with_checks) < 20:
+		var waves_with_checks_str= PoolStringArray(waves_with_checks)
+		var waves_with_checks_value = waves_with_checks_str.join(", ")
+		_waves_with_checks_setting.set_value(waves_with_checks_value)
+	else:
+		# Simplify the string if there's a check for every wave so it fits on-screen.
+		_waves_with_checks_setting.set_value("1-20")
 	
 	var gold_reward_mode_value: String
 	if slot_data["gold_reward_mode"] == 0:
