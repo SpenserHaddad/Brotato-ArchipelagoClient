@@ -15,7 +15,7 @@ signal ap_connect_button_pressed
 func init():
 	if _archipelago_button != null:
 		# Make AP button reachable with controller. The base class also sets the neighbors for some
-		# of these buttons in its _init(), so we have to set the neighbor her for it to be applied.
+		# of these buttons in its _init(), so we have to set the neighbor here for it to be applied.
 		var bottom_neighbor
 		if ProgressData.saved_run_state.has_run_state:
 			bottom_neighbor = continue_button
@@ -27,7 +27,7 @@ func init():
 		
 		# This will trigger in the base class' init(), which is called after this one's.
 		# Use the "AP" prefix so we don't clash with a similar signal handler in the base class.
-		continue_button.connect("visibility_changed", self, "_ap_on_ContinueButton_visibility_changed")
+		continue_button.connect("visibility_changed", self , "_ap_on_ContinueButton_visibility_changed")
 
 
 func _ready():
@@ -35,7 +35,7 @@ func _ready():
 	_ap_client = mod_node.brotato_ap_client
 	
 	_ap_websocket_connection = get_node("/root/ModLoader/RampagingHippy-Archipelago").ap_websocket_connection
-	var _success = _ap_websocket_connection.connect("connection_state_changed", self, "_set_ap_button_icon")
+	var _success = _ap_websocket_connection.connect("connection_state_changed", self , "_set_ap_button_icon")
 	_add_ap_button()
 	_set_ap_button_icon(_ap_websocket_connection.connection_state)
 
@@ -44,14 +44,14 @@ func _add_ap_button():
 	var parent_node: Container = $MarginContainer/VBoxContainer/HBoxContainer/ButtonsLeft
 
 	ModLoaderMod.append_node_in_scene(
-		self,
+		self ,
 		"ArchipelagoButton",
 		parent_node.get_path(),
 		ApConnectButton.resource_path
 	)
 	_archipelago_button = parent_node.get_node("ArchipelagoButton")
 	parent_node.move_child(_archipelago_button, 0)
-	_archipelago_button.connect("pressed", self, "_on_MainMenu_ap_connect_button_pressed")
+	_archipelago_button.connect("pressed", self , "_on_MainMenu_ap_connect_button_pressed")
 	_archipelago_button.set_focus_mode(FOCUS_ALL)
 
 func _set_ap_button_icon(ws_state: int):
