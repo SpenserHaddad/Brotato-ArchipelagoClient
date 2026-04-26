@@ -19,13 +19,13 @@ script = ExtResource( 2 )
 margin_left = 5.0
 margin_top = 5.0
 margin_right = 495.0
-margin_bottom = 219.0
+margin_bottom = 273.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 margin_right = 490.0
-margin_bottom = 214.0
+margin_bottom = 268.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 5
@@ -52,10 +52,48 @@ margin_right = 490.0
 margin_bottom = 34.0
 title = "RHAP_PROGRESS_RUNS_WON_LABEL"
 
-[node name="RunsWon" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="ShopSlotsNew" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
 margin_top = 39.0
+margin_right = 490.0
+margin_bottom = 73.0
+rect_pivot_offset = Vector2( -414, 29 )
+title = "RHAP_PROGRESS_SHOP_SLOTS_LABEL"
+
+[node name="ShopLockButtons" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
+margin_top = 78.0
+margin_right = 490.0
+margin_bottom = 112.0
+title = "RHAP_PROGRESS_SHOP_LOCK_BUTTONS_LABEL"
+
+[node name="CommonCratesProgress" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
+margin_top = 117.0
+margin_right = 490.0
+margin_bottom = 151.0
+title = "RHAP_PROGRESS_COMMON_CRATES_LABEL"
+
+[node name="CommonCratesNextGroup" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
+margin_top = 156.0
+margin_right = 490.0
+margin_bottom = 190.0
+title = "RHAP_PROGRESS_COMMON_CRATES_NEXT_GROUP_LABEL"
+
+[node name="LegendaryCratesProgress" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
+margin_top = 195.0
+margin_right = 490.0
+margin_bottom = 229.0
+title = "RHAP_PROGRESS_LEGENDARY_CRATES_LABEL"
+
+[node name="LegendaryCratesNextGroup" parent="MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
+margin_top = 234.0
+margin_right = 490.0
+margin_bottom = 268.0
+title = "RHAP_PROGRESS_LEGENDARY_CRATES_NEXT_GROUP_LABEL"
+
+[node name="RunsWon" type="Label" parent="MarginContainer/VBoxContainer"]
+visible = false
+margin_top = 273.0
 margin_right = 300.0
-margin_bottom = 64.0
+margin_bottom = 298.0
 rect_min_size = Vector2( 300, 0 )
 size_flags_horizontal = 0
 size_flags_vertical = 1
@@ -64,9 +102,10 @@ text = "Runs Won: 0 / 10"
 valign = 1
 
 [node name="ShopSlots" type="Label" parent="MarginContainer/VBoxContainer"]
-margin_top = 69.0
+visible = false
+margin_top = 273.0
 margin_right = 300.0
-margin_bottom = 94.0
+margin_bottom = 298.0
 rect_min_size = Vector2( 300, 0 )
 hint_tooltip = "Number of shop slots unlocked"
 mouse_filter = 1
@@ -77,9 +116,10 @@ text = "Shop Slots: 0 / 4"
 valign = 1
 
 [node name="CommonCrateProgress" type="Label" parent="MarginContainer/VBoxContainer"]
-margin_top = 99.0
+visible = false
+margin_top = 273.0
 margin_right = 300.0
-margin_bottom = 124.0
+margin_bottom = 298.0
 rect_min_size = Vector2( 300, 0 )
 hint_tooltip = "Found / Available / Total"
 mouse_filter = 1
@@ -90,9 +130,10 @@ text = "Loot Crates: 0 / 0 / 0"
 valign = 1
 
 [node name="CommonCrateWinsNeeded" type="Label" parent="MarginContainer/VBoxContainer"]
-margin_top = 129.0
+visible = false
+margin_top = 273.0
 margin_right = 381.0
-margin_bottom = 154.0
+margin_bottom = 298.0
 rect_min_size = Vector2( 300, 0 )
 mouse_filter = 1
 size_flags_horizontal = 0
@@ -102,9 +143,10 @@ text = "5 more wins to unlock next 5 crates"
 valign = 1
 
 [node name="LegendaryCrateProgress" type="Label" parent="MarginContainer/VBoxContainer"]
-margin_top = 159.0
+visible = false
+margin_top = 273.0
 margin_right = 300.0
-margin_bottom = 184.0
+margin_bottom = 298.0
 rect_min_size = Vector2( 300, 0 )
 hint_tooltip = "Found / Available / Total"
 mouse_filter = 1
@@ -115,9 +157,10 @@ text = "Loot Crates: 0 / 0 / 0"
 valign = 1
 
 [node name="LegendaryCrateWinsNeeded" type="Label" parent="MarginContainer/VBoxContainer"]
-margin_top = 189.0
+visible = false
+margin_top = 273.0
 margin_right = 381.0
-margin_bottom = 214.0
+margin_bottom = 298.0
 rect_min_size = Vector2( 300, 0 )
 mouse_filter = 1
 size_flags_horizontal = 0

@@ -3,15 +3,13 @@ extends PanelContainer
 
 const LOG_NAME = "RampagingHippy-Archipelago/ui_crate_progress"
 
-onready var _contents_container = $MarginContainer/VBoxContainer
-onready var _runs_won_label = $MarginContainer/VBoxContainer/RunsWon
-onready var _shop_slots_label = $MarginContainer/VBoxContainer/ShopSlots
-onready var _common_crate_progress_label = $MarginContainer/VBoxContainer/CommonCrateProgress
-onready var _common_crate_wins_needed_label = $MarginContainer/VBoxContainer/CommonCrateWinsNeeded
-onready var _legendary_crate_progress_label = $MarginContainer/VBoxContainer/LegendaryCrateProgress
-onready var _legendary_crate_wins_needed_label = $MarginContainer/VBoxContainer/LegendaryCrateWinsNeeded
-
-onready var _runs_won_new = $MarginContainer/VBoxContainer/RunsWonNew
+onready var _runs_won = $MarginContainer/VBoxContainer/RunsWonNew
+onready var _shop_slots = $MarginContainer/VBoxContainer/ShopSlotsNew
+onready var _shop_lock_buttons = $MarginContainer/VBoxContainer/ShopLockButtons
+onready var _common_crates_progress = $MarginContainer/VBoxContainer/CommonCratesProgress
+onready var _common_crates_next_group = $MarginContainer/VBoxContainer/CommonCratesNextGroup
+onready var _legendary_crates_progress = $MarginContainer/VBoxContainer/LegendaryCratesProgress
+onready var _legendary_crates_next_group = $MarginContainer/VBoxContainer/LegendaryCratesNextGroup
 
 var _ap_client
 
@@ -37,33 +35,32 @@ func update_runs_won_ui():
 	var wins_progress = _ap_client.wins_progress
 	var num_wins = wins_progress.num_wins
 	var wins_for_goal = wins_progress.wins_for_goal
-	_runs_won_label.text = tr("RHAP_PROGRESS_RUNS_WON").format({amount=wins_progress.num_wins, total=wins_progress.wins_for_goal})
-	_runs_won_new.set_value("%d / %d" % [wins_progress.num_wins, wins_progress.wins_for_goal])
+	_runs_won.set_value("%d / %d" % [wins_progress.num_wins, wins_progress.wins_for_goal])
 	
 func update_shop_slots_ui():
-	_shop_slots_label.text = tr("RHAP_PROGRESS_SHOP_SLOTS").format({amount=_ap_client.shop_slots_progress.num_unlocked_shop_slots})
+	_shop_slots.set_value(str(_ap_client.shop_slots_progress.num_unlocked_shop_slots))
+	_shop_lock_buttons.set_value(str(_ap_client.shop_lock_buttons_progress.num_unlocked_shop_lock_buttons))
 	
 func update_all_crate_progress_ui():
 	_update_crate_progress_ui(
-		_common_crate_progress_label,
-		_common_crate_wins_needed_label,
+		_common_crates_progress,
+		_common_crates_next_group,
 		_ap_client.common_loot_crate_progress
 	)
 	_update_crate_progress_ui(
-		_legendary_crate_progress_label,
-		_legendary_crate_wins_needed_label,
+		_legendary_crates_progress,
+		_legendary_crates_next_group,
 		_ap_client.legendary_loot_crate_progress
 	)
 	
-func _update_crate_progress_ui(progress_text: Label, wins_needed_text: Label, crate_progress):
+func _update_crate_progress_ui(progress_control, groups_control, crate_progress):
 	var crate_type = tr("RHAP_%s_CRATE_LABEL" % crate_progress.crate_type.to_upper())
 	var num_checked = crate_progress.total_locations_checked()
 	var checks_available = crate_progress.num_unlocked_locations
 	var total_checks = crate_progress.total_checks
 
 	# Crate locations checked / Available/ Total
-	progress_text.text = tr("RHAP_PROGRESS_CRATES_COUNT").format({crate_type=crate_type,checked=num_checked, available=checks_available, total=total_checks})
-	
+	progress_control.set_value("%d / %d / %d" % [num_checked, checks_available, total_checks])
 	var next_group_idx = crate_progress.last_unlocked_group_idx + 1
 	if next_group_idx < crate_progress.loot_crate_groups.size():
 		var next_crate_group = crate_progress.loot_crate_groups[next_group_idx]
@@ -75,6 +72,6 @@ func _update_crate_progress_ui(progress_text: Label, wins_needed_text: Label, cr
 			LOG_NAME
 		)
 		var wins_str = tr("RHAP_PROGRESS_WINS_SINGULAR") if wins_needed == 1 else tr("RHAP_PROGRESS_WINS_PLURAL")
-		wins_needed_text.text = tr("RHAP_PROGRESS_CRATES_WINS_TO_NEXT_GROUP").format({crate_type=crate_type, wins_needed=wins_needed, wins=wins_str, num_crates=next_crate_group.num_crates})
+		groups_control.set_value(wins_str)
 	else:
-		wins_needed_text.text = tr("RHAP_PROGRESS_CRATES_ALL_AVAILABLE").format({crate_type=crate_type})
+		groups_control.set_value(tr("RHAP_PROGRESS_CRATES_ALL_AVAILABLE").format({crate_type=crate_type}))
