@@ -38,9 +38,18 @@ alignment = 1
 [node name="ApConnect" parent="VBoxContainer/HBoxContainer" instance=ExtResource( 7 )]
 margin_right = 1212.0
 margin_bottom = 773.0
-focus_neighbour_bottom = NodePath("../../HBoxContainer2")
+focus_neighbour_bottom = NodePath("../../HBoxContainer2/BackButton")
 size_flags_horizontal = 2
 size_flags_vertical = 6
+
+[node name="VBoxContainer" parent="VBoxContainer/HBoxContainer/ApConnect" index="0"]
+margin_left = 0.0
+margin_top = 0.0
+margin_right = 1212.0
+margin_bottom = 773.0
+
+[node name="DisconnectButton" parent="VBoxContainer/HBoxContainer/ApConnect/VBoxContainer" index="2"]
+focus_neighbour_bottom = NodePath("../../../../HBoxContainer2/BackButton")
 
 [node name="EmptySpaceCenter" type="Control" parent="VBoxContainer/HBoxContainer"]
 margin_left = 1216.0
@@ -166,6 +175,7 @@ unique_name_in_owner = true
 margin_left = 695.0
 margin_right = 1387.0
 margin_bottom = 65.0
+focus_neighbour_top = NodePath("../../HBoxContainer/ApConnect/VBoxContainer/DisconnectButton")
 size_flags_horizontal = 3
 text = "MENU_BACK"
 icon = ExtResource( 4 )
@@ -179,3 +189,5 @@ margin_bottom = 65.0
 size_flags_horizontal = 3
 
 [connection signal="pressed" from="VBoxContainer/HBoxContainer2/BackButton" to="." method="_on_BackButton_pressed"]
+
+[editable path="VBoxContainer/HBoxContainer/ApConnect"]
