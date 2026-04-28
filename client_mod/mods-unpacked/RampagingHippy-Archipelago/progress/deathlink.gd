@@ -1,11 +1,18 @@
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApDeathLinkProgress
 
+enum DeathlinkEnableMode {
+	USE_SLOT_VALUE = 0
+	FORCE_ENABLE = 1
+	FORCE_DISABLE = 2
+}
+
 const LOG_NAME = "RampagingHippy-Archipelago/progress/deathlink"
 
 signal deathlink_triggered(source, cause)
 
-var deathlink_enabled: bool = false
+var _deathlink_enabled_for_slot: bool = false
+var _deathlink_mode = DeathlinkEnableMode.USE_SLOT_VALUE
 
 # The source and cause fields from the last DeathLink that caused a run to be
 # lost. If multiple DeathLinks happen to come in close together, this will be
@@ -23,8 +30,38 @@ var handling_deathlink: bool = false
 var lost_to_deathlink: bool = false
 
 func _init(ap_client, game_state).(ap_client, game_state):
-	var _status = _ap_client.connect("bounced_received", self, "_on_bounced_received")
-	return
+	var _status = _ap_client.connect("bounced_received", self , "_on_bounced_received")
+	set_deathlink_mode(int(_ap_client.config.data["deathlink_mode"]))
+
+func deathlink_enabled() -> bool:
+	match _deathlink_mode:
+		DeathlinkEnableMode.USE_SLOT_VALUE:
+			return _deathlink_enabled_for_slot
+		DeathlinkEnableMode.FORCE_ENABLE:
+			return true
+		DeathlinkEnableMode.FORCE_DISABLE:
+			return false
+		_:
+			ModLoaderLog.warning("Unknown Deathlink enable mode %s, defaulting to false." % _deathlink_mode, LOG_NAME)
+			return false
+
+func get_deathlink_mode():
+	return _deathlink_mode
+
+func set_deathlink_mode(mode):
+	ModLoaderLog.info("Deathlink mode changed to %s" % mode, LOG_NAME)
+	var mt = typeof(mode)
+	_deathlink_mode = mode
+	_ap_client.config.data["deathlink_mode"] = mode
+	# TODO: Centralize config handling
+	ModLoaderConfig.update_config(_ap_client.config)
+	_update_client_deathlink()
+	
+func _update_client_deathlink():
+	if deathlink_enabled():
+		_ap_client.enable_deathlink()
+	else:
+		_ap_client.disable_deathlink()
 
 func on_run_started(_character_ids: Array, _is_new_run: bool):
 	# Clear the flags just to be safe
@@ -34,7 +71,7 @@ func on_run_started(_character_ids: Array, _is_new_run: bool):
 	deathlink_cause = ""
 
 func on_wave_finished(wave_number: int, _character_ids: Array, is_run_lost: bool, _is_run_won: bool):
-	if is_run_lost and deathlink_enabled and not handling_deathlink:
+	if is_run_lost and deathlink_enabled() and not handling_deathlink:
 		ModLoaderLog.info("Sending DeathLink", LOG_NAME)
 		var message_template
 		if wave_number == 20:
@@ -50,13 +87,12 @@ func on_wave_finished(wave_number: int, _character_ids: Array, is_run_lost: bool
 		_ap_client.send_deathlink("", message)
 
 func on_connected_to_multiworld():
-	deathlink_enabled = _ap_client.slot_data.get("deathlink", 0) == 1
-	ModLoaderLog.info("Deathlink enabled: %s" % deathlink_enabled, LOG_NAME)
-	if deathlink_enabled:
-		_ap_client.enable_deathlink()
+	_deathlink_enabled_for_slot = _ap_client.slot_data.get("deathlink", 0) == 1
+	ModLoaderLog.info("Deathlink enabled for slot: %s" % _deathlink_enabled_for_slot, LOG_NAME)
+	_update_client_deathlink()
 
 func _on_bounced_received(bounced_data: Dictionary):
-	if deathlink_enabled and bounced_data.get("tags", {}).has("DeathLink"):
+	if deathlink_enabled() and bounced_data.get("tags", {}).has("DeathLink"):
 		var packet_source = bounced_data.data["source"]
 		var packet_cause = bounced_data.data.get("cause", "")
 		
