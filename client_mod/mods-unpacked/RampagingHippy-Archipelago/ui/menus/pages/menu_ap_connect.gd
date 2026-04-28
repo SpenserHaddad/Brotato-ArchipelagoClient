@@ -98,7 +98,13 @@ func _on_connection_state_changed(new_state: int, error: int = 0):
 	else:
 		_animate_status_texture = false
 		_status_texture.rect_rotation = 0
-	
+		
+	# Disable the host/player/password elements unless we're not connected
+	var enable_form_controls = new_state == BrotatoApClient.ConnectState.DISCONNECTED
+	_host_edit.editable = enable_form_controls
+	_player_edit.editable = enable_form_controls
+	_password_edit.editable = enable_form_controls
+		
 	if error != 0:
 		_set_error(error)
 	else:
