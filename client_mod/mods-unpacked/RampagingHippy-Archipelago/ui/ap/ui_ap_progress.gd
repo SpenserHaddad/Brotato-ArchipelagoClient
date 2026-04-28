@@ -17,6 +17,7 @@ func _ready():
 func set_client(ap_client):
 	_ap_client = ap_client
 	_ap_client.connect("connection_state_changed", self, "_on_connection_state_changed")
+	_ap_client.wins_progress.connect("win_received", self, "_on_win_received")
 
 	if _ap_client.connected_to_multiworld():
 		update_all_ui()
@@ -28,6 +29,9 @@ func _on_connection_state_changed(new_state: int, error: int = 0):
 		update_all_ui()
 	else:
 		clear_all_ui()
+
+func _on_win_received(new_count: int):
+	update_runs_won_ui()
 
 func update_all_ui():
 	update_runs_won_ui()
