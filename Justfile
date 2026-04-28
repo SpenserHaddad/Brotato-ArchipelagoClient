@@ -22,7 +22,7 @@ install_ap_deps:
 
 create_symlinks:
     uv run python ${TOOLS_DIR}/create_dev_symlinks.py -a ${AP_DIR} -b ${BROTATO_UNPACKED_DIR}
-    # ln -sf $(realpath apworld/${APWORLD}/) ${AP_DIR}/worlds/${APWORLD}
+
 download_gdretools:
     uv run tools/download_gdretools.py ${GDRETOOLS_VERSION} -o ${GDRETOOLS_DIR}
 
@@ -52,4 +52,6 @@ types:
 apworld:
     zip -r ${APWORLD}.apworld apworld/${APWORLD}/ -x "**__pycache__/*" -x "apworld/${APWORLD}/test/*"
 
-
+[working-directory: './client_mod']
+build_mod:
+    zip -r ../RampagingHippy-Archipelago.zip * .import/*
