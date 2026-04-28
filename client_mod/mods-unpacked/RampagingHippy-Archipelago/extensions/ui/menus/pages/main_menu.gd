@@ -29,8 +29,8 @@ func init():
 
 	# This will trigger in the base class' init(), which is called after this one's.
 	# Use the "AP" prefix so we don't clash with a similar signal handler in the base class.
-	
-	continue_button.connect("visibility_changed", self , "_ap_on_ContinueButton_visibility_changed")
+	if not continue_button.is_connected("visibility_changed", self , "_ap_on_ContinueButton_visibility_changed"):
+		continue_button.connect("visibility_changed", self , "_ap_on_ContinueButton_visibility_changed")
 
 
 func _ready():
