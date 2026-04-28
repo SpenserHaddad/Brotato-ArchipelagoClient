@@ -313,7 +313,7 @@ func _set_connection_state(state):
 	emit_signal("connection_state_changed", connection_state)
 
 func _handle_command(command: Dictionary):
-	ModLoaderLog.info("Received %s command" % command["cmd"], LOG_NAME)
+	ModLoaderLog.debug("Received %s command" % command["cmd"], LOG_NAME)
 	match command["cmd"]:
 		"RoomInfo":
 			emit_signal("on_room_info", command)
