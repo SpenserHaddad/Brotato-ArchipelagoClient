@@ -72,18 +72,24 @@ func _ready() -> void:
 	ModLoaderLog.info("Getting config", LOG_NAME)
 
 	var config = ModLoaderConfig.get_config(MOD_NAME, "ap_config")
+	var default_config = ModLoaderConfig.get_default_config(MOD_NAME)
+	
 	if config == null:
 		ModLoaderLog.info("Config null", LOG_NAME)
-
-		var default_config = ModLoaderConfig.get_default_config(MOD_NAME)
-		ModLoaderLog.info("Got default config", LOG_NAME)
-		
 		ModLoaderConfig.create_config(MOD_NAME, "ap_config", default_config.data)
-		ModLoaderLog.info("Created default config", LOG_NAME)
-
 		config = ModLoaderConfig.get_config(MOD_NAME, "ap_config")
 		ModLoaderLog.info("Got config again", LOG_NAME)
-
+	else:
+		var config_needs_update = false
+		ModLoaderLog.info("Validating config", LOG_NAME)
+		for key in default_config.data:
+			if not config.data.has(key):
+				ModLoaderLog.info("Key %s not present in config, applying default." % key, LOG_NAME)
+				config.data[key] = default_config.data[key]
+				config_needs_update = true
+		
+		if config_needs_update:
+			ModLoaderConfig.update_config(config)
 
 	ModLoaderLog.info("Got config", LOG_NAME)
 
