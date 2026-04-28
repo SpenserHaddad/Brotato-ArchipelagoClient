@@ -17,9 +17,8 @@ extends Object
 class_name ApProgressBase
 
 const BrotatoApConstants = preload("../ap/constants.gd")
-const GodotApClient = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/godot_ap_client.gd")
 
-var _ap_client: GodotApClient
+var _ap_client
 ## A BrotatoApClient instance which sub-classes can use to send/receive updates from the
 ## multiworld.
 
@@ -36,12 +35,12 @@ func _init(ap_client, game_state):
 	## Takes GodotAPClient and ApGameState instances as inputs, which are made available
 	_ap_client = ap_client
 	_game_state = game_state
-	var _status = _ap_client.connect("connection_state_changed", self, "_on_client_connection_state_changed")
-	_status = _ap_client.connect("item_received", self, "on_item_received")
-	_status = _ap_client.connect("room_updated", self, "on_room_updated")
-	_status = _ap_client.connect("data_storage_updated", self, "on_data_storage_updated")
-	_status = _game_state.connect("run_started", self, "on_run_started")
-	_status = _game_state.connect("wave_finished", self, "on_wave_finished")
+	var _status = _ap_client.connect("connection_state_changed", self , "_on_client_connection_state_changed")
+	_status = _ap_client.connect("item_received", self , "on_item_received")
+	_status = _ap_client.connect("room_updated", self , "on_room_updated")
+	_status = _ap_client.connect("data_storage_updated", self , "on_data_storage_updated")
+	_status = _game_state.connect("run_started", self , "on_run_started")
+	_status = _game_state.connect("wave_finished", self , "on_wave_finished")
 
 func export_run_specific_progress_data() -> Dictionary:
 	## Get any run-specific state to the input dictionary.
