@@ -60,7 +60,14 @@
 						"title": "Archipelago Last Run Was Saved",
 						"type": "boolean",
 						"default": false
-					}
+					},
+					"deathlink_mode": {
+						"title": "How the value for DeathLink should be determined:",
+						"type": "integer",
+						"minimum": 0,
+						"maximimum": 2,
+						"default": 0
+					},
 				}
 			}
 		}
