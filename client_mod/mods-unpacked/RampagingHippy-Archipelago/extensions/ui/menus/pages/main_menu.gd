@@ -13,6 +13,8 @@ var _ap_icon_disconnected = preload("res://mods-unpacked/RampagingHippy-Archipel
 signal ap_connect_button_pressed
 
 func init():
+	.init()
+	
 	if _archipelago_button != null:
 		# Make AP button reachable with controller. The base class also sets the neighbors for some
 		# of these buttons in its _init(), so we have to set the neighbor here for it to be applied.
@@ -24,10 +26,11 @@ func init():
 
 		quit_button.focus_neighbour_bottom = quit_button.get_path_to(_archipelago_button)
 		_archipelago_button.focus_neighbour_top = quit_button.get_path()
-		
-		# This will trigger in the base class' init(), which is called after this one's.
-		# Use the "AP" prefix so we don't clash with a similar signal handler in the base class.
-		continue_button.connect("visibility_changed", self , "_ap_on_ContinueButton_visibility_changed")
+
+	# This will trigger in the base class' init(), which is called after this one's.
+	# Use the "AP" prefix so we don't clash with a similar signal handler in the base class.
+	
+	continue_button.connect("visibility_changed", self , "_ap_on_ContinueButton_visibility_changed")
 
 
 func _ready():
