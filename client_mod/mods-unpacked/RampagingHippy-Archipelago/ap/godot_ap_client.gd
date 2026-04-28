@@ -104,11 +104,11 @@ func _init(websocket_client_, config_):
 
 func _ready():
 	var _status: int
-	_status = websocket_client.connect("on_received_items", self, "_on_received_items")
-	_status = websocket_client.connect("on_set_reply", self, "_on_set_reply")
-	_status = websocket_client.connect("on_retrieved", self, "_on_retrieved")
-	_status = websocket_client.connect("on_room_update", self, "_on_room_update")
-	_status = websocket_client.connect("on_bounced", self, "_on_bounced_received")
+	_status = websocket_client.connect("on_received_items", self , "_on_received_items")
+	_status = websocket_client.connect("on_set_reply", self , "_on_set_reply")
+	_status = websocket_client.connect("on_retrieved", self , "_on_retrieved")
+	_status = websocket_client.connect("on_room_update", self , "_on_room_update")
+	_status = websocket_client.connect("on_bounced", self , "_on_bounced_received")
 
 func _connected_or_connection_refused_received(message: Dictionary):
 	emit_signal("_received_connect_response", message)
@@ -173,7 +173,7 @@ func connect_to_multiworld(get_data_package: bool = true) -> int:
 			websocket_client.get_data_package([game])
 			# 4. Server sends a DataPackage packet in return. (If the client sent GetDataPackage.)
 			var data_package_message = yield (websocket_client, "on_data_package")
-			data_package = ApDataPackage.new(data_package_message["data"]["games"][self.game])
+			data_package = ApDataPackage.new(data_package_message["data"]["games"][ self.game])
 
 	# 5. Client sends Connect packet in order to authenticate with the server.
 	# 6. Server validates the client's packet and responds with Connected or
@@ -182,19 +182,19 @@ func connect_to_multiworld(get_data_package: bool = true) -> int:
 	# Wait for the first response the server sends back
 	var _result = websocket_client.connect(
 		"on_connected",
-		self,
+		self ,
 		"_connected_or_connection_refused_received"
 	)
 	_result = websocket_client.connect(
 		"on_connection_refused",
-		self,
+		self ,
 		"_connected_or_connection_refused_received"
 	)
 	if room_info.password:
 		websocket_client.send_connect(game, player, password, true, self.player_tags)
 	else:
 		websocket_client.send_connect(game, player, "", true, self.player_tags)
-	var connect_response = yield (self, "_received_connect_response")
+	var connect_response = yield (self , "_received_connect_response")
 
 	if connect_response["cmd"] == "ConnectionRefused":
 		# There may be multiple errors, but there isn't a clean way in Godot to return
@@ -236,8 +236,8 @@ func connect_to_multiworld(get_data_package: bool = true) -> int:
 	ModLoaderLog.info(
 		(
 			"Connected to Archipelago\n" + \
-			"\tServer: %s, Player: %s, Game: %s, Slot: %d, Team: %d\n" % [self.server, self.player, self.game, self.slot, self.team] + \
-			"\tChecked locations: %d, Missing locations: %d\n" % [self.checked_locations.size(), self.missing_locations.size()] + \
+			"\tServer: %s, Player: %s, Game: %s, Slot: %d, Team: %d\n" % [ self.server, self.player, self.game, self.slot, self.team] + \
+			"\tChecked locations: %d, Missing locations: %d\n" % [ self.checked_locations.size(), self.missing_locations.size()] + \
 			"\tHint points: %d\n" % self.hint_points + \
 			"\tSlot info: %s\n" % self.slot_info + \
 			"\tSlot data:\n\t\t%s" % JSON.print(self.slot_data, "\t\t")
@@ -310,9 +310,21 @@ func add_player_tag(tag: String):
 	if self.connect_state == ConnectState.CONNECTED_TO_MULTIWORLD:
 		websocket_client.send_connect_update(-1, self.player_tags)
 
+func remove_player_tag(tag: String):
+	# Tries to remove a tag from the player slot. If the tag was removed and we're 
+	# connected, send a ConnectUpdate.
+	var tag_idx = self.player_tags.find(tag)
+	if tag_idx >= 0:
+		self.player_tags.remove(tag_idx)
+		if self.connect_state == ConnectState.CONNECTED_TO_MULTIWORLD:
+			websocket_client.send_connect_update(-1, self.player_tags)
+
 func enable_deathlink():
 	# Convenience method to set the "DeathLink" tag for the slot
 	add_player_tag("DeathLink")
+
+func disable_deathlink():
+	remove_player_tag("DeathLink")
 
 func send_deathlink(source: String = "", cause: String = ""):
 	# Convenience method for sending a DeathLink bounce packet
