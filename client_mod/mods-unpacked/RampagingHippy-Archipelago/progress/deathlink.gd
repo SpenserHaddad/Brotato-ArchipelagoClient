@@ -47,10 +47,9 @@ func deathlink_enabled() -> bool:
 
 func get_deathlink_mode():
 	return _deathlink_mode
-
+ 
 func set_deathlink_mode(mode):
 	ModLoaderLog.info("Deathlink mode changed to %s" % mode, LOG_NAME)
-	var mt = typeof(mode)
 	_deathlink_mode = mode
 	_ap_client.config.data["deathlink_mode"] = mode
 	# TODO: Centralize config handling
