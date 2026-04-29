@@ -22,4 +22,5 @@ func _on_OpenLogFileDirButton_pressed():
 
 
 func _on_OpenArchipelagoDiscordButton_pressed():
+	# Link to the Brotato channel on the AP Discord specifically.
 	OS.shell_open("https://discord.com/channels/731205301247803413/1154944430097313803")

@@ -1,6 +1,8 @@
 class_name ApMultiWorldProgress
 extends PanelContainer
 
+const BrotatoApClient = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/brotato_ap_client.gd")
+
 const LOG_NAME = "RampagingHippy-Archipelago/ap_ui_progress"
 
 onready var _runs_won = $MarginContainer/VBoxContainer/RunsWonNew
@@ -16,8 +18,8 @@ func _ready():
 
 func set_client(ap_client):
 	_ap_client = ap_client
-	_ap_client.connect("connection_state_changed", self, "_on_connection_state_changed")
-	_ap_client.wins_progress.connect("win_received", self, "_on_win_received")
+	_ap_client.connect("connection_state_changed", self , "_on_connection_state_changed")
+	_ap_client.wins_progress.connect("win_received", self , "_on_win_received")
 
 	if _ap_client.connected_to_multiworld():
 		update_all_ui()

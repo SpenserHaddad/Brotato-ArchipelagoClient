@@ -1,4 +1,3 @@
-# extends "res://entities/entity.gd"
 extends "res://entities/units/enemies/enemy.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/entities/units/enemies/enemy"
@@ -9,7 +8,7 @@ func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_ap_client = mod_node.brotato_ap_client
 
-func die(args: = Entity.DieArgs.new()) -> void :
+func die(args := Utils.default_die_args) -> void:
 	# Check if we should spawn a crate for debugging
 	var old_unit_always_drop_consumable = self.stats.get("always_drop_consumables")
 	# An enemy died, handle debug crates 
