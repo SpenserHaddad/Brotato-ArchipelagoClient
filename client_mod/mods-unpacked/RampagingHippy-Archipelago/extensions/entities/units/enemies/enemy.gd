@@ -1,4 +1,4 @@
-#extends "res://entities/units/enemies/enemy.gd"
+extends "res://entities/units/enemies/enemy.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/entities/units/enemies/enemy"
 
