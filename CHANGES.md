@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1] - 2026-04-28
+
+### Added
+
+- The "Connect" menu has been renamed to the "AP" menu and additional information has
+  been added to it.
+  - The Progress panel previously shown on the character select screen has been moved
+    here.
+- A new Slot Data panel now shows the slot data when connected.
+- A new Options panel has been added for mod-specific configuration.
+- Deathlink can now be set from the Options page to one of three modes:
+  - Use the value set in the slot data/player options.
+  - Force Deathlink on.
+  - Force Deathlink off.
+- Added a section to the Options panel to help with bug reporting:
+  - Instructions on the best way to report feedback (in the Archipelago Discord).
+  - A button to open the log file's location.
+    - This is especially relevant now that Brotato has cross-platform builds.
+  - A button to open the Brotato game development channel on the Archipelago Discord.
+
+### Changed
+
+- Disable the address, olayer, and password edit boxes in the connect UI when
+  connecting/connected to an AP server.
+
+### Fixed
+
+- Fixed the main menu not initializing properly when the Archipelago mod was enabled.
+- Fixed the character select screen constantly changing size when mousing over
+  characters.
+  - Unfortunately, the fix for this was to remove the Progress panel from the UI. The
+    base game's UI is wider now due to the animated character portraits, and there's not
+    enough horizontal space for the AP data. I may add this back in at some point if I
+    think of a better way to handle it.
+
+
 ## [0.14.0] - 2026-02-16
 
 ### Added
@@ -601,8 +637,9 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.14.0...HEAD
-[0.13.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.13.0...v0.14.0
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.14.1...HEAD
+[0.14.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.14.0...v0.14.1
+[0.14.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.11.1...v0.12.0
