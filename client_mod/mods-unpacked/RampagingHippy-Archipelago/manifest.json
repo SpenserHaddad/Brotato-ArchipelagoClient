@@ -67,7 +67,7 @@
 						"minimum": 0,
 						"maximimum": 2,
 						"default": 0
-					},
+					}
 				}
 			}
 		}
