@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from ...constants import ABYSSAL_TERRORS_CHARACTERS, BASE_GAME_CHARACTERS, TOTAL_NUM_CHARACTERS
+from ...constants import ABYSSAL_TERRORS_CHARACTERS, BASE_GAME_CHARACTERS, MAX_REQUIRED_RUN_WINS, TOTAL_NUM_CHARACTERS
 from .base import BrotatoTestDataSet
 
 
@@ -17,7 +17,7 @@ class NumCharactersTestDataSet(BrotatoTestDataSet):
     def options_dict(self) -> dict[str, Any]:
         return {
             "num_characters": self.num_characters,
-            "num_victories": self.num_characters,
+            "num_victories": min(self.num_characters, MAX_REQUIRED_RUN_WINS),
             # Include all characters for simplicity, the num_characters/num_victories above will ensure only the correct
             # amount is chosen.
             "enable_abyssal_terrors_dlc": True,
