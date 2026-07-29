@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Incrased WebSocket buffer sizes in client mod from 20 MB to 80 MB.
+  - This should (hopefully) be a bandaid fix until the new WS implementation is ready.
+
 ## [0.15.0] - 2026-05-12
 
 ### Added
