@@ -117,7 +117,7 @@ func send_connect(game: String, user: String, password: String = "", slot_data: 
 		"game": game,
 		"name": user,
 		"password": password,
-		"uuid": "Godot %s: %s" % [game, user], # TODO: What do we need here? We can't generate an actual UUID in 3.5
+		"uuid": "60c9c15c-4f9b-4bcd-9512-abd53eeccc81",
 		"version": {"major": 0, "minor": 6, "build": 2, "class": "Version"},
 		"items_handling": 0b111, # TODO: argument
 		"tags": tags,
@@ -254,7 +254,7 @@ func _send_command(args: Dictionary):
 #		ModLoaderLog.debug("Sending %s command" % args['cmd'], LOG_NAME)
 	var command_str = JSON.print([args])
 	if _peer != null:
-		var result = _peer.put_packet(command_str.to_ascii())
+		var result = _peer.put_packet(command_str.to_utf8())
 		if result != 0:
 			var gpe = _peer.get_packet_error()
 			var client_state = _client.get_connection_status()
