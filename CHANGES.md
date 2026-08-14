@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed the client failing to connect if the player's name had non-ASCII characters.
+
 ## [0.15.1] - 2026-07-26
 
 ### Changed
