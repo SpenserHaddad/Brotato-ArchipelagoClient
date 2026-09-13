@@ -1,4 +1,4 @@
-from typing import Any, ClassVar
+from typing import Any
 
 from ..options import StartingShopLockButtonsMode
 from ..waves import get_wave_for_each_item
@@ -7,9 +7,9 @@ from .data_sets.shop_slots import SHOP_SLOT_TEST_DATA_SETS
 
 
 class TestBrotatoSlotData(BrotatoTestBase):
-    run_default_tests = False  # type:ignore
+    run_default_tests = False
 
-    options: ClassVar[dict[str, Any]] = {
+    options: dict[str, Any] = {  # noqa: RUF012
         # Only set options that are referenced by slot_data
         "num_victories": 10,
         "starting_characters": 0,
