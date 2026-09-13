@@ -105,15 +105,15 @@ class TestBrotatoCreateRegions(TestBrotatoRegions):
     parent_region: Region
     regions: dict[str, Region]
 
-    characters: list[str] = ("Brawler", "Crazy", "Mage", "Demon")
+    characters: ClassVar[list[str]] = ["Brawler", "Crazy", "Mage", "Demon"]
     common_loot_crate_groups: ClassVar[list[BrotatoLootCrateGroup]] = [
         BrotatoLootCrateGroup(1, 10, 0),
         BrotatoLootCrateGroup(2, 10, 5),
         BrotatoLootCrateGroup(3, 10, 10),
         BrotatoLootCrateGroup(4, 5, 15),
     ]
-    legendary_loot_crate_groups: list[BrotatoLootCrateGroup] = (BrotatoLootCrateGroup(1, 5, 0),)
-    waves_with_checks: list[int] = (5, 10, 15, 20)
+    legendary_loot_crate_groups: ClassVar[list[BrotatoLootCrateGroup]] = [BrotatoLootCrateGroup(1, 5, 0)]  # ruff: noqa: RUF012
+    waves_with_checks: ClassVar[list[int]] = [5, 10, 15, 20]
 
     def setUp(self) -> None:
         super().setUp()
@@ -173,8 +173,8 @@ class TestBrotatoCreateRegions(TestBrotatoRegions):
 
 
 class TestBrotatoRegionAccessRules(BrotatoTestBase):
-    run_default_tests = False  # type:ignore
-    options: ClassVar[dict[str, Any]] = {
+    run_default_tests = False
+    options: dict[str, Any] = {  # noqa: RUF012
         "num_victories": 10,
         "num_characters": 10,
         # Number of characters should match

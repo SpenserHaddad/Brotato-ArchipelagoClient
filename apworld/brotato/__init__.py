@@ -92,7 +92,7 @@ class BrotatoWorld(World):
     """
 
     options_dataclass = BrotatoOptions
-    options: BrotatoOptions  # type: ignore
+    options: BrotatoOptions
     game: ClassVar[str] = "Brotato"
     web = BrotatoWeb()
     data_version = 0
