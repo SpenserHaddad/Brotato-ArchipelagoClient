@@ -20,7 +20,7 @@ install_ap_deps:
     uv run python -m ensurepip
     uv run python ${AP_DIR}/ModuleUpdate.py --yes --append ${AP_DIR}/WebHostLib/requirements.txt
 
-create_symlinks:
+create_symlinks: 
     uv run python ${TOOLS_DIR}/create_dev_symlinks.py -a ${AP_DIR} -b ${BROTATO_UNPACKED_DIR}
 
 download_gdretools:
@@ -35,7 +35,6 @@ extract_brotato: download_gdretools
 dev_setup: download_godot download_gdretools extract_brotato create_symlinks install_ap_deps
 
 # Code check/development recipes
-
 @test:
     ${AP_DIR}/.env/bin/pytest ${AP_DIR}/worlds/${APWORLD}
 
@@ -47,7 +46,10 @@ lint *FLAGS:
     uv run ruff check {{ FLAGS }}
 
 types:
-    ty check ${APWORLD}
+    ty check apworld/${APWORLD}
+
+# Run formatter -> linter -> type checker -> unit tests
+check: format lint types test
 
 apworld:
     zip -r ${APWORLD}.apworld apworld/${APWORLD}/ -x "**__pycache__/*" -x "apworld/${APWORLD}/test/*"
