@@ -117,7 +117,7 @@ func send_connect(game: String, user: String, password: String = "", slot_data: 
 		"game": game,
 		"name": user,
 		"password": password,
-		"uuid": "Godot %s: %s" % [game, user], # TODO: What do we need here? We can't generate an actual UUID in 3.5
+		"uuid": "60c9c15c-4f9b-4bcd-9512-abd53eeccc81",
 		"version": {"major": 0, "minor": 6, "build": 2, "class": "Version"},
 		"items_handling": 0b111, # TODO: argument
 		"tags": tags,
@@ -254,7 +254,7 @@ func _send_command(args: Dictionary):
 #		ModLoaderLog.debug("Sending %s command" % args['cmd'], LOG_NAME)
 	var command_str = JSON.print([args])
 	if _peer != null:
-		var result = _peer.put_packet(command_str.to_ascii())
+		var result = _peer.put_packet(command_str.to_utf8())
 		if result != 0:
 			var gpe = _peer.get_packet_error()
 			var client_state = _client.get_connection_status()
@@ -283,7 +283,7 @@ func _init_client():
 	#	- input_max_packets = 1024
 	#	- output_buffer_size_kb = 64 KB
 	#	- output_max_packets = 1024 
-	# We increase the input buffer to 20 MB because some messages we receive
+	# We increase the input buffer to 80 MB because some messages we receive
 	# are too large	for 64K. It's huge, but it being too small has caused some
 	# nasty bugs in the past. The other defaults have been fine though.
 	# Hopefully once the compression update propagates we can turn this down to
@@ -292,7 +292,7 @@ func _init_client():
 	# can cause the WebSocket connection to time out because the messaging is
 	# not complete. If the game mysteriously drops the connection a few seconds
 	# after connecting, the buffer likely needs to be larger.
-	_result = _client.set_buffers(1024 * 20, 1024, 1024 * 20, 1024)
+	_result = _client.set_buffers(1024 * 80, 2048, 1024 * 80, 2048)
 	if _result:
 		ModLoaderLog.warning("Failed to set buffer sizes with error %d" % _result, LOG_NAME)
 
