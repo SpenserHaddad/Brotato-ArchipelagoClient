@@ -229,17 +229,17 @@ LOOT_CRATE_GROUP_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
         description="Max crates, groups, and wins",
         options=BrotatoLootCrateTestOptions(
             num_victories=MAX_REQUIRED_RUN_WINS,  # 25
-            num_common_crate_drops=MAX_NORMAL_CRATE_DROPS,  # 30
+            num_common_crate_drops=MAX_NORMAL_CRATE_DROPS,  # 25
             num_common_crate_drop_groups=MAX_NORMAL_CRATE_DROP_GROUPS,  # 25
             num_legendary_crate_drops=MAX_LEGENDARY_CRATE_DROP_GROUPS,  # 10
             num_legendary_crate_drop_groups=MAX_LEGENDARY_CRATE_DROP_GROUPS,  # 10
         ),
         expected_common_groups=[
-            BrotatoLootCrateGroup(1, 2, 0),
-            BrotatoLootCrateGroup(2, 2, 1),
-            BrotatoLootCrateGroup(3, 2, 2),
-            BrotatoLootCrateGroup(4, 2, 3),
-            BrotatoLootCrateGroup(5, 2, 4),
+            BrotatoLootCrateGroup(1, 1, 0),
+            BrotatoLootCrateGroup(2, 1, 1),
+            BrotatoLootCrateGroup(3, 1, 2),
+            BrotatoLootCrateGroup(4, 1, 3),
+            BrotatoLootCrateGroup(5, 1, 4),
             BrotatoLootCrateGroup(6, 1, 5),
             BrotatoLootCrateGroup(7, 1, 6),
             BrotatoLootCrateGroup(8, 1, 7),
@@ -285,7 +285,7 @@ LOOT_CRATE_GROUP_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
         ),
         # All the crates should be in the first group which is unlocked by default.
         expected_common_groups=[
-            BrotatoLootCrateGroup(1, 30, 0),
+            BrotatoLootCrateGroup(1, 25, 0),
         ],
         expected_legendary_groups=[
             BrotatoLootCrateGroup(1, 10, 0),
@@ -330,7 +330,7 @@ LOOT_CRATE_GROUP_DATA_SETS: list[BrotatoLootCrateTestDataSet] = [
             num_legendary_crate_drop_groups=2,
         ),
         expected_common_groups=[
-            BrotatoLootCrateGroup(1, 30, 0),
+            BrotatoLootCrateGroup(1, 25, 0),
         ],
         expected_legendary_groups=[
             BrotatoLootCrateGroup(1, 5, 0),
