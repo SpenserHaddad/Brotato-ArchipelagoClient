@@ -109,10 +109,10 @@ class TestBrotatoCreateRegions(TestBrotatoRegions):
     common_loot_crate_groups: ClassVar[list[BrotatoLootCrateGroup]] = [
         BrotatoLootCrateGroup(1, 10, 0),
         BrotatoLootCrateGroup(2, 10, 5),
-        BrotatoLootCrateGroup(3, 10, 10),
+        BrotatoLootCrateGroup(3, 5, 10),
         BrotatoLootCrateGroup(4, 5, 15),
     ]
-    legendary_loot_crate_groups: ClassVar[list[BrotatoLootCrateGroup]] = [BrotatoLootCrateGroup(1, 5, 0)]  # ruff: noqa: RUF012
+    legendary_loot_crate_groups: ClassVar[list[BrotatoLootCrateGroup]] = [BrotatoLootCrateGroup(1, 5, 0)]
     waves_with_checks: ClassVar[list[int]] = [5, 10, 15, 20]
 
     def setUp(self) -> None:
@@ -130,8 +130,8 @@ class TestBrotatoCreateRegions(TestBrotatoRegions):
         expected_locations_per_region: list[list[str]] = [
             [CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(1, 11)],
             [CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(11, 21)],
-            [CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(21, 31)],
-            [CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(31, 36)],
+            [CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(21, 26)],
+            [CRATE_DROP_LOCATION_TEMPLATE.format(num=i) for i in range(26, 31)],
         ]
         for region_idx, expected_locations in enumerate(expected_locations_per_region, start=1):
             region_name: str = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=region_idx)
