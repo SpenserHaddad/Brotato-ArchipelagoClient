@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `num_victories` is now 25 instead of matching the total number of characters.
   - `num_common_crate_drops` is now 25 instead of 50.
   - `num_legendary_crate_drops` is now 10 instead of 50.
+- The amount of wins to unlock each group of loot crate checks has been adjusted so the
+  thresholds are evenly distributed over the number of wins needed to goal.
+  - Before, the last group could be unlocked much earlier in logic if the number of
+    groups did not evenly divide into the number of wins needed.
+
 
 ## [0.15.2] - 2026-08-14
 
