@@ -139,8 +139,8 @@ TOTAL_NUM_CHARACTERS = len(ALL_CHARACTERS)
 
 MAX_REQUIRED_RUN_WINS = 25
 
-MAX_NORMAL_CRATE_DROPS = 50
-MAX_LEGENDARY_CRATE_DROPS = 20
+MAX_NORMAL_CRATE_DROPS = 30
+MAX_LEGENDARY_CRATE_DROPS = 10
 
 # The maximum number of groups is the maximum number wins required, otherwise we'd have
 # groups which could never be filled.
