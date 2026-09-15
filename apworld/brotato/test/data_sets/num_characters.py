@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from ...constants import ABYSSAL_TERRORS_CHARACTERS, BASE_GAME_CHARACTERS, MAX_REQUIRED_RUN_WINS, TOTAL_NUM_CHARACTERS
+from ...constants import ABYSSAL_TERRORS_CHARACTERS, BASE_GAME_CHARACTERS, MAX_REQUIRED_RUN_WINS
 from .base import BrotatoTestDataSet
 
 
@@ -27,5 +27,5 @@ class NumCharactersTestDataSet(BrotatoTestDataSet):
 
 
 NUM_CHARACTERS_DATA_SETS: list[NumCharactersTestDataSet] = [
-    NumCharactersTestDataSet(num_characters=n + 1) for n in range(TOTAL_NUM_CHARACTERS)
+    NumCharactersTestDataSet(num_characters=n + 1) for n in range(MAX_REQUIRED_RUN_WINS)
 ]
