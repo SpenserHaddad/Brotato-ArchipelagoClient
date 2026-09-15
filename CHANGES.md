@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Reduced the maximum values of some options that were too unfun at larger values:
+- Reduced the maximum values of some options that were unfun at larger values:
   - `num_victories` is now 25 instead of matching the total number of characters.
   - `num_common_crate_drops` is now 25 instead of 50.
   - `num_legendary_crate_drops` is now 10 instead of 50.
