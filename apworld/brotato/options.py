@@ -9,6 +9,7 @@ from .constants import (
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_NORMAL_CRATE_DROP_GROUPS,
     MAX_NORMAL_CRATE_DROPS,
+    MAX_REQUIRED_RUN_WINS,
     MAX_SHOP_SLOTS,
     NUM_WAVES,
     TOTAL_NUM_CHARACTERS,
@@ -22,7 +23,7 @@ class NumberRequiredWins(Range):
     """
 
     range_start = 1
-    range_end = TOTAL_NUM_CHARACTERS
+    range_end = MAX_REQUIRED_RUN_WINS
 
     default = 10
     display_name = "Wins Required"
