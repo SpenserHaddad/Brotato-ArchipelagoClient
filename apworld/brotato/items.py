@@ -37,6 +37,7 @@ class ItemName(Enum):
     LEGENDARY_UPGRADE = "Legendary Upgrade"
     SHOP_SLOT = "Progressive Shop Slot"
     SHOP_LOCK_BUTTON = "Progressive Shop Lock Button"
+    PROGRESSIVE_WAVE_CAP_INCREASE = "Progressive Wave Cap Increase"
     XP_5 = "XP (5)"
     XP_10 = "XP (10)"
     XP_25 = "XP (25)"
@@ -130,6 +131,7 @@ _items: list[BrotatoItemBase] = [
     BrotatoItemBase(name=ItemName.LEGENDARY_UPGRADE, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.SHOP_SLOT, classification=ItemClassification.useful),
     BrotatoItemBase(name=ItemName.SHOP_LOCK_BUTTON, classification=ItemClassification.useful),
+    BrotatoItemBase(name=ItemName.PROGRESSIVE_WAVE_CAP_INCREASE, classification=ItemClassification.progression),
     BrotatoItemBase(name=ItemName.XP_5, classification=ItemClassification.filler),
     BrotatoItemBase(name=ItemName.XP_10, classification=ItemClassification.filler),
     BrotatoItemBase(name=ItemName.XP_25, classification=ItemClassification.filler),
