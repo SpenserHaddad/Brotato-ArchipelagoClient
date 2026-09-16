@@ -6,6 +6,8 @@ from BaseClasses import Item, MultiWorld, Region, Tutorial
 from Options import OptionGroup
 from worlds.AutoWorld import WebWorld, World
 
+from apworld.brotato.wave_caps import get_wave_cap_info
+
 from . import options  # So we don't need to import every option class when defining option groups
 from .characters import get_available_and_starting_characters
 from .constants import (
@@ -132,6 +134,16 @@ class BrotatoWorld(World):
     Calculated from player options in generate_early.
     """
 
+    num_wave_cap_increases: int
+    """The number of Progressive Wave Cap Increase items to create."""
+
+    wave_access: dict[int, range]
+    """Lookup of which waves can be accessed with the number of wave cap increases.
+
+    For example, wave_access[1] contains the range of waves that can be require with one
+    or more Progressive Wave Cap Increase items to access.
+    """
+
     common_loot_crate_groups: list[BrotatoLootCrateGroup]
     """Information about each common loot crate group, i.e. how many crates it has and how many wins it needs.
 
@@ -182,6 +194,8 @@ class BrotatoWorld(World):
 
         # Clamp the number of wins needed to goal to the number of included characters, so the game isn't unwinnable.
         self.num_wins_needed = min(self.options.num_victories.value, len(self._include_characters))
+
+        self.num_wave_cap_increases, self.wave_access = get_wave_cap_info(self.options.num_wave_caps)
 
         # Thought: if num victories is clamped, do some of the groups become unreachable?
         self.common_loot_crate_groups = build_loot_crate_groups(
