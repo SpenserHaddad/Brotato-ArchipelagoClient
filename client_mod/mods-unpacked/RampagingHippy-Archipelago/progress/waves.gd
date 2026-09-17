@@ -1,22 +1,29 @@
 ## Track waves completed by the player and send corresponding checks to the multiworld.
 ##
-## Brotato Archipelago defines locations for every n'th wave completed with a each 
+## Brotato Archipelago defines locations for every n'th wave completed with a each
 ## character. The wave counts are determined at generation time and stored in slot_data,
 ## which this class reads when connecting to the multiworld.
 ##
-## This then listens for every wave to be completed and sends a check if the completed 
+## This then listens for every wave to be completed and sends a check if the completed
 ## wave corresponds to one.
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApWavesProgress
 const LOG_NAME = "RampagingHippy-Archipelago/progress/waves"
 
 var waves_with_checks: PoolIntArray
+var wave_access: Dictionary
+var num_wave_cap_increases: int = 0
 
 func _init(ap_client, game_state).(ap_client, game_state):
 	pass
 
 func on_connected_to_multiworld():
 	waves_with_checks = PoolIntArray(_ap_client.slot_data["waves_with_checks"])
+	wave_access = _ap_client.slot_data["wave_access"]
+	num_wave_cap_increases = 0
+
+func can_play_wave(wave_number: int):
+	return num_wave_cap_increases >= wave_access[str(wave_number)]
 
 func on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool, _is_run_won: bool):
 	ModLoaderLog.info("Wave %d completed: characters=%s, is_run_lost=%s, is_run_won=%s" %
@@ -33,3 +40,7 @@ func on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool,
 				_ap_client.check_location(location_id)
 			else:
 				ModLoaderLog.info("Location %s already checked, not sending check." % location_name, LOG_NAME)
+
+func on_item_received(item_name: String, _item):
+	if item_name == constants.PROGRESSIVE_WAVE_CAP_INCREASE_ITEM_NAME:
+		num_wave_cap_increases += 1
