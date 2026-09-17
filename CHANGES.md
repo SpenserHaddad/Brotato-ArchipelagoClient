@@ -16,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     greater than the wave number or 20, respectively.
   - Controlled by a new option, `wave_caps`, which sets the number Progressive Wave Cap
     Increase items and the increase given by each one.
+  - There are predefined values for `wave_caps`:
+    - `one`: One wave cap, all 20 waves are reachable from the start
+      (matches previous apworld behavior).\
+    - `two`: Waves 1-10 are playable from the start, waves 11-20 require a cap increase.
+    - `four`: Waves 1-5 are playable from the start, 6-10 require a single increase,
+      11-15 require two, 16-20 require three.
+    - `ten`: Waves 1-2 are playable from the start, 3-4 require one increase, etc.
+    - `twenty`: Every wave past wave 1 requires a cap increase.
 
 
 ### Changed
