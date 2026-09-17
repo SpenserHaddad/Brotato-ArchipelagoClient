@@ -39,6 +39,8 @@ func _ready():
 		_ap_go_to_wave_menu.connect("skip_to_wave_toggled", self, "_on_skip_to_wave_toggled")
 		_check_wave_cap()
 
+		_ap_client.waves_progress.connect("wave_cap_increase_received", self, "_check_wave_cap")
+
 	_original_current_wave = RunData.current_wave
 
 func _add_ap_go_to_wave_button():
