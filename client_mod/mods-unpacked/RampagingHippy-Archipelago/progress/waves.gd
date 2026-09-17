@@ -1,22 +1,53 @@
-## Track waves completed by the player and send corresponding checks to the multiworld.
+## Track waves completed by the player and the highest wave they can access.
 ##
-## Brotato Archipelago defines locations for every n'th wave completed with a each 
+## Brotato Archipelago defines locations for every n'th wave completed with a each
 ## character. The wave counts are determined at generation time and stored in slot_data,
 ## which this class reads when connecting to the multiworld.
 ##
-## This then listens for every wave to be completed and sends a check if the completed 
+## This listens for every wave to be completed and sends a check if the completed
 ## wave corresponds to one.
+##
+## In additon, this checks if the player is allowed to progress to a certain wave based
+## on the wave_access slot data, which defines how many wave cap increase items are
+## needed to reach a particular wave. This therefore also keeps track of the number of
+## items received.
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApWavesProgress
 const LOG_NAME = "RampagingHippy-Archipelago/progress/waves"
 
 var waves_with_checks: PoolIntArray
+var wave_cap_enabled := false
+var wave_access: Dictionary
+var wave_cap_increases_received := 0
+var total_wave_cap_increases := 0
 
 func _init(ap_client, game_state).(ap_client, game_state):
 	pass
 
 func on_connected_to_multiworld():
 	waves_with_checks = PoolIntArray(_ap_client.slot_data["waves_with_checks"])
+	wave_access = _ap_client.slot_data.get("wave_access", {})
+	wave_cap_enabled = wave_access.size() > 0
+	wave_cap_increases_received = 0
+	if wave_cap_enabled:
+		# The wave 20 slot will require all wave cap increases to be available
+		total_wave_cap_increases = wave_access[str(RunData.nb_of_waves)]
+	ModLoaderLog.info("wave_cap_enabled: %s, wave_cap_increases_received: %d, total_wave_cap_increases: %d" % [
+		wave_cap_enabled, wave_cap_increases_received, total_wave_cap_increases
+	], LOG_NAME)
+
+func get_wave_cap():
+	if not wave_cap_enabled:
+		return RunData.nb_of_waves
+	for wave in range(1, RunData.nb_of_waves+1, 1):
+		if wave_access[str(wave)] > wave_cap_increases_received:
+			return wave - 1
+	return RunData.nb_of_waves
+
+func can_play_wave(wave_number: int):
+	if not wave_cap_enabled:
+		return true
+	return wave_cap_increases_received >= wave_access[str(wave_number)]
 
 func on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool, _is_run_won: bool):
 	ModLoaderLog.info("Wave %d completed: characters=%s, is_run_lost=%s, is_run_won=%s" %
@@ -33,3 +64,7 @@ func on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool,
 				_ap_client.check_location(location_id)
 			else:
 				ModLoaderLog.info("Location %s already checked, not sending check." % location_name, LOG_NAME)
+
+func on_item_received(item_name: String, _item):
+	if item_name == constants.PROGRESSIVE_WAVE_CAP_INCREASE_ITEM_NAME:
+		wave_cap_increases_received += 1

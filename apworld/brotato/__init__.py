@@ -25,6 +25,7 @@ from .options import (
 from .regions import create_regions
 from .rules import create_has_run_wins_rule
 from .shop_slots import get_num_shop_slot_and_lock_button_items
+from .wave_caps import get_wave_cap_info
 from .waves import get_wave_for_each_item, get_waves_with_checks
 
 logger = logging.getLogger("Brotato")
@@ -132,6 +133,16 @@ class BrotatoWorld(World):
     Calculated from player options in generate_early.
     """
 
+    num_wave_cap_increases: int
+    """The number of Progressive Wave Cap Increase items to create."""
+
+    wave_access: dict[int, int]
+    """Lookup of waves to the number of wave cap increases needed to access it.
+
+    For example, wave_access[1] has the number of increases needed for wave 1 to be in
+    logic.
+    """
+
     common_loot_crate_groups: list[BrotatoLootCrateGroup]
     """Information about each common loot crate group, i.e. how many crates it has and how many wins it needs.
 
@@ -183,6 +194,8 @@ class BrotatoWorld(World):
         # Clamp the number of wins needed to goal to the number of included characters, so the game isn't unwinnable.
         self.num_wins_needed = min(self.options.num_victories.value, len(self._include_characters))
 
+        self.num_wave_cap_increases, self.wave_access = get_wave_cap_info(self.options.num_wave_caps)
+
         # Thought: if num victories is clamped, do some of the groups become unreachable?
         self.common_loot_crate_groups = build_loot_crate_groups(
             self.options.num_common_crate_drops.value,
@@ -215,6 +228,7 @@ class BrotatoWorld(World):
             [
                 len(self._include_characters),  # Run Won Items
                 len(self._include_characters) - len(self._starting_characters),  # The character items
+                self.num_wave_cap_increases,
                 self.num_shop_slot_items,
                 self.num_shop_lock_button_items,
             ]
@@ -247,6 +261,7 @@ class BrotatoWorld(World):
             create_region,
             self._include_characters,
             self.waves_with_checks,
+            self.wave_access,
             self.common_loot_crate_groups,
             self.legendary_loot_crate_groups,
         )
@@ -267,6 +282,9 @@ class BrotatoWorld(World):
         for item_name, item_count in self.nonessential_item_counts.items():
             item_pool += [self.create_item(item_name) for _ in range(item_count)]
 
+        item_pool += [
+            self.create_item(ItemName.PROGRESSIVE_WAVE_CAP_INCREASE) for _ in range(self.num_wave_cap_increases)
+        ]
         item_pool += [self.create_item(ItemName.SHOP_SLOT) for _ in range(self.num_shop_slot_items)]
         item_pool += [self.create_item(ItemName.SHOP_LOCK_BUTTON) for _ in range(self.num_shop_lock_button_items)]
 
@@ -294,6 +312,7 @@ class BrotatoWorld(World):
         return {
             "deathlink": self.options.death_link.value,
             "waves_with_checks": self.waves_with_checks,
+            "wave_access": self.wave_access,
             "num_wins_needed": self.num_wins_needed,
             "gold_reward_mode": self.options.gold_reward_mode.value,
             "xp_reward_mode": self.options.xp_reward_mode.value,
