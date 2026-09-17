@@ -64,10 +64,16 @@ def create_character_region(
 ) -> Region:
     character_region: Region = create_region(CHARACTER_REGION_TEMPLATE.format(char=character))
     run_complete_location_name = RUN_COMPLETE_LOCATION_TEMPLATE.format(char=character)
-    character_region.add_locations(
-        {run_complete_location_name: location_table[run_complete_location_name].id},
-        BrotatoLocation,
+    run_complete_location_id = location_table[run_complete_location_name].id
+    run_complete_location = BrotatoLocation(
+        character_region.player,
+        name=run_complete_location_name,
+        address=run_complete_location_id,
+        parent=character_region,
     )
+    # All wave cap increases are needed to reach the final wave.
+    run_complete_location.access_rule = create_can_reach_wave_rule(character_region.player, wave_access[NUM_WAVES])
+    character_region.locations.append(run_complete_location)
 
     for wave in waves_with_checks:
         if wave not in range(1, NUM_WAVES + 1):
