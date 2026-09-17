@@ -172,6 +172,11 @@ class BrotatoWorld(World):
     def __init__(self, world: MultiWorld, player: int) -> None:
         super().__init__(world, player)
 
+    @staticmethod
+    def _hack_log(msg: str) -> None:
+        with open("/home/spenser/Projects/AP/Archipelago/hack_log.txt", "a") as f:
+            f.write(msg + "\n")
+
     def create_item(self, name: str | ItemName) -> BrotatoItem:
         if isinstance(name, ItemName):
             name = name.value
@@ -180,16 +185,25 @@ class BrotatoWorld(World):
     def generate_early(self) -> None:
         # Determine needed values from the options
         self.waves_with_checks = get_waves_with_checks(self.options.waves_per_drop)
-
-        self._include_characters, self._starting_characters = get_available_and_starting_characters(
-            self.options.include_base_game_characters.value,
-            bool(self.options.enable_abyssal_terrors_dlc.value),
-            self.options.include_abyssal_terrors_characters.value,
-            self.options.starting_characters,
-            self.options.num_starting_characters.value,
-            self.options.num_characters.value,
-            self.random,
-        )
+        is_ut = getattr(self.multiworld, "generation_is_fake", False)
+        re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
+        starting_characters = getattr(self, "starting_characters", None)
+        self._hack_log(f"In generate early, {is_ut=}, {re_gen_passthrough=}")
+        self._hack_log(f"Before: {starting_characters}")
+        if re_gen_passthrough:
+            self._starting_characters = re_gen_passthrough[self.game]["starting_characters"]
+            self._include_characters = re_gen_passthrough[self.game]["include_characters"]
+        else:
+            self._include_characters, self._starting_characters = get_available_and_starting_characters(
+                self.options.include_base_game_characters.value,
+                bool(self.options.enable_abyssal_terrors_dlc.value),
+                self.options.include_abyssal_terrors_characters.value,
+                self.options.starting_characters,
+                self.options.num_starting_characters.value,
+                self.options.num_characters.value,
+                self.random,
+            )
+        self._hack_log(f"After: {self._starting_characters}")
 
         # Clamp the number of wins needed to goal to the number of included characters, so the game isn't unwinnable.
         self.num_wins_needed = min(self.options.num_victories.value, len(self._include_characters))
@@ -326,4 +340,20 @@ class BrotatoWorld(World):
             "legendary_crate_drop_groups": [asdict(g) for g in self.legendary_loot_crate_groups],
             "wave_per_game_item": wave_per_game_item,
             "enable_abyssal_terrors_dlc": self.options.enable_abyssal_terrors_dlc.value,
+            # Info for Universal Tracker, the mod doesn't use these.
+            "starting_characters": self._starting_characters,
+            "include_characters": self._include_characters,
         }
+
+    @staticmethod
+    def interpret_slot_data(slot_data: dict[str, Any]) -> dict[str, Any] | None:
+        BrotatoWorld._hack_log("In brotato interpret slot data")
+        if "starting_characters" in slot_data:
+            # If this key is present, all UT-related keys should be present
+            character_info = {
+                "starting_characters": slot_data["starting_characters"],
+                "include_characters": slot_data["include_characters"],
+            }
+            BrotatoWorld._hack_log(f"{character_info=}")
+            return character_info
+        return None
