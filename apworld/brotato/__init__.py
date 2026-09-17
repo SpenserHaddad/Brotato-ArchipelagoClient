@@ -6,8 +6,6 @@ from BaseClasses import Item, MultiWorld, Region, Tutorial
 from Options import OptionGroup
 from worlds.AutoWorld import WebWorld, World
 
-from apworld.brotato.wave_caps import get_wave_cap_info
-
 from . import options  # So we don't need to import every option class when defining option groups
 from .characters import get_available_and_starting_characters
 from .constants import (
@@ -27,6 +25,7 @@ from .options import (
 from .regions import create_regions
 from .rules import create_has_run_wins_rule
 from .shop_slots import get_num_shop_slot_and_lock_button_items
+from .wave_caps import get_wave_cap_info
 from .waves import get_wave_for_each_item, get_waves_with_checks
 
 logger = logging.getLogger("Brotato")
@@ -137,11 +136,11 @@ class BrotatoWorld(World):
     num_wave_cap_increases: int
     """The number of Progressive Wave Cap Increase items to create."""
 
-    wave_access: dict[int, range]
-    """Lookup of which waves can be accessed with the number of wave cap increases.
+    wave_access: dict[int, int]
+    """Lookup of waves to the number of wave cap increases needed to access it.
 
-    For example, wave_access[1] contains the range of waves that can be require with one
-    or more Progressive Wave Cap Increase items to access.
+    For example, wave_access[1] has the number of increases needed for wave 1 to be in
+    logic.
     """
 
     common_loot_crate_groups: list[BrotatoLootCrateGroup]
@@ -262,6 +261,7 @@ class BrotatoWorld(World):
             create_region,
             self._include_characters,
             self.waves_with_checks,
+            self.wave_access,
             self.common_loot_crate_groups,
             self.legendary_loot_crate_groups,
         )
