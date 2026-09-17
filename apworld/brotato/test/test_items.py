@@ -11,7 +11,7 @@ class TestBrotatoItems(BrotatoTestBase):
         expected_num_items = num_wave_caps - 1
         with self._run({"num_wave_caps": num_wave_caps}):
             wave_cap_increase_items = [
-                item for item in self.multiworld.itempool if item.name == ItemName.PROGRESSIVE_WAVE_CAP_INCREASE.value
+                item for item in self.multiworld.itempool if item.name == ItemName.PROGRESSIVE_WAVE_CAP.value
             ]
             self.assertEqual(len(wave_cap_increase_items), expected_num_items)
 

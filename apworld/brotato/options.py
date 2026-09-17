@@ -116,15 +116,15 @@ class NumWaveCaps(Choice):
     """The number of caps to put on the accessible waves.
 
     You will not be able to play beyond the maximum wave cap until you find additional
-    Progressive Wave Cap Increase items.
+    Progressive Wave Cap items.
 
     With one cap, all waves are accessible from the start.
 
     With two caps, waves 1-10 are accessible from the start, and waves 11-20 require one
-    Progressive Wave Cap Increase.
+    Progressive Wave Cap.
 
     With four caps: waves 1-5 are accessible from the start, waves 6-10 require one
-    Progressive Wave Cap Increase, waves 11-15 require two, waves 16-20 require 3.
+    Progressive Wave Cap, waves 11-15 require two, waves 16-20 require 3.
     """
 
     option_one = 0

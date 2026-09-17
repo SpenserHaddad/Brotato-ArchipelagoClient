@@ -253,14 +253,14 @@ class TestBrotatoRegionAccessRules(BrotatoTestBase):
                 run_won_location_name = RUN_COMPLETE_LOCATION_TEMPLATE.format(char=char)
 
                 # Our test options say there are 3 cap increase items total
-                expected_items = [ItemName.PROGRESSIVE_WAVE_CAP_INCREASE.value] * 3
+                expected_items = [ItemName.PROGRESSIVE_WAVE_CAP.value] * 3
                 if char in self.world._starting_characters:
                     expected_items.append(char)
                 self.assertAccessDependency([run_won_location_name], [expected_items], only_check_listed=True)
 
     def test_wave_complete_locations_have_correct_access_rules(self):
         """Check that wave complete locations are only reachable if the player has enough
-        Progressive Wave Cap Increase items.
+        Progressive Wave Cap items.
         """
         characters = self.options["include_base_game_characters"]
         for char in characters:
@@ -278,7 +278,7 @@ class TestBrotatoRegionAccessRules(BrotatoTestBase):
             for wave, expected_wave_cap_increases_needed in expected_wave_location_access.items():
                 with self.subTest(character=char, wave=wave):
                     expected_items = [
-                        *[ItemName.PROGRESSIVE_WAVE_CAP_INCREASE.value] * expected_wave_cap_increases_needed,
+                        *[ItemName.PROGRESSIVE_WAVE_CAP.value] * expected_wave_cap_increases_needed,
                     ]
                     if char not in self.world._starting_characters:
                         expected_items.append(char)
