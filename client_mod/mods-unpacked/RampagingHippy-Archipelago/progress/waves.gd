@@ -1,11 +1,16 @@
-## Track waves completed by the player and send corresponding checks to the multiworld.
+## Track waves completed by the player and the highest wave they can access.
 ##
 ## Brotato Archipelago defines locations for every n'th wave completed with a each
 ## character. The wave counts are determined at generation time and stored in slot_data,
 ## which this class reads when connecting to the multiworld.
 ##
-## This then listens for every wave to be completed and sends a check if the completed
+## This listens for every wave to be completed and sends a check if the completed
 ## wave corresponds to one.
+##
+## In additon, this checks if the player is allowed to progress to a certain wave based
+## on the wave_access slot data, which defines how many wave cap increase items are
+## needed to reach a particular wave. This therefore also keeps track of the number of
+## items received.
 extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApWavesProgress
 const LOG_NAME = "RampagingHippy-Archipelago/progress/waves"
