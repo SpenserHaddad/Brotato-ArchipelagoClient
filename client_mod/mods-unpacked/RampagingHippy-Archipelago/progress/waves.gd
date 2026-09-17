@@ -15,11 +15,14 @@ extends "res://mods-unpacked/RampagingHippy-Archipelago/progress/_base.gd"
 class_name ApWavesProgress
 const LOG_NAME = "RampagingHippy-Archipelago/progress/waves"
 
+signal wave_cap_increase_received
+
 var waves_with_checks: PoolIntArray
 var wave_cap_enabled := false
 var wave_access: Dictionary
 var wave_cap_increases_received := 0
 var total_wave_cap_increases := 0
+
 
 func _init(ap_client, game_state).(ap_client, game_state):
 	pass
@@ -68,3 +71,4 @@ func on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool,
 func on_item_received(item_name: String, _item):
 	if item_name == constants.PROGRESSIVE_WAVE_CAP_INCREASE_ITEM_NAME:
 		wave_cap_increases_received += 1
+		emit_signal("wave_cap_increase_received")
