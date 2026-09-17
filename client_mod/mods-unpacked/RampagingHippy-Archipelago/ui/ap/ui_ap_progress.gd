@@ -22,20 +22,24 @@ func set_client(ap_client):
 	_ap_client = ap_client
 	_ap_client.connect("connection_state_changed", self , "_on_connection_state_changed")
 	_ap_client.wins_progress.connect("win_received", self , "_on_win_received")
+	_ap_client.waves_progress.connect("wave_cap_increase_received", self, "_on_wave_cap_increase_received")
 
 	if _ap_client.connected_to_multiworld():
 		update_all_ui()
 	else:
 		clear_all_ui()
 
-func _on_connection_state_changed(new_state: int, error: int = 0):
+func _on_connection_state_changed(new_state: int, _error: int = 0):
 	if new_state == BrotatoApClient.ConnectState.CONNECTED_TO_MULTIWORLD:
 		update_all_ui()
 	else:
 		clear_all_ui()
 
-func _on_win_received(new_count: int):
+func _on_win_received(_new_count: int):
 	update_runs_won_ui()
+
+func _on_wave_cap_increase_received():
+	update_wave_cap_ui()
 
 func update_all_ui():
 	update_runs_won_ui()
@@ -53,22 +57,20 @@ func clear_all_ui():
 
 func update_runs_won_ui():
 	var wins_progress = _ap_client.wins_progress
-	var num_wins = wins_progress.num_wins
-	var wins_for_goal = wins_progress.wins_for_goal
 	_runs_won.set_value("%d / %d" % [wins_progress.num_wins, wins_progress.wins_for_goal])
 
 func update_wave_cap_ui():
 	var wave_cap = _ap_client.waves_progress.get_wave_cap()
 	_wave_cap.set_value(str(wave_cap))
 	_wave_cap_increases.set_value("%d / %d" % [
-		_ap_client.waves_progress.wave_cap_increases_received, 
+		_ap_client.waves_progress.wave_cap_increases_received,
 		_ap_client.waves_progress.total_wave_cap_increases
 	])
 
 func update_shop_slots_ui():
 	_shop_slots.set_value(str(_ap_client.shop_slots_progress.num_unlocked_shop_slots))
 	_shop_lock_buttons.set_value(str(_ap_client.shop_lock_buttons_progress.num_unlocked_shop_lock_buttons))
-	
+
 func update_all_crate_progress_ui():
 	_common_crates.update_progress(_ap_client.common_loot_crate_progress, _ap_client.wins_progress.num_wins)
 	_legendary_crates.update_progress(_ap_client.legendary_loot_crate_progress, _ap_client.wins_progress.num_wins)
