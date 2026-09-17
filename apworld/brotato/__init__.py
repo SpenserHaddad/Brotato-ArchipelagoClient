@@ -134,7 +134,7 @@ class BrotatoWorld(World):
     """
 
     num_wave_cap_increases: int
-    """The number of Progressive Wave Cap Increase items to create."""
+    """The number of Progressive Wave Cap items to create."""
 
     wave_access: dict[int, int]
     """Lookup of waves to the number of wave cap increases needed to access it.
@@ -282,9 +282,7 @@ class BrotatoWorld(World):
         for item_name, item_count in self.nonessential_item_counts.items():
             item_pool += [self.create_item(item_name) for _ in range(item_count)]
 
-        item_pool += [
-            self.create_item(ItemName.PROGRESSIVE_WAVE_CAP_INCREASE) for _ in range(self.num_wave_cap_increases)
-        ]
+        item_pool += [self.create_item(ItemName.PROGRESSIVE_WAVE_CAP) for _ in range(self.num_wave_cap_increases)]
         item_pool += [self.create_item(ItemName.SHOP_SLOT) for _ in range(self.num_shop_slot_items)]
         item_pool += [self.create_item(ItemName.SHOP_LOCK_BUTTON) for _ in range(self.num_shop_lock_button_items)]
 

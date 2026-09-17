@@ -20,6 +20,6 @@ def create_has_character_rule(player: int, character: str) -> CollectionRule:
 
 def create_can_reach_wave_rule(player: int, num_wave_cap_items_needed: int) -> CollectionRule:
     def can_reach_wave(state: CollectionState) -> bool:
-        return state.has(ItemName.PROGRESSIVE_WAVE_CAP_INCREASE.value, player, num_wave_cap_items_needed)
+        return state.has(ItemName.PROGRESSIVE_WAVE_CAP.value, player, num_wave_cap_items_needed)
 
     return can_reach_wave

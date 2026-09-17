@@ -86,7 +86,7 @@ const UPGRADE_NAME_TO_TIER = {
 	"Legendary Upgrade": Tier.LEGENDARY
 }
 
-const PROGRESSIVE_WAVE_CAP_INCREASE_ITEM_NAME = "Progressive Wave Cap Increase"
+const PROGRESSIVE_WAVE_CAP_INCREASE_ITEM_NAME = "Progressive Wave Cap"
 const SHOP_SLOT_ITEM_NAME = "Progressive Shop Slot"
 const SHOP_LOCK_BUTTON_ITEM_NAME = "Progressive Shop Lock Button"
 
