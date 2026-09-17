@@ -179,7 +179,10 @@ class TestBrotatoCreateRegions(TestBrotatoRegions):
 
 
 class TestBrotatoRegionAccessRules(BrotatoTestBase):
-    run_default_tests = False
+    @property
+    def run_default_tests(self) -> bool:
+        return False
+
     options: dict[str, Any] = {  # noqa: RUF012
         "num_victories": 10,
         "num_characters": 10,
@@ -197,6 +200,7 @@ class TestBrotatoRegionAccessRules(BrotatoTestBase):
             "Demon",
         ],
         "waves_per_drop": 4,
+        "num_wave_caps": 4,
         "num_common_crate_drops": 25,
         "num_common_crate_drop_groups": 5,
         "num_legendary_crate_drops": 5,
@@ -240,3 +244,35 @@ class TestBrotatoRegionAccessRules(BrotatoTestBase):
                 self.assertTrue(self.multiworld.state.can_reach_region(region_name, self.player))
             else:
                 self.assertAccessDependency(region_locations, [[char]])
+
+    def test_wave_complete_locations_have_correct_access_rules(self):
+        """Check that wave complete locations are only reachable if the player has enough
+        Progressive Wave Cap Increase items.
+        """
+        characters = self.options["include_base_game_characters"]
+        for char in characters:
+            region_name = CHARACTER_REGION_TEMPLATE.format(char=char)
+            region = self.multiworld.regions.region_cache[self.player][region_name]
+            region_location_names = [loc.name for loc in region.locations]
+            expected_wave_location_access: dict[int, int] = {
+                4: 0,
+                8: 1,
+                12: 2,
+                16: 3,
+                20: 3,
+            }
+
+            for wave, expected_wave_cap_increases_needed in expected_wave_location_access.items():
+                with self.subTest(character=char, wave=wave):
+                    expected_items = [
+                        *[ItemName.PROGRESSIVE_WAVE_CAP_INCREASE.value] * expected_wave_cap_increases_needed,
+                    ]
+                    if char not in self.world._starting_characters:
+                        expected_items.append(char)
+                    location_name = WAVE_COMPLETE_LOCATION_TEMPLATE.format(char=char, wave=wave)
+                    # Sanity check that the location is defined
+                    self.assertIn(location_name, region_location_names)
+                    if expected_items:
+                        self.assertAccessDependency([location_name], [expected_items], only_check_listed=True)
+                    else:
+                        self.assertTrue(self.can_reach_location(location_name))
