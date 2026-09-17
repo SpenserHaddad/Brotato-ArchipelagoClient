@@ -15,7 +15,9 @@ from ..constants import (
 )
 from ..items import ItemName
 from ..loot_crates import BrotatoLootCrateGroup
+from ..options import NumWaveCaps
 from ..regions import create_character_region, create_loot_crate_group_region, create_regions
+from ..wave_caps import get_wave_cap_info
 from . import BrotatoTestBase
 
 
@@ -26,6 +28,7 @@ class TestBrotatoRegions(WorldTestBase):
         self.multiworld.game[1] = "Brotato"
         self.multiworld.player_name = {self.player: "Tester"}
         self.multiworld.worlds[1] = BrotatoWorld(self.multiworld, 1)
+        self.default_wave_access: dict[int, int] = get_wave_cap_info(NumWaveCaps(1))[1]
 
     def _create_region(self, name: str) -> Region:
         """Region factory to pass to the region creation functions."""
@@ -43,14 +46,14 @@ class TestBrotatoCharacterRegions(TestBrotatoRegions):
             WAVE_COMPLETE_LOCATION_TEMPLATE.format(char="Crazy", wave=15),
             WAVE_COMPLETE_LOCATION_TEMPLATE.format(char="Crazy", wave=20),
         ]
-        region = create_character_region(self._create_region, "Crazy", waves_with_checks)
+        region = create_character_region(self._create_region, "Crazy", waves_with_checks, self.default_wave_access)
         region_location_names = [loc.name for loc in region.locations]
 
-        self.assertListEqual(region_location_names, expected_location_names)
+        self.assertSequenceEqual(region_location_names, expected_location_names)
 
     def test_create_character_region_invalid_character_fails(self):
         with self.assertRaises(KeyError):
-            create_character_region(self._create_region, "Ironclad", [3, 6, 9, 12, 15, 18])
+            create_character_region(self._create_region, "Ironclad", [3, 6, 9, 12, 15, 18], self.default_wave_access)
 
     def test_create_character_region_invalid_waves_with_checks_fails(self):
         """Check that we don't create a region with invalid wave complete locations.
@@ -64,8 +67,10 @@ class TestBrotatoCharacterRegions(TestBrotatoRegions):
                 f"Check that create_character_region fails when waves_with_checks={invalid_value}",
                 invalid_value=invalid_value,
             ):
+                # Run setup to clear to the location cache between subtests
+                self.setUp()
                 with self.assertRaises(ValueError):
-                    create_character_region(self._create_region, "Brawler", invalid_value)
+                    create_character_region(self._create_region, "Brawler", invalid_value, self.default_wave_access)
 
 
 class TestBrotatoLootCrateRegions(TestBrotatoRegions):
@@ -121,6 +126,7 @@ class TestBrotatoCreateRegions(TestBrotatoRegions):
             self._create_region,
             self.characters,
             self.waves_with_checks,
+            self.default_wave_access,
             self.common_loot_crate_groups,
             self.legendary_loot_crate_groups,
         )

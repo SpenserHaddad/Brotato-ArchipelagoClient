@@ -6,6 +6,15 @@ from .data_sets.shop_slots import SHOP_SLOT_TEST_DATA_SETS
 
 
 class TestBrotatoItems(BrotatoTestBase):
+    def test_create_items_progressive_wave_cap_increase_items(self):
+        num_wave_caps = 4
+        expected_num_items = num_wave_caps - 1
+        with self._run({"num_wave_caps": num_wave_caps}):
+            wave_cap_increase_items = [
+                item for item in self.multiworld.itempool if item.name == ItemName.PROGRESSIVE_WAVE_CAP_INCREASE.value
+            ]
+            self.assertEqual(len(wave_cap_increase_items), expected_num_items)
+
     def test_create_items_shop_slot_items(self):
         for test_case in SHOP_SLOT_TEST_DATA_SETS:
             with self.data_set_subtest(test_case):
