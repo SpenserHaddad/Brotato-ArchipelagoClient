@@ -6,6 +6,8 @@ const BrotatoApClient = preload("res://mods-unpacked/RampagingHippy-Archipelago/
 const LOG_NAME = "RampagingHippy-Archipelago/ap_ui_progress"
 
 onready var _runs_won = $MarginContainer/VBoxContainer/RunsWonNew
+onready var _wave_cap_increases = $MarginContainer/VBoxContainer/WaveCapIncreases
+onready var _wave_cap = $MarginContainer/VBoxContainer/WaveCap
 onready var _shop_slots = $MarginContainer/VBoxContainer/ShopSlotsNew
 onready var _shop_lock_buttons = $MarginContainer/VBoxContainer/ShopLockButtons
 onready var _common_crates = $MarginContainer/VBoxContainer/CommonCrates
@@ -37,11 +39,13 @@ func _on_win_received(new_count: int):
 
 func update_all_ui():
 	update_runs_won_ui()
+	update_wave_cap_ui()
 	update_shop_slots_ui()
 	update_all_crate_progress_ui()
 
 func clear_all_ui():
 	_runs_won.set_value("RHAP_PROGRESS_PLACEHOLDER")
+	_wave_cap.set_value("RHAP_PROGRESS_PLACEHOLDER")
 	_shop_slots.set_value("RHAP_PROGRESS_PLACEHOLDER")
 	_shop_lock_buttons.set_value("RHAP_PROGRESS_PLACEHOLDER")
 	_common_crates.clear_progress()
@@ -52,7 +56,15 @@ func update_runs_won_ui():
 	var num_wins = wins_progress.num_wins
 	var wins_for_goal = wins_progress.wins_for_goal
 	_runs_won.set_value("%d / %d" % [wins_progress.num_wins, wins_progress.wins_for_goal])
-	
+
+func update_wave_cap_ui():
+	var wave_cap = _ap_client.waves_progress.get_wave_cap()
+	_wave_cap.set_value(str(wave_cap))
+	_wave_cap_increases.set_value("%d / %d" % [
+		_ap_client.waves_progress.wave_cap_increases_received, 
+		_ap_client.waves_progress.total_wave_cap_increases
+	])
+
 func update_shop_slots_ui():
 	_shop_slots.set_value(str(_ap_client.shop_slots_progress.num_unlocked_shop_slots))
 	_shop_lock_buttons.set_value(str(_ap_client.shop_lock_buttons_progress.num_unlocked_shop_lock_buttons))
