@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- New Feature: Progressive Wave Caps
+  - The game now has a cap on the highest wave that can be played from the start.
+  - A new item, "Progressive Wave Cap Increase", has been added which, when received,
+    increases the maximum playable wave.
+  - The logic for Wave Completed and Run Won locations now requires that the wave cap be
+    greater than the wave number or 20, respectively.
+  - Controlled by a new option, `wave_caps`, which sets the number Progressive Wave Cap
+    Increase items and the increase given by each one.
+
+
 ### Changed
 
 - Reduced the maximum values of some options that were unfun at larger values:
