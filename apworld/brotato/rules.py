@@ -12,7 +12,14 @@ def create_has_run_wins_rule(player: int, count: int) -> CollectionRule:
 
 
 def create_has_character_rule(player: int, character: str) -> CollectionRule:
-    def char_region_access_rule(state: CollectionState):
+    def char_region_access_rule(state: CollectionState) -> bool:
         return state.has(character, player)
 
     return char_region_access_rule
+
+
+def create_can_reach_wave_rule(player: int, num_wave_cap_items_needed: int) -> CollectionRule:
+    def can_reach_wave(state: CollectionState) -> bool:
+        return state.has(ItemName.PROGRESSIVE_WAVE_CAP_INCREASE.value, player, num_wave_cap_items_needed)
+
+    return can_reach_wave
