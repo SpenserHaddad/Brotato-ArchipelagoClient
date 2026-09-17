@@ -2,6 +2,8 @@ extends "res://ui/menus/shop/base_shop.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/ui/menus/shop/base_shop"
 const ApGoToWaveMenu = preload("res://mods-unpacked/RampagingHippy-Archipelago/ui/menus/shop/ap_go_to_wave_menu.tscn")
+const BrotatoApConstants = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/constants.gd")
+
 
 # Tell Godot about our extensions of types that the base game uses for type checking.
 # As far as I can tell, Godot considers our extended versions of these classes to be
@@ -18,17 +20,27 @@ const ShopItem = preload("res://mods-unpacked/RampagingHippy-Archipelago/extensi
 const ShopItemsContainer = preload("res://mods-unpacked/RampagingHippy-Archipelago/extensions/ui/menus/shop/shop_items_container.gd")
 
 onready var _ap_client
+onready var _constants
 onready var _ap_go_to_wave_menu
 onready var _original_current_wave: int
+onready var _original_go_button_text: String
+onready var _original_go_button_tooltip: String
 
 func _ready():
 	var mod_node = get_node("/root/ModLoader/RampagingHippy-Archipelago")
 	_ap_client = mod_node.brotato_ap_client
 	if _ap_client.connected_to_multiworld():
+		_constants = BrotatoApConstants.new()
+		var go_button = _get_go_button(0)
+		_original_go_button_text = go_button.text
+		_original_go_button_tooltip = go_button.hint_tooltip
+
 		_add_ap_go_to_wave_button()
 		_ap_go_to_wave_menu.connect("skip_to_wave_toggled", self, "_on_skip_to_wave_toggled")
+		_check_wave_cap()
+
 	_original_current_wave = RunData.current_wave
-	
+
 func _add_ap_go_to_wave_button():
 	var go_button = _get_go_button(0)
 	var parent_node = go_button.get_parent()
@@ -46,9 +58,24 @@ func _on_skip_to_wave_toggled(enabled: bool):
 		new_next_wave = _ap_go_to_wave_menu.skip_to_wave
 	else:
 		new_next_wave = RunData.current_wave + 1
-			
+
 	var go_button = _get_go_button(0)
 	go_button.text = tr(go_text) + " (" + Text.text("WAVE", [str(new_next_wave)]) + ")"
+
+func _check_wave_cap():
+	var can_play_wave = _ap_client.waves_progress.can_play_wave(RunData.current_wave+1)
+	for player_index in RunData.get_player_count():
+		var go_button = _get_go_button(player_index)
+		if can_play_wave:
+			go_button.disabled = false
+			go_button.text = _original_go_button_text
+			go_button.hint_tooltip = _original_go_button_tooltip
+		else:
+			go_button.disabled = true
+			go_button.text = "RHAP_MENU_SHOP_WAVE_CAP_REACHED"
+			go_button.hint_tooltip = tr("RHAP_MENU_SHOP_WAVE_CAP_REACHED_TOOLTIP").format(
+				{item_name=_constants.PROGRESSIVE_WAVE_CAP_INCREASE_ITEM_NAME}
+			)
 
 func _on_GoButton_pressed(player_index: int):
 	if player_index == 0:
