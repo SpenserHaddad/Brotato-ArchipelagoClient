@@ -312,6 +312,7 @@ class BrotatoWorld(World):
         return {
             "deathlink": self.options.death_link.value,
             "waves_with_checks": self.waves_with_checks,
+            "wave_access": self.wave_access,
             "num_wins_needed": self.num_wins_needed,
             "gold_reward_mode": self.options.gold_reward_mode.value,
             "xp_reward_mode": self.options.xp_reward_mode.value,
