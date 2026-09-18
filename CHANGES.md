@@ -24,7 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       11-15 require two, 16-20 require three.
     - `ten`: Waves 1-2 are playable from the start, 3-4 require one increase, etc.
     - `twenty`: Every wave past wave 1 requires a cap increase.
-
+- Added Universal Tracker hooks to the apworld so it now uses the same characters as the 
+  actual slot.
 
 ### Changed
 
