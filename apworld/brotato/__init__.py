@@ -229,7 +229,7 @@ class BrotatoWorld(World):
             [
                 len(self._include_characters),  # Run Won Items
                 len(self._include_characters) - len(self._starting_characters),  # The character items
-                self.num_wave_cap_increases,
+                self.num_wave_cap_increases * len(self._include_characters),
                 self.num_shop_slot_items,
                 self.num_shop_lock_button_items,
             ]
