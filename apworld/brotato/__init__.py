@@ -173,11 +173,6 @@ class BrotatoWorld(World):
     def __init__(self, world: MultiWorld, player: int) -> None:
         super().__init__(world, player)
 
-    @staticmethod
-    def _hack_log(msg: str) -> None:
-        with open("/home/spenser/Projects/AP/Archipelago/hack_log.txt", "a") as f:
-            f.write(msg + "\n")
-
     def create_item(self, name: str | ItemName) -> BrotatoItem:
         if isinstance(name, ItemName):
             name = name.value
@@ -186,11 +181,7 @@ class BrotatoWorld(World):
     def generate_early(self) -> None:
         # Determine needed values from the options
         self.waves_with_checks = get_waves_with_checks(self.options.waves_per_drop)
-        is_ut = getattr(self.multiworld, "generation_is_fake", False)
         re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
-        starting_characters = getattr(self, "starting_characters", None)
-        self._hack_log(f"In generate early, {is_ut=}, {re_gen_passthrough=}")
-        self._hack_log(f"Before: {starting_characters}")
         if re_gen_passthrough:
             self._starting_characters = re_gen_passthrough[self.game]["starting_characters"]
             self._include_characters = re_gen_passthrough[self.game]["include_characters"]
@@ -204,7 +195,6 @@ class BrotatoWorld(World):
                 self.options.num_characters.value,
                 self.random,
             )
-        self._hack_log(f"After: {self._starting_characters}")
 
         # Clamp the number of wins needed to goal to the number of included characters, so the game isn't unwinnable.
         self.num_wins_needed = min(self.options.num_victories.value, len(self._include_characters))
@@ -353,13 +343,11 @@ class BrotatoWorld(World):
 
     @staticmethod
     def interpret_slot_data(slot_data: dict[str, Any]) -> dict[str, Any] | None:
-        BrotatoWorld._hack_log("In brotato interpret slot data")
         if "starting_characters" in slot_data:
             # If this key is present, all UT-related keys should be present
-            character_info = {
+            return {
                 "starting_characters": slot_data["starting_characters"],
                 "include_characters": slot_data["include_characters"],
             }
-            BrotatoWorld._hack_log(f"{character_info=}")
-            return character_info
+        # Backwards compat with worlds generated before UT support was added
         return None
