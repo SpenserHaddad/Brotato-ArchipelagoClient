@@ -24,7 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       11-15 require two, 16-20 require three.
     - `ten`: Waves 1-2 are playable from the start, 3-4 require one increase, etc.
     - `twenty`: Every wave past wave 1 requires a cap increase.
-
+- Added Universal Tracker hooks to the apworld so it now uses the same characters as the 
+  actual slot.
 
 ### Changed
 
@@ -36,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   thresholds are evenly distributed over the number of wins needed to goal.
   - Before, the last group could be unlocked much earlier in logic if the number of
     groups did not evenly divide into the number of wins needed.
-- The progress UI in the Archipelago menu in the mod now shows the wave cap and number
-  of cap increases received.
 
 
 ## [0.15.2] - 2026-08-14
