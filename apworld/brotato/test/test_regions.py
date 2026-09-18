@@ -10,6 +10,7 @@ from ..constants import (
     CRATE_DROP_LOCATION_TEMPLATE,
     LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
+    PROGRESSIVE_WAVE_CAP_ITEM_TEMPLATE,
     RUN_COMPLETE_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
 )
@@ -251,9 +252,10 @@ class TestBrotatoRegionAccessRules(BrotatoTestBase):
         for char in characters:
             with self.subTest(character=char):
                 run_won_location_name = RUN_COMPLETE_LOCATION_TEMPLATE.format(char=char)
+                wave_cap_item_name = PROGRESSIVE_WAVE_CAP_ITEM_TEMPLATE.format(char=char)
 
                 # Our test options say there are 3 cap increase items total
-                expected_items = [ItemName.PROGRESSIVE_WAVE_CAP.value] * 3
+                expected_items = [wave_cap_item_name] * 3
                 if char in self.world._starting_characters:
                     expected_items.append(char)
                 self.assertAccessDependency([run_won_location_name], [expected_items], only_check_listed=True)
@@ -278,7 +280,7 @@ class TestBrotatoRegionAccessRules(BrotatoTestBase):
             for wave, expected_wave_cap_increases_needed in expected_wave_location_access.items():
                 with self.subTest(character=char, wave=wave):
                     expected_items = [
-                        *[ItemName.PROGRESSIVE_WAVE_CAP.value] * expected_wave_cap_increases_needed,
+                        *[PROGRESSIVE_WAVE_CAP_ITEM_TEMPLATE.format(char=char)] * expected_wave_cap_increases_needed,
                     ]
                     if char not in self.world._starting_characters:
                         expected_items.append(char)

@@ -10,6 +10,7 @@ from . import options  # So we don't need to import every option class when defi
 from .characters import get_available_and_starting_characters
 from .constants import (
     MAX_SHOP_SLOTS,
+    PROGRESSIVE_WAVE_CAP_ITEM_TEMPLATE,
     RUN_COMPLETE_LOCATION_TEMPLATE,
 )
 from .item_weights import create_items_from_weights
@@ -242,7 +243,7 @@ class BrotatoWorld(World):
             [
                 len(self._include_characters),  # Run Won Items
                 len(self._include_characters) - len(self._starting_characters),  # The character items
-                self.num_wave_cap_increases,
+                self.num_wave_cap_increases * len(self._include_characters),
                 self.num_shop_slot_items,
                 self.num_shop_lock_button_items,
             ]
@@ -292,11 +293,16 @@ class BrotatoWorld(World):
             else:
                 item_pool.append(character_item)
 
+            for _ in range(self.num_wave_cap_increases):
+                wave_cap_increase_item = self.create_item(
+                    name=PROGRESSIVE_WAVE_CAP_ITEM_TEMPLATE.format(char=character)
+                )
+                item_pool.append(wave_cap_increase_item)
+
         # Create an item for each nonessential item. These are determined in generate_early().
         for item_name, item_count in self.nonessential_item_counts.items():
             item_pool += [self.create_item(item_name) for _ in range(item_count)]
 
-        item_pool += [self.create_item(ItemName.PROGRESSIVE_WAVE_CAP) for _ in range(self.num_wave_cap_increases)]
         item_pool += [self.create_item(ItemName.SHOP_SLOT) for _ in range(self.num_shop_slot_items)]
         item_pool += [self.create_item(ItemName.SHOP_LOCK_BUTTON) for _ in range(self.num_shop_lock_button_items)]
 

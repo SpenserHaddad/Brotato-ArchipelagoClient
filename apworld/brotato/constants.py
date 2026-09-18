@@ -173,3 +173,6 @@ SHOP_ITEM_LOCATION_TEMPLATE = "{tier} Shop Item {num}"
 CRATE_DROP_GROUP_REGION_TEMPLATE = "Loot Crate Group {num}"
 LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE = "Legendary Loot Crate Group {num}"
 CHARACTER_REGION_TEMPLATE = "In-Game ({char})"
+
+# Item name string templates
+PROGRESSIVE_WAVE_CAP_ITEM_TEMPLATE = "Progressive Wave Cap ({char})"
