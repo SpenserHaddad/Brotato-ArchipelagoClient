@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-09-17
+
 ### Added
 - New Feature: Progressive Wave Caps
   - The game now has a cap on the highest wave that can be played from the start.
@@ -689,7 +691,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.15.2...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.15.2...v0.16.0
 [0.15.2]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.15.1...v0.15.2
 [0.15.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.14.1...v0.15.0
