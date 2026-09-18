@@ -37,9 +37,9 @@ func _ready():
 
 		_add_ap_go_to_wave_button()
 		_ap_go_to_wave_menu.connect("skip_to_wave_toggled", self, "_on_skip_to_wave_toggled")
-		_check_wave_cap()
+		_check_wave_caps()
 
-		_ap_client.waves_progress.connect("wave_cap_increase_received", self, "_check_wave_cap")
+		_ap_client.waves_progress.connect("wave_cap_increase_received", self, "_on_wave_cap_increase_received")
 
 	_original_current_wave = RunData.current_wave
 
@@ -64,10 +64,17 @@ func _on_skip_to_wave_toggled(enabled: bool):
 	var go_button = _get_go_button(0)
 	go_button.text = tr(go_text) + " (" + Text.text("WAVE", [str(new_next_wave)]) + ")"
 
-func _check_wave_cap():
-	var can_play_wave = _ap_client.waves_progress.can_play_wave(RunData.current_wave+1)
+func _on_wave_cap_increase_received(_character: String):
+	# Just check the wave cap for all characters again, it's fast enough that we don't
+	# need to check if the increase was for any currently active player.
+	_check_wave_caps()
+
+func _check_wave_caps():
 	for player_index in RunData.get_player_count():
 		var go_button = _get_go_button(player_index)
+		var player_character_id = RunData.players_data[player_index].current_character.my_id
+		var player_character_name = _constants.CHARACTER_ID_TO_NAME[player_character_id]
+		var can_play_wave = _ap_client.waves_progress.can_play_wave(RunData.current_wave+1, player_character_name)
 		if can_play_wave:
 			go_button.disabled = false
 			go_button.text = _original_go_button_text
@@ -75,9 +82,8 @@ func _check_wave_cap():
 		else:
 			go_button.disabled = true
 			go_button.text = "RHAP_MENU_SHOP_WAVE_CAP_REACHED"
-			go_button.hint_tooltip = tr("RHAP_MENU_SHOP_WAVE_CAP_REACHED_TOOLTIP").format(
-				{item_name=_constants.PROGRESSIVE_WAVE_CAP_INCREASE_ITEM_NAME}
-			)
+			var item_name = _constants.PROGRESSIVE_WAVE_CAP_INCREASE_ITEM_TEMPLATE.format({char=player_character_name})
+			go_button.hint_tooltip = tr("RHAP_MENU_SHOP_WAVE_CAP_REACHED_TOOLTIP").format({item_name=item_name})
 
 func _on_GoButton_pressed(player_index: int):
 	if player_index == 0:

@@ -72,7 +72,9 @@ def create_character_region(
         parent=character_region,
     )
     # All wave cap increases are needed to reach the final wave.
-    run_complete_location.access_rule = create_can_reach_wave_rule(character_region.player, wave_access[NUM_WAVES])
+    run_complete_location.access_rule = create_can_reach_wave_rule(
+        character_region.player, character, wave_access[NUM_WAVES]
+    )
     character_region.locations.append(run_complete_location)
 
     for wave in waves_with_checks:
@@ -90,7 +92,7 @@ def create_character_region(
 
         num_wave_cap_items_needed_for_wave = wave_access[wave]
         wave_complete_location.access_rule = create_can_reach_wave_rule(
-            character_region.player, num_wave_cap_items_needed_for_wave
+            character_region.player, character, num_wave_cap_items_needed_for_wave
         )
         character_region.locations.append(wave_complete_location)
 

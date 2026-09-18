@@ -12,8 +12,8 @@ multiworld will be unlocked. You may receive characters that you have not unlock
 vanilla play, but these will be locked again when you disconnect.
 
 Unless `wave_caps` is set to one, you will not be able to play all 20 waves from the
-start. Instead, you will need to find "Progressive Wave Cap" items to be able
-to play further waves, and to complete runs.
+start. Instead, you will need to find "Progressive Wave Cap (<character>)" items to be
+able to play further waves and complete runs with a particular character.
 
 Loot crate drops in-game are replaced with Archipelago "check" items. When picked up,
 these will send a check to the multiworld. Depending on your settings, normal loot
