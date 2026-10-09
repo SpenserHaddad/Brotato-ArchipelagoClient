@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `num_wave_caps` options not being mapped to the actual value when generating.
+
 ## [0.16.0] - 2026-09-17
 
 ### Added
