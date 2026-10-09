@@ -29,7 +29,7 @@ class TestBrotatoRegions(WorldTestBase):
         self.multiworld.game[1] = "Brotato"
         self.multiworld.player_name = {self.player: "Tester"}
         self.multiworld.worlds[1] = BrotatoWorld(self.multiworld, 1)
-        self.default_wave_access: dict[int, int] = get_wave_cap_info(NumWaveCaps(1))[1]
+        self.default_wave_access: dict[int, int] = get_wave_cap_info(NumWaveCaps(NumWaveCaps.option_one))[1]
 
     def _create_region(self, name: str) -> Region:
         """Region factory to pass to the region creation functions."""
@@ -201,7 +201,7 @@ class TestBrotatoRegionAccessRules(BrotatoTestBase):
             "Demon",
         ],
         "waves_per_drop": 4,
-        "num_wave_caps": 4,
+        "num_wave_caps": NumWaveCaps.option_four,
         "num_common_crate_drops": 25,
         "num_common_crate_drop_groups": 5,
         "num_legendary_crate_drops": 5,
