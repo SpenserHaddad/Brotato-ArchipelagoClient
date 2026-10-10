@@ -23,26 +23,36 @@ import os
 import shutil
 import stat
 import sys
+import tarfile
 import tempfile
 import urllib
 import urllib.request
 import zipfile
 from pathlib import Path
 
-_GODOT_STEAM_RELEASE_QUERY_URL = "https://codeberg.org/api/v1/repos/godotsteam/godotsteam/releases/tags/{version}"
+_GODOT_STEAM_RELEASE_QUERY_URL = (
+    "https://codeberg.org/api/v1/repos/godotsteam/godotsteam/releases/tags/{version}"
+)
 _GODOT_DOWNLOAD_URL = "https://codeberg.org/godotsteam/godotsteam/releases/download/{version}/{platform}-{build}.zip"
 
-parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument("godotsteam_version", default=None, help="The tag of GodotSteam to download.")
+parser = argparse.ArgumentParser(
+    description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+)
+parser.add_argument(
+    "godotsteam_version", default=None, help="The tag of GodotSteam to download."
+)
 parser.add_argument(
     "-o",
     "--outdir",
     type=Path,
-    default=Path.cwd(),
+    default=Path.cwd() / "godotsteam",
     help="The directory to save Godot into. Defaults to the current directory.",
 )
 parser.add_argument(
-    "-f", "--force", action="store_true", help="Download and save even if the requested version is already downloaded."
+    "-f",
+    "--force",
+    action="store_true",
+    help="Download and save even if the requested version is already downloaded.",
 )
 
 
@@ -58,7 +68,7 @@ def get_platform_prefix() -> str:
             raise RuntimeError(f"Unknown platform {sys.platform}")
 
 
-def download_godot_steam(version: str, outdir: Path) -> str:
+def download_godot_steam(version: str, outdir: Path) -> None:
     build_name, download_url = find_build_from_version(version)
     with tempfile.TemporaryDirectory() as td:
         td_path = Path(td)
@@ -70,8 +80,12 @@ def download_godot_steam(version: str, outdir: Path) -> str:
             shutil.rmtree(outdir)
 
         print(f"Extracting GodotSteam to {outdir}.")
-        with zipfile.ZipFile(download_file, "r") as zf:
-            zf.extractall(outdir)
+        if download_file.suffix == ".xz":
+            with tarfile.open(download_file, "r:xz") as tf:
+                tf.extractall(outdir)
+        else:
+            with zipfile.ZipFile(download_file, "r") as zf:
+                zf.extractall(outdir)
 
     print(f"Saved {version} to {outdir}.")
 
@@ -79,7 +93,9 @@ def download_godot_steam(version: str, outdir: Path) -> str:
 def find_build_from_version(version: str) -> tuple[str, str]:
     print(f"Getting release information for GodotSteam {version}.")
     get_release_url = _GODOT_STEAM_RELEASE_QUERY_URL.format(version=version)
-    request = urllib.request.Request(get_release_url, headers={"accept": "application/json"})
+    request = urllib.request.Request(
+        get_release_url, headers={"accept": "application/json"}
+    )
     response = urllib.request.urlopen(request)
     release_info = json.loads(response.read())
 
@@ -87,7 +103,9 @@ def find_build_from_version(version: str) -> tuple[str, str]:
     assets = release_info["assets"]
     assets_for_platform = [a for a in assets if a["name"].startswith(platform)]
     if len(assets_for_platform) == 0:
-        raise RuntimeError(f"Could not find a build for platform {platform} for GodotSteam version {version}.")
+        raise RuntimeError(
+            f"Could not find a build for platform {platform} for GodotSteam version {version}."
+        )
     if len(assets_for_platform) > 1:
         raise RuntimeError(
             f"Found multiple builds for platform {platform} for GodotSteam version {version}, "
@@ -117,11 +135,15 @@ def main():
         # Check if the requested version is already downloaded
         version_info = json.loads(version_file.read_text())
         downloaded_version = version_info["version"]
-        downloaded_required = downloaded_version != version
-        if not downloaded_required:
-            print(f"Requested version {version} is already downloaded to this location, not downloading again.")
+        download_required = downloaded_version != version
+        if not download_required:
+            print(
+                f"Requested version {version} is already downloaded to this location, not downloading again."
+            )
+    else:
+        download_required = True
 
-    if downloaded_required:
+    if download_required:
         downloaded_build = download_godot_steam(version, outdir)
         # Save the downloaded version to a local JSON file for easy querying.
         version_info = {
