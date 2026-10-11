@@ -30,17 +30,11 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-_GODOT_STEAM_RELEASE_QUERY_URL = (
-    "https://codeberg.org/api/v1/repos/godotsteam/godotsteam/releases/tags/{version}"
-)
+_GODOT_STEAM_RELEASE_QUERY_URL = "https://codeberg.org/api/v1/repos/godotsteam/godotsteam/releases/tags/{version}"
 _GODOT_DOWNLOAD_URL = "https://codeberg.org/godotsteam/godotsteam/releases/download/{version}/{platform}-{build}.zip"
 
-parser = argparse.ArgumentParser(
-    description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-)
-parser.add_argument(
-    "godotsteam_version", default=None, help="The tag of GodotSteam to download."
-)
+parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument("godotsteam_version", default=None, help="The tag of GodotSteam to download.")
 parser.add_argument(
     "-o",
     "--outdir",
@@ -93,9 +87,7 @@ def download_godot_steam(version: str, outdir: Path) -> None:
 def find_build_from_version(version: str) -> tuple[str, str]:
     print(f"Getting release information for GodotSteam {version}.")
     get_release_url = _GODOT_STEAM_RELEASE_QUERY_URL.format(version=version)
-    request = urllib.request.Request(
-        get_release_url, headers={"accept": "application/json"}
-    )
+    request = urllib.request.Request(get_release_url, headers={"accept": "application/json"})
     response = urllib.request.urlopen(request)
     release_info = json.loads(response.read())
 
@@ -103,9 +95,7 @@ def find_build_from_version(version: str) -> tuple[str, str]:
     assets = release_info["assets"]
     assets_for_platform = [a for a in assets if a["name"].startswith(platform)]
     if len(assets_for_platform) == 0:
-        raise RuntimeError(
-            f"Could not find a build for platform {platform} for GodotSteam version {version}."
-        )
+        raise RuntimeError(f"Could not find a build for platform {platform} for GodotSteam version {version}.")
     if len(assets_for_platform) > 1:
         raise RuntimeError(
             f"Found multiple builds for platform {platform} for GodotSteam version {version}, "
@@ -137,9 +127,7 @@ def main():
         downloaded_version = version_info["version"]
         download_required = downloaded_version != version
         if not download_required:
-            print(
-                f"Requested version {version} is already downloaded to this location, not downloading again."
-            )
+            print(f"Requested version {version} is already downloaded to this location, not downloading again.")
     else:
         download_required = True
 
