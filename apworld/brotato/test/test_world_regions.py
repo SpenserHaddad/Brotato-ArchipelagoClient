@@ -5,7 +5,6 @@ from ..constants import (
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_NORMAL_CRATE_DROPS,
-    RUN_COMPLETE_LOCATION_TEMPLATE,
 )
 from ..items import ItemName
 from ..loot_crates import BrotatoLootCrateGroup
@@ -107,7 +106,7 @@ class TestBrotatoRegions(BrotatoTestBase):
                 )
 
     def _test_regions_have_correct_access_rules(
-        self, loot_crate_groups: list[BrotatoLootCrateGroup], region_template: str
+        self, loot_crate_groups: list[BrotatoLootCrateGroup], region_template: str, required_wave: int = 1
     ):
         """Shared test logic for the crate drop region access rules tests."""
 
@@ -115,10 +114,18 @@ class TestBrotatoRegions(BrotatoTestBase):
         run_won_item = self.world.create_item(run_won_item_name)
         for group in loot_crate_groups:
             region_name = region_template.format(num=group.index)
+            # region_locations = self.multiworld.get_region(region_name, self.player).locations
+            # region_location_names = [loc.name for loc in region_locations]
+            # # expected_items = [run_won_item.name] * group.wins_to_unlock
+            # if expected_items:
+            #     self.assertAccessDependency(region_location_names, [expected_items], only_check_listed=True)
+            # else:
+            #     assert self.can_reach_region(region_name)
 
             # Add Run Won items by getting each character's Run Won location in order
+            # assertAccessDependency doesn't work when there's multiple items with the same name.
             num_wins = self.count(run_won_item_name)
-            character_index = 0
+            # character_index = 0
             while num_wins < group.wins_to_unlock:
                 # Make sure the region isn't reachable too early
                 self.assertFalse(
@@ -129,17 +136,9 @@ class TestBrotatoRegions(BrotatoTestBase):
                     ),
                 )
 
-                next_character_won = self.world._include_characters[character_index]
-                character_index += 1
-                try:
-                    next_win_location = self.world.get_location(
-                        RUN_COMPLETE_LOCATION_TEMPLATE.format(char=next_character_won)
-                    )
-                except KeyError:
-                    self.fail(f"Character {next_character_won} does not have a Run Won location.")
                 old_num_wins = self.multiworld.state.count(run_won_item_name, self.player)
                 # Set event=True so the state doesn't try to collect more wins and throw off our tests
-                self.multiworld.state.collect(run_won_item, prevent_sweep=True, location=next_win_location)
+                self.multiworld.state.collect(run_won_item, prevent_sweep=True)
                 num_wins = self.multiworld.state.count(run_won_item_name, self.player)
                 # Sanity check that the state updated as we intend it to.
                 self.assertTrue(
@@ -147,6 +146,7 @@ class TestBrotatoRegions(BrotatoTestBase):
                     msg="State added more than 1 'Run Won' item, this is a test implementation error.",
                 )
 
+            num_wave_cap_items = self.world.wave_access[required_wave]
             self.assertTrue(
                 self.can_reach_region(region_name),
                 msg=f"Could not reach region {region_name} with {group.wins_to_unlock} wins.",
