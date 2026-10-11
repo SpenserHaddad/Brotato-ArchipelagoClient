@@ -36,7 +36,7 @@ dev_setup: download_godot download_gdretools extract_brotato create_symlinks ins
 
 # Code check/development recipes
 @test:
-    ${AP_DIR}/.env/bin/pytest ${AP_DIR}/worlds/${APWORLD}
+    uv --directory ${AP_DIR} run pytest ${AP_DIR}/worlds/${APWORLD}
 
 format:
     uv run ruff format
