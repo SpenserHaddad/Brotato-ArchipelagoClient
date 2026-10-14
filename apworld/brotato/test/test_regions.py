@@ -30,6 +30,7 @@ class TestBrotatoRegions(WorldTestBase):
         self.multiworld.player_name = {self.player: "Tester"}
         self.multiworld.worlds[1] = BrotatoWorld(self.multiworld, 1)
         self.default_wave_access: dict[int, int] = get_wave_cap_info(NumWaveCaps(NumWaveCaps.option_one))[1]
+        self.include_elites_in_logic: bool = False
 
     def _create_region(self, name: str) -> Region:
         """Region factory to pass to the region creation functions."""
@@ -128,6 +129,7 @@ class TestBrotatoCreateRegions(TestBrotatoRegions):
             self.characters,
             self.waves_with_checks,
             self.default_wave_access,
+            self.include_elites_in_logic,
             self.common_loot_crate_groups,
             self.legendary_loot_crate_groups,
         )
@@ -206,6 +208,7 @@ class TestBrotatoRegionAccessRules(BrotatoTestBase):
         "num_common_crate_drop_groups": 5,
         "num_legendary_crate_drops": 5,
         "num_legendary_crate_drop_groups": 1,
+        "include_elites_in_logic": 0,
     }
 
     def test_common_loot_crate_group_regions_have_correct_access_rules(self):

@@ -1,3 +1,5 @@
+import dataclasses
+
 from ..constants import (
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
@@ -5,6 +7,7 @@ from ..constants import (
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_NORMAL_CRATE_DROPS,
+    NUM_WAVES,
     PROGRESSIVE_WAVE_CAP_ITEM_TEMPLATE,
 )
 from ..items import ItemName
@@ -90,11 +93,17 @@ class TestBrotatoRegions(BrotatoTestBase):
         for test_data in LOOT_CRATE_GROUP_DATA_SETS:
             with self.data_set_subtest(test_data):
                 self._test_regions_have_correct_access_rules(
-                    test_data.expected_common_groups, CRATE_DROP_GROUP_REGION_TEMPLATE
+                    test_data.expected_common_groups,
+                    CRATE_DROP_GROUP_REGION_TEMPLATE,
+                    required_wave=test_data.required_wave_for_common_crates,
                 )
 
     def test_legendary_crate_drop_region_have_correct_access_rules(self):
-        """Check that each of the legendary loot crate drop regions is only unlocked after enough wins are achieved.
+        """Check that the access rules for legendary loot crate drop regions are correct.
+
+        The regions should only be reachable after enough wins are achieved, and the minimum
+        wave where legendary crates can drop is in reachable. This is wave 20 by default,
+        but including elites changes it to wave 11.
 
         This and the normal loot crate region tests are separate since they both need to incrementally update the
         state and check region access at each step. Splitting the tests, with a common private test method, means less
@@ -103,7 +112,9 @@ class TestBrotatoRegions(BrotatoTestBase):
         for test_data in LOOT_CRATE_GROUP_DATA_SETS:
             with self.data_set_subtest(test_data):
                 self._test_regions_have_correct_access_rules(
-                    test_data.expected_legendary_groups, LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE, required_wave=20
+                    test_data.expected_legendary_groups,
+                    LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
+                    required_wave=test_data.required_wave_for_legendary_crates,
                 )
 
     def _test_regions_have_correct_access_rules(
@@ -157,16 +168,17 @@ class TestBrotatoRegions(BrotatoTestBase):
                 )
                 self.multiworld.state.collect(wave_cap_increase_item, prevent_sweep=True)
 
-            self.assertTrue(
-                self.can_reach_region(region_name),
-                msg=f"Could not reach region {region_name} with {group.wins_to_unlock} wins.",
-            )
+            try:
+                self.assertTrue(
+                    self.can_reach_region(region_name),
+                    msg=f"Could not reach region {region_name} with {group.wins_to_unlock} wins.",
+                )
+            finally:
+                while self.multiworld.state.has(run_won_item_name, self.player):
+                    self.multiworld.state.remove(run_won_item)
 
-            while self.multiworld.state.has(run_won_item_name, self.player):
-                self.multiworld.state.remove(run_won_item)
-
-            while self.multiworld.state.has(wave_cap_increase_item_name, self.player):
-                self.multiworld.state.remove(wave_cap_increase_item)
+                while self.multiworld.state.has(wave_cap_increase_item_name, self.player):
+                    self.multiworld.state.remove(wave_cap_increase_item)
 
     def _test_loot_crate_regions_have_correct_locations(
         self,
@@ -186,6 +198,3 @@ class TestBrotatoRegions(BrotatoTestBase):
             region = player_regions[region_template.format(num=group.index)]
             actual_location_names = [loc.name for loc in region.locations]
             self.assertListEqual(actual_location_names, expected_location_names)
-
-    def test_fill(self):
-        return super().test_fill()
