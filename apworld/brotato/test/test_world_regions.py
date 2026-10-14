@@ -1,4 +1,3 @@
-import dataclasses
 
 from ..constants import (
     CRATE_DROP_GROUP_REGION_TEMPLATE,
@@ -7,7 +6,6 @@ from ..constants import (
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
     MAX_LEGENDARY_CRATE_DROPS,
     MAX_NORMAL_CRATE_DROPS,
-    NUM_WAVES,
     PROGRESSIVE_WAVE_CAP_ITEM_TEMPLATE,
 )
 from ..items import ItemName
