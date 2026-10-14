@@ -54,8 +54,14 @@ def create_regions(
                     loot_crate_group_region.player, characters, wave_access[NUM_WAVES]
                 )
 
-                def legendary_loot_crate_region_rule(state: CollectionState):
-                    return has_wins_rule(state) and can_reach_wave_rule(state)  # noqa: B023
+                def legendary_loot_crate_region_rule(
+                    state: CollectionState,
+                    has_wins_rule: CollectionRule = has_wins_rule,
+                    can_reach_wave_rule: CollectionRule = can_reach_wave_rule,
+                ):
+                    has_wins = has_wins_rule(state)
+                    can_reach_wave = can_reach_wave_rule(state)
+                    return has_wins and can_reach_wave
 
                 loot_crate_region_rule = cast(CollectionRule, legendary_loot_crate_region_rule)
 
