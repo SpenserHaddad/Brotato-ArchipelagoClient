@@ -1,4 +1,3 @@
-
 from ..constants import (
     CRATE_DROP_GROUP_REGION_TEMPLATE,
     CRATE_DROP_LOCATION_TEMPLATE,
