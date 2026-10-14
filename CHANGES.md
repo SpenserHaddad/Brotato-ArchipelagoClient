@@ -7,9 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New option: `include_elites_in_logic`
+  - When set, considers elites when determining access logic. Assumes you are playing
+    on Danger 2 or higher.
+  - Currently only affects legendary loot crate pickup logic (see below).
+
 ### Fixed
 
 - Fix `num_wave_caps` options not being mapped to the actual value when generating.
+- Logic for legendary loot crate pickups now requires that at least one character is
+  able to reach a wave where they can drop:
+  - Wave 11 if `include_elites_in_logic` is 1.
+  - Wave 20 otherwise.
 
 ## [0.16.0] - 2026-09-17
 
