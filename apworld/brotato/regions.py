@@ -9,6 +9,7 @@ from .constants import (
     CRATE_DROP_LOCATION_TEMPLATE,
     LEGENDARY_CRATE_DROP_GROUP_REGION_TEMPLATE,
     LEGENDARY_CRATE_DROP_LOCATION_TEMPLATE,
+    MINIMUM_ELITE_WAVE,
     NUM_WAVES,
     RUN_COMPLETE_LOCATION_TEMPLATE,
     WAVE_COMPLETE_LOCATION_TEMPLATE,
@@ -30,6 +31,7 @@ def create_regions(
     characters: list[str],
     waves_with_checks: list[int],
     wave_access: dict[int, int],
+    include_elites_in_logic: bool,
     common_loot_crate_groups: list[BrotatoLootCrateGroup],
     legendary_loot_crate_groups: list[BrotatoLootCrateGroup],
 ) -> list[Region]:
@@ -48,10 +50,13 @@ def create_regions(
                 region_factory, group, loot_crate_type, crate_count_start=crate_count
             )
             crate_count += group.num_crates
+            # If elites are enabled, set the access wave to when they start spawning.
+            # Otherwise, set the access wave to the last wave, requiring boss kills.
+            required_wave = MINIMUM_ELITE_WAVE if include_elites_in_logic else NUM_WAVES
             has_wins_rule = create_has_run_wins_rule(loot_crate_group_region.player, group.wins_to_unlock)
             if loot_crate_type == "legendary":
                 can_reach_wave_rule = create_any_player_can_reach_wave_rule(
-                    loot_crate_group_region.player, characters, wave_access[NUM_WAVES]
+                    loot_crate_group_region.player, characters, wave_access[required_wave]
                 )
 
                 def legendary_loot_crate_region_rule(
