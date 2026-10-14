@@ -211,26 +211,27 @@ class TestBrotatoRegionAccessRules(BrotatoTestBase):
     def test_common_loot_crate_group_regions_have_correct_access_rules(self):
         # 10 wins and 5 groups means 2 wins to unlock each group
         wins_per_group = [0, 2, 4, 6, 8]
-        wins_collected = 0
-        victory_item = self.multiworld.create_item(ItemName.RUN_COMPLETE.value, self.player)
+        run_won_item = self.multiworld.create_item(ItemName.RUN_COMPLETE.value, self.player)
         # For whatever reason, self.assertAccessDependency doesn't work, so we do the collect and sweep manually.
         for group_idx, num_wins_needed in enumerate(wins_per_group, start=1):
             region_name: str = CRATE_DROP_GROUP_REGION_TEMPLATE.format(num=group_idx)
             region: Region = self.multiworld.regions.region_cache[self.player][region_name]
             region_locations = [location.name for location in region.locations]
-            while wins_collected < num_wins_needed:
+            for wins in range(num_wins_needed):
                 self.assertFalse(
                     self.multiworld.state.can_reach_region(region_name, self.player),
-                    f"Should not be able to reach region {region_name} without {num_wins_needed} wins, have {wins_collected}.",  # noqa
+                    f"Should not be able to reach region {region_name} without {num_wins_needed} wins, have {wins}.",
                 )
                 for location in region_locations:
                     self.assertFalse(self.multiworld.state.can_reach_location(location, self.player))
-                self.multiworld.state.collect(victory_item, prevent_sweep=True)
-                wins_collected += 1
+                self.multiworld.state.collect(run_won_item, prevent_sweep=True)
 
             self.assertTrue(self.multiworld.state.can_reach_region(region_name, self.player))
             for location in region_locations:
                 self.assertTrue(self.multiworld.state.can_reach_location(location, self.player))
+
+            while self.multiworld.state.has(run_won_item.name, self.player):
+                self.multiworld.state.remove(run_won_item)
 
     def test_character_regions_have_correct_access_rules(self):
         characters = self.options["include_base_game_characters"]
