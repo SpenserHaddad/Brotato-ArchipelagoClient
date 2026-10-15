@@ -1,6 +1,8 @@
 class_name ApLoadSavedRunSelection
 extends Control
 
+const LOG_NAME = "RampagingHippy-Archipelago/ui/menus/run/load_ap_run"
+
 onready var _weapons_container = $"%WeaponsContainer"
 onready var _items_container = $"%ItemsContainer"
 onready var _stats_container = $"%StatsContainer"
@@ -105,6 +107,7 @@ func _on_ResumeButton_pressed():
 	RunData.resume_from_state(_saved_game_state)
 	RunData.resumed_from_state_in_shop = true
 	_ap_client.load_run_specific_progress_data(_saved_ap_state)
+	ModLoaderLog.debug("Starting new run (load)", LOG_NAME)
 	_ap_client.game_state.notify_run_started(characters, false)
 	var scene = "res://ui/menus/shop/shop.tscn"
 	var _error = get_tree().change_scene(scene)

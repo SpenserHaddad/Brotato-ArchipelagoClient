@@ -24,13 +24,14 @@ func _ready() -> void:
 	_ap_client = mod_node.brotato_ap_client
 	
 	if _ap_client.connected_to_multiworld():
-		if RunData.current_wave == DebugService.starting_wave or not _ap_client.game_state.in_run:
+		if RunData.current_wave == DebugService.starting_wave and not _ap_client.game_state.in_run:
 			# Run started, notify the AP game state tracker.
 			# Wait a very short time before sending the notify_run_started event to
 			# ensure the rest of the game is initialized. As of the 1.1.8.0 patch,
 			# collecting enough XP to level up too early causes the game to crash
 			# because the "Level Up" floating text is not fully initialized yet. This
 			# isn't elegant, but it doesn't negatively impact UX and it works.
+			ModLoaderLog.debug("Starting new run (main)", LOG_NAME)
 			yield (get_tree().create_timer(0.01), "timeout")
 			var active_characters = []
 			for player in RunData.players_data:
