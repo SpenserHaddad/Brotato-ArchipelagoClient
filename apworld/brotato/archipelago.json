@@ -1,7 +1,5 @@
 {
-    "game": "Brotato",
-  "world_version": "0.17.0",
-    "authors": [
-        "Rampaging Hippy"
-    ]
+  "game": "Brotato",
+  "world_version": "0.17.1",
+  "authors": ["Rampaging Hippy"]
 }

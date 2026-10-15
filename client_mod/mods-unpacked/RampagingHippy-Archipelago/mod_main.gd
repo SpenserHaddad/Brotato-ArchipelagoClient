@@ -3,7 +3,7 @@ extends Node
 
 # Brotato Archipelago Multiworld Randomizer Client
 const MOD_NAME = "RampagingHippy-Archipelago"
-const MOD_VERSION = "0.17.0"
+const MOD_VERSION = "0.17.1"
 const LOG_NAME = MOD_NAME + "/mod_main"
 
 const ApWebSocketConnection = preload("res://mods-unpacked/RampagingHippy-Archipelago/ap/ap_websocket_connection.gd")
@@ -54,7 +54,7 @@ func _init():
 		# Show character win status on character select screen
 		"global/inventory_element.gd",
 	]
-	
+
 	for ef in extension_files:
 		ModLoaderMod.install_script_extension(ext_dir.plus_file(ef))
 
@@ -73,7 +73,7 @@ func _ready() -> void:
 
 	var config = ModLoaderConfig.get_config(MOD_NAME, "ap_config")
 	var default_config = ModLoaderConfig.get_default_config(MOD_NAME)
-	
+
 	if config == null:
 		ModLoaderLog.info("Config null", LOG_NAME)
 		ModLoaderConfig.create_config(MOD_NAME, "ap_config", default_config.data)
@@ -87,7 +87,7 @@ func _ready() -> void:
 				ModLoaderLog.info("Key %s not present in config, applying default." % key, LOG_NAME)
 				config.data[key] = default_config.data[key]
 				config_needs_update = true
-		
+
 		if config_needs_update:
 			ModLoaderConfig.update_config(config)
 
@@ -105,7 +105,7 @@ func _ready() -> void:
 
 	ModLoaderLog.success("Archipelago mod v%s initialized" % MOD_VERSION, LOG_NAME)
 
-	# We deliberately DON'T add the AP consumables to the full list because we want to 
+	# We deliberately DON'T add the AP consumables to the full list because we want to
 	# manually control how/when they drop, instead of just adding to the drop pool.
 
 	# var ContentLoader = get_node("/root/ModLoader/Darkly77-ContentLoader/ContentLoader")
