@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix Deathlink not being processed due to internal changes in Brotato
+- Fix the mod giving the player all received AP items when replaying the Wave 1 due to 
+  [Hourglass.](https://brotato.wiki.spellsandguns.com/Hourglass)
 
 ## [0.17.0] - 2026-10-13
 
