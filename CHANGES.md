@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The "Run Lost" screen now shows a custom message and icon when killed by Deathlink.
+
+### Fixed
+
+- Fix Deathlink not being processed due to internal changes in Brotato
+
 ## [0.17.0] - 2026-10-13
 
 ### Added
@@ -709,7 +717,7 @@ objects for better organization and readability.
       locations are checked.
 
 [unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.17.0...HEAD
-[0.16.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.16.0...v0.17.0
+[0.17.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.15.2...v0.16.0
 [0.15.2]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.15.1...v0.15.2
 [0.15.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.15.0...v0.15.1

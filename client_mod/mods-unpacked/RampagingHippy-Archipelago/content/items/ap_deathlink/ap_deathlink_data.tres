@@ -1,0 +1,23 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://items/global/item_data.gd" type="Script" id=1]
+[ext_resource path="res://mods-unpacked/RampagingHippy-Archipelago/images/ap_logo_80.png" type="Texture" id=2]
+
+[resource]
+script = ExtResource( 1 )
+my_id = "item_ap_deathlink"
+unlocked_by_default = false
+can_be_looted = false
+icon = ExtResource( 2 )
+name = "ITEM_AP_DEATHLINK"
+tier = 5
+value = 1
+effects = [  ]
+tracking_text = ""
+is_lockable = false
+unlock_codex_descr_after_get_it = 1
+is_cursed = false
+curse_factor = 0.0
+max_nb = -1
+item_appearances = [  ]
+tags = [  ]
