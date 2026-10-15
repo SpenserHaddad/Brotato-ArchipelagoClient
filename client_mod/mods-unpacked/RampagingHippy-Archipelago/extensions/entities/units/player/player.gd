@@ -13,7 +13,7 @@ func _ready():
 
 func _on_deathlink_triggered(source: String, cause: String):
 	var kill_item = _deathlink_item.duplicate()
-	kill_item.name = source
+	kill_item.name = tr("RHAP_WAVE_CLEARED_LABEL_DEATHLINK_DEATH_CAUSE").format({source=source})
 	var die_args = Entity.DieArgs.new()
 	die_args.from = kill_item
 	die(die_args)
