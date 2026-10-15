@@ -3,6 +3,7 @@ extends "res://entities/units/player/player.gd"
 const LOG_NAME = "RampagingHippy-Archipelago/entities/units/player/player"
 
 onready var _ap_client
+var _deathlink_item = preload("res://mods-unpacked/RampagingHippy-Archipelago/content/items/ap_deathlink/ap_deathlink_data.tres")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -11,4 +12,8 @@ func _ready():
 	var _status = _ap_client.deathlink_progress.connect("deathlink_triggered", self, "_on_deathlink_triggered")
 
 func _on_deathlink_triggered(source: String, cause: String):
-	die()
+	var kill_item = _deathlink_item.duplicate()
+	kill_item.name = source
+	var die_args = Entity.DieArgs.new()
+	die_args.from = kill_item
+	die(die_args)
