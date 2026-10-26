@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Enabling more logging for character unlock events.
+
 ## [0.17.1] - 2026-10-14
 
 ### Changed
