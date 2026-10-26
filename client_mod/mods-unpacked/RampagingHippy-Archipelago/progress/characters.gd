@@ -46,6 +46,7 @@ func get_unlocked_characters() -> Array:
 
 func on_item_received(item_name: String, _item):
 	if constants.CHARACTER_NAME_TO_ID.has(item_name):
+		ModLoaderLog.info("Character unlocked: %s" % item_name, LOG_NAME)
 		character_info[item_name].unlocked = true
 		
 func on_room_updated(updated_room_info: Dictionary):
