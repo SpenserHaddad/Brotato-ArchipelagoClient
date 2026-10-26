@@ -56,7 +56,7 @@ func _on_character_received(character: String):
 
 func _get_unlocked_elements(player_index: int) -> Array:
 	# Override to replace the unlocked characters with those received by AP
-	ModLoaderLog.debug("Getting unlocked characters", LOG_NAME)
+	ModLoaderLog.info("Getting unlocked characters", LOG_NAME)
 	_ensure_ap_client()
 	if _ap_client.connected_to_multiworld():
 		var character_str = ", ".join(_unlocked_characters)
@@ -64,10 +64,10 @@ func _get_unlocked_elements(player_index: int) -> Array:
 		for character in ItemService.characters:
 			if _unlocked_characters.has(character.my_id):
 				unlocked_character_ids.push_back(character.my_id_hash)
-		ModLoaderLog.debug("Unlocking characters %s" % character_str, LOG_NAME)
+		ModLoaderLog.info("Unlocking characters %s" % character_str, LOG_NAME)
 		return unlocked_character_ids
 	else:
-		ModLoaderLog.debug("Returning default characters", LOG_NAME)
+		ModLoaderLog.info("Returning default characters", LOG_NAME)
 		return._get_unlocked_elements(player_index)
 
 func _get_all_possible_elements(player_index: int) -> Array:
