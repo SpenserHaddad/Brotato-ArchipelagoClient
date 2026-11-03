@@ -98,12 +98,12 @@ func connect_to_server(server: String) -> bool:
 		_peer.set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
 		_set_connection_state(State.STATE_OPEN)
 		ModLoaderLog.info("Connected to multiworld %s." % _url, LOG_NAME)
-	
+
 	return wss_success or ws_success
 
 func connected_to_server() -> bool:
 	return connection_state == State.STATE_OPEN
-	
+
 func disconnect_from_server():
 	if connection_state == State.STATE_CLOSED:
 		return
@@ -118,7 +118,7 @@ func send_connect(game: String, user: String, password: String = "", slot_data: 
 		"name": user,
 		"password": password,
 		"uuid": "60c9c15c-4f9b-4bcd-9512-abd53eeccc81",
-		"version": {"major": 0, "minor": 6, "build": 2, "class": "Version"},
+		"version": {"major": 0, "minor": 6, "build": 8, "class": "Version"},
 		"items_handling": 0b111, # TODO: argument
 		"tags": tags,
 		"slot_data": slot_data
@@ -188,7 +188,7 @@ func send_bounce(data: Dictionary, games: Array = [], slots: Array = [], tags: A
 
 # TODO: Extra custom arguments
 func get_value(keys: Array):
-	# This is Archipelago's "Get" command, we change the name 
+	# This is Archipelago's "Get" command, we change the name
 	# since "get" is already taken by "Object.get".
 	_send_command({
 		"cmd": "Get",
@@ -270,19 +270,19 @@ func _init_client():
 		self._client.disconnect("connection_established", self, "_on_connection_established")
 		self._client.disconnect("connection_error", self, "_on_connection_error")
 	self._client = WebSocketClient.new()
-	
+
 	# Connect base signals to get notified of connection open, close, and errors.
 	var _result = self._client.connect("connection_closed", self, "_on_connection_closed")
 	_result = self._client.connect("data_received", self, "_on_data_received")
 	_result = self._client.connect("connection_established", self, "_on_connection_established")
 	_result = self._client.connect("connection_error", self, "_on_connection_error")
-	
-	# Increase max buffer size to accommodate AP's larger payloads. The args 
+
+	# Increase max buffer size to accommodate AP's larger payloads. The args
 	# and their defaults are:
 	#	- input_buffer_size_kb = 64 KB
 	#	- input_max_packets = 1024
 	#	- output_buffer_size_kb = 64 KB
-	#	- output_max_packets = 1024 
+	#	- output_max_packets = 1024
 	# We increase the input buffer to 80 MB because some messages we receive
 	# are too large	for 64K. It's huge, but it being too small has caused some
 	# nasty bugs in the past. The other defaults have been fine though.

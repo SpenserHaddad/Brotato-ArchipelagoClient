@@ -70,7 +70,7 @@ def main():
     output_dir.mkdir()
 
     # Extra files in order to ensure the files in each are overlaid properly
-    pck_filenames: list[str] = ["Brotato", "BrotatoAbyssalTerrors"]
+    pck_filenames: list[str] = ["Brotato"]
 
     for p in pck_filenames:
         pck_file: Path = brotato_dir / f"{p}.pck"
