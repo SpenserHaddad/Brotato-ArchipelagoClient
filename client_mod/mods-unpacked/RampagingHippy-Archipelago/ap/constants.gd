@@ -66,6 +66,17 @@ const CHARACTER_NAME_TO_ID = {
 	"Buccaneer": "character_buccaneer",
 	"Ogre": "character_ogre",
 	"Romantic": "character_romantic",
+	# Primal Dread Characters
+	"Veteran": "character_veteran",
+	"Archaeologist": "character_archaeologist",
+	"Droid": "character_droid",
+	"Time Shifter": "character_time_shifter",
+	"Variant": "character_variant",
+	"Caveman": "character_caveman",
+	"Arsonist": "character_arsonist",
+	"Mad Scientist": "character_mad_scientist",
+	"Poacher": "character_poacher",
+	"Survivor": "character_survivor",
 }
 
 const CHARACTER_ID_TO_NAME = {}
