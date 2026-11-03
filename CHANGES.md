@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-11-02
+
+### Added
+
+- Added options for including the characters from the Primal Dread DLC:
+  - `enable_primal_dread_dlc` to enable/disable DLC settings (more may come in the future).
+  - `include_primal_dread_characters` to select the DLC characters to include in generation.
+- Added new Primal Dread values to the `starting_characters` option.
+
+### Changed
+
+- Set the Archipelago Client version of the mod to 0.6.8.
+- Updated the minimum supported Brotato version for the mod to 1.2.0.0 (the Primal Dread update)
+
+### Fixed
+
+- Fix mod breaking on the 1.2.0.0 update due to changes in DLC detection.
+
 ## [0.17.2] - 2026-10-26
 
 ### Changed
@@ -726,7 +744,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.17.2...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.17.2...v0.18.0
 [0.17.2]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.16.0...v0.17.0
