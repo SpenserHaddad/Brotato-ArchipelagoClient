@@ -22,6 +22,8 @@ var ApWinsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progre
 var ApSavedRunsProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/saved_runs.gd")
 var ApDeathLinkProgress = load("res://mods-unpacked/RampagingHippy-Archipelago/progress/deathlink.gd")
 var GodotApClientDebugSettings = load("res://mods-unpacked/RampagingHippy-Archipelago/ap/debug.gd")
+var ApShopSetupHook = load("res://mods-unpacked/RampagingHippy-Archipelago/hooks/hack_shop_setup.gd")
+var ApWaveSkipHook = load("res://mods-unpacked/RampagingHippy-Archipelago/hooks/wave_skip.gd")
 
 var game_state
 var debug
@@ -41,6 +43,10 @@ var waves_progress
 var wins_progress
 var saved_runs_progress
 var deathlink_progress
+
+# Hooks
+var shop_setup_hook
+var wave_skip_hook
 
 # Holder for all the trackers together so we can perform bulk operations.
 var _progress_trackers: Array
@@ -64,6 +70,10 @@ func _init(websocket_client, config).(websocket_client, config):
 	wins_progress = ApWinsProgress.new(self, game_state)
 	saved_runs_progress = ApSavedRunsProgress.new(self, game_state)
 	deathlink_progress = ApDeathLinkProgress.new(self, game_state)
+
+	shop_setup_hook = ApShopSetupHook.new()
+	wave_skip_hook = ApWaveSkipHook.new()
+
 	debug = GodotApClientDebugSettings.new()
 
 	_progress_trackers = [
@@ -85,6 +95,14 @@ func _init(websocket_client, config).(websocket_client, config):
 
 	ModLoaderLog.debug("Brotato AP adapter initialized", _LOG_NAME)
 
+func _ready():
+	ModLoaderLog.debug("Brotato AP adapter added to tree", _LOG_NAME)
+	var hooks = [
+		shop_setup_hook,
+		wave_skip_hook
+	]
+	for hook in hooks:
+		add_child(hook)
 
 func export_run_specific_progress_data() -> Dictionary:
 	## Gather all run-specific data from the progress trackers into a single dictionary.
@@ -102,6 +120,6 @@ func load_run_specific_progress_data(data: Dictionary):
 		progress.load_run_specific_progress_data(data)
 
 func connected_to_multiworld() -> bool:
-	# Convenience method to check if connected to AP, so other scenes don't need to 
+	# Convenience method to check if connected to AP, so other scenes don't need to
 	# reference the player session just to check this.
 	return self.connect_state == self.ConnectState.CONNECTED_TO_MULTIWORLD
