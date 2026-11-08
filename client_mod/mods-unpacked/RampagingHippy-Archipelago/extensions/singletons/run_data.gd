@@ -21,3 +21,12 @@ func add_xp(value: int, player_index: int, is_ap_xp: bool = false) -> void:
 	# class also checks if we're connected to a multiworld.
 	if _ap_client.enemy_xp_progress.enable_enemy_xp or is_ap_xp:
 		.add_xp(value, player_index)
+
+func get_next_wave() -> int:
+	# Override to skip to a certain wave if set in the AP shop (ap_go_to_wave_menu)
+	if _ap_client.connected_to_multiworld() and _ap_client.wave_skip_hook.skip_enabled:
+		# We're skipping, clear the flag
+		_ap_client.wave_skip_hook.skip_enabled = false
+		return _ap_client.wave_skip_hook.skip_to_wave
+	else:
+		return .get_next_wave()

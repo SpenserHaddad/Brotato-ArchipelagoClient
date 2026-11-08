@@ -40,11 +40,14 @@ func _init():
 		"ui/menus/run/locked_panel.gd",
 		# Show character win status in inventory elements and replace lock icon with character portrait
 		"ui/menus/shop/inventory.gd",
+
+		# CURRENTLY DISABLED DUE TO GODOT ISSUE. See base_shop.gd extension for details.
 		# Show "Go To Wave" Button (single player and coop)
-		"ui/menus/shop/base_shop.gd",
+		# "ui/menus/shop/base_shop.gd",
 		# Fix weird issue where the shops won't load (see comments in files for details)
-		"ui/menus/shop/shop.gd",
-		"ui/menus/shop/coop_shop.gd",
+		# "ui/menus/shop/shop.gd",
+		# "ui/menus/shop/coop_shop.gd",
+
 		# Enable/Disable shop item lock buttons
 		"ui/menus/shop/shop_items_container.gd",
 		"ui/menus/shop/shop_item.gd",

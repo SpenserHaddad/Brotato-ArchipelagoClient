@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix game crashing when loading parts of the mod before Brotato was fully initialized.
+
 ## [0.18.0] - 2026-11-02
 
 ### Added
