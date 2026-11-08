@@ -66,7 +66,6 @@ func on_wave_finished(wave_number: int, character_ids: Array, is_run_lost: bool,
 func on_item_received(item_name: String, _item):
 	if item_name.begins_with("Progressive Wave Cap"):
 		# Extract character name from item name with format "Progressive Wave Cap (<char>)"
-		var isplit = item_name.rsplit("(", false, 1)
 		var character_name = item_name.rsplit("(", false, 1)[1].trim_suffix(")")
 		if wave_cap_increases_received.has(character_name):
 			wave_cap_increases_received[character_name] += 1
