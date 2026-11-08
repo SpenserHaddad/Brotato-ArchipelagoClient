@@ -1,3 +1,11 @@
+# NOTE: This extension is currently disabled due to an issue when applying it. Mod
+# extensions are applied before global classes like RunData are initialized, and applying
+# the extensions means loading both the extension and base class. Vanilla base_shop tries
+# to infer types from RunData methods, but since RunData is null, it causes a parse error,
+# crashing the game.
+#
+# The equivalent logic has been moved to res://mods-unpacked/RampagingHippy-Archipelago/hooks/hack_shop_setup.gd
+# as a workaround.
 extends "res://ui/menus/shop/base_shop.gd"
 
 const LOG_NAME = "RampagingHippy-Archipelago/ui/menus/shop/base_shop"
