@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.1] - 2026-11-08
+
 ### Fixed
 
 - Fix game crashing when loading parts of the mod before Brotato was fully initialized.
@@ -748,7 +750,8 @@ objects for better organization and readability.
     - Hooks into Brotato to add the received items listed above and detect when
       locations are checked.
 
-[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.18.0...HEAD
+[unreleased]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.18.1...HEAD
+[0.18.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.17.2...v0.18.0
 [0.17.2]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/SpenserHaddad/Brotato-ArchipelagoClient/compare/v0.17.0...v0.17.1
